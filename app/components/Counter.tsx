@@ -1,0 +1,73 @@
+import Image from "next/image";
+import plus from "../../public/icons/plus.svg";
+import minus from "../../public/icons/minus.svg";
+
+interface Props {
+  handleIncrement: () => void;
+  handleDecrement: () => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value: number;
+  text: string;
+  name: string;
+}
+
+const Counter = ({
+  handleIncrement,
+  handleDecrement,
+  onChange,
+  text,
+  name,
+  value,
+}: Props) => {
+  return (
+    <>
+      <label htmlFor={name} className="form-label text-white">
+        {text}
+      </label>
+      <div className="row bg-light d-flex rounded-pill m-1">
+        <div className="col ps-1 pt-1 pb-1">
+          <button
+            className="btn bg-color-sea-green rounded rounded-pill p-0"
+            type="button"
+            onClick={handleDecrement}
+          >
+            <Image
+              className="p-1"
+              src={minus}
+              alt="minus"
+              width={25}
+              height={20}
+            />
+          </button>
+        </div>
+        <div className="col p-0 d-flex align-items-center justify-content-center">
+          <input
+            type="number"
+            name={name}
+            id={name}
+            value={value}
+            onChange={onChange}
+            className="form-control form-control-sm p-0 sortId text-center border-0 bg-light"
+          />
+        </div>
+        <div className="col text-end pe-1 pt-1 pb-1">
+          <button
+            className="btn bg-color-sea-green rounded rounded-pill p-0"
+            type="button"
+            onClick={handleIncrement}
+          >
+            <Image
+              src={plus}
+              alt="plus"
+              className="p-1"
+              width={25}
+              height={20}
+            />
+          </button>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Counter;
