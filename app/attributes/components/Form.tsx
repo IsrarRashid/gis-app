@@ -30,6 +30,8 @@ interface Form {
   sortId: number;
   attributeCode: string;
   evaluationFormula: string;
+  weightage: number;
+  remarks: string;
 }
 
 interface Option {
@@ -96,6 +98,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     sortId: 0,
     attributeCode: "",
     evaluationFormula: "",
+    weightage: 0,
+    remarks: "",
   });
 
   const [optionsData, setOptionsData] = useState<Option[]>([
@@ -186,6 +190,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             sortId: itemData.sortId,
             attributeCode: itemData.attributeCode,
             evaluationFormula: itemData.evaluationFormula,
+            weightage: itemData.weightage,
+            remarks: itemData.remarks,
           });
         }
       } catch (error) {
@@ -273,93 +279,103 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    switch (true) {
-      case !formData.label:
-        notifyError(errorMessages.labelError);
-        break;
+    // switch (true) {
+    // case !formData.label:
+    //   notifyError(errorMessages.labelError);
+    //   break;
 
-      case !formData.placeholder:
-        notifyError(errorMessages.placeholderError);
-        break;
+    // case !formData.placeholder:
+    //   notifyError(errorMessages.placeholderError);
+    //   break;
 
-      case !formData.unit:
-        notifyError(errorMessages.unitError);
-        break;
+    // case !formData.unit:
+    //   notifyError(errorMessages.unitError);
+    //   break;
 
-      case !formData.validationRegx:
-        notifyError(errorMessages.validationRegxError);
-        break;
+    // case !formData.validationRegx:
+    //   notifyError(errorMessages.validationRegxError);
+    //   break;
 
-      case !formData.errorMessage:
-        notifyError(errorMessages.errorMessage);
-        break;
+    // case !formData.errorMessage:
+    //   notifyError(errorMessages.errorMessage);
+    //   break;
 
-      case !formData.attributeCode:
-        notifyError(errorMessages.attributeCodeError);
-        break;
+    // case !formData.attributeCode:
+    //   notifyError(errorMessages.attributeCodeError);
+    //   break;
 
-      default:
-        try {
-          console.log("data:", { attribute: formData, options: optionsData });
-          // send a POST request to the server to add the product
-          const token = Cookies.get("token");
-          if (method === "POST") {
-            const response = await axios({
-              method: method,
-              url: api,
-              data: { attribute: formData, options: optionsData },
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            });
-            notifyCreate(errorMessages.created);
-            setFormData({
-              attributeDataType: "",
-              multiselect: 0,
-              label: "",
-              validationRegx: "",
-              min: 0,
-              max: 0,
-              required: 0,
-              status: 0,
-              hidden: 0,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              placeholder: "",
-              attributeType: "",
-              unit: "",
-              errorMessage: "",
-              verificationType: "",
-              sortId: 0,
-              attributeCode: "",
-              evaluationFormula: "",
-            });
-            console.log("Submit Response:", response.data);
-            setRefresh((prev) => !prev);
-          } else if (method === "PUT") {
-            const response = await axios({
-              method: method,
-              url: `${api}/${id}`,
-              data: { attribute: formData, options: optionsData },
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            });
-            console.log("response", response);
-            notifyCreate(updated);
-          } else {
-            console.log("api is wrong");
-          }
-          // notifyCreate(created);
-          // handle the response and perform any necessary actions
-          console.log("data", formData);
-        } catch (err) {
-          console.log((err as AxiosError).message);
-          notifyError((err as AxiosError).message);
-        }
+    // default:
+    try {
+      console.log("data:", { attribute: formData, options: optionsData });
+      // send a POST request to the server to add the product
+      const token = Cookies.get("token");
+      if (method === "POST") {
+        const response = await axios({
+          method: method,
+          url: api,
+          data: {
+            attribute: formData,
+            options:
+              formData.attributeType === "radio" ||
+              formData.attributeType === "select" ||
+              formData.attributeType === "checkbox"
+                ? optionsData
+                : null,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        notifyCreate(errorMessages.created);
+        setFormData({
+          attributeDataType: "",
+          multiselect: 0,
+          label: "",
+          validationRegx: "",
+          min: 0,
+          max: 0,
+          required: 0,
+          status: 0,
+          hidden: 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          placeholder: "",
+          attributeType: "",
+          unit: "",
+          errorMessage: "",
+          verificationType: "",
+          sortId: 0,
+          attributeCode: "",
+          evaluationFormula: "",
+          weightage: 0,
+          remarks: "",
+        });
+        console.log("Submit Response:", response.data);
+        setRefresh((prev) => !prev);
+      } else if (method === "PUT") {
+        const response = await axios({
+          method: method,
+          url: `${api}/${id}`,
+          data: { attribute: formData, options: optionsData },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        console.log("response", response);
+        notifyCreate(updated);
+      } else {
+        console.log("api is wrong");
+      }
+      // notifyCreate(created);
+      // handle the response and perform any necessary actions
+      console.log("data", formData);
+    } catch (err) {
+      console.log((err as AxiosError).message);
+      notifyError((err as AxiosError).message);
     }
+    // }
   };
 
   return (
@@ -462,9 +478,10 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       name="attributeDataType"
                       onChange={handleChange}
                     >
-                      <option value="Number">Number</option>
-                      <option value="String">String</option>
-                      <option value="Date">Date</option>
+                      <option value="">None</option>
+                      <option value="number">Number</option>
+                      <option value="string">String</option>
+                      <option value="date">Date</option>
                     </select>
                   </div>
                 </div>
@@ -482,15 +499,16 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       name="attributeType"
                       onChange={handleChange}
                     >
-                      <option value="Text">Text</option>
-                      <option value="Select">Select</option>
-                      <option value="File">File</option>
-                      <option value="Radio">Radio</option>
-                      <option value="Slider">Slider</option>
-                      <option value="Textarea">Textarea</option>
-                      <option value="Progress">Progress</option>
-                      <option value="Checkbox">Checkbox</option>
-                      <option value="Formula">Formula</option>
+                      <option value="">None</option>
+                      <option value="text">Text</option>
+                      <option value="select">Select</option>
+                      <option value="file">File</option>
+                      <option value="radio">Radio</option>
+                      <option value="slider">Slider</option>
+                      <option value="textarea">Textarea</option>
+                      <option value="progress">Progress</option>
+                      <option value="checkbox">Checkbox</option>
+                      <option value="formula">Formula</option>
                     </select>
                   </div>
                   <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
@@ -614,6 +632,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       name="verificationType"
                       onChange={handleChange}
                     >
+                      <option value="">None</option>
                       <option value="Image">Image</option>
                       <option value="Video">Video</option>
                     </select>
@@ -635,23 +654,43 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Verification Content"
                     />
                   </div>
-                  {/* <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label htmlFor="parentId" className="form-label text-white">
-                      Parent Id
+                </div>
+                <div className="row d-flex justify-content-start mb-3">
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="weightage"
+                      className="form-label text-white"
+                    >
+                      Weightage
                     </label>
                     <input
                       type="number"
                       className="form-control form-control-sm"
-                      id="parentId"
-                      name="parentId"
-                      value={formData.parentId}
+                      id="weightage"
+                      name="weightage"
+                      value={formData.weightage}
                       onChange={handleChange}
-                      placeholder="Enter Parent Id value"
+                      placeholder="Enter Verification Content"
                     />
-                  </div> */}
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label htmlFor="remarks" className="form-label text-white">
+                      Remarks
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control form-control-sm"
+                      id="remarks"
+                      name="remarks"
+                      value={formData.remarks}
+                      onChange={handleChange}
+                      placeholder="Enter Verification Content"
+                    />
+                  </div>
                 </div>
+
                 <div className="row d-flex justify-content-start mb-3">
-                  {formData.attributeType === "Formula" && (
+                  {formData.attributeType === "formula" && (
                     <>
                       <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
                         <label
@@ -716,24 +755,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     <div className="form-check form-switch">
                       <label
                         className="form-check-label text-white"
-                        htmlFor="required"
-                      >
-                        Is Required
-                      </label>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="required"
-                        name="required"
-                        checked={isRequired}
-                        onChange={() => setRequired(!isRequired)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-lg-2 col-md-4 col-sm-12 text-start">
-                    <div className="form-check form-switch">
-                      <label
-                        className="form-check-label text-white"
                         htmlFor="multiselect"
                       >
                         Is Multi Select
@@ -745,6 +766,24 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         name="multiselect"
                         checked={isMultiSelect}
                         onChange={() => setMultiSelect(!isMultiSelect)}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-lg-2 col-md-4 col-sm-12 text-start">
+                    <div className="form-check form-switch">
+                      <label
+                        className="form-check-label text-white"
+                        htmlFor="required"
+                      >
+                        Is Required
+                      </label>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="required"
+                        name="required"
+                        checked={isRequired}
+                        onChange={() => setRequired(!isRequired)}
                       />
                     </div>
                   </div>
@@ -785,9 +824,9 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </div>
                   </div>
                 </div>
-                {formData.attributeType === "Radio" ||
-                formData.attributeType === "Select" ||
-                formData.attributeType === "Checkbox" ? (
+                {formData.attributeType === "radio" ||
+                formData.attributeType === "select" ||
+                formData.attributeType === "checkbox" ? (
                   <>
                     <div className="row d-flex justify-content-between mb-3">
                       <div className="col-lg-10 col-md-6 col-sm-4 my-auto">

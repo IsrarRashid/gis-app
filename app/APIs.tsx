@@ -4,3 +4,5 @@ export const projectAPI = `${backendURL}/api/Projects`;
 export const attributeGroupsAPI = `${backendURL}/api/AttributeGroups`;
 export const userAPI = `${backendURL}/api/Users`;
 export const attributesAPI = `${backendURL}/api/Attributes`;
+export const attributeGroupsToProjectMappingAPI = `${backendURL}/api/AttributeGroupsToProjectMapping`;
+export const attributeGroupMappingAPI = `${backendURL}/api/AttributeGroupMapping`;

@@ -159,7 +159,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
               name="sort id"
               handleSort={() => handleSort("sortId")}
             />
-            <th colSpan={2}>ACTION</th>
+            <th colSpan={2}>ACTIONS</th>
           </tr>
         </thead>
         <tbody>

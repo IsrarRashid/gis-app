@@ -16,7 +16,6 @@ interface Form {
   city: string;
   locationCoordinates: string;
   status: string;
-  groups: string;
 }
 
 interface Props {
@@ -43,7 +42,6 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
     city: "",
     locationCoordinates: "",
     status: "",
-    groups: "",
   });
   const [show, setShow] = useState(false);
 
@@ -51,12 +49,8 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
   const created = "Created Successfully";
   const updated = "Updated Successfully";
   const errorMessage = "something Bad Happend";
-  const nameError = "Project Name is missing";
-  const addressError = "Address is missing";
-  const cityError = "City is missing";
-  const locationCoordinatesError = "location coordinates is missing";
-  const sectorNameError = "Sector Name is missing";
-  const groupsError = "Groups is missing";
+  const nameError = "Please add Name!";
+  const sectorIdError = "Please add Sector!";
 
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
@@ -128,7 +122,6 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
             city: itemData.city,
             locationCoordinates: itemData.locationCoordinates,
             status: itemData.status,
-            groups: itemData.groups,
           });
         }
       } catch (error) {
@@ -142,7 +135,6 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
         city: "",
         locationCoordinates: "",
         status: "",
-        groups: "",
       });
     }
   };
@@ -166,20 +158,8 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
         notifyError(nameError);
         break;
 
-      case !formData.address:
-        notifyError(addressError);
-        break;
-
-      case !formData.city:
-        notifyError(cityError);
-        break;
-
-      case !formData.locationCoordinates:
-        notifyError(locationCoordinatesError);
-        break;
-
-      case !formData.groups:
-        notifyError(groupsError);
+      case !formData.sectorId:
+        notifyError(sectorIdError);
         break;
 
       default:
@@ -206,7 +186,6 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                 city: "",
                 locationCoordinates: "",
                 status: "",
-                groups: "",
               });
 
               console.log("response", response);
@@ -373,20 +352,6 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       value={formData.city}
                       onChange={handleChange}
                       placeholder="Enter City Name"
-                    />
-                  </div>
-                  <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
-                    <label htmlFor="groups" className="form-label text-white">
-                      Groups
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm"
-                      id="groups"
-                      name="groups"
-                      value={formData.groups}
-                      onChange={handleChange}
-                      placeholder="Enter Groups"
                     />
                   </div>
                 </div>

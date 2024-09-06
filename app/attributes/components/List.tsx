@@ -38,6 +38,8 @@ interface Props {
   verificationContent: string;
   value: string;
   sortId: number;
+  remarks: string;
+  weightage: number;
   options: [
     {
       value: string;
@@ -225,6 +227,14 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               handleSort={() => handleSort("verificationContent")}
             />
             <TableHeading
+              name="weightage"
+              handleSort={() => handleSort("weightage")}
+            />
+            <TableHeading
+              name="remarks"
+              handleSort={() => handleSort("remarks")}
+            />
+            <TableHeading
               name="options"
               handleSort={() => handleSort("options")}
             />
@@ -250,6 +260,8 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               <td>{d.parentId}</td>
               <td>{d.errorMessage}</td>
               <td>{d.verificationContent}</td>
+              <td>{d.weightage}</td>
+              <td>{d.remarks}</td>
               <td>{d.options.length}</td>
               <td>
                 <DeleteModal handleDelete={handleDelete} id={d.attributeId} />

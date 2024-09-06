@@ -10,11 +10,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import DeleteModal from "@/app/components/DeleteModal";
-import { projectAPI } from "@/app/APIs";
+import { attributeGroupsAPI, projectAPI } from "@/app/APIs";
 import ProjectForm from "./ProjectForm";
 import { sort } from "fast-sort";
 import TableHeading from "@/app/sectors/components/TableHeading";
 import { getFormattedDate } from "@/app/utils";
+import GroupingForm, { Option } from "./GroupingForm";
 
 interface Props {
   id: number;
@@ -34,6 +35,7 @@ interface ListProps {
 }
 
 const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
+  const [attributeGroups, setAttributeGroups] = useState<Option[]>([]);
   const [data, setData] = useState<Props[]>([]);
   const [originalData, setOriginalData] = useState<Props[]>([]); // Store the original data
 
@@ -83,6 +85,27 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
   useEffect(() => {
     console.log("new data:", data);
   }, [data]);
+
+  useEffect(() => {
+    const loadItems = async () => {
+      try {
+        const token = Cookies.get("token");
+        if (token) {
+          const response = await axios.get(attributeGroupsAPI, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+          setAttributeGroups(response.data.data);
+        }
+        console.log("AttributeGroups Data:", data);
+      } catch (error) {
+        console.log("Error fetching data:", error);
+      }
+    };
+    loadItems();
+  }, [refresh]);
 
   const handleDelete = async (id: number) => {
     try {
@@ -250,7 +273,9 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
                 name="groups"
                 handleSort={() => handleSort("groups")}
               />
-              <th colSpan={2}>ACTIONS</th>
+              <th colSpan={3}>
+                <div className="text-center">ACTIONS</div>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -288,6 +313,12 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
                     id={d.id}
                     setRefresh={setRefresh}
                     refresh={refresh}
+                  />
+                </td>
+                <td>
+                  <GroupingForm
+                    projectId={d.id}
+                    groupOptions={attributeGroups}
                   />
                 </td>
               </tr>

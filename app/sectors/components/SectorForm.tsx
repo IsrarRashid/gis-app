@@ -1,4 +1,3 @@
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import plus from "../../../public/icons/plus.svg";
 import minus from "../../../public/icons/minus.svg";
@@ -140,10 +139,6 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
         notifyError(nameError);
         break;
 
-      case !formData.description:
-        notifyError(descriptionError);
-        break;
-
       default:
         try {
           // send a POST request to the server to add the product
@@ -276,6 +271,8 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                         name="parentId"
                         onChange={handleChange}
                       >
+                        <option value={0}>None</option>
+
                         {data.length > 0 ? (
                           data?.map((d) => (
                             <option key={d.id} value={d.id}>
@@ -377,8 +374,8 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
             </div>
           </div>
         </Modal.Body>
+        <ToastContainer />
       </Modal>
-      <ToastContainer />
     </>
   );
 };
