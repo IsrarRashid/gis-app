@@ -1,30 +1,20 @@
-import { useEffect, useState } from "react";
-import projectService, { Project } from "../services/project-service";
-import { CanceledError } from "../services/api-client";
+import { projectAPI } from "../APIs";
+import useData from "./useData";
 
-const useProjects = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [error, setError] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+export interface Project {
+  id: number;
+  sectorId: number;
+  name: string;
+  address: string;
+  city: string;
+  locationCoordinates: string;
+  status: string;
+}
 
-  useEffect(() => {
-    setLoading(true);
-    const { request, cancel } = projectService.getAll<Project>();
-    request
-      .then((res) => {
-        setProjects(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (err instanceof CanceledError) return;
-        setError(err.message);
-        setLoading(false);
-      });
+interface Props {
+  refresh: boolean;
+}
 
-    return () => cancel();
-  }, []);
-
-  return { projects, error, isLoading, setProjects, setError };
-};
-
+const useProjects = ({ refresh }: Props) =>
+  useData<Project>({ refresh, endpoint: projectAPI });
 export default useProjects;

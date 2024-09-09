@@ -152,26 +152,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           weightage: itemData.weightage,
           remarks: itemData.remarks,
         });
-        setOptionsData(
-          itemData.options || [
-            {
-              attributeId: 0,
-              value: "",
-              sortId: 0,
-              isActive: 0,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              label: "",
-            },
-          ]
-        );
-        setActiveStates(
-          itemData.options
-            ? itemData.options.map((option: Option) =>
-                option.isActive ? true : false
-              )
-            : {}
-        );
         setRequired(itemData.required === 1 ? true : false);
         setMultiSelect(itemData.multiselect === 1 ? true : false);
         setStatus(itemData.status === 1 ? true : false);
@@ -246,7 +226,14 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       status: isStatus ? 1 : 0,
       hidden: isHidden ? 1 : 0,
     });
-  }, [isRequired, isMultiSelect, isStatus, isHidden, formData.attributeType]);
+  }, [
+    isRequired,
+    isMultiSelect,
+    isStatus,
+    isHidden,
+    formData.attributeType,
+    formData,
+  ]);
 
   // Update optionsData state when activeStates change
   useEffect(() => {
@@ -325,7 +312,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             console.log("response", response);
             setRefresh((prev) => !prev);
             // notifyCreate(updated);
-            handleClose();
           }
         } catch (err) {
           console.log((err as AxiosError).message);

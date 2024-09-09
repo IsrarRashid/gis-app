@@ -1,8 +1,8 @@
-const backendURL = process.env.NEXT_PUBLIC_BACKEND_API;
-export const sectorAPI = `${backendURL}/api/Sectors`;
-export const projectAPI = `${backendURL}/api/Projects`;
-export const attributeGroupsAPI = `${backendURL}/api/AttributeGroups`;
-export const userAPI = `${backendURL}/api/Users`;
-export const attributesAPI = `${backendURL}/api/Attributes`;
-export const attributeGroupsToProjectMappingAPI = `${backendURL}/api/AttributeGroupsToProjectMapping`;
-export const attributeGroupMappingAPI = `${backendURL}/api/AttributeGroupMapping`;
+export const loginAPI = `/api/Authentication/login`;
+export const sectorAPI = `/api/Sectors`;
+export const projectAPI = `/api/Projects`;
+export const attributeGroupsAPI = `/api/AttributeGroups`;
+export const userAPI = `/api/Users`;
+export const attributesAPI = `/api/Attributes`;
+export const attributeGroupsToProjectMappingAPI = `/api/AttributeGroupsToProjectMapping`;
+export const attributeGroupMappingAPI = `/api/AttributeGroupMapping`;

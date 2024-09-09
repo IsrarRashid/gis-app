@@ -1,22 +1,28 @@
 import Modal from "react-bootstrap/Modal";
-import plus from "../../../public/icons/plus.svg";
-import minus from "../../../public/icons/minus.svg";
 import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
-import Cookies from "js-cookie";
+import { useState } from "react";
 import more from "../../../public/icons/more.svg";
-import { projectAPI, sectorAPI } from "@/app/APIs";
-import { ToastContainer, toast } from "react-toastify";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import useSectors from "@/app/hooks/useSectors";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast, { Toaster } from "react-hot-toast";
+import { useForm } from "react-hook-form";
 
-interface Form {
-  sectorId: number;
-  name: string;
-  address: string;
-  city: string;
-  locationCoordinates: string;
-  status: string;
-}
+const schema = z.object({
+  id: z.number().optional().default(0),
+  sectorId: z.preprocess(
+    (val) => (val === "" ? undefined : val),
+    z.number({ invalid_type_error: "Please add Sector Id!" })
+  ),
+  name: z.string().min(1, { message: "Please add Name!" }),
+  address: z.string().optional().default(""),
+  city: z.string().optional().default(""),
+  locationCoordinates: z.string().optional().default(""),
+  status: z.string().optional().default(""),
+});
+
+type Project = z.infer<typeof schema>;
 
 interface Props {
   api: string;
@@ -26,214 +32,83 @@ interface Props {
   refresh: boolean;
 }
 
-interface PropsData {
-  id: number;
-  parentId: number;
-  name: string;
-}
-
 const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
-  const [projectsData, setProjectsData] = useState<PropsData[]>([]);
-  const [sectorsData, setsectorsData] = useState<PropsData[]>([]);
-  const [formData, setFormData] = useState<Form>({
-    sectorId: 0,
-    name: "",
-    address: "",
-    city: "",
-    locationCoordinates: "",
-    status: "",
-  });
+  const { data: sectorsData } = useSectors({ refresh });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<Project>({ resolver: zodResolver(schema) });
+  console.log(errors);
   const [show, setShow] = useState(false);
+  const modalId = `formModal-${id}`;
 
-  // error messages
-  const created = "Created Successfully";
-  const updated = "Updated Successfully";
-  const errorMessage = "something Bad Happend";
-  const nameError = "Please add Name!";
-  const sectorIdError = "Please add Sector!";
+  const createdMessage = "Created Successfully";
+  const updatedMessage = "Updated Successfully";
 
-  const notifyCreate = (message: string) => toast.success(message);
-  const notifyError = (message: string) => toast.error(message);
+  const handleClose = () => {
+    setShow(false);
+    reset();
+  };
 
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios.get(projectAPI, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          setProjectsData(response.data.data);
-        }
-        console.log("projectsData Data:", projectsData);
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      }
-    };
-    loadItems();
-  }, [refresh]);
-
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios.get(sectorAPI, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          setsectorsData(response.data.data);
-        }
-        console.log("sectorsData:", sectorsData);
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      }
-    };
-    loadItems();
-  }, [refresh]);
-
-  const handleClose = () => setShow(false);
   const handleShow = async () => {
     setShow(true);
 
     if (method === "PUT") {
       try {
         // send a request to the server to add the product
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios({
-            method: "GET",
-            url: `${api}/${id}`,
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          const itemData = response.data.data;
-          setFormData({
-            sectorId: itemData.sectorId,
-            name: itemData.name,
-            address: itemData.address,
-            city: itemData.city,
-            locationCoordinates: itemData.locationCoordinates,
-            status: itemData.status,
-          });
-        }
-      } catch (error) {
-        console.log(error);
+        const response = await apiClient.get(`${api}/${id}`);
+        const itemData = response.data.data;
+        setValue("id", itemData.id);
+        setValue("name", itemData.name);
+        setValue("sectorId", itemData.sectorId);
+        setValue("address", itemData.address);
+        setValue("city", itemData.city);
+        setValue("locationCoordinates", itemData.locationCoordinates);
+        setValue("status", itemData.status);
+      } catch (err) {
+        console.log((err as AxiosError).message);
+        toast.error((err as AxiosError).message);
       }
-    } else {
-      setFormData({
-        sectorId: 0,
-        name: "",
-        address: "",
-        city: "",
-        locationCoordinates: "",
-        status: "",
-      });
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    switch (true) {
-      case !formData.name:
-        notifyError(nameError);
-        break;
-
-      case !formData.sectorId:
-        notifyError(sectorIdError);
-        break;
-
-      default:
-        try {
-          // send a POST request to the server to add the product
-          const token = Cookies.get("token");
-
-          if (token) {
-            if (method === "POST") {
-              const response = await axios({
-                method: method,
-                url: api,
-                data: formData,
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-              });
-              notifyCreate(created);
-              setFormData({
-                sectorId: 0,
-                name: "",
-                address: "",
-                city: "",
-                locationCoordinates: "",
-                status: "",
-              });
-
-              console.log("response", response);
-              setRefresh((prev) => !prev);
-            } else if (method === "PUT") {
-              const response = await axios({
-                method: method,
-                data: formData,
-                url: `${api}/${id}`,
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-              });
-              console.log("response", response);
-              notifyCreate(updated);
-            } else {
-              console.log("api is wrong");
-            }
-          }
-          // handle the response and perform any necessary actions
-          console.log("data", formData);
-        } catch (err) {
-          console.log((err as AxiosError).message);
-          notifyError((err as AxiosError).message);
-        }
+  const onSubmit = async (formData: Project) => {
+    console.log("Form Data:", formData);
+    console.log(errors);
+    try {
+      const response = await apiClient({
+        method: method,
+        url: method === "POST" ? api : `${api}/${id}`,
+        data: formData,
+      });
+      console.log("Response:", response);
+      setRefresh((prev) => !prev);
+      toast.success(method === "POST" ? createdMessage : updatedMessage);
+      handleClose();
+    } catch (err) {
+      console.error("Submission error:", err);
+      toast.error((err as AxiosError).message);
     }
   };
 
   return (
     <>
-      {method === "POST" ? (
-        <button
-          type="button"
-          className="btn btn-sm text-white bg-color-sea-green"
-          onClick={handleShow}
-        >
-          + Add Project
-        </button>
-      ) : (
-        <button
-          className="btn btn-sm rounded-pill"
-          style={{ background: "#fff" }}
-          onClick={handleShow}
-        >
-          <Image src={more} alt="more" />
-        </button>
-      )}
+      <div>
+        <Toaster />
+      </div>
+      <button
+        type="button"
+        className={`btn btn-sm ${
+          method === "POST" ? "text-white bg-color-sea-green" : "rounded-pill"
+        }`}
+        onClick={handleShow}
+        style={{ background: method === "POST" ? "" : "#fff" }}
+      >
+        {method === "POST" ? "+ Add Project" : <Image src={more} alt="more" />}
+      </button>
 
       <Modal
         show={show}
@@ -241,6 +116,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
         aria-labelledby="contained-modal-title-vcenter"
         centered
         dialogClassName="custom-modal"
+        id={modalId}
       >
         <Modal.Body
           className="p-0"
@@ -255,104 +131,87 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
           >
             <div className="row flex-column justify-content-center mb-4">
               <div className="col-lg-12">
-                {method === "POST" ? (
-                  <p className="text-center text-white mt-4 fw-bold">
-                    <span>ADD PROJECT</span>
-                  </p>
-                ) : (
-                  <p className="text-center text-white mt-4 fw-bold">
-                    <span>UPDATE PROJECT</span>
-                  </p>
-                )}
+                <p className="text-center text-white mt-4 fw-bold">
+                  {method === "POST" ? "ADD PROJECT" : "UPDATE PROJECT"}
+                </p>
               </div>
-              <form className="ps-5 pe-5" onSubmit={handleSubmit}>
+              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
                 <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
                   <label htmlFor="name" className="form-label text-white">
                     Name
                   </label>
                   <input
+                    {...register("name")}
+                    id="name"
                     type="text"
                     className="form-control form-control-sm"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
                     placeholder="Enter Project Name"
                   />
+                  {errors.name && (
+                    <p className="text-danger mt-1">{errors.name.message}</p>
+                  )}
                 </div>
-                <div className="col mb-3">
-                  <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
+                <div className="row d-flex justify-content-between">
+                  <div className="col-lg-6 col-md-12 col-sm-12 mb-3 text-start">
                     <label htmlFor="address" className="form-label text-white">
                       Address
                     </label>
                     <input
+                      {...register("address")}
+                      id="address"
                       type="text"
                       className="form-control form-control-sm"
-                      id="address"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
                       placeholder="Enter Address"
                     />
                   </div>
-                  <div className="row d-flex justify-content-between">
-                    <div className="col-lg-6 col-md-6 col-sm-12 text-start">
-                      <label htmlFor="status" className="form-label text-white">
-                        Status
-                      </label>
-                      <select
-                        className="form-select form-select-sm"
-                        aria-label="Default select example"
-                        name="status"
-                        onChange={handleChange}
-                      >
-                        <option value="">Select</option>
-                        <option value="Scheduled">Scheduled</option>
-                        <option value="Not Confirmed">Not Confirmed</option>
-                        <option value="Cancel">Cancel</option>
-                        <option value="Complete">Complete</option>
-                      </select>
-                    </div>
-                    <div className="col-lg-6 col-md-6 col-sm-12 text-start">
-                      <label
-                        htmlFor="parentId"
-                        className="form-label text-white"
-                      >
-                        Sector Id
-                      </label>
-                      <select
-                        className="form-select form-select-sm"
-                        aria-label="Default select example"
-                        name="parentId"
-                        onChange={handleChange}
-                      >
-                        {sectorsData.length > 0 ? (
-                          sectorsData?.map((d) => (
-                            <option key={d.id} value={d.id}>
-                              {d.name}
-                            </option>
-                          ))
-                        ) : (
-                          <option disabled>Loading...</option>
-                        )}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div className="row d-flex justify-content-between">
                   <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
                     <label htmlFor="city" className="form-label text-white">
                       City
                     </label>
                     <input
+                      {...register("city")}
+                      id="city"
                       type="text"
                       className="form-control form-control-sm"
-                      id="city"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
                       placeholder="Enter City Name"
                     />
+                  </div>
+                </div>
+                <div className="row d-flex justify-content-between">
+                  <div className="col-lg-6 col-md-6 col-sm-12 text-start">
+                    <label htmlFor="status" className="form-label text-white">
+                      Status
+                    </label>
+                    <select
+                      {...register("status")}
+                      className="form-select form-select-sm"
+                    >
+                      <option value="">Select</option>
+                      <option value="active">Active</option>
+                      <option value="draft">Draft</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+                  <div className="col-lg-6 col-md-6 col-sm-12 text-start">
+                    <label htmlFor="sectorId" className="form-label text-white">
+                      Sector ID
+                    </label>
+                    <select
+                      {...register("sectorId", { valueAsNumber: true })}
+                      className="form-select form-select-sm"
+                    >
+                      <option value="">None</option>
+                      {sectorsData?.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.sectorId && (
+                      <p className="text-danger mt-1">
+                        {errors.sectorId.message}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
@@ -363,12 +222,10 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     Location Coordinates
                   </label>
                   <input
+                    {...register("locationCoordinates")}
+                    id="locationCoordinates"
                     type="text"
                     className="form-control form-control-sm"
-                    id="locationCoordinates"
-                    name="locationCoordinates"
-                    value={formData.locationCoordinates}
-                    onChange={handleChange}
                     placeholder="Enter Location Coordinates"
                   />
                 </div>
@@ -384,7 +241,6 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
             </div>
           </div>
         </Modal.Body>
-        <ToastContainer />
       </Modal>
     </>
   );

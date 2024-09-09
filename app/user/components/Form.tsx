@@ -1,22 +1,34 @@
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import plus from "../../../public/icons/plus.svg";
-import minus from "../../../public/icons/minus.svg";
 import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
-import Cookies from "js-cookie";
+import { useState } from "react";
 import more from "../../../public/icons/more.svg";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast, { Toaster } from "react-hot-toast";
+import { useForm } from "react-hook-form";
 
-interface Form {
-  name: string;
-  email: string;
-  phone: string;
-  roleId: number;
-  password: string;
-  createdAt: string;
-  updatedAt: string;
-}
+const schema = z.object({
+  id: z.number().optional().default(0),
+  name: z.string().min(1, { message: "Please add Name!" }),
+  email: z
+    .string()
+    .min(1, { message: "Please add Email!" })
+    .email({ message: "Please enter valid email!" }),
+  phone: z.string().optional().default(""),
+  roleId: z
+    .preprocess(
+      (val) => (val === "" ? undefined : val),
+      z.number({ invalid_type_error: "Please add Role Id!" })
+    )
+    .optional()
+    .default(0),
+  password: z.string().min(1, { message: "Please add Password!" }),
+  createdAt: z.string().optional().default(new Date().toISOString()),
+  updatedAt: z.string().optional().default(new Date().toISOString()),
+});
+
+type User = z.infer<typeof schema>;
 
 interface Props {
   api: string;
@@ -27,145 +39,79 @@ interface Props {
 }
 
 const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
-  const [formData, setFormData] = useState<Form>({
-    name: "",
-    email: "",
-    phone: "",
-    roleId: 0,
-    password: "",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<User>({ resolver: zodResolver(schema) });
+  // console.log(errors);
+  const modalId = `formModal-${id}`;
+  const createdMessage = "Created Successfully";
+  const updatedMessage = "Updated Successfully";
+
+  const handleClose = () => {
+    setShow(false);
+    reset();
+  };
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
   const handleShow = async () => {
     setShow(true);
 
     if (method === "PUT") {
       try {
-        // send a POST request to the server to add the product
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios({
-            method: "GET",
-            url: `${api}/${id}`,
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          const itemData = response.data.data;
-          setFormData({
-            name: itemData.name,
-            email: itemData.email,
-            phone: itemData.phone,
-            roleId: itemData.roleId,
-            password: itemData.password,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          });
-        }
+        const response = await apiClient.get(`${api}/${id}`);
+        const itemData = response.data.data;
+        setValue("id", itemData.id);
+        setValue("name", itemData.name);
+        setValue("email", itemData.email);
+        setValue("phone", itemData.phone);
+        setValue("roleId", itemData.roleId);
+        setValue("password", itemData.password);
+        setValue("createdAt", new Date().toISOString());
+        setValue("updatedAt", new Date().toISOString());
       } catch (error) {
         console.log(error);
       }
-    } else {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        roleId: 0,
-        password: "",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const onSubmit = async (formData: User) => {
+    console.log("Form Data:", formData);
+    console.log(errors);
     try {
-      // send a POST request to the server to add the product
-      const token = Cookies.get("token");
-
-      if (token) {
-        if (method === "POST") {
-          const response = await axios({
-            method: method,
-            url: api,
-            data: formData,
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          console.log("response", response);
-          setRefresh((prev) => !prev);
-          setFormData({
-            name: "",
-            email: "",
-            phone: "",
-            roleId: 0,
-            password: "",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          });
-        } else if (method === "PUT") {
-          const response = await axios({
-            method: method,
-            url: `${api}/${id}`,
-            data: formData,
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          console.log("response", response);
-        } else {
-          console.log("api is wrong");
-        }
-      }
-      // notifyCreate(created);
-      // handle the response and perform any necessary actions
-      console.log("data", formData);
+      const response = await apiClient({
+        method: method,
+        url: method === "POST" ? api : `${api}/${id}`,
+        data: formData,
+      });
+      console.log("Response:", response);
+      setRefresh((prev) => !prev);
+      toast.success(method === "POST" ? createdMessage : updatedMessage);
+      handleClose();
     } catch (err) {
-      // notifyError(errorMessage);
-      console.log((err as AxiosError).message);
+      console.error("Submission error:", err);
+      toast.error((err as AxiosError).message);
     }
   };
 
   return (
     <>
-      {method === "POST" ? (
-        <button
-          type="button"
-          className="btn btn-sm text-white bg-color-sea-green"
-          onClick={handleShow}
-        >
-          + Add User
-        </button>
-      ) : (
-        <button
-          className="btn btn-sm rounded-pill"
-          style={{ background: "#fff" }}
-          onClick={handleShow}
-        >
-          <Image src={more} alt="more" />
-        </button>
-      )}
+      <div>
+        <Toaster />
+      </div>
+      <button
+        type="button"
+        className={`btn btn-sm ${
+          method === "POST" ? "text-white bg-color-sea-green" : "rounded-pill"
+        }`}
+        onClick={handleShow}
+        style={{ background: method === "POST" ? "" : "#fff" }}
+      >
+        {method === "POST" ? "+ Add User" : <Image src={more} alt="more" />}
+      </button>
 
       <Modal
         show={show}
@@ -173,6 +119,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         aria-labelledby="contained-modal-title-vcenter"
         centered
         dialogClassName="custom-modal"
+        id={modalId}
       >
         <Modal.Body
           className="p-0"
@@ -187,45 +134,41 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           >
             <div className="row flex-column justify-content-center mb-4">
               <div className="col-lg-12">
-                {method === "POST" ? (
-                  <p className="text-center text-white mt-4 fw-bold">
-                    <span>ADD USER</span>
-                  </p>
-                ) : (
-                  <p className="text-center text-white mt-4 fw-bold">
-                    <span>UPDATE USER</span>
-                  </p>
-                )}
+                <p className="text-center text-white mt-4 fw-bold">
+                  {method === "POST" ? "ADD USER" : "UPDATE USER"}
+                </p>
               </div>
-              <form className="ps-5 pe-5" onSubmit={handleSubmit}>
+              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
                 <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
                   <label htmlFor="name" className="form-label text-white">
                     Name
                   </label>
                   <input
+                    {...register("name")}
+                    id="name"
                     type="text"
                     className="form-control form-control-sm"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Enter Username"
+                    placeholder="Enter User Name"
                   />
+                  {errors.name && (
+                    <p className="text-danger mt-1">{errors.name.message}</p>
+                  )}
                 </div>
                 <div className="col mb-3">
                   <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
                     <label htmlFor="email" className="form-label text-white">
-                      email
+                      Email
                     </label>
                     <input
+                      {...register("email")}
+                      id="email"
                       type="text"
                       className="form-control form-control-sm"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Enter email"
+                      placeholder="Enter Email"
                     />
+                    {errors.email && (
+                      <p className="text-danger mt-1">{errors.email.message}</p>
+                    )}
                   </div>
                   <div className="row d-flex justify-content-between">
                     <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
@@ -233,76 +176,29 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Phone
                       </label>
                       <input
+                        {...register("phone")}
+                        id="phone"
                         type="text"
                         className="form-control form-control-sm"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="Enter Phone Name"
+                        placeholder="Enter Phone"
                       />
                     </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 text-start">
-                      <label
-                        htmlFor="roleId"
-                        className="form-label text-white mb-1"
-                      >
-                        Role ID
+                    <div className="col-lg-6 col-md-6 col-sm-12 text-start">
+                      <label htmlFor="roleId" className="form-label text-white">
+                        Role Id
                       </label>
-                      <div className="row bg-light d-flex rounded-pill">
-                        <div className="col ps-1 pt-1 pb-1">
-                          <button
-                            className="btn bg-color-sea-green rounded rounded-pill p-0"
-                            type="button"
-                            onClick={() => {
-                              if (formData.roleId !== 0) {
-                                setFormData((prevData) => ({
-                                  ...prevData,
-                                  roleId: prevData.roleId - 1,
-                                }));
-                              }
-                            }}
-                          >
-                            <Image
-                              className="p-1"
-                              src={minus}
-                              alt="minus"
-                              width={25}
-                              height={20}
-                            />
-                          </button>
-                        </div>
-                        <div className="col p-0 d-flex align-items-center justify-content-center">
-                          <input
-                            type="number"
-                            name="roleId"
-                            id="roleId"
-                            value={formData.roleId}
-                            onChange={handleChange}
-                            className="form-control form-control-sm p-0 sortId text-center border-0 bg-light"
-                          />
-                        </div>
-                        <div className="col text-end pe-1 pt-1 pb-1">
-                          <button
-                            className="btn bg-color-sea-green rounded rounded-pill p-0"
-                            type="button"
-                            onClick={() => {
-                              setFormData((prevData) => ({
-                                ...prevData,
-                                roleId: prevData.roleId + 1,
-                              }));
-                            }}
-                          >
-                            <Image
-                              src={plus}
-                              alt="plus"
-                              className="p-1"
-                              width={25}
-                              height={20}
-                            />
-                          </button>
-                        </div>
-                      </div>
+                      <input
+                        {...register("roleId", { valueAsNumber: true })}
+                        id="roleId"
+                        type="number"
+                        className="form-control form-control-sm"
+                        placeholder="Enter Role ID"
+                      />
+                      {errors.roleId && (
+                        <p className="text-danger mt-1">
+                          {errors.roleId.message}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -311,14 +207,17 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     Password
                   </label>
                   <input
+                    {...register("password")}
+                    id="password"
                     type="password"
                     className="form-control form-control-sm"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
                     placeholder="Enter Password"
                   />
+                  {errors.password && (
+                    <p className="text-danger mt-1">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
                   <button

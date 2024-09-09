@@ -4,10 +4,13 @@ import Sectors from "./sectors/components/Sectors";
 import Projects from "./projects/components/Projects";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
-import AttributeGroups from "./attribute groups/components/AttributeGroups";
+import AttributeGroups from "./attributeGroups/components/AttributeGroups";
 import Users from "./user/components/Users";
 import Attributes from "./attributes/components/Attributes";
 import Navbar from "./Navbar";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Cookies from 'js-cookie'
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -18,9 +21,19 @@ export default function Home() {
   const currentContent = useSelector(
     (state: RootState) => state.content.currentContent
   );
+  const router = useRouter();
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      router.push("/sectors");
+    } else {
+      router.push("/login");
+    }
+  }, [router]);
+
   return (
     <>
-      <Navbar />
+      {/* <Navbar />
       <div
         className={poppins.className + " container p-3 mt-3 mb-4"}
         style={{
@@ -36,7 +49,7 @@ export default function Home() {
         {currentContent === "Attributes" && <Attributes />}
         {currentContent === "Attribute Groups" && <AttributeGroups />}
         {currentContent === "User" && <Users />}
-      </div>
+      </div> */}
     </>
   );
 }

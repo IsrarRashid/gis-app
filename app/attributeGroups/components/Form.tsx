@@ -1,13 +1,15 @@
 import Modal from "react-bootstrap/Modal";
 import Image from "next/image";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import more from "../../../public/icons/more.svg";
 // import { ToastContainer, toast } from "react-toastify";
+import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import useSectors from "@/app/hooks/useSectors";
-import { useForm } from "react-hook-form";
+import Counter from "@/app/components/Counter";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import more from "../../../public/icons/more.svg";
+import toast, { Toaster } from "react-hot-toast";
+import { useForm } from "react-hook-form";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -15,30 +17,34 @@ const schema = z.object({
   name: z.string().min(1, { message: "Please add Name!" }),
   description: z.string().optional().default(""),
   createdAt: z.string().optional().default(new Date().toISOString()),
-  updateAt: z.string().optional().default(new Date().toISOString()),
+  updatedAt: z.string().optional().default(new Date().toISOString()),
   sortId: z.number({ invalid_type_error: "Please add Sort Id!" }),
 });
 
-type Sector = z.infer<typeof schema>;
+type AttributeGroup = z.infer<typeof schema>;
 
 interface Props {
   api: string;
   method: "POST" | "PUT" | "PATCH";
   id?: number;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   refresh: boolean;
-  onSubmit: (formData: Sector) => void;
 }
 
-const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
-  const { data } = useSectors({ refresh });
+const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
+  const { data, setError } = useAttributeGroups({ refresh });
   const {
     register,
     handleSubmit,
     setValue,
     reset,
     formState: { errors },
-  } = useForm<Sector>({ resolver: zodResolver(schema) });
+  } = useForm<AttributeGroup>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
+  const modalId = `formModal-${id}`;
+
+  const createdMessage = "Created Successfully";
+  const updatedMessage = "Updated Successfully";
 
   const handleClose = () => {
     setShow(false);
@@ -47,6 +53,7 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
 
   const handleShow = async () => {
     setShow(true);
+
     if (method === "PUT") {
       try {
         const response = await apiClient.get(`${api}/${id}`);
@@ -54,24 +61,41 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
         setValue("id", itemData.id);
         setValue("parentId", itemData.parentId);
         setValue("name", itemData.name);
-        setValue("sortId", itemData.sortId);
         setValue("description", itemData.description);
+        setValue("sortId", itemData.sortId);
         setValue("createdAt", new Date().toISOString());
-        setValue("updateAt", new Date().toISOString());
+        setValue("updatedAt", new Date().toISOString());
       } catch (err) {
         console.log((err as AxiosError).message);
+        setError((err as AxiosError).message);
       }
     }
   };
 
-  const handleFormSubmit = (formData: Sector) => {
-    console.log("inside sectorForm", formData);
-    handleClose();
-    onSubmit(formData); // Use onSubmit passed from the parent
+  const onSubmit = async (formData: AttributeGroup) => {
+    console.log("Form Data:", formData);
+    console.log(errors);
+    try {
+      const response = await apiClient({
+        method: method,
+        url: method === "POST" ? api : `${api}/${id}`,
+        data: formData,
+      });
+      console.log("Response:", response);
+      setRefresh((prev) => !prev);
+      toast.success(method === "POST" ? createdMessage : updatedMessage);
+      handleClose();
+    } catch (err) {
+      console.error("Submission error:", err);
+      toast.error((err as AxiosError).message);
+    }
   };
 
   return (
-    <div>
+    <>
+      <div>
+        <Toaster />
+      </div>
       <button
         type="button"
         className={`btn btn-sm ${
@@ -80,7 +104,11 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
         onClick={handleShow}
         style={{ background: method === "POST" ? "" : "#fff" }}
       >
-        {method === "POST" ? "+ Add Sector" : <Image src={more} alt="more" />}
+        {method === "POST" ? (
+          "+ Add Attribute Group"
+        ) : (
+          <Image src={more} alt="more" />
+        )}
       </button>
 
       <Modal
@@ -89,7 +117,7 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
         aria-labelledby="contained-modal-title-vcenter"
         centered
         dialogClassName="custom-modal"
-        id={`formModal-${id}`}
+        id={modalId}
       >
         <Modal.Body
           className="p-0"
@@ -105,13 +133,12 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
             <div className="row flex-column justify-content-center mb-4">
               <div className="col-lg-12">
                 <p className="text-center text-white mt-4 fw-bold">
-                  {method === "POST" ? "ADD SECTOR" : "UPDATE SECTOR"}
+                  {method === "POST"
+                    ? "ADD ATTRIBUTE GROUP"
+                    : "UPDATE ATTRIBUTE GROUP"}
                 </p>
               </div>
-              <form
-                className="ps-5 pe-5"
-                onSubmit={handleSubmit(handleFormSubmit)}
-              >
+              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
                 <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
                   <label htmlFor="name" className="form-label text-white">
                     Name
@@ -121,7 +148,7 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
                     id="name"
                     type="text"
                     className="form-control form-control-sm"
-                    placeholder="Enter Sector Name"
+                    placeholder="Enter Attribute Group Name"
                   />
                   {errors.name && (
                     <p className="text-danger mt-1">{errors.name.message}</p>
@@ -129,12 +156,12 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
                 </div>
                 <div className="col mb-3">
                   <div className="row d-flex justify-content-between">
-                    <div className="col-lg-6 col-md-6 col-sm-12 text-start">
+                    <div className="col-lg-7 col-md-6 col-sm-12 text-start">
                       <label
                         htmlFor="parentId"
                         className="form-label text-white"
                       >
-                        Parent Sector
+                        Parent Attribute Group
                       </label>
                       <select
                         {...register("parentId", { valueAsNumber: true })}
@@ -148,7 +175,7 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
                         ))}
                       </select>
                     </div>
-                    <div className="col-lg-6 col-md-6 col-sm-12 text-start">
+                    <div className="col-lg-5 col-md-6 col-sm-12 text-start">
                       <label htmlFor="sortId" className="form-label text-white">
                         Sort Id
                       </label>
@@ -195,9 +222,8 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
           </div>
         </Modal.Body>
       </Modal>
-      {/* <ToastContainer /> */}
-    </div>
+    </>
   );
 };
 
-export default SectorForm;
+export default Form;

@@ -1,12 +1,13 @@
-import axios, { CanceledError } from "axios";
+import axios, { CanceledError, AxiosError } from "axios";
 import Cookies from "js-cookie";
 
 const token = Cookies.get("token");
 export default axios.create({
-  baseURL: "http://45.115.86.186:154/api",
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
   headers: {
     Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
   },
 });
 
-export { CanceledError };
+export { CanceledError, AxiosError };

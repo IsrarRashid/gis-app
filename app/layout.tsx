@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 import { Poppins } from "next/font/google";
-import { Provider } from "react-redux";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -29,7 +28,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          <Navbar />
+          <div
+            className={poppins.className + " container p-3 mt-3 mb-4"}
+            style={{
+              background: "rgba(209, 209, 209, 0.4)",
+              border: "1px solid #ededed",
+              padding: "10px",
+              borderRadius: "25px",
+            }}
+          >
+            {children}
+          </div>
+        </ReduxProvider>
         <BootstrapClient />
       </body>
     </html>

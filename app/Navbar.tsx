@@ -9,7 +9,7 @@ import { Lexend } from "next/font/google";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { UserData } from "./components/Login";
+import { useRouter } from "next/navigation";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -18,11 +18,18 @@ const lexend = Lexend({
 
 const Navbar = () => {
   const [userEmail, setUserEmail] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const email = Cookies.get("email") || "";
     setUserEmail(email);
-  }, []);
+  }, [router]);
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    Cookies.remove("email");
+    Cookies.remove("userName");
+  };
 
   return (
     <nav
@@ -101,21 +108,12 @@ const Navbar = () => {
                   aria-labelledby="navbarDropdown"
                 >
                   <li>
-                    <Link className="dropdown-item" href="#">
-                      Action
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" href="#">
-                      Another action
-                    </Link>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" href="#">
-                      Something
+                    <Link
+                      className="dropdown-item"
+                      href="/login"
+                      onClick={handleLogout}
+                    >
+                      Logout
                     </Link>
                   </li>
                 </ul>

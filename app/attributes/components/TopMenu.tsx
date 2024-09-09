@@ -1,55 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import axios from "axios";
 import Form from "./Form";
 import { attributesAPI } from "@/app/APIs";
 import { getFormattedDate } from "@/app/utils";
+import useAttributes from "@/app/hooks/useAttributes";
 
 interface Props {
-  id: number;
-  parentId: number;
-  name: "";
-  description: "";
-  createdAt: "";
-  updateAt: "";
-  sortId: number;
-  parentName: "";
-}
-
-interface ForForm {
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const TopMenu = ({ refresh, setRefresh }: ForForm) => {
-  const [data, setData] = useState<Props[]>([]);
+const TopMenu = ({ refresh, setRefresh }: Props) => {
+  const { data } = useAttributes({ refresh });
 
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios.get(attributesAPI, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          setData(response.data.data);
-          console.log("api Data:", data);
-        }
-        console.log("api Data:", data);
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      }
-    };
-    loadItems();
-  }, []);
-
-  useEffect(() => {
-    console.log("new data:", data);
-  }, [data]);
   return (
     <>
       <div className="row d-flex p-3">

@@ -1,20 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import axios from "axios";
 import ProjectForm from "./ProjectForm";
 import { projectAPI } from "@/app/APIs";
 import { getFormattedDate } from "@/app/utils";
-
-interface Props {
-  sectorId: number;
-  name: string;
-  address: string;
-  city: string;
-  locationCoordinates: string;
-  status: string;
-  groups: string;
-}
+import useProjects, { Project } from "@/app/hooks/useProjects";
 
 interface ForForm {
   refresh: boolean;
@@ -22,34 +11,12 @@ interface ForForm {
 }
 
 const TopMenu = ({ refresh, setRefresh }: ForForm) => {
-  const [data, setData] = useState<Props[]>([]);
-  const [originalData, setOriginalData] = useState<Props[]>([]); // Store the original data
+  const { data, setData } = useProjects({ refresh });
+  const [originalData, setOriginalData] = useState<Project[]>([]); // Store the original data
 
   useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios.get(projectAPI, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          setData(response.data.data);
-          setOriginalData(response.data.data);
-        }
-        console.log("api Data:", data);
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      }
-    };
-    loadItems();
-  }, []);
-
-  useEffect(() => {
-    console.log("new data:", data);
-  }, [data]);
+    setOriginalData(data);
+  }, [refresh, data]);
 
   const hideCompleted = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {

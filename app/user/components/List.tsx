@@ -1,30 +1,16 @@
 "use client";
 import Image from "next/image";
-import calender from "../../../public/icons/calendar.svg";
-import trash from "../../../public/icons/trash.svg";
-import more from "../../../public/icons/more.svg";
-import clock from "../../../public/icons/clock.svg";
-import cancel from "../../../public/icons/cancel.svg";
-import complete from "../../../public/icons/complete.svg";
 import arrowLeft from "../../../public/icons/arrow-left.svg";
 import arrowRight from "../../../public/icons/arrow-right.svg";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import DeleteModal from "@/app/components/DeleteModal";
 import { userAPI } from "@/app/APIs";
 import Form from "./Form";
-
-interface Props {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  roleId: number;
-  password: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import useUsers, { User } from "@/app/hooks/useUsers";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { ToastContainer, toast } from "react-toastify";
+import { useState } from "react";
+import { sort } from "fast-sort";
+import TableHeading from "@/app/sectors/components/TableHeading";
 
 interface ListProps {
   refresh: boolean;
@@ -32,149 +18,195 @@ interface ListProps {
 }
 
 const List = ({ refresh, setRefresh }: ListProps) => {
-  const [data, setData] = useState<Props[]>([]);
+  const { data, setData, setError, error, isLoading } = useUsers({ refresh });
+  const deleteMessage = "Deleted Successfully!";
 
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios.get(userAPI, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          setData(response.data.data);
-        }
-        console.log("api Data:", data);
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      }
-    };
-    loadItems();
-  }, [refresh]);
-
-  useEffect(() => {
-    console.log("new data:", data);
-  }, [data]);
+  const notifyCreate = (message: string) => toast.success(message);
+  const notifyError = (message: string) => toast.error(message);
 
   const handleDelete = async (id: number) => {
     try {
-      const token = Cookies.get("token");
-      if (token) {
-        await axios.delete(`${userAPI}/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        // remove the deleted item from the data array
-        setData((prevData) => prevData.filter((item) => item.id !== id));
-        // notifyCreate(deleteMessage);
-        console.log("item deleted successfully");
-      }
-    } catch (error) {
-      console.error("failed to delete item", error);
-      // notifyError(errorMessage);
+      await apiClient.delete(`${userAPI}/${id}`);
+      // remove the deleted item from the data array
+      setData((prevData) => prevData.filter((item) => item.id !== id));
+      notifyCreate(deleteMessage);
+      console.log("item deleted successfully");
+    } catch (err) {
+      console.error("failed to delete item", err);
+      setError((err as AxiosError).message);
+      notifyError((err as AxiosError).message);
     }
   };
 
+  // for sorting
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof User;
+    direction: "asc" | "desc";
+  } | null>(null);
+
+  const handleSort = (key: keyof User) => {
+    let direction: "asc" | "desc" = "asc";
+
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
+      direction = "desc";
+    }
+    const sortedData = sort(data)[direction](key);
+    setSortConfig({ key, direction });
+    setData([...sortedData]);
+  };
+
+  // for selecting rows per page
+  const [rows, setRows] = useState(10); // Default to 11 rows per page
+  const [currentPage, setCurrentPage] = useState(1); // Track the current page
+
+  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRows(parseInt(e?.target.value, 10));
+    setCurrentPage(1);
+  };
+
+  // Determine the data to display for the current page
+  const indexOfLastRow = currentPage * rows;
+  const indexOfFirstRow = indexOfLastRow - rows;
+  const currentData = data.slice(indexOfFirstRow, indexOfLastRow);
+
+  // for pagination buttons
+  const totalPages = Math.ceil(data.length / rows);
+  // Handle previous page
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Handle next page
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Paginate data to display only the current page's rows
+  const paginatedData = data.slice(
+    (currentPage - 1) * rows,
+    currentPage * rows
+  );
+
   return (
-    <div className="table-responsive ">
-      <table className="table mb-5" style={{ border: ".5px solid #858585" }}>
-        <thead>
-          <tr
-            className="color-dark-blue"
-            style={{ border: "1px solid #858585 !important" }}
-          >
-            <th>ID</th>
-            <th>NAME</th>
-            <th>EMAIL</th>
-            <th>PHONE</th>
-            <th>ROLE ID</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data?.map((d) => (
-            <tr key={d.id}>
-              <td>{d.id}</td>
-              <td>{d.name}</td>
-              <td>{d.email}</td>
-              <td>{d.phone}</td>
-              <td>{d.roleId}</td>
-              <td>
-                <div className="row d-flex">
-                  <div className="col">
-                    <DeleteModal handleDelete={handleDelete} id={d.id} />
-                  </div>
-                  <div className="col">
-                    <Form
-                      api={userAPI}
-                      method="PUT"
-                      id={d.id}
-                      setRefresh={setRefresh}
-                      refresh={refresh}
-                    />
-                  </div>
-                </div>
-              </td>
+    <>
+      {error && <p className="text-danger">{error}</p>}
+      {isLoading && (
+        <div className="col text-center">
+          <div className="spinner-border text-primary"></div>
+        </div>
+      )}
+      <div className="table-responsive ">
+        <table className="table mb-5" style={{ border: ".5px solid #858585" }}>
+          <thead>
+            <tr
+              className="color-dark-blue"
+              style={{ border: "1px solid #858585 !important" }}
+            >
+              <TableHeading name="id" handleSort={() => handleSort("id")} />
+              <TableHeading name="name" handleSort={() => handleSort("name")} />
+              <TableHeading
+                name="email"
+                handleSort={() => handleSort("email")}
+              />
+              <TableHeading
+                name="phone"
+                handleSort={() => handleSort("phone")}
+              />
+              <TableHeading
+                name="role id"
+                handleSort={() => handleSort("roleId")}
+              />
+              <th>ACTIONS</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="row d-flex">
-        <div className="col-lg-6 col-md-6 col-sm-12">1 - 11 of 50</div>
-        <div className="col-lg-6 col-md-6 col-sm-12">
-          <div className="row d-flex justify-content-end">
-            <div className="col-lg-2 col-md-1 col-sm-12"></div>
-            <div className="col-lg-5 col-md-7 col-sm-12 d-flex justify-content-end mb-2">
-              Rows per page:
-              <div className="dropdown ms-2">
-                <button
-                  className="btn btn-sm dropdown-toggle bg-color-sea-green text-white"
-                  type="button"
-                  id="dropdownMenuButton1"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  11
-                </button>
-                <ul
-                  className="dropdown-menu"
-                  aria-labelledby="dropdownMenuButton1"
-                >
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Action
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Another action
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Something else here
-                    </a>
-                  </li>
-                </ul>
+          </thead>
+          <tbody>
+            {currentData?.map((d) => (
+              <tr key={d.id}>
+                <td>{d.id}</td>
+                <td>{d.name}</td>
+                <td>{d.email}</td>
+                <td>{d.phone}</td>
+                <td>{d.roleId}</td>
+                <td>
+                  <div className="row d-flex">
+                    <div className="col">
+                      <DeleteModal handleDelete={handleDelete} id={d.id} />
+                    </div>
+                    <div className="col">
+                      <Form
+                        api={userAPI}
+                        method="PUT"
+                        id={d.id}
+                        setRefresh={setRefresh}
+                        refresh={refresh}
+                      />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="row d-flex">
+          <div className="col-lg-6 col-md-6 col-sm-12">
+            {/* Display the current range and total */}
+            {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
+            {data.length}
+          </div>
+          <div className="col-lg-6 col-md-6 col-sm-12">
+            <div className="row d-flex justify-content-end">
+              <div className="col-lg-2 col-md-1 col-sm-12"></div>
+              <div className="col-lg-5 col-md-6 col-sm-12 text-end">
+                <label htmlFor="rowPerPage" className="form-label text-white">
+                  Rows Per Page:
+                </label>
               </div>
-            </div>
-            <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-              <button className="btn btn-sm bg-color-sea-green shadow-sm me-2">
-                <Image src={arrowLeft} alt="arrow left" />
-              </button>
-              <button className="btn btn-sm bg-color-sea-green shadow-sm">
-                <Image src={arrowRight} alt="arrow right" />
-              </button>
+              <div className="col-lg-2 col-md-6 col-sm-12 text-start">
+                <select
+                  className="form-select form-select-sm bg-color-sea-green text-white"
+                  style={{ color: "#fff" }}
+                  aria-label="Rows per page"
+                  name="rowPerPage"
+                  value={rows}
+                  onChange={handleRowsPerPage}
+                >
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-lg-3 col-md-4 col-sm-12 text-end">
+                <button
+                  className="btn btn-sm bg-color-sea-green shadow-sm me-2"
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                >
+                  <Image src={arrowLeft} alt="arrow left" />
+                </button>
+                <button
+                  className="btn btn-sm bg-color-sea-green shadow-sm"
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  <Image src={arrowRight} alt="arrow right" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
+        <ToastContainer />
       </div>
-    </div>
+    </>
   );
 };
 

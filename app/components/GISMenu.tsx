@@ -1,5 +1,4 @@
 "use client";
-
 import downArrow from "../../public/icons/down-arrow.svg";
 import Image from "next/image";
 import cross from "../../public/icons/cross-2.svg";
@@ -9,6 +8,7 @@ import qr from "../../public/icons/qr.svg";
 import location from "../../public/icons/location.svg";
 import { useDispatch } from "react-redux";
 import { setContent } from "../features/content/contentSlice";
+import { useRouter } from "next/navigation";
 
 const GISMenu = () => {
   const dispatch = useDispatch();
@@ -16,6 +16,8 @@ const GISMenu = () => {
   const handleButtonClick = (content: string) => {
     dispatch(setContent(content));
   };
+
+  const router = useRouter();
 
   return (
     <>
@@ -61,7 +63,7 @@ const GISMenu = () => {
                   <div className="col text-center">
                     <button
                       className="btn p-0"
-                      onClick={() => handleButtonClick("Sector")}
+                      onClick={() => router.push("/sectors")}
                       data-bs-dismiss="modal"
                       aria-label="Close"
                     >
@@ -82,7 +84,7 @@ const GISMenu = () => {
                   <div className="col text-center">
                     <button
                       className="btn p-0"
-                      onClick={() => handleButtonClick("Projects")}
+                      onClick={() => router.push("/projects")}
                       data-bs-dismiss="modal"
                       aria-label="Close"
                     >
@@ -105,30 +107,7 @@ const GISMenu = () => {
                   <div className="col text-center">
                     <button
                       className="btn p-0"
-                      onClick={() => handleButtonClick("Attributes")}
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    >
-                      <div
-                        className="col text-center"
-                        style={{
-                          backgroundImage:
-                            "linear-gradient(to bottom right, #F08630 , #E75161)",
-                          borderRadius: "10px",
-                          padding: "40px 45px",
-                        }}
-                      >
-                        <Image src={db} alt="db" width={40} />
-                      </div>
-                      <div className="col text-center fw-bold mt-1">
-                        Attributes
-                      </div>
-                    </button>
-                  </div>
-                  <div className="col text-center">
-                    <button
-                      className="btn p-0"
-                      onClick={() => handleButtonClick("Attribute Groups")}
+                      onClick={() => router.push("/attributeGroups")}
                       data-bs-dismiss="modal"
                       aria-label="Close"
                     >
@@ -151,7 +130,30 @@ const GISMenu = () => {
                   <div className="col text-center">
                     <button
                       className="btn p-0"
-                      onClick={() => handleButtonClick("User")}
+                      onClick={() => router.push("/attributes")}
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <div
+                        className="col text-center"
+                        style={{
+                          backgroundImage:
+                            "linear-gradient(to bottom right, #F08630 , #E75161)",
+                          borderRadius: "10px",
+                          padding: "40px 45px",
+                        }}
+                      >
+                        <Image src={db} alt="db" width={40} />
+                      </div>
+                      <div className="col text-center fw-bold mt-1">
+                        Attributes
+                      </div>
+                    </button>
+                  </div>
+                  <div className="col text-center">
+                    <button
+                      className="btn p-0"
+                      onClick={() => router.push("/user")}
                       data-bs-dismiss="modal"
                       aria-label="Close"
                     >

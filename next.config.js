@@ -1,7 +1,7 @@
-const path = require("path");
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
+  images: { unoptimized: true }, //comment this line if you don't use export command
   webpack: (config) => {
     config.module.rules.push({
       test: /\.(mp4|webm|ogg)$/,

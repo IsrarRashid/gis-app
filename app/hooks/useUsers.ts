@@ -1,30 +1,22 @@
-import { useEffect, useState } from "react";
-import userService, { User } from "../services/user-service";
-import { CanceledError } from "../services/api-client";
+import { userAPI } from "../APIs";
+import useData from "./useData";
 
-const useUsers = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [error, setError] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  roleId: number;
+  password: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
-  useEffect(() => {
-    setLoading(true);
-    const { request, cancel } = userService.getAll<User>();
-    request
-      .then((res) => {
-        setUsers(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (err instanceof CanceledError) return;
-        setError(err.message);
-        setLoading(false);
-      });
+interface Props {
+  refresh: boolean;
+}
 
-    return () => cancel();
-  }, []);
-
-  return { users, error, isLoading, setUsers, setError };
-};
+const useUsers = ({ refresh }: Props) =>
+  useData<User>({ refresh, endpoint: userAPI });
 
 export default useUsers;

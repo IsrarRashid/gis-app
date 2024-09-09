@@ -4,12 +4,12 @@ import TopMenu from "./TopMenu";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
-const Attributes = () => {
+const AttributeGroups = () => {
   const [refresh, setRefresh] = useState(false);
   const router = useRouter();
-  const token = Cookies.get("token");
 
   useEffect(() => {
+    const token = Cookies.get("token");
     if (!token) {
       router.push("/login");
     }
@@ -25,4 +25,4 @@ const Attributes = () => {
   );
 };
 
-export default Attributes;
+export default AttributeGroups;

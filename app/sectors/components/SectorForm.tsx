@@ -1,28 +1,25 @@
 import Modal from "react-bootstrap/Modal";
-import plus from "../../../public/icons/plus.svg";
-import minus from "../../../public/icons/minus.svg";
 import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
-import Cookies from "js-cookie";
+import { useState } from "react";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import useSectors from "@/app/hooks/useSectors";
+import { useForm } from "react-hook-form";
 import more from "../../../public/icons/more.svg";
-import { sectorAPI } from "@/app/APIs";
-import { ToastContainer, toast } from "react-toastify";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast, { Toaster } from "react-hot-toast";
 
-interface PropsData {
-  id: number;
-  parentId: number;
-  name: string;
-}
+const schema = z.object({
+  id: z.number().optional().default(0),
+  parentId: z.number().optional().default(0),
+  name: z.string().min(1, { message: "Please add Name!" }),
+  description: z.string().optional().default(""),
+  createdAt: z.string().optional().default(new Date().toISOString()),
+  updateAt: z.string().optional().default(new Date().toISOString()),
+  sortId: z.number({ invalid_type_error: "Please add Sort Id!" }),
+});
 
-interface Form {
-  parentId: number;
-  name: string;
-  description: string;
-  createdAt: string;
-  updateAt: string;
-  sortId: number;
-}
+type Sector = z.infer<typeof schema>;
 
 interface Props {
   api: string;
@@ -33,183 +30,78 @@ interface Props {
 }
 
 const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
-  const [data, setData] = useState<PropsData[]>([]);
-  const [formData, setFormData] = useState<Form>({
-    parentId: 0,
-    name: "",
-    description: "",
-    createdAt: new Date().toISOString(),
-    updateAt: new Date().toISOString(),
-    sortId: 0,
-  });
-
+  const { data } = useSectors({ refresh });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<Sector>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
 
-  // error messages
-  const created = "Created Successfully";
-  const updated = "Updated Successfully";
-  const errorMessage = "something Bad Happend";
-  const nameError = "Sector Name is missing";
-  const descriptionError = "Description is missing";
+  const createdMessage = "Created Successfully";
+  const updatedMessage = "Updated Successfully";
 
-  const notifyCreate = (message: string) => toast.success(message);
-  const notifyError = (message: string) => toast.error(message);
+  const handleClose = () => {
+    setShow(false);
+    reset();
+  };
 
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios.get(sectorAPI, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          setData(response.data.data);
-        }
-        console.log("api Data:", data);
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      }
-    };
-    loadItems();
-  }, [refresh]);
-
-  useEffect(() => {
-    console.log("new data:", data);
-  }, [data]);
-
-  // const getParentSector = (parsentSectorId: number, data: PropsData[]) => {
-  //   const sector = data.find((sector) => sector.id === parsentSectorId);
-  //   return sector.name;
-  // };
-
-  const handleClose = () => setShow(false);
   const handleShow = async () => {
     setShow(true);
-
     if (method === "PUT") {
       try {
-        // send a POST request to the server to add the product
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios({
-            method: "GET",
-            url: `${api}/${id}`,
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          const itemData = response.data.data;
-          setFormData({
-            parentId: itemData.parentId,
-            name: itemData.name,
-            description: itemData.description,
-            sortId: itemData.sortId,
-            createdAt: new Date().toISOString(),
-            updateAt: new Date().toISOString(),
-          });
-        }
+        const response = await apiClient.get(`${api}/${id}`);
+        const itemData = response.data.data;
+        setValue("id", itemData.id);
+        setValue("parentId", itemData.parentId);
+        setValue("name", itemData.name);
+        setValue("sortId", itemData.sortId);
+        setValue("description", itemData.description);
+        setValue("createdAt", new Date().toISOString());
+        setValue("updateAt", new Date().toISOString());
       } catch (err) {
         console.log((err as AxiosError).message);
-        notifyError((err as AxiosError).message);
+        toast.error((err as AxiosError).message);
       }
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    switch (true) {
-      case !formData.name:
-        notifyError(nameError);
-        break;
-
-      default:
-        try {
-          // send a POST request to the server to add the product
-          const token = Cookies.get("token");
-
-          if (token) {
-            if (method === "POST") {
-              const response = await axios({
-                method: method,
-                url: api,
-                data: formData,
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-              });
-              notifyCreate(created);
-              setFormData({
-                parentId: 0,
-                name: "",
-                description: "",
-                createdAt: new Date().toISOString(),
-                updateAt: new Date().toISOString(),
-                sortId: 0,
-              });
-              console.log("response", response);
-              setRefresh((prev) => !prev);
-            } else if (method === "PUT") {
-              const response = await axios({
-                method: method,
-                url: `${api}/${id}`,
-                data: formData,
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-              });
-              console.log("response", response);
-              notifyCreate(updated);
-            } else {
-              console.log("api is wrong");
-            }
-          }
-          // handle the response and perform any necessary actions
-          console.log("data", formData);
-        } catch (err) {
-          console.log((err as AxiosError).message);
-          notifyError((err as AxiosError).message);
-        }
+  const onSubmit = async (formData: Sector) => {
+    console.log("Form Data:", formData);
+    console.log(errors);
+    try {
+      const response = await apiClient({
+        method: method,
+        url: method === "POST" ? api : `${api}/${id}`,
+        data: formData,
+      });
+      console.log("Response:", response);
+      setRefresh((prev) => !prev);
+      toast.success(method === "POST" ? createdMessage : updatedMessage);
+      handleClose();
+    } catch (err) {
+      console.error("Submission error:", err);
+      toast.error((err as AxiosError).message);
     }
   };
 
   return (
     <>
-      {method === "POST" ? (
-        <button
-          type="button"
-          className="btn btn-sm text-white bg-color-sea-green"
-          onClick={handleShow}
-        >
-          + Add Sector
-        </button>
-      ) : (
-        <button
-          className="btn btn-sm rounded-pill"
-          style={{ background: "#fff" }}
-          onClick={handleShow}
-        >
-          <Image src={more} alt="more" />
-        </button>
-      )}
+      <div>
+        <Toaster />
+      </div>
+      <button
+        type="button"
+        className={`btn btn-sm ${
+          method === "POST" ? "text-white bg-color-sea-green" : "rounded-pill"
+        }`}
+        onClick={handleShow}
+        style={{ background: method === "POST" ? "" : "#fff" }}
+      >
+        {method === "POST" ? "+ Add Sector" : <Image src={more} alt="more" />}
+      </button>
 
       <Modal
         show={show}
@@ -217,6 +109,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
         aria-labelledby="contained-modal-title-vcenter"
         centered
         dialogClassName="custom-modal"
+        id={`formModal-${id}`}
       >
         <Modal.Body
           className="p-0"
@@ -231,30 +124,25 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
           >
             <div className="row flex-column justify-content-center mb-4">
               <div className="col-lg-12">
-                {method === "POST" ? (
-                  <p className="text-center text-white mt-4 fw-bold">
-                    <span>ADD SECTOR</span>
-                  </p>
-                ) : (
-                  <p className="text-center text-white mt-4 fw-bold">
-                    <span>UPDATE SECTOR</span>
-                  </p>
-                )}
+                <p className="text-center text-white mt-4 fw-bold">
+                  {method === "POST" ? "ADD SECTOR" : "UPDATE SECTOR"}
+                </p>
               </div>
-              <form className="ps-5 pe-5" onSubmit={handleSubmit}>
+              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
                 <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
                   <label htmlFor="name" className="form-label text-white">
                     Name
                   </label>
                   <input
+                    {...register("name")}
+                    id="name"
                     type="text"
                     className="form-control form-control-sm"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
                     placeholder="Enter Sector Name"
                   />
+                  {errors.name && (
+                    <p className="text-danger mt-1">{errors.name.message}</p>
+                  )}
                 </div>
                 <div className="col mb-3">
                   <div className="row d-flex justify-content-between">
@@ -263,85 +151,36 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                         htmlFor="parentId"
                         className="form-label text-white"
                       >
-                        Parent Sector
+                        Parent Sector ID
                       </label>
                       <select
+                        {...register("parentId", { valueAsNumber: true })}
                         className="form-select form-select-sm"
-                        aria-label="Default select example"
-                        name="parentId"
-                        onChange={handleChange}
                       >
-                        <option value={0}>None</option>
-
-                        {data.length > 0 ? (
-                          data?.map((d) => (
-                            <option key={d.id} value={d.id}>
-                              {d.name}
-                            </option>
-                          ))
-                        ) : (
-                          <option disabled>Loading...</option>
-                        )}
+                        <option value="0">None</option>
+                        {data?.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            {d.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 text-start">
-                      <label htmlFor="sector" className="form-label text-white">
-                        Sort ID
+                    <div className="col-lg-6 col-md-6 col-sm-12 text-start">
+                      <label htmlFor="sortId" className="form-label text-white">
+                        Sort Id
                       </label>
-                      <div className="row bg-light d-flex rounded-pill">
-                        <div className="col ps-1 pt-1 pb-1">
-                          <button
-                            className="btn bg-color-sea-green rounded rounded-pill p-0"
-                            type="button"
-                            onClick={() => {
-                              if (formData.sortId !== 0) {
-                                setFormData((prevData) => ({
-                                  ...prevData,
-                                  sortId: prevData.sortId - 1,
-                                }));
-                              }
-                            }}
-                          >
-                            <Image
-                              className="p-1"
-                              src={minus}
-                              alt="minus"
-                              width={25}
-                              height={20}
-                            />
-                          </button>
-                        </div>
-                        <div className="col p-0 d-flex align-items-center justify-content-center">
-                          <input
-                            type="number"
-                            name="sortId"
-                            id="sortId"
-                            value={formData.sortId}
-                            onChange={handleChange}
-                            className="form-control form-control-sm p-0 sortId text-center border-0 bg-light"
-                          />
-                        </div>
-                        <div className="col text-end pe-1 pt-1 pb-1">
-                          <button
-                            className="btn bg-color-sea-green rounded rounded-pill p-0"
-                            type="button"
-                            onClick={() => {
-                              setFormData((prevData) => ({
-                                ...prevData,
-                                sortId: prevData.sortId + 1,
-                              }));
-                            }}
-                          >
-                            <Image
-                              src={plus}
-                              alt="plus"
-                              className="p-1"
-                              width={25}
-                              height={20}
-                            />
-                          </button>
-                        </div>
-                      </div>
+                      <input
+                        {...register("sortId", { valueAsNumber: true })}
+                        id="sortId"
+                        type="number"
+                        className="form-control form-control-sm"
+                        placeholder="Enter Sort ID"
+                      />
+                      {errors.sortId && (
+                        <p className="text-danger mt-1">
+                          {errors.sortId.message}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -353,12 +192,10 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     Description
                   </label>
                   <textarea
-                    className="form-control form-control-sm"
-                    value={formData.description}
-                    onChange={handleChange}
-                    name="description"
-                    placeholder="Write Brief Description..."
                     id="description"
+                    {...register("description")}
+                    className="form-control form-control-sm"
+                    placeholder="Write Brief Description..."
                     style={{ height: "100px" }}
                   />
                 </div>
@@ -374,7 +211,6 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
             </div>
           </div>
         </Modal.Body>
-        <ToastContainer />
       </Modal>
     </>
   );

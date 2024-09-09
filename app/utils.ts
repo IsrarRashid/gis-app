@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export const getFormattedDate = () => {
   const today = new Date();
 
@@ -14,3 +16,6 @@ export const getFormattedDate = () => {
   // Remove the space after the month to get "{getFormattedDate()}"
   return formattedDate.replace(" ", "");
 };
+
+export const notifyCreate = (message: string) => toast.success(message);
+export const notifyError = (message: string) => toast.error(message);

@@ -2,33 +2,52 @@
 import Image from "next/image";
 import arrowLeft from "../../../public/icons/arrow-left.svg";
 import arrowRight from "../../../public/icons/arrow-right.svg";
-import { useEffect, useState } from "react";
 import DeleteModal from "@/app/components/DeleteModal";
-import { sectorAPI } from "@/app/APIs";
-import SectorForm from "./SectorForm";
+import { attributeGroupsAPI } from "@/app/APIs";
+import Form from "./Form";
+import TableHeading from "@/app/sectors/components/TableHeading";
 import { sort } from "fast-sort";
-import TableHeading from "./TableHeading";
+import GroupingForm from "./GroupingForm";
+import useAttributeGroups, {
+  AttributeGroup,
+} from "@/app/hooks/useAttributeGroups";
+import useAttributes from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
-import useSectors, { Sector } from "@/app/hooks/useSectors";
+import { useState } from "react";
 
-interface SectorsTableProps {
+interface ListProps {
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
-  const { data, setData, error, setError, isLoading } = useSectors({ refresh });
+
+export interface Option {
+  attributeId: number;
+  label: string;
+}
+
+const List = ({ refresh, setRefresh }: ListProps) => {
+  const { data, setData, setError, error, isLoading } = useAttributeGroups({
+    refresh,
+  });
+  const { data: attributes } = useAttributes({ refresh });
   const deleteMessage = "Deleted Successfully!";
+
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
 
+  const getParentSector = (parsentSectorId: number, data: AttributeGroup[]) => {
+    const sector = data.find((sector) => sector.id === parsentSectorId);
+    return sector?.name;
+  };
+
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
-    key: keyof Sector;
+    key: keyof AttributeGroup;
     direction: "asc" | "desc";
   } | null>(null);
 
-  const handleSort = (key: keyof Sector) => {
+  const handleSort = (key: keyof AttributeGroup) => {
     let direction: "asc" | "desc" = "asc";
 
     if (
@@ -43,8 +62,22 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
     setData([...sortedData]);
   };
 
+  const handleDelete = async (id: number) => {
+    try {
+      await apiClient.delete(`${attributeGroupsAPI}/${id}`);
+      // remove the deleted item from the data array
+      setData((prevData) => prevData.filter((item) => item.id !== id));
+      notifyCreate(deleteMessage);
+      console.log("item deleted successfully");
+    } catch (err) {
+      console.error("failed to delete item", err);
+      setError((err as AxiosError).message);
+      notifyError((err as AxiosError).message);
+    }
+  };
+
   // for selecting rows per page
-  const [rows, setRows] = useState(11); // Default to 11 rows per page
+  const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
   const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -79,25 +112,6 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
     currentPage * rows
   );
 
-  const getParentSector = (parsentSectorId: number, data: Sector[]) => {
-    const sector = data.find((sector) => sector.id === parsentSectorId);
-    return sector?.name;
-  };
-
-  const handleDelete = async (id: number) => {
-    try {
-      await apiClient.delete(`${sectorAPI}/${id}`);
-      // remove the deleted item from the data array
-      setData((prevData) => prevData.filter((item) => item.id !== id));
-      notifyCreate(deleteMessage);
-      console.log("item deleted successfully");
-    } catch (err) {
-      console.error("failed to delete item", err);
-      setError((err as AxiosError).message);
-      notifyError((err as AxiosError).message);
-    }
-  };
-
   return (
     <>
       {error && <p className="text-danger">{error}</p>}
@@ -127,7 +141,9 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                 name="sort id"
                 handleSort={() => handleSort("sortId")}
               />
-              <th colSpan={2}>ACTIONS</th>
+              <th colSpan={3}>
+                <div className="text-center">ACTIONS</div>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -142,13 +158,16 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
                 </td>
                 <td>
-                  <SectorForm
-                    api={sectorAPI}
+                  <Form
+                    api={attributeGroupsAPI}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}
                     refresh={refresh}
                   />
+                </td>
+                <td>
+                  <GroupingForm id={d.id} options={attributes} />
                 </td>
               </tr>
             ))}
@@ -209,4 +228,4 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   );
 };
 
-export default SectorsTable;
+export default List;

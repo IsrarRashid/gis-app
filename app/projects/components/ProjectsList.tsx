@@ -6,46 +6,50 @@ import cancel from "../../../public/icons/cancel.svg";
 import complete from "../../../public/icons/complete.svg";
 import arrowLeft from "../../../public/icons/arrow-left.svg";
 import arrowRight from "../../../public/icons/arrow-right.svg";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import DeleteModal from "@/app/components/DeleteModal";
-import { attributeGroupsAPI, projectAPI } from "@/app/APIs";
+import { projectAPI } from "@/app/APIs";
 import ProjectForm from "./ProjectForm";
 import { sort } from "fast-sort";
 import TableHeading from "@/app/sectors/components/TableHeading";
 import { getFormattedDate } from "@/app/utils";
-import GroupingForm, { Option } from "./GroupingForm";
-
-interface Props {
-  id: number;
-  sectorId: number;
-  name: string;
-  address: string;
-  city: string;
-  locationCoordinates: string;
-  status: string;
-  sectorName: string;
-  groups: string;
-}
+import GroupingForm from "./GroupingForm";
+import useProjects, { Project } from "@/app/hooks/useProjects";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { ToastContainer, toast } from "react-toastify";
+import useSectors, { Sector } from "@/app/hooks/useSectors";
+import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 
 interface ListProps {
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+export interface Option {
+  id: number;
+  name: string;
+}
+
 const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
-  const [attributeGroups, setAttributeGroups] = useState<Option[]>([]);
-  const [data, setData] = useState<Props[]>([]);
-  const [originalData, setOriginalData] = useState<Props[]>([]); // Store the original data
+  const { data, setData, error, setError, isLoading } = useProjects({
+    refresh,
+  });
+  const { data: sectorsData } = useSectors({ refresh });
+  const { data: attributeGroups } = useAttributeGroups({ refresh });
+  const [originalData, setOriginalData] = useState<Project[]>([]); // Store the original data
+
+  const deleteMessage = "Deleted Successfully!";
+
+  const notifyCreate = (message: string) => toast.success(message);
+  const notifyError = (message: string) => toast.error(message);
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
-    key: keyof Props;
+    key: keyof Project;
     direction: "asc" | "desc";
   } | null>(null);
 
-  const handleSort = (key: keyof Props) => {
+  const handleSort = (key: keyof Project) => {
     let direction: "asc" | "desc" = "asc";
 
     if (
@@ -61,75 +65,25 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
   };
 
   useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios.get(projectAPI, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          setData(response.data.data);
-          setOriginalData(response.data.data);
-        }
-        console.log("api Data:", data);
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      }
-    };
-    loadItems();
-  }, [refresh]);
-
-  useEffect(() => {
-    console.log("new data:", data);
-  }, [data]);
-
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (token) {
-          const response = await axios.get(attributeGroupsAPI, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          setAttributeGroups(response.data.data);
-        }
-        console.log("AttributeGroups Data:", data);
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      }
-    };
-    loadItems();
-  }, [refresh]);
+    setOriginalData(data);
+  }, [refresh, data]);
 
   const handleDelete = async (id: number) => {
     try {
-      const token = Cookies.get("token");
-      if (token) {
-        await axios.delete(`${projectAPI}/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        // remove the deleted item from the data array
-        setData((prevData) => prevData.filter((item) => item.id !== id));
-        // notifyCreate(deleteMessage);
-        console.log("item deleted successfully");
-      }
-    } catch (error) {
-      console.error("failed to delete item", error);
-      // notifyError(errorMessage);
+      await apiClient.delete(`${projectAPI}/${id}`);
+      // remove the deleted item from the data array
+      setData((prevData) => prevData.filter((item) => item.id !== id));
+      notifyCreate(deleteMessage);
+      console.log("item deleted successfully");
+    } catch (err) {
+      console.error("failed to delete item", err);
+      setError((err as AxiosError).message);
+      notifyError((err as AxiosError).message);
     }
   };
 
   // for selecting rows per page
-  const [rows, setRows] = useState(11); // Default to 11 rows per page
+  const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
   const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -187,9 +141,20 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
     }
   };
 
+  const getName = (id: number, data: Sector[]) => {
+    const sector = data.find((sector) => sector.id === id);
+    return sector?.name;
+  };
+
   return (
     <>
       <>
+        {error && <p className="text-danger">{error}</p>}
+        {isLoading && (
+          <div className="col text-center">
+            <div className="spinner-border text-primary"></div>
+          </div>
+        )}
         <div className="row d-flex p-3">
           <div className="col-lg-6 col-md-6 col-sm-12">
             <h4 className="fw-bold">Projects</h4>
@@ -218,7 +183,7 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
             </p>
           </div>
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <div className="row d-flex justify-content-end align-items-center">
+            {/* <div className="row d-flex justify-content-end align-items-center">
               <div className="col-lg-4 col-md-4 col-sm-12 text-center">
                 <input
                   type="checkbox"
@@ -235,7 +200,7 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
                 />
                 <label htmlFor="">&nbsp;Show Cancel</label>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </>
@@ -249,7 +214,7 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
-                name="sector Id"
+                name="sector"
                 handleSort={() => handleSort("sectorId")}
               />
               <TableHeading
@@ -265,14 +230,6 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
                 name="status"
                 handleSort={() => handleSort("status")}
               />
-              <TableHeading
-                name="sector name"
-                handleSort={() => handleSort("sectorName")}
-              />
-              <TableHeading
-                name="groups"
-                handleSort={() => handleSort("groups")}
-              />
               <th colSpan={3}>
                 <div className="text-center">ACTIONS</div>
               </th>
@@ -283,26 +240,28 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
               <tr key={d.id}>
                 <td>{d.id}</td>
                 <td>{d.name}</td>
-                <td>{d.sectorId}</td>
+                <td>{getName(d.sectorId, sectorsData)}</td>
                 <td>{d.address}</td>
                 <td>{d.city}</td>
                 <td>{d.locationCoordinates}</td>
                 <td>
-                  {d.status === "Scheduled" || d.status === "scheduled" ? (
+                  {d.status === "scheduled" ? (
                     <Image src={calender} alt="calender" />
-                  ) : d.status === "Not Confirmed" ? (
+                  ) : d.status === "not confirmed" ? (
                     <Image src={clock} alt="clock" />
-                  ) : d.status === "Cancel" || d.status === "cancel" ? (
+                  ) : d.status === "cancel" ? (
                     <Image src={cancel} alt="cancel" />
-                  ) : d.status === "Complete" || d.status === "complete" ? (
+                  ) : d.status === "completed" ? (
                     <Image src={complete} alt="complete" />
+                  ) : d.status === "active" ? (
+                    <Image src={calender} alt="calender" />
+                  ) : d.status === "draft" ? (
+                    <Image src={clock} alt="clock" />
                   ) : (
                     ""
                   )}
                   &nbsp;{d.status}
                 </td>
-                <td>{d.sectorName}</td>
-                <td>{d.groups}</td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
                 </td>
@@ -316,10 +275,7 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
                   />
                 </td>
                 <td>
-                  <GroupingForm
-                    projectId={d.id}
-                    groupOptions={attributeGroups}
-                  />
+                  <GroupingForm id={d.id} options={attributeGroups} />
                 </td>
               </tr>
             ))}
@@ -374,6 +330,7 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
             </div>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </>
   );

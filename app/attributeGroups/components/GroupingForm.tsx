@@ -1,9 +1,9 @@
 import React, { useState, useEffect, FormEvent } from "react";
 import { Modal } from "react-bootstrap";
 import Select, { ActionMeta, MultiValue } from "react-select";
-import { attributeGroupsToProjectMappingAPI } from "@/app/APIs";
+import { attributeGroupMappingAPI } from "@/app/APIs";
 import { ToastContainer, toast } from "react-toastify";
-import { Option } from "./ProjectsList";
+import { Option } from "./List";
 import apiClient from "@/app/services/api-client";
 
 interface Props {
@@ -28,7 +28,7 @@ const GroupingForm = ({ id, options }: Props) => {
     const fetchSelectedOptions = async () => {
       try {
         const response = await apiClient.get(
-          `${attributeGroupsToProjectMappingAPI}/${0}?projectId=${id}`
+          `${attributeGroupMappingAPI}/${id}`
         );
         const data = response.data.data; // Assuming this returns an array of group objects
         setSelectedOptions(data); // Set the selected groups as objects
@@ -47,8 +47,8 @@ const GroupingForm = ({ id, options }: Props) => {
     // Map selected groups to the original format (GroupOption)
     const selectedOptions = newValue
       ? newValue.map((option) => ({
-          id: option.value,
-          name: option.label,
+          attributeId: option.value,
+          label: option.label,
         }))
       : [];
 
@@ -64,18 +64,15 @@ const GroupingForm = ({ id, options }: Props) => {
   // Handle form submission
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const optionIds = selectedOptions.map((group) => group.id);
+    const optionIds = selectedOptions.map((group) => group.attributeId);
 
     const data = {
-      projectID: id,
-      groupsIds: optionIds,
+      groupId: id,
+      attributeIds: optionIds,
     };
 
     try {
-      const response = await apiClient.post(
-        attributeGroupsToProjectMappingAPI,
-        data
-      );
+      const response = await apiClient.post(attributeGroupMappingAPI, data);
       // notifyCreate(updated);
       console.log(response);
       handleClose();
@@ -86,14 +83,14 @@ const GroupingForm = ({ id, options }: Props) => {
 
   // Prepare options for react-select in {value, label} format
   const availableOptions = options.map((group) => ({
-    value: group.id,
-    label: group.name,
+    value: group.attributeId,
+    label: group.label,
   }));
 
   // Prepare selected values for react-select in {value, label} format
   const selectedValues = selectedOptions.map((group) => ({
-    value: group.id,
-    label: group.name,
+    value: group.attributeId,
+    label: group.label,
   }));
 
   // Custom styles for react-select options
@@ -120,7 +117,7 @@ const GroupingForm = ({ id, options }: Props) => {
           className="btn btn-sm text-white bg-color-sea-green"
           data-bs-target={`#${modalId}`}
         >
-          Attribute Groups
+          Attributes
         </button>
 
         <Modal
@@ -171,7 +168,7 @@ const GroupingForm = ({ id, options }: Props) => {
                     onChange={handleSelectGroup} // Correct handler
                     styles={customStyles}
                     closeMenuOnSelect={false}
-                    placeholder="Choose Attribute Groups..."
+                    placeholder="Choose Attributes..."
                   />
                 </div>
                 <div className="col text-center">

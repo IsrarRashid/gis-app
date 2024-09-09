@@ -1,7 +1,7 @@
 import Modal from "react-bootstrap/Modal";
 import Image from "next/image";
 import { useState } from "react";
-// import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import useSectors from "@/app/hooks/useSectors";
 import { useForm } from "react-hook-form";
@@ -25,11 +25,11 @@ interface Props {
   api: string;
   method: "POST" | "PUT" | "PATCH";
   id?: number;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   refresh: boolean;
-  onSubmit: (formData: Sector) => void;
 }
 
-const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
+const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
   const { data } = useSectors({ refresh });
   const {
     register,
@@ -39,6 +39,12 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
     formState: { errors },
   } = useForm<Sector>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
+
+  const createdMessage = "Created Successfully";
+  const updatedMessage = "Updated Successfully";
+
+  const notifyCreate = (message: string) => toast.success(message);
+  const notifyError = (message: string) => toast.error(message);
 
   const handleClose = () => {
     setShow(false);
@@ -60,14 +66,27 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
         setValue("updateAt", new Date().toISOString());
       } catch (err) {
         console.log((err as AxiosError).message);
+        notifyError((err as AxiosError).message);
       }
     }
   };
 
-  const handleFormSubmit = (formData: Sector) => {
-    console.log("inside sectorForm", formData);
-    handleClose();
-    onSubmit(formData); // Use onSubmit passed from the parent
+  const onSubmit = async (formData: Sector) => {
+    console.log("Form Data:", formData);
+    console.log(errors);
+    try {
+      const response = await apiClient({
+        method: method,
+        url: method === "POST" ? api : `${api}/${id}`,
+        data: formData,
+      });
+      console.log("Response:", response);
+      notifyCreate(method === "POST" ? createdMessage : updatedMessage);
+      handleClose();
+    } catch (err) {
+      console.error("Submission error:", err);
+      notifyError((err as AxiosError).message);
+    }
   };
 
   return (
@@ -108,10 +127,7 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
                   {method === "POST" ? "ADD SECTOR" : "UPDATE SECTOR"}
                 </p>
               </div>
-              <form
-                className="ps-5 pe-5"
-                onSubmit={handleSubmit(handleFormSubmit)}
-              >
+              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
                 <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
                   <label htmlFor="name" className="form-label text-white">
                     Name
@@ -195,7 +211,7 @@ const SectorForm = ({ api, method, id, refresh, onSubmit }: Props) => {
           </div>
         </Modal.Body>
       </Modal>
-      {/* <ToastContainer /> */}
+      <ToastContainer />
     </div>
   );
 };

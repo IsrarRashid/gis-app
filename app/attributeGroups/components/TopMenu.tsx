@@ -1,8 +1,11 @@
 "use client";
-import { sectorAPI } from "@/app/APIs";
-import SectorForm from "./SectorForm";
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
+import Form from "./Form";
+import { attributeGroupsAPI } from "@/app/APIs";
 import { getFormattedDate } from "@/app/utils";
-import useSectors from "@/app/hooks/useProjects";
+import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 
 interface Props {
   refresh: boolean;
@@ -10,13 +13,13 @@ interface Props {
 }
 
 const TopMenu = ({ refresh, setRefresh }: Props) => {
-  const { data } = useSectors({ refresh });
+  const { data } = useAttributeGroups({ refresh });
 
   return (
     <>
       <div className="row d-flex p-3">
         <div className="col-lg-6 col-md-6 col-sm-12">
-          <h4 className="fw-bold">Sectors</h4>
+          <h4 className="fw-bold">Attribute Groups</h4>
         </div>
         <div className="col-lg-6 col-md-6 col-sm-12">
           <div className="row d-flex ">
@@ -25,8 +28,8 @@ const TopMenu = ({ refresh, setRefresh }: Props) => {
               <span className="fw-bold">{getFormattedDate()}</span> Today
             </div>
             <div className="col text-end">
-              <SectorForm
-                api={sectorAPI}
+              <Form
+                api={attributeGroupsAPI}
                 method="POST"
                 setRefresh={setRefresh}
                 refresh={refresh}
@@ -38,7 +41,8 @@ const TopMenu = ({ refresh, setRefresh }: Props) => {
       <div className="row p-3">
         <div className="col-lg-6 col-md-6 col-sm-12">
           <p>
-            Showing: <span className="fw-bold">{data?.length} Sectors</span>
+            Showing:{" "}
+            <span className="fw-bold">{data?.length} Attribute Groups</span>
           </p>
         </div>
       </div>
