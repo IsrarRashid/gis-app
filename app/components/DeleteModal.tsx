@@ -18,7 +18,7 @@ const DeleteModal = ({ handleDelete, id }: Props) => {
         data-bs-toggle="modal"
         data-bs-target={`#${modalId}`}
       >
-        <Image src={trashIcon} alt="trash" />
+        <Image src={trashIcon} alt="trash" width={20} height={20} />
       </button>
 
       <div
@@ -43,7 +43,12 @@ const DeleteModal = ({ handleDelete, id }: Props) => {
               >
                 <div className="row flex-column justify-content-center mb-4">
                   <div className="col text-center mt-4">
-                    <Image src={trashImage} alt="trash" width={110} />
+                    <Image
+                      src={trashImage}
+                      alt="trash"
+                      width={110}
+                      height={110}
+                    />
                   </div>
                   <div className="col-lg-9 mx-auto text-center">
                     <p className="text-white mt-2 fs-1 fw-bold">

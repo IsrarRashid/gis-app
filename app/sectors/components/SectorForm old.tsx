@@ -138,7 +138,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
           className="btn btn-sm text-white bg-color-sea-green"
           onClick={handleShow}
         >
-          + Add Sector
+          + Sector
         </button>
       ) : (
         <button

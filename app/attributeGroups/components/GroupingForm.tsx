@@ -5,6 +5,8 @@ import { attributeGroupMappingAPI } from "@/app/APIs";
 import { ToastContainer, toast } from "react-toastify";
 import { Option } from "./List";
 import apiClient from "@/app/services/api-client";
+import dbGrey from "../../../public/icons/dbGrey.svg";
+import Image from "next/image";
 
 interface Props {
   id: number;
@@ -114,10 +116,13 @@ const GroupingForm = ({ id, options }: Props) => {
         <button
           type="button"
           onClick={handleShow}
-          className="btn btn-sm text-white bg-color-sea-green"
+          className="btn btn-sm"
           data-bs-target={`#${modalId}`}
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          title="Attributes"
         >
-          Attributes
+          <Image src={dbGrey} alt="dbGrey" width={20} height={20} />
         </button>
 
         <Modal

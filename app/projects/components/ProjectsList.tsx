@@ -19,6 +19,13 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
 import useSectors, { Sector } from "@/app/hooks/useSectors";
 import useAttributeGroups from "@/app/hooks/useAttributeGroups";
+import { DM_Sans } from "next/font/google";
+import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 interface ListProps {
   refresh: boolean;
@@ -163,7 +170,10 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
             <div className="row d-flex ">
               <div className="col d-none d-lg-block"></div>
               <div className="col text-end">
-                <span className="fw-bold">{getFormattedDate()}</span> Today
+                <span className="fw-bold">
+                  {getFormattedDate(new Date(), "short")}
+                </span>{" "}
+                Today
               </div>
               <div className="col text-end">
                 <ProjectForm
@@ -204,12 +214,18 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
           </div>
         </div>
       </>
-      <div className="table-responsive ">
-        <table className="table mb-5" style={{ border: ".5px solid #858585" }}>
+      <div className={`table-responsive ${dmSans.className}`}>
+        <table
+          className="table mb-5"
+          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
+        >
           <thead>
             <tr
               className="color-dark-blue cursor-pointer"
-              style={{ border: "1px solid #858585 !important" }}
+              style={{
+                border: ".41px solid rgba(81,81,81,0.20) !important",
+                fontSize: ".9rem",
+              }}
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
@@ -230,21 +246,25 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
                 name="status"
                 handleSort={() => handleSort("status")}
               />
+              <th style={{ whiteSpace: "nowrap" }}>ATTRIBUTE GROUPS</th>
               <th colSpan={3}>
-                <div className="text-center">ACTIONS</div>
+                <div className="text-center"></div>
               </th>
             </tr>
           </thead>
           <tbody>
             {currentData?.map((d) => (
-              <tr key={d.id}>
+              <tr
+                style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
+                key={d.id}
+              >
                 <td>{d.id}</td>
                 <td>{d.name}</td>
                 <td>{getName(d.sectorId, sectorsData)}</td>
                 <td>{d.address}</td>
                 <td>{d.city}</td>
                 <td>{d.locationCoordinates}</td>
-                <td>
+                <td style={{ whiteSpace: "nowrap" }}>
                   {d.status === "scheduled" ? (
                     <Image src={calender} alt="calender" />
                   ) : d.status === "not confirmed" ? (
@@ -262,8 +282,14 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
                   )}
                   &nbsp;{d.status}
                 </td>
+                <td className="text-center">
+                  <GroupingForm id={d.id} options={attributeGroups} />
+                </td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
+                </td>
+                <td>
+                  <DownloadPDFBtn />
                 </td>
                 <td>
                   <ProjectForm
@@ -274,15 +300,12 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
                     refresh={refresh}
                   />
                 </td>
-                <td>
-                  <GroupingForm id={d.id} options={attributeGroups} />
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="row d-flex">
-          <div className="col-lg-6 col-md-6 col-sm-12">
+        <div className="row d-flex mb-3">
+          <div className="col-lg-6 col-md-6 col-sm-12 mt-2">
             {/* Display the current range and total */}
             {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
             {data.length}
@@ -291,36 +314,36 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
             <div className="row d-flex justify-content-end">
               <div className="col-lg-2 col-md-1 col-sm-12"></div>
               <div className="col-lg-5 col-md-6 col-sm-12 text-end">
-                <label htmlFor="rowPerPage" className="form-label text-white">
+                <label htmlFor="rowPerPage" className="form-label mt-2">
                   Rows Per Page:
                 </label>
               </div>
-              <div className="col-lg-2 col-md-6 col-sm-12 text-start">
+              <div className="col-lg-1 col-md-6 col-sm-12 text-start p-0">
                 <select
-                  className="form-select form-select-sm bg-color-sea-green text-white"
+                  className="form-select form-select-sm rounded bg-color-sea-green text-white shadow"
                   style={{ color: "#fff" }}
                   aria-label="Rows per page"
                   name="rowPerPage"
                   value={rows}
                   onChange={handleRowsPerPage}
                 >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((num) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                     <option key={num} value={num}>
-                      {num}
+                      &nbsp;{num}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="col-lg-3 col-md-4 col-sm-12 text-end">
                 <button
-                  className="btn btn-sm bg-color-sea-green shadow-sm me-2"
+                  className="btn bg-color-sea-green shadow me-2"
                   onClick={handlePreviousPage}
                   disabled={currentPage === 1}
                 >
                   <Image src={arrowLeft} alt="arrow left" />
                 </button>
                 <button
-                  className="btn btn-sm bg-color-sea-green shadow-sm"
+                  className="btn bg-color-sea-green shadow"
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages}
                 >

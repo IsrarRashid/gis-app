@@ -5,7 +5,8 @@ import { attributeGroupsToProjectMappingAPI } from "@/app/APIs";
 import { ToastContainer, toast } from "react-toastify";
 import { Option } from "./ProjectsList";
 import apiClient from "@/app/services/api-client";
-
+import Image from "next/image";
+import groupGrey from "../../../public/icons/groupGray.svg";
 interface Props {
   id: number;
   options: Option[];
@@ -117,10 +118,13 @@ const GroupingForm = ({ id, options }: Props) => {
         <button
           type="button"
           onClick={handleShow}
-          className="btn btn-sm text-white bg-color-sea-green"
+          className="btn btn-sm"
           data-bs-target={`#${modalId}`}
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          title="Attribute Groups"
         >
-          Attribute Groups
+          <Image src={groupGrey} alt="groupGrey" width={20} height={20} />
         </button>
 
         <Modal

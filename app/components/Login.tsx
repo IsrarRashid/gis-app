@@ -3,12 +3,16 @@ import { FormEvent, useState } from "react";
 import Cookies from "js-cookie";
 import bgVideo from "../../public/video/bg-video.mp4";
 import logoGreen from "../../public/images/logo-green.png";
-import user from "../../public/icons/user-2.svg";
+import userGrey from "../../public/icons/userGrey.svg";
+import passwordGrey from "../../public/icons/passwordGrey.svg";
+import eye from "../../public/icons/eye.svg";
+import verticalLineGrey from "../../public/icons/verticalLineGrey.svg";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
 import apiClient, { AxiosError } from "../services/api-client";
 import { loginAPI } from "../APIs";
 import { ToastContainer, toast } from "react-toastify";
+import Link from "next/link";
 
 export interface UserData {
   userName: string;
@@ -26,6 +30,7 @@ interface Props {
 const Login = () => {
   const [userName, setUserName] = useState("shahid");
   const [password, setPassword] = useState("Home@5790");
+  const [buttonType, setButtonType] = useState(true);
 
   const dispatch = useDispatch();
 
@@ -75,22 +80,41 @@ const Login = () => {
           bottom: "0",
           minWidth: "100%",
           minHeight: "100%",
+          zIndex: "0",
         }}
       >
         <source src={bgVideo} type="video/mp4" />
         Your browser does not support HTML5 video.
       </video>
-
-      <div className="container">
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0,0,0,0.6)",
+          zIndex: 0,
+        }}
+      ></div>
+      <div
+        className="container"
+        style={{
+          position: "relative",
+          zIndex: "1",
+        }}
+      >
         <div className="row d-flex justify-content-center">
           <div
-            className="col-3 pt-3 ps-5 pe-5 pb-5 mt-5"
+            className="col-lg-5 col-md-8 col-sm-12 pt-3 ps-5 pe-5 pb-5"
             style={{
               background: "rgba(209, 209, 209, 0.6)",
               position: "fixed",
-              border: "2px solid #fff",
               padding: "10px",
               borderRadius: "25px",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%,-50%)",
             }}
           >
             <div className="row">
@@ -106,55 +130,113 @@ const Login = () => {
               </div>
             </div>
             <form onSubmit={handleSumbit}>
-              <div className="mb-3">
-                <label htmlFor="username" className="form-label text-white">
-                  User ID
-                </label>
-                <div className="input-group mb-3">
-                  <span className="input-group-text bg-white" id="basic-addon1">
-                    <Image src={user} alt="user" />
-                  </span>
-                  <input
-                    style={{
-                      borderLeft: "2px solid #c7c7c7",
-                    }}
-                    type="text"
-                    className="form-control"
-                    id="username"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                  />
+              <div className="row d-flex justify-content-center mb-3">
+                <div className="col-9">
+                  <label htmlFor="username" className="form-label text-white">
+                    User ID
+                  </label>
+                  <div className="input-group mb-3">
+                    <span
+                      className="input-group-text pe-0 bg-white border-0"
+                      id="basic-addon1"
+                    >
+                      <Image
+                        src={userGrey}
+                        alt="userGrey"
+                        width={17}
+                        height={17}
+                        style={{
+                          color: "#7e7e7e !important",
+                        }}
+                      />
+                      <Image
+                        src={verticalLineGrey}
+                        alt="verticalLineGrey"
+                        width={17}
+                        height={17}
+                      />
+                    </span>
+                    <input
+                      type="text"
+                      className="form-control border-0"
+                      id="username"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label text-white">
-                  Password
-                </label>
-                <div className="input-group mb-3">
-                  <span className="input-group-text bg-white" id="basic-addon1">
-                    <Image src={user} alt="user" />
-                  </span>
-                  <input
-                    style={{
-                      borderLeft: "2px solid #c7c7c7",
-                    }}
-                    type="password"
-                    className="form-control"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
+              <div className="row d-flex justify-content-center">
+                <div className="col-9">
+                  <label htmlFor="password" className="form-label text-white">
+                    Password
+                  </label>
+                  <div className="input-group mb-3">
+                    <span
+                      className="input-group-text pe-0 bg-white border-0"
+                      id="basic-addon1"
+                    >
+                      <Image
+                        src={passwordGrey}
+                        alt="password"
+                        width={17}
+                        height={17}
+                      />
+                      <Image
+                        src={verticalLineGrey}
+                        alt="verticalLineGrey"
+                        width={17}
+                        height={17}
+                      />
+                    </span>
+                    <input
+                      type={buttonType === true ? "password" : "text"}
+                      className="form-control border-0"
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <span
+                      className="input-group-text bg-white border-0"
+                      id="basic-addon1"
+                    >
+                      <button
+                        className="btn p-0"
+                        type="button"
+                        onClick={() => setButtonType(!buttonType)}
+                      >
+                        <Image src={eye} alt="eye" width={17} height={17} />
+                      </button>
+                    </span>
+                  </div>
                 </div>
               </div>
-              <button
-                type="submit"
-                style={{
-                  borderRadius: "6px",
-                }}
-                className="btn btn-success text-white w-100 mb-3 pt-3 pb-3"
-              >
-                LOGIN
-              </button>
+              <div className="row d-flex justify-content-center mb-4 ">
+                <div className="col-9 text-end ">
+                  <Link
+                    className="text-decoration-none"
+                    href="/login"
+                    style={{ color: "#B8FFB1", fontSize: ".75rem" }}
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
+              </div>
+              <div className="row d-flex flex-colum justify-content-center mb-3">
+                <div className="col-9">
+                  <button
+                    type="submit"
+                    style={{
+                      borderRadius: "6px",
+                      backgroundImage:
+                        "linear-gradient(to right, #37b53c , #39953d)",
+                    }}
+                    className="btn text-white w-100 mb-3 pt-3 pb-3"
+                  >
+                    LOGIN
+                  </button>
+                </div>
+              </div>
             </form>
           </div>
         </div>

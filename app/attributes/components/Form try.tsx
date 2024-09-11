@@ -253,7 +253,7 @@
 //         style={{ background: method === "POST" ? "" : "#fff" }}
 //       >
 //         {method === "POST" ? (
-//           "+ Add Attribute"
+//           "+ Attribute"
 //         ) : (
 //           <Image src={more} alt="more" />
 //         )}

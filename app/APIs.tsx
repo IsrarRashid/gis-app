@@ -6,3 +6,5 @@ export const userAPI = `/api/Users`;
 export const attributesAPI = `/api/Attributes`;
 export const attributeGroupsToProjectMappingAPI = `/api/AttributeGroupsToProjectMapping`;
 export const attributeGroupMappingAPI = `/api/AttributeGroupMapping`;
+export const vehicleApi = `/api/Vehicle`;
+export const driverApi = `/api/Driver`;

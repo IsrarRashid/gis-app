@@ -70,7 +70,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         setValue("phone", itemData.phone);
         setValue("roleId", itemData.roleId);
         setValue("password", itemData.password);
-        setValue("createdAt", new Date().toISOString());
+        setValue("createdAt", itemData.createdAt);
         setValue("updatedAt", new Date().toISOString());
       } catch (error) {
         console.log(error);
@@ -104,13 +104,21 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       </div>
       <button
         type="button"
-        className={`btn btn-sm ${
-          method === "POST" ? "text-white bg-color-sea-green" : "rounded-pill"
+        className={`btn shadow ${
+          method === "POST"
+            ? "text-white bg-color-sea-green"
+            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
         }`}
         onClick={handleShow}
-        style={{ background: method === "POST" ? "" : "#fff" }}
+        style={{
+          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
+        }}
       >
-        {method === "POST" ? "+ Add User" : <Image src={more} alt="more" />}
+        {method === "POST" ? (
+          "+ User"
+        ) : (
+          <Image src={more} alt="more" width={25} height={25} />
+        )}
       </button>
 
       <Modal

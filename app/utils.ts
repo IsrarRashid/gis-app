@@ -1,21 +1,36 @@
-import { toast } from "react-toastify";
-
-export const getFormattedDate = () => {
-  const today = new Date();
-
-  // Define the options with appropriate types
-  const options: Intl.DateTimeFormatOptions = {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
+export const getFormattedDate = (
+  date: Date,
+  formatType: "short" | "numeric"
+) => {
+  // Define options for both formats
+  const shortOptions: Intl.DateTimeFormatOptions = {
+    month: "short", // e.g., "Sep"
+    day: "numeric", // e.g., "10"
+    year: "numeric", // e.g., "2024"
   };
 
-  // Format the date to "Aug 7, 2024"
-  const formattedDate = today.toLocaleDateString("en-US", options);
+  const numericOptions: Intl.DateTimeFormatOptions = {
+    month: "numeric", // e.g., "9" for September
+    day: "numeric", // e.g., "10"
+    year: "numeric", // e.g., "2024"
+  };
 
-  // Remove the space after the month to get "{getFormattedDate()}"
-  return formattedDate.replace(" ", "");
+  // Choose the options based on formatType parameter
+  const options = formatType === "short" ? shortOptions : numericOptions;
+
+  // Format the date using the chosen options
+  const formattedDate = date.toLocaleDateString("en-US", options);
+
+  // If it's "numeric" format, return with dots between day, month, and year
+  if (formatType === "numeric") {
+    const [month, day, year] = formattedDate.split("/");
+    return `${month}.${day}.${year}`;
+  }
+
+  // For "short" format, return as is (e.g., "Sep 10, 2024")
+  return formattedDate;
 };
 
-export const notifyCreate = (message: string) => toast.success(message);
-export const notifyError = (message: string) => toast.error(message);
+// Usage examples
+const shortDate = getFormattedDate(new Date(), "short"); // Outputs: "Sep 10, 2024"
+const numericDate = getFormattedDate(new Date(), "numeric"); // Outputs: "10.9.2024"

@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 
 const lexend = Lexend({
   subsets: ["latin"],
-  weight: "400",
+  weight: "300",
 });
 
 const Navbar = () => {

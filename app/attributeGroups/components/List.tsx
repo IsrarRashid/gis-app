@@ -15,6 +15,13 @@ import useAttributes from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
+import { DM_Sans } from "next/font/google";
+import { getFormattedDate } from "@/app/utils";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 interface ListProps {
   refresh: boolean;
@@ -120,12 +127,50 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           <div className="spinner-border text-primary"></div>
         </div>
       )}
-      <div className="table-responsive">
-        <table className="table mb-5" style={{ border: ".5px solid #858585" }}>
+      <div className="row d-flex p-3">
+        <div className="col-lg-6 col-md-6 col-sm-12">
+          <h4 className="fw-bold">Attribute Groups</h4>
+        </div>
+        <div className="col-lg-6 col-md-6 col-sm-12">
+          <div className="row d-flex ">
+            <div className="col d-none d-lg-block"></div>
+            <div className="col text-end">
+              <span className="fw-bold">
+                {getFormattedDate(new Date(), "short")}
+              </span>{" "}
+              Today
+            </div>
+            <div className="col text-end">
+              <Form
+                api={attributeGroupsAPI}
+                method="POST"
+                setRefresh={setRefresh}
+                refresh={refresh}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="row p-3">
+        <div className="col-lg-6 col-md-6 col-sm-12">
+          <p>
+            Showing:{" "}
+            <span className="fw-bold">{data?.length} Attribute Groups</span>
+          </p>
+        </div>
+      </div>
+      <div className={`table-responsive ${dmSans.className}`}>
+        <table
+          className="table mb-5"
+          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
+        >
           <thead>
             <tr
               className="color-dark-blue cursor-pointer"
-              style={{ border: "1px solid #858585 !important" }}
+              style={{
+                border: ".41px solid rgba(81,81,81,0.20) !important",
+                fontSize: ".9rem",
+              }}
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
@@ -141,19 +186,44 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 name="sort id"
                 handleSort={() => handleSort("sortId")}
               />
-              <th colSpan={3}>
-                <div className="text-center">ACTIONS</div>
+              <TableHeading
+                name="created at"
+                handleSort={() => handleSort("createdAt")}
+              />
+              <TableHeading
+                name="updated at"
+                handleSort={() => handleSort("updatedAt")}
+              />
+              <th>
+                <div className="text-center">Attributes</div>
+              </th>
+              <th colSpan={2}>
+                <div className="text-center"></div>
               </th>
             </tr>
           </thead>
           <tbody>
             {currentData?.map((d) => (
-              <tr key={d.id}>
+              <tr
+                style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
+                key={d.id}
+              >
                 <td>{d.id}</td>
                 <td>{d.name}</td>
                 <td>{d.description}</td>
                 <td>{getParentSector(d.parentId, data)}</td>
                 <td>{d.sortId}</td>
+                <td>
+                  {d.createdAt &&
+                    getFormattedDate(new Date(d.createdAt), "numeric")}
+                </td>
+                <td>
+                  {d.updatedAt &&
+                    getFormattedDate(new Date(d.updatedAt), "numeric")}
+                </td>
+                <td className="text-center">
+                  <GroupingForm id={d.id} options={attributes} />
+                </td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
                 </td>
@@ -166,15 +236,12 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                     refresh={refresh}
                   />
                 </td>
-                <td>
-                  <GroupingForm id={d.id} options={attributes} />
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="row d-flex">
-          <div className="col-lg-6 col-md-6 col-sm-12">
+        <div className="row d-flex mb-3">
+          <div className="col-lg-6 col-md-6 col-sm-12 mt-2">
             {/* Display the current range and total */}
             {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
             {data.length}
@@ -183,36 +250,36 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             <div className="row d-flex justify-content-end">
               <div className="col-lg-2 col-md-1 col-sm-12"></div>
               <div className="col-lg-5 col-md-6 col-sm-12 text-end">
-                <label htmlFor="rowPerPage" className="form-label text-white">
+                <label htmlFor="rowPerPage" className="form-label mt-2">
                   Rows Per Page:
                 </label>
               </div>
-              <div className="col-lg-2 col-md-6 col-sm-12 text-start">
+              <div className="col-lg-1 col-md-6 col-sm-12 text-start p-0">
                 <select
-                  className="form-select form-select-sm bg-color-sea-green text-white"
+                  className="form-select form-select-sm rounded bg-color-sea-green text-white shadow"
                   style={{ color: "#fff" }}
                   aria-label="Rows per page"
                   name="rowPerPage"
                   value={rows}
                   onChange={handleRowsPerPage}
                 >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((num) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                     <option key={num} value={num}>
-                      {num}
+                      &nbsp;{num}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="col-lg-3 col-md-4 col-sm-12 text-end">
                 <button
-                  className="btn btn-sm bg-color-sea-green shadow-sm me-2"
+                  className="btn bg-color-sea-green shadow me-2"
                   onClick={handlePreviousPage}
                   disabled={currentPage === 1}
                 >
                   <Image src={arrowLeft} alt="arrow left" />
                 </button>
                 <button
-                  className="btn btn-sm bg-color-sea-green shadow-sm"
+                  className="btn bg-color-sea-green shadow"
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages}
                 >

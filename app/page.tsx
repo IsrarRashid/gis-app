@@ -10,7 +10,7 @@ import Attributes from "./attributes/components/Attributes";
 import Navbar from "./Navbar";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 
 const poppins = Poppins({
   subsets: ["latin"],

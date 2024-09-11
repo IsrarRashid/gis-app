@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import SectorsTable from "./SectorsTable";
-import TopMenu from "./TopMenu";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
@@ -18,9 +17,18 @@ const Sectors = () => {
 
   return (
     <>
-      <TopMenu refresh={refresh} setRefresh={setRefresh} />
-      <div className="row p-3">
-        <SectorsTable refresh={refresh} setRefresh={setRefresh} />
+      <div
+        className="container p-3 mt-3 mb-4"
+        style={{
+          background: "rgba(209, 209, 209, 0.4)",
+          border: "1px solid #dbdbdb",
+          padding: "10px",
+          borderRadius: "15px",
+        }}
+      >
+        <div className="row p-3">
+          <SectorsTable refresh={refresh} setRefresh={setRefresh} />
+        </div>
       </div>
     </>
   );

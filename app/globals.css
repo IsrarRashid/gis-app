@@ -50,3 +50,31 @@ body {
 .cursor-pointer {
   cursor: pointer;
 }
+
+input[type="text"] {
+  font-size: 0.8rem;
+  padding: 10px;
+  color: #7e7e7e !important;
+}
+
+input[type="password"] {
+  font-size: 0.8rem;
+  padding: 10px;
+  color: #7e7e7e !important;
+}
+
+input[type="number"] {
+  font-size: 0.8rem;
+  padding: 10px;
+  color: #7e7e7e !important;
+}
+textarea {
+  font-size: 0.8rem !important;
+  padding: 10px !important;
+  color: #7e7e7e !important;
+}
+select {
+  font-size: 0.8rem !important;
+  padding: 9px !important;
+  color: #7e7e7e !important;
+}

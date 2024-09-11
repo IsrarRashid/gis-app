@@ -134,7 +134,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           className="btn btn-sm text-white bg-color-sea-green"
           onClick={handleShow}
         >
-          + Add Attribute Group
+          + Attribute Group
         </button>
       ) : (
         <button

@@ -5,7 +5,6 @@ import more from "../../../public/icons/more.svg";
 // import { ToastContainer, toast } from "react-toastify";
 import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import Counter from "@/app/components/Counter";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast, { Toaster } from "react-hot-toast";
@@ -63,7 +62,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         setValue("name", itemData.name);
         setValue("description", itemData.description);
         setValue("sortId", itemData.sortId);
-        setValue("createdAt", new Date().toISOString());
+        setValue("createdAt", itemData.createdAt);
         setValue("updatedAt", new Date().toISOString());
       } catch (err) {
         console.log((err as AxiosError).message);
@@ -98,16 +97,20 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       </div>
       <button
         type="button"
-        className={`btn btn-sm ${
-          method === "POST" ? "text-white bg-color-sea-green" : "rounded-pill"
+        className={`btn shadow ${
+          method === "POST"
+            ? "text-white bg-color-sea-green"
+            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
         }`}
         onClick={handleShow}
-        style={{ background: method === "POST" ? "" : "#fff" }}
+        style={{
+          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
+        }}
       >
         {method === "POST" ? (
-          "+ Add Attribute Group"
+          "+ Attribute Group"
         ) : (
-          <Image src={more} alt="more" />
+          <Image src={more} alt="more" width={20} height={20} />
         )}
       </button>
 

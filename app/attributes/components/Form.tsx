@@ -139,7 +139,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           required: itemData.required,
           status: itemData.status,
           hidden: itemData.hidden,
-          createdAt: new Date().toISOString(),
+          createdAt: itemData.createdAt,
           updatedAt: new Date().toISOString(),
           placeholder: itemData.placeholder,
           attributeType: itemData.attributeType,
@@ -337,23 +337,24 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
   return (
     <>
-      {method === "POST" ? (
-        <button
-          type="button"
-          className="btn btn-sm text-white bg-color-sea-green"
-          onClick={handleShow}
-        >
-          + Add Attribute
-        </button>
-      ) : (
-        <button
-          className="btn btn-sm rounded-pill"
-          style={{ background: "#fff" }}
-          onClick={handleShow}
-        >
-          <Image src={more} alt="more" />
-        </button>
-      )}
+      <button
+        type="button"
+        className={`btn shadow ${
+          method === "POST"
+            ? "text-white bg-color-sea-green"
+            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
+        }`}
+        onClick={handleShow}
+        style={{
+          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
+        }}
+      >
+        {method === "POST" ? (
+          "+ Attribute"
+        ) : (
+          <Image src={more} alt="more" width={25} height={25} />
+        )}
+      </button>
 
       <Modal
         size="xl"
@@ -377,15 +378,9 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           >
             <div className="row flex-column justify-content-center mb-4">
               <div className="col-lg-12">
-                {method === "POST" ? (
-                  <p className="text-center text-white mt-4 fw-bold">
-                    <span>ADD Attribute</span>
-                  </p>
-                ) : (
-                  <p className="text-center text-white mt-4 fw-bold">
-                    <span>UPDATE Attribute</span>
-                  </p>
-                )}
+                <p className="text-center text-white mt-4 fw-bold">
+                  {method === "POST" ? "ADD ATTRIBUTE" : "UPDATE ATTRIBUTE"}
+                </p>
               </div>
               <form
                 className="ps-lg-4 pe-lg-4 ps-md-4 pe-md-4"

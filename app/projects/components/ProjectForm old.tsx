@@ -141,7 +141,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
           className="btn btn-sm text-white bg-color-sea-green"
           onClick={handleShow}
         >
-          + Add Project
+          + Project
         </button>
       ) : (
         <button

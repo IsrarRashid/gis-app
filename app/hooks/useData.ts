@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import apiClient, { AxiosError, CanceledError } from "../services/api-client";
-import Cookies from "js-cookie";
 
 interface Props {
   refresh: boolean;

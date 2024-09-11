@@ -101,13 +101,21 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
       </div>
       <button
         type="button"
-        className={`btn btn-sm ${
-          method === "POST" ? "text-white bg-color-sea-green" : "rounded-pill"
+        className={`btn shadow ${
+          method === "POST"
+            ? "text-white bg-color-sea-green"
+            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
         }`}
         onClick={handleShow}
-        style={{ background: method === "POST" ? "" : "#fff" }}
+        style={{
+          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
+        }}
       >
-        {method === "POST" ? "+ Add Project" : <Image src={more} alt="more" />}
+        {method === "POST" ? (
+          "+ Project"
+        ) : (
+          <Image src={more} alt="more" width={20} height={20} />
+        )}
       </button>
 
       <Modal

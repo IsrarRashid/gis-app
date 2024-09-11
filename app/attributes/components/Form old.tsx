@@ -329,7 +329,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           className="btn btn-sm text-white bg-color-sea-green"
           onClick={handleShow}
         >
-          + Add Attribute
+          + Attribute
         </button>
       ) : (
         <button
