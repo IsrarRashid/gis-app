@@ -8,789 +8,821 @@ import Picture6 from "../../../public/images/projectPdfFile/Picture6.jpg";
 import Picture7 from "../../../public/images/projectPdfFile/Picture7.jpg";
 
 const DownloadFile = () => {
+  const projectsTableData = [
+    {
+      columnHeading: "Objectives",
+      columnData:
+        "This road section is part of the Lahore Ring Road southern loop, which will facilitate the movement of traffic from Raiwind Road up to SL-4.",
+    },
+    { columnHeading: "GS NO.", columnData: "4898 (2022-23)" },
+    { columnHeading: "Scheme No.", columnData: "01192354147" },
+    { columnHeading: "Location", columnData: "Lahore" },
+    { columnHeading: "ADP Sector", columnData: "Infrastructure Development" },
+    { columnHeading: "Sub-Sector", columnData: "Roads" },
+    {
+      columnHeading: "Sponsoring Ministry/ Agency",
+      columnData: "Communication & Works Department",
+    },
+    {
+      columnHeading: "Execution Agency",
+      columnData: "Lahore Ring Road Authority",
+    },
+    { columnHeading: "PC-I Cost", columnData: "Rs. 17,785.850 M" },
+    { columnHeading: "Administrative Approval", columnData: "01-08-2023" },
+    { columnHeading: "Expenditure", columnData: "Rs. 6,000.00 M" },
+    { columnHeading: "Planned Start", columnData: "Date	01-08-2023" },
+    { columnHeading: "Planned End Date", columnData: "01-02-2024" },
+    { columnHeading: "Actual Start Date", columnData: "21-08-2023" },
+    { columnHeading: "Gestation Period", columnData: "06 Months" },
+    { columnHeading: "Approving Authority", columnData: "PDWP" },
+    {
+      columnHeading: "Contractor",
+      columnData: "M/s Frontier Works Organization",
+    },
+    {
+      columnHeading: "Design Engineer",
+      columnData: "M/s National Engineering Services Pakistan (NESPEK)",
+    },
+    {
+      columnHeading: "Resident Supervision",
+      columnData: "M/S National Engineering Services Pakistan (NESPAK)",
+    },
+  ];
+
+  const designAndScopeData = [
+    {
+      tablHeading: "Design Speed",
+      tableData1: "120 KPH",
+      tableData2: "Metaled width",
+      tableData3: "10.8 m",
+    },
+    {
+      tablHeading: "Outer Shoulder",
+      tableData1: "3.0 m",
+      tableData2: "Central Median",
+      tableData3: "0.6 m",
+    },
+
+    {
+      tablHeading: "Inner Shoulder",
+      tableData1: "3.0 m",
+      tableData2: "Bridges (Main Carriageway)",
+      tableData3: "06 No’s",
+    },
+    {
+      tablHeading: "Asphalt Base Course",
+      tableData1: "15 cm",
+      tableData2: "Bridges (Service Road)",
+      tableData3: "03 No’s",
+    },
+    {
+      tablHeading: "Asphalt Wearing Course",
+      tableData1: "5 cm",
+      tableData2: "Electric Duct",
+      tableData3: "06 No’s",
+    },
+    {
+      tablHeading: "Water Bound Macadam",
+      tableData1: "25 cm",
+      tableData2: "Pipe Culverts",
+      tableData3: "14 No’s",
+    },
+    {
+      tablHeading: "Subbase Course",
+      tableData1: "20 cm",
+      tableData2: "Underpasses",
+      tableData3: "04 No’s",
+    },
+    { tablHeading: "Side Drain", tableData1: "16 Km" },
+  ];
+
+  const majorDeliverables = [
+    {
+      tableHeading: "Road work",
+      qty: "8",
+      cost: "11,402.814",
+      progress: [
+        {
+          field: "Formation of Embankment",
+          value: "4.5%",
+        },
+        {
+          field: "Laying of Subbase",
+          value: "1%",
+        },
+
+        {
+          field: "Laying of WBM",
+          value: "0%",
+        },
+
+        {
+          field: "Laying of Asphalt Basecourse",
+          value: "0%",
+        },
+        {
+          field: "Laying of Asphalt wearing course",
+          value: "0%",
+        },
+        {
+          field: "Material Stacking",
+          value: "7%",
+        },
+      ],
+    },
+    {
+      tableHeading: "Road Structure",
+      qty: "8",
+      cost: "2,915.341",
+      progress: [
+        {
+          field: "Bridges (6)",
+          value: "10%",
+        },
+        {
+          field: "Culverts (14)",
+          value: "04%",
+        },
+
+        {
+          field: "Underpasses (5)",
+          value: "02%",
+        },
+
+        {
+          field: "Electric Ducts (6)",
+          value: "0%",
+        },
+      ],
+    },
+    {
+      tableHeading: "Ancillary Work",
+      qty: "---",
+      cost: "369.556",
+      progress: [
+        {
+          field: "Yet to Start.",
+          value: "",
+        },
+      ],
+    },
+    {
+      tableHeading: "General Items",
+      qty: "---",
+      cost: "19.800",
+      progress: [
+        {
+          field: "Soil Investigation",
+          value: "0%",
+        },
+        {
+          field: "EIA Report",
+          value: "100%",
+        },
+        {
+          field: "SNGPL NOC",
+          value: "0%",
+        },
+      ],
+    },
+    {
+      tableHeading: "Electric Work",
+      qty: "---",
+      cost: "325.60",
+      progress: [
+        {
+          field: "Yet to Start.",
+          value: "",
+        },
+      ],
+    },
+    {
+      tableHeading: "Toll Plaza & Weigh Station",
+      qty: "---",
+      cost: "257.216",
+      progress: [
+        {
+          field: "Yet to Start.",
+          value: "",
+        },
+      ],
+    },
+    {
+      tableHeading: "Landscaping & Hort. Charges 1%",
+      qty: "---",
+      cost: "152.903",
+      progress: [
+        {
+          field: "Yet to Start.",
+          value: "",
+        },
+      ],
+    },
+    {
+      tableHeading: "3% Contingency",
+      qty: "---",
+      cost: "458.709",
+      progress: [
+        {
+          field: "Ongoing",
+          value: "",
+        },
+      ],
+    },
+    {
+      tableHeading: "1% Consultancy Charges",
+      qty: "---",
+      cost: "152.903",
+      progress: [
+        {
+          field: "NESPAK Consultant",
+          value: "",
+        },
+      ],
+    },
+
+    {
+      tableHeading: "Consultant Supervision 2%",
+      qty: "---",
+      cost: "305.807",
+      progress: [
+        {
+          field: "NESPAK Consultant",
+          value: "",
+        },
+      ],
+    },
+
+    {
+      tableHeading: "PST @16% of Consultancy",
+      qty: "---",
+      cost: "73.394",
+      progress: [
+        {
+          field: "---",
+          value: "",
+        },
+      ],
+    },
+    {
+      tableHeading: "5% PST",
+      qty: "---",
+      cost: "764.516",
+      progress: [
+        {
+          field: "Partially Paid",
+          value: "",
+        },
+      ],
+    },
+    {
+      tableHeading: "IT (P.S)",
+      qty: "---",
+      cost: "600.00",
+      progress: [
+        {
+          field: "Yet to Start",
+          value: "",
+        },
+      ],
+    },
+  ];
+
+  const ongoingActivities = [
+    {
+      tableHeading: "A.",
+      tableData: "Road Work",
+    },
+    {
+      tableHeading: "Earth Filling, Compaction Embankment",
+      tableData:
+        "Laying and compaction of embankment earthwork material is in progress. Out of 3,801,008 m3, around 4.2%, i.e., 1,60,000 m3 earthwork material has been laid.",
+    },
+    {
+      tableHeading: "Stacking of Material",
+      tableData:
+        "Material Stacking is in progress for the construction of the subbase course and base course.",
+    },
+    {
+      tableHeading: "B.",
+      tableData: "Road Structures",
+    },
+    {
+      tableHeading: "Bridges",
+      tableData: (
+        <ul>
+          <li>
+            Bridge-01 (RD 58+885): 22 out of 32 concrete piles are cast. Steel
+            fabrication for the prestressed girders is in progress. Wet Rotatory
+            Boring for the pile is in progress.
+          </li>
+          <li>Bridge-02 (RD 59+195): No Activity observed.</li>
+          <li>
+            Bridge-03 (RD 60+147): 19 out of 24 concrete piles are completed.
+            Steel fabrication for the pile cap is in progress. Wet Rotatory
+            Boring for the pile is in progress.
+          </li>
+          <li>Bridge-04 (RD 62+442): Wet Rotatory Boring was in progress.</li>
+          <li>
+            Bridge-05 (RD 63+362): 11 out of 32 concrete piles are constructed.
+            Steel fixing for the pile is in progress. Wet Rotatory Boring for
+            the pile is in progress.
+          </li>
+        </ul>
+      ),
+    },
+    {
+      tableHeading: "A.",
+      tableData: "Road Work",
+    },
+    {
+      tableHeading: "A.",
+      tableData: "Road Work",
+    },
+
+    <p>
+      {/* Bridge-06 (RD 63+760): 28 out of 42 concrete piles are cast. Steel fixing for the pile is in progress. Wet Rotatory Boring for the pile is in progress.
+Underpasses/Subways	
+Excavation for the construction of the Underpass-1 (RD 57+308), Underpass-2 (RD 57+990), Underpass-3 (RD 60+710) is completed. Lean was laid for two underpasses
+Culverts	Excavation for the construction of the 09 Culverts was completed. */}
+    </p>,
+  ];
+
   return (
     <>
-      <div className="container">
+      <div className="container mt-3">
         <div className="row">
           <div className="col-12">
-            <h2 className="text-center pt-5" style={{ color: "#002060" }}>
-              MONITORING REPORT
-            </h2>
-            <h3 className="text-center pt-5" style={{ color: "#002060" }}>
-              Lahore Ring Road - Southern Loop (SL-3) Construction of Road from
-              Raiwind Road up to Multan Road
-            </h3>
-            <h5 className="text-center pt-5 fw-bold">September 2023</h5>
-            <div className="text-center">
-              <Image
-                src={Picture1}
-                className="rounded"
-                alt="..."
-                style={{ width: "75%" }}
-              />
+            <div className="col mb-5">
+              <div className="row d-flex justify-content-center">
+                <div className="col-9 border border-dark border-2">
+                  <p
+                    className="fs-4 fw-bold text-center pt-5"
+                    style={{ color: "#002060" }}
+                  >
+                    MONITORING REPORT
+                  </p>
+                  <div className="row d-flex justify-content-center">
+                    <div className="col-10">
+                      <p
+                        className="fs-5 fw-bold text-center pt-5"
+                        style={{ color: "#002060" }}
+                      >
+                        Lahore Ring Road - Southern Loop (SL-3) Construction of
+                        Road from Raiwind Road up to Multan Road
+                      </p>
+                    </div>
+                  </div>
+
+                  <h5 className="text-center pt-5 fw-bold">September 2023</h5>
+                  <div className="text-center pb-4">
+                    <Image
+                      src={Picture1}
+                      className="rounded"
+                      alt="..."
+                      style={{ width: "75%", height: "100%" }}
+                    />
+                  </div>
+                  <div className="text-center pt-5 mt-5">
+                    <Image
+                      src={Picture2}
+                      className="rounded"
+                      alt="..."
+                      style={{ width: "20%", height: "10%" }}
+                    />
+                  </div>
+                  <div className="row d-flex justify-content-center">
+                    <div className="col-8">
+                      <h4
+                        className="text-center pt-5"
+                        style={{ color: "#0070C0" }}
+                      >
+                        Directorate General (Monitoring & Evaluation) Planning
+                        and Development Board <br /> Government of the Punjab
+                      </h4>
+                    </div>
+                  </div>
+                  <div className="row d-flex justify-content-center mb-5">
+                    <div className="col-9">
+                      <h5 className="text-center pt-5 fw-bold">
+                        4th Floor, 65- Trade Centre Block, Ayub Chowk, Johar
+                        Town, Lahore
+                      </h5>
+                      <h5 className="text-center fw-bold">
+                        042-99233177-91, <a href="#">info@dgmepunjab.gov.pk</a>
+                      </h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="text-center pt-5">
-              <Image src={Picture2} className="rounded" alt="..." />
-            </div>
-            <h4 className="text-center pt-5" style={{ color: "#0070C0" }}>
-              Directorate General (Monitoring & Evaluation) Planning and
-              Development Board Government of the Punjab
-            </h4>
-            <h5 className="text-center pt-5 fw-bold">
-              4th Floor, 65- Trade Centre Block, Ayub Chowk, Johar Town, Lahore
-            </h5>
-            <h5 className="text-center fw-bold">
-              042-99233177-91, <a href="#">info@dgmepunjab.gov.pk</a>
-            </h5>
 
             {/* <!--Table 01 Start--> */}
-
-            <h4 className="fw-bold pt-5" style={{ color: "#0070C0" }}>
-              1.Project Profile
-            </h4>
-            <h5 className="text-center pt-5 fw-bold">Table 1</h5>
-            <table className="table table-bordered border-light">
-              <thead className="table-primary"></thead>
-              <tbody className="">
-                <tr>
-                  <th
-                    scope="col"
-                    className="text-light text-center"
-                    colSpan={2}
-                  >
-                    Lahore Ring Road - Southern Loop (SL-3) Construction of Road
-                    from Raiwind Road up to Multan Road
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Objectives</th>
-                  <th scope="col" className="fw-normal table-primary">
-                    This road section is part of the Lahore Ring Road southern
-                    loop, which will facilitate the movement of traffic from
-                    Raiwind Road up to SL-4.{" "}
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">GS NO.</th>
-                  <th scope="col" className="fw-normal table-info">
-                    4898 (2022-23)
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Scheme No.</th>
-                  <th scope="col" className="fw-normal table-primary">
-                    01192354147
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Location</th>
-                  <th scope="col" className="fw-normal table-info">
-                    Lahore
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">ADP Sector</th>
-                  <th scope="col" className="fw-normal table-primary">
-                    Infrastructure Development
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Sub-Sector</th>
-                  <th scope="col" className="fw-normal table-info">
-                    Roads
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Sponsoring Ministry/ Agency</th>
-                  <th scope="col" className="fw-normal table-primary">
-                    Communication & Works Department
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Execution Agency</th>
-                  <th scope="col" className="fw-normal table-info">
-                    Lahore Ring Road Authority
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">PC-I Cost</th>
-                  <th scope="col" className="fw-normal table-primary">
-                    Rs. 17,785.850 M
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Administrative Approval</th>
-                  <th scope="col" className="fw-normal table-info">
-                    01-08-2023
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Expenditure</th>
-                  <th scope="col" className="fw-normal table-primary">
-                    Rs. 6,000.00 M
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Planned Start Date</th>
-                  <th scope="col" className="fw-normal table-info">
-                    01-08-2023
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Planned End Date</th>
-                  <th scope="col" className="fw-normal table-primary">
-                    01-02-2024
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Actual Start Date</th>
-                  <th scope="col" className="fw-normal table-info">
-                    21-08-2023
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Gestation Period</th>
-                  <th scope="col" className="fw-normal table-primary">
-                    06 Months
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Approving Authority</th>
-                  <th scope="col" className="fw-normal table-info">
-                    PDWP
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Contractor</th>
-                  <th scope="col" className="fw-normal table-primary">
-                    M/s Frontier Works Organization{" "}
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Design Engineer</th>
-                  <th scope="col" className="fw-normal table-info">
-                    M/s National Engineering Services Pakistan (NESPEK)
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Resident Supervision</th>
-                  <th scope="col" className="fw-normal table-primary">
-                    M/S National Engineering Services Pakistan (NESPAK)
-                  </th>
-                </tr>
-              </tbody>
-            </table>
-
+            <div className="col mb-5">
+              <div className="row d-flex justify-content-center">
+                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                  <h4 className="fw-bold" style={{ color: "#0070C0" }}>
+                    1. Project Profile
+                  </h4>
+                  <h5 className="text-center pt-2 fw-bold">Table 1</h5>
+                  <table className="table table-bordered border-light">
+                    <thead className="table-primary"></thead>
+                    <tbody className="">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="text-center text-white bg-color-matte-blue"
+                          colSpan={2}
+                        >
+                          Lahore Ring Road - Southern Loop (SL-3) Construction
+                          of Road from Raiwind Road up to Multan Road
+                        </th>
+                      </tr>
+                      {projectsTableData.map((d, i) => (
+                        <tr>
+                          <th scope="col" style={{ background: "#4bacc6" }}>
+                            {d.columnHeading}
+                          </th>
+                          <th
+                            scope="col"
+                            className="fw-normal"
+                            style={{
+                              background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                            }}
+                          >
+                            {d.columnData}
+                          </th>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
             {/* <!--Table 01 End--> */}
 
             {/* <!--Table 02 Start--> */}
+            <div className="col mb-5">
+              <div className="row d-flex flex-column justify-content-center align-items-center">
+                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                  <>
+                    <h4 className="fw-bold" style={{ color: "#0070C0" }}>
+                      2. Design & Scope
+                    </h4>
+                    <h5 className="text-center fw-bold">Table 2</h5>
+                    <table className="table table-bordered border-light">
+                      <tbody>
+                        <tr>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Description
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Quantity
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Description
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Quantity
+                          </th>
+                        </tr>
+                        {designAndScopeData.map((d, i) => (
+                          <tr>
+                            <th
+                              scope="col"
+                              className="text-center fw-bold"
+                              style={{ background: "#4bacc6" }}
+                            >
+                              {d.tablHeading}
+                            </th>
+                            <th
+                              scope="col"
+                              className="fw-normal text-center"
+                              style={{
+                                background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                              }}
+                            >
+                              {d.tableData1}
+                            </th>
+                            <th
+                              scope="col"
+                              className="text-center fw-bold"
+                              style={{
+                                background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                              }}
+                            >
+                              {d.tableData2}
+                            </th>
+                            <th
+                              scope="col"
+                              className="fw-normal text-center"
+                              style={{
+                                background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                              }}
+                            >
+                              {d.tableData3}
+                            </th>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </>
+                  {/* <!--Table 02 End--> */}
+                  {/* <!--Table 03 Start--> */}
+                  <>
+                    <h4 className="fw-bold pt-3" style={{ color: "#0070C0" }}>
+                      3. Major Deliverables{" "}
+                    </h4>
+                    <h5 className="text-center pt-3 fw-bold">Table 2</h5>
+                    <table className="table table-bordered border-light">
+                      <thead className="table-primary"></thead>
+                      <tbody className="">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            PC-I Components
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Qty. (Km)
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Cost (Rs. M)
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Progress
+                          </th>
+                        </tr>
+                        {majorDeliverables.map((d, i) => (
+                          <tr>
+                            <th
+                              scope="col"
+                              className="text-center align-middle"
+                              style={{ background: "#4bacc6" }}
+                            >
+                              {d.tableHeading}
+                            </th>
+                            <th
+                              scope="col"
+                              className="fw-normal text-center align-middle"
+                              style={{
+                                background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                              }}
+                            >
+                              {d.qty}
+                            </th>
+                            <th
+                              scope="col"
+                              className="text-center align-middle fw-normal"
+                              style={{
+                                background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                              }}
+                            >
+                              {d.cost}
+                            </th>
+                            <th
+                              scope="col"
+                              className="fw-normal text-danger"
+                              style={{
+                                background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                              }}
+                            >
+                              <ul style={{ listStyleType: "none" }}>
+                                {d.progress.map((p, j) => (
+                                  <li className="row d-flex justify-content-end m-0">
+                                    <div
+                                      className={`col p-0 ${
+                                        (i === 3 && j == 1) ||
+                                        i === 7 ||
+                                        i === 8 ||
+                                        i === 9 ||
+                                        i === 10 ||
+                                        i === 11
+                                          ? "text-dark"
+                                          : "text-danger"
+                                      }`}
+                                      style={{
+                                        whiteSpace: "nowrap",
+                                        background:
+                                          i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                                      }}
+                                    >
+                                      {p.field}
+                                    </div>
+                                    <div
+                                      className="col text-end"
+                                      style={{
+                                        background:
+                                          i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                                      }}
+                                    >
+                                      {p.value}
+                                    </div>
+                                  </li>
+                                ))}
+                              </ul>
+                            </th>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </>
+                  {/* <!--Table 03 End--> */}
+                  <>
+                    {/* <!--Table 04 Start--> */}
+                    <h4
+                      className="fw-bold pt-5 pb-5"
+                      style={{ color: "#0070C0" }}
+                    >
+                      4. Ongoing Activities{" "}
+                    </h4>
+                    <table className="table table-bordered border-light">
+                      <tbody>
+                        <tr>
+                          <th
+                            scope="col"
+                            className="text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Component
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            {" "}
+                            Progress
+                          </th>
+                        </tr>
+                        <tr>
+                          <th
+                            scope="col"
+                            className="text-center"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            A.
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center"
+                            style={
+                              {
+                                // background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                              }
+                            }
+                          >
+                            Road Work
+                          </th>
+                        </tr>
+                        <tr>
+                          <th scope="col" className="">
+                            Earth Filling, Compaction Embankment
+                          </th>
+                          <th scope="col" className="fw-normal table-primary">
+                            <span>
+                              Laying and compaction of embankment earthwork
+                              material is in progress. Out of 3,801,008 m3,
+                              around 4.2%, i.e., 1,60,000 m3 earthwork material
+                              has been laid.
+                            </span>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th scope="col" className="">
+                            Stacking of Material
+                          </th>
+                          <th scope="col" className="fw-normal table-info">
+                            Material Stacking is in progress for the
+                            construction of the subbase course and base course.{" "}
+                          </th>
+                        </tr>
+                        <tr>
+                          <th scope="col" className="text-center">
+                            B.
+                          </th>
+                          <th scope="col" className="text-center table-primary">
+                            Road Structures
+                          </th>
+                        </tr>
+                        <tr>
+                          <th scope="col" className="">
+                            Bridges
+                          </th>
+                          <th scope="col" className="fw-normal table-info">
+                            <ul>
+                              <li>
+                                Bridge-01 (RD 58+885): 22 out of 32 concrete
+                                piles are cast. Steel fabrication for the
+                                prestressed girders is in progress. Wet Rotatory
+                                Boring for the pile is in progress.
+                              </li>
+                              <li>
+                                Bridge-02 (RD 59+195): No Activity observed.
+                              </li>
+                              <li>
+                                Bridge-03 (RD 60+147): 19 out of 24 concrete
+                                piles are completed. Steel fabrication for the
+                                pile cap is in progress. Wet Rotatory Boring for
+                                the pile is in progress.{" "}
+                              </li>
+                              <li>
+                                Bridge-04 (RD 62+442): Wet Rotatory Boring was
+                                in progress.
+                              </li>
+                              <li>
+                                Bridge-05 (RD 63+362): 11 out of 32 concrete
+                                piles are constructed. Steel fixing for the pile
+                                is in progress. Wet Rotatory Boring for the pile
+                                is in progress.{" "}
+                              </li>
+                              <li>
+                                Bridge-06 (RD 63+760): 28 out of 42 concrete
+                                piles are cast. Steel fixing for the pile is in
+                                progress. Wet Rotatory Boring for the pile is in
+                                progress.{" "}
+                              </li>
+                            </ul>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th scope="col" className="">
+                            Underpasses/Subways
+                          </th>
+                          <th scope="col" className="fw-normal table-primary">
+                            <ul>
+                              <li>
+                                Excavation for the construction of the
+                                Underpass-1 (RD 57+308), Underpass-2 (RD
+                                57+990), Underpass-3 (RD 60+710) is completed.
+                                Lean was laid for two underpasses{" "}
+                              </li>
+                            </ul>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th scope="col" className="">
+                            Culverts
+                          </th>
+                          <th scope="col" className="fw-normal table-info">
+                            Excavation for the construction of the 09 Culverts
+                            was completed.
+                          </th>
+                        </tr>
+                      </tbody>
+                    </table>
 
-            <h4 className="fw-bold pt-5" style={{ color: "#0070C0" }}>
-              2. Design & Scope
-            </h4>
-            <h5 className="text-center pt-5 fw-bold">Table 2</h5>
-            <table className="table table-bordered border-light">
-              <thead className="table-primary"></thead>
-              <tbody className="">
-                <tr>
-                  <th scope="col" className="text-light text-center">
-                    Description
-                  </th>
-                  <th scope="col" className="text-light text-center">
-                    Quantity
-                  </th>
-                  <th scope="col" className="text-light text-center">
-                    Description
-                  </th>
-                  <th scope="col" className="text-light text-center">
-                    Quantity
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Design Speed
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    120 KPH
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    Metaled width
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    10.8 m
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Outer Shoulder
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    3.0 m
-                  </th>
-                  <th scope="col" className="table-info text-center">
-                    Central Median
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    0.6 m
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Inner Shoulder
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    3.0 m
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    Bridges (Main Carriageway)
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    06 No’s
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Asphalt Base Course
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    15 cm
-                  </th>
-                  <th scope="col" className="table-info text-center">
-                    Bridges (Service Road)
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    03 No’s
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Asphalt Wearing Course
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    5 cm
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    Electric Duct
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    06 No’s
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Water Bound Macadam
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    25 cm
-                  </th>
-                  <th scope="col" className="table-info text-center">
-                    Pipe Culverts
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    14No’s
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Subbase Course
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    20 cm
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    Underpasses
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    04 No’s
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Side Drain
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    16 Km
-                  </th>
-                  <th scope="col" className="table-info text-center"></th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-info text-center"
-                  ></th>
-                </tr>
-              </tbody>
-            </table>
+                    <table
+                      className="table table-bordered border-dark"
+                      style={{ backgroundColor: "yellow" }}
+                    >
+                      <tbody>
+                        <tr>
+                          <th>Progress Analysis</th>
+                          <th>Planned progress 32%</th>
+                          <th>Achieved progress. 11 %</th>
+                          <th>Financial progress 16%</th>
+                          <th>Lag in physical progress -21%</th>
+                          <th>Lag in financial progress 5%</th>
+                        </tr>
+                      </tbody>
+                    </table>
 
-            {/* <!--Table 02 End--> */}
-
-            {/* <!--Table 03 Start--> */}
-
-            <h4 className="fw-bold pt-5" style={{ color: "#0070C0" }}>
-              3. Major Deliverables{" "}
-            </h4>
-            <h5 className="text-center pt-5 fw-bold">Table 3</h5>
-            <table className="table table-bordered border-light">
-              <thead className="table-primary"></thead>
-              <tbody className="">
-                <tr>
-                  <th scope="col" className="text-light text-center">
-                    PC-I Components
-                  </th>
-                  <th scope="col" className="text-light text-center">
-                    Qty. (Km)
-                  </th>
-                  <th scope="col" className="text-light text-center">
-                    Cost (Rs. M)
-                  </th>
-                  <th scope="col" className="text-light text-center">
-                    Progress
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center align-middle">
-                    Road work
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center align-middle"
-                  >
-                    8
-                  </th>
-                  <th
-                    scope="col"
-                    className="table-primary text-center align-middle"
-                  >
-                    11,402.814
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-danger"
-                  >
-                    <ul style={{ listStyleType: "none" }}>
-                      <li>
-                        Formation of Embankment <span>4.5%</span>
-                      </li>
-                      <li>
-                        Laying of Subbase <span>1%</span>
-                      </li>
-                      <li>
-                        Laying of WBM <span>0%</span>
-                      </li>
-                      <li>
-                        Laying of Asphalt Basecourse <span>0%</span>
-                      </li>
-                      <li>
-                        Laying of Asphalt wearing course <span>0%</span>
-                      </li>
-                      <li>
-                        Material Stacking <span>7%</span>
-                      </li>
-                    </ul>
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center align-middle">
-                    Road Structure
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal align-middle table-info text-center"
-                  >
-                    8
-                  </th>
-                  <th
-                    scope="col"
-                    className="table-info align-middle text-center"
-                  >
-                    2,915.341
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-danger">
-                    <ul style={{ listStyleType: "none" }}>
-                      <li>
-                        Bridges (6) <span>10%</span>
-                      </li>
-                      <li>
-                        Culverts (14) <span>04%</span>
-                      </li>
-                      <li>
-                        Underpasses (5) <span>02%</span>
-                      </li>
-                      <li>
-                        Electric Ducts (6) <span>0%</span>
-                      </li>
-                    </ul>
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Ancillary Work
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    ---
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    369.556
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-danger"
-                  >
-                    Yet to Start.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center align-middle">
-                    General Items
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal align-middle table-info text-center"
-                  >
-                    ---
-                  </th>
-                  <th
-                    scope="col"
-                    className="table-info align-middle text-center"
-                  >
-                    19.800
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-danger">
-                    <ul style={{ listStyleType: "none" }}>
-                      <li>
-                        Soil Investigation <span>0%</span>
-                      </li>
-                      <li>
-                        EIA Report <span>100%</span>
-                      </li>
-                      <li>
-                        SNGPL NOC <span>0%</span>
-                      </li>
-                    </ul>
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Electric Work
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    ---
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    325.60
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-danger"
-                  >
-                    Yet to Start.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Toll Plaza & Weigh Station
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    ---
-                  </th>
-                  <th scope="col" className="table-info text-center">
-                    257.216
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-danger">
-                    {" "}
-                    Yet to Start.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Landscaping & Hort. Charges 1%
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    ---
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    152.903
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-danger"
-                  >
-                    Yet to Start.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    3% Contingency
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    ---
-                  </th>
-                  <th scope="col" className="table-info text-center">
-                    458.709
-                  </th>
-                  <th scope="col" className="fw-normal table-info">
-                    {" "}
-                    Ongoing
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    1% Consultancy Charges
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    ---
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    152.903
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-danger"
-                  >
-                    NESPAK Consultant
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Consultant Supervision 2%
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    ---
-                  </th>
-                  <th scope="col" className="table-info text-center">
-                    305.807
-                  </th>
-                  <th scope="col" className="fw-normal table-info">
-                    {" "}
-                    NESPAK Consultant
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    PST @16% of Consultancy
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    ---
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    73.394
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-danger"
-                  >
-                    ---
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    5% PST
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    ---
-                  </th>
-                  <th scope="col" className="table-info text-center">
-                    764.516
-                  </th>
-                  <th scope="col" className="fw-normal table-info">
-                    {" "}
-                    Partially Paid
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    IT (P.S)
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    ---
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    600.00
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-danger"
-                  >
-                    {" "}
-                    Yet to Start
-                  </th>
-                </tr>
-              </tbody>
-            </table>
-
-            {/* <!--Table 03 End--> */}
-
-            {/* <!--Table 04 Start--> */}
-            <h4 className="fw-bold pt-5 pb-5" style={{ color: "#0070C0" }}>
-              4. Ongoing Activities{" "}
-            </h4>
-            <table className="table table-bordered border-light">
-              <tbody>
-                <tr>
-                  <th scope="col" className="text-light">
-                    Component
-                  </th>
-                  <th scope="col" className="text-light text-center">
-                    {" "}
-                    Progress
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    A.
-                  </th>
-                  <th scope="col" className="table-info text-center">
-                    Road Work
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-light">
-                    Earth Filling, Compaction Embankment
-                  </th>
-                  <th scope="col" className="fw-normal table-primary">
-                    <span>
-                      Laying and compaction of embankment earthwork material is
-                      in progress. Out of 3,801,008 m3, around 4.2%, i.e.,
-                      1,60,000 m3 earthwork material has been laid.
-                    </span>
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-light">
-                    Stacking of Material
-                  </th>
-                  <th scope="col" className="fw-normal table-info">
-                    Material Stacking is in progress for the construction of the
-                    subbase course and base course.{" "}
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    B.
-                  </th>
-                  <th scope="col" className="text-center table-primary">
-                    Road Structures
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-light">
-                    Bridges
-                  </th>
-                  <th scope="col" className="fw-normal table-info">
-                    <ul>
-                      <li>
-                        Bridge-01 (RD 58+885): 22 out of 32 concrete piles are
-                        cast. Steel fabrication for the prestressed girders is
-                        in progress. Wet Rotatory Boring for the pile is in
-                        progress.
-                      </li>
-                      <li>Bridge-02 (RD 59+195): No Activity observed.</li>
-                      <li>
-                        Bridge-03 (RD 60+147): 19 out of 24 concrete piles are
-                        completed. Steel fabrication for the pile cap is in
-                        progress. Wet Rotatory Boring for the pile is in
-                        progress.{" "}
-                      </li>
-                      <li>
-                        Bridge-04 (RD 62+442): Wet Rotatory Boring was in
-                        progress.
-                      </li>
-                      <li>
-                        Bridge-05 (RD 63+362): 11 out of 32 concrete piles are
-                        constructed. Steel fixing for the pile is in progress.
-                        Wet Rotatory Boring for the pile is in progress.{" "}
-                      </li>
-                      <li>
-                        Bridge-06 (RD 63+760): 28 out of 42 concrete piles are
-                        cast. Steel fixing for the pile is in progress. Wet
-                        Rotatory Boring for the pile is in progress.{" "}
-                      </li>
-                    </ul>
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-light">
-                    Underpasses/Subways
-                  </th>
-                  <th scope="col" className="fw-normal table-primary">
-                    <ul>
-                      <li>
-                        Excavation for the construction of the Underpass-1 (RD
-                        57+308), Underpass-2 (RD 57+990), Underpass-3 (RD
-                        60+710) is completed. Lean was laid for two underpasses{" "}
-                      </li>
-                    </ul>
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-light">
-                    Culverts
-                  </th>
-                  <th scope="col" className="fw-normal table-info">
-                    Excavation for the construction of the 09 Culverts was
-                    completed.
-                  </th>
-                </tr>
-              </tbody>
-            </table>
-
-            <table
-              className="table table-bordered border-light"
-              style={{ backgroundColor: "yellow" }}
-            >
-              <tbody>
-                <tr>
-                  <th>Progress Analysis</th>
-                  <th>Planned progress 32%</th>
-                  <th>Achieved progress. 11 %</th>
-                  <th>Financial progress 16%</th>
-                  <th>Lag in physical progress -21%</th>
-                  <th>Lag in financial progress 5%</th>
-                </tr>
-              </tbody>
-            </table>
-
-            {/* <!--Table 04 End--> */}
+                    {/* <!--Table 04 End--> */}
+                  </>
+                </div>
+              </div>
+            </div>
 
             {/* <!--Table 05 Start--> */}
 
@@ -798,13 +830,13 @@ const DownloadFile = () => {
               5. Earned Value Analysis
             </h4>
             <h5 className="text-center pt-5 fw-bold">Table 5</h5>
-            <table className="table table-bordered border-light">
+            <table className="table table-bordered border-dark">
               <tbody className="">
                 <tr>
-                  <th scope="col" colSpan={2} className="text-light">
+                  <th scope="col" colSpan={2} className="">
                     Earned Value Analysis/Parameters
                   </th>
-                  <th scope="col" className="text-light text-center">
+                  <th scope="col" className=" text-center">
                     {" "}
                     Remarks
                   </th>
@@ -993,13 +1025,13 @@ const DownloadFile = () => {
             </table>
 
             <table
-              className="table table-bordered border-light"
+              className="table table-bordered border-dark"
               style={{ backgroundColor: "rgb(180, 24, 24)" }}
             >
               <tbody>
                 <tr>
-                  <th className="text-center text-light">Alert:</th>
-                  <th className="text-light">
+                  <th className="text-center ">Alert:</th>
+                  <th className="">
                     Earned Value Analysis shows that the project would face time
                     and cost overrun if the same pace of work persists.
                   </th>
@@ -1015,27 +1047,23 @@ const DownloadFile = () => {
               6. Financial Analysis
             </h4>
             <h5 className="text-center pt-5 fw-bold">Table 6</h5>
-            <table className="table table-bordered border-light">
+            <table className="table table-bordered border-dark">
               <thead className="table-primary"></thead>
               <tbody className="">
                 <tr>
-                  <th scope="col" className="text-light text-center">
+                  <th scope="col" className="text-center">
                     Fiscal Year
                   </th>
-                  <th scope="col" className="text-light text-center">
+                  <th scope="col" className="text-center">
                     Allocation (M)
                   </th>
-                  <th scope="col" className="text-light text-center">
+                  <th scope="col" className="text-center">
                     Releases (M)
                   </th>
-                  <th scope="col" className="text-light text-center">
+                  <th scope="col" className="text-center">
                     Utilization (M)
                   </th>
-                  <th
-                    scope="col"
-                    className="text-light text-center"
-                    colSpan={2}
-                  >
+                  <th scope="col" className="text-center" colSpan={2}>
                     Financial Efficiency
                   </th>
                 </tr>
@@ -1106,19 +1134,19 @@ const DownloadFile = () => {
             <h4 className="fw-bold pt-5 pb-5" style={{ color: "#0070C0" }}>
               7. Observations & Recommendations
             </h4>
-            <table className="table table-bordered border-light">
+            <table className="table table-bordered border-dark">
               <tbody>
                 <tr>
-                  <th scope="col" className="text-light">
+                  <th scope="col" className="">
                     Observations
                   </th>
-                  <th scope="col" className="text-light">
+                  <th scope="col" className="">
                     {" "}
                     Description
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" className="text-light">
+                  <th scope="col" className="">
                     Observation 1 (Slow progress)
                   </th>
                   <th scope="col" className="fw-normal table-info">
@@ -1137,7 +1165,7 @@ const DownloadFile = () => {
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" className="text-light">
+                  <th scope="col" className="">
                     Observation 2 (Project Cost Overrun)
                   </th>
                   <th scope="col" className="fw-normal table-primary">
@@ -1151,7 +1179,7 @@ const DownloadFile = () => {
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" className="text-light">
+                  <th scope="col" className="">
                     Observation 3 (Pile Load Test)
                   </th>
                   <th scope="col" className="fw-normal table-info">
@@ -1166,7 +1194,7 @@ const DownloadFile = () => {
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" className="text-light">
+                  <th scope="col" className="">
                     Observation 4 (Inappropriate Embankment Material)
                   </th>
                   <th scope="col" className="fw-normal table-primary">
@@ -1180,7 +1208,7 @@ const DownloadFile = () => {
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" className="text-light">
+                  <th scope="col" className="">
                     Observation 5 (Delay in shifting of utilities)
                   </th>
                   <th scope="col" className="fw-normal table-info">
@@ -1191,7 +1219,7 @@ const DownloadFile = () => {
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" className="text-light">
+                  <th scope="col" className="">
                     Observation 6 (Non-barricaded Sites)
                   </th>
                   <th scope="col" className="fw-normal table-primary">
@@ -1204,7 +1232,7 @@ const DownloadFile = () => {
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" className="text-light">
+                  <th scope="col" className="">
                     Observation 7 (Field laboratories)
                   </th>
                   <th scope="col" className="fw-normal table-info">
@@ -1219,7 +1247,7 @@ const DownloadFile = () => {
                   </th>
                 </tr>
                 <tr>
-                  <th scope="col" className="text-light">
+                  <th scope="col" className="">
                     Observation 8 (Non-provision of PPEs)
                   </th>
                   <th scope="col" className="fw-normal table-primary">
@@ -1243,7 +1271,7 @@ const DownloadFile = () => {
                 src={Picture3}
                 className="rounded"
                 alt="..."
-                style={{ width: "75%" }}
+                style={{ width: "75%", height: "100%" }}
               />
               <h5 className="fw-bold">
                 Figure 01{" "}
@@ -1257,7 +1285,7 @@ const DownloadFile = () => {
                 src={Picture4}
                 className="rounded"
                 alt="..."
-                style={{ width: "75%" }}
+                style={{ width: "75%", height: "100%" }}
               />
               <h5 className="fw-bold">
                 Figure 02{" "}
@@ -1272,7 +1300,7 @@ const DownloadFile = () => {
               src={Picture5}
               className="rounded"
               alt="..."
-              style={{ width: "75%" }}
+              style={{ width: "75%", height: "100%" }}
             />
             <h5 className="fw-bold">
               Figure 03{" "}
@@ -1286,7 +1314,7 @@ const DownloadFile = () => {
               src={Picture6}
               className="rounded"
               alt="..."
-              style={{ width: "75%" }}
+              style={{ width: "75%", height: "100%" }}
             />
             <h5 className="fw-bold">
               Figure 04{" "}
@@ -1300,7 +1328,7 @@ const DownloadFile = () => {
               src={Picture7}
               className="rounded"
               alt="..."
-              style={{ width: "75%" }}
+              style={{ width: "75%", height: "100%" }}
             />
             <h5 className="fw-bold">
               Figure 05{" "}
@@ -1309,8 +1337,6 @@ const DownloadFile = () => {
               </span>
             </h5>
           </div>
-
-          {/* <!--Photo Gallery End--> */}
         </div>
       </div>
     </>

@@ -11,13 +11,15 @@ import TableHeading from "@/app/sectors/components/TableHeading";
 import useAttributes, { Attribute } from "../../hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
-import { DM_Sans } from "next/font/google";
+import { DM_Sans, Inter } from "next/font/google";
 import { getFormattedDate } from "@/app/utils";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: "400",
 });
+
+const inter = Inter({ subsets: ["latin"] });
 
 interface Props {
   refresh: boolean;
@@ -106,7 +108,7 @@ const List = ({ refresh, setRefresh }: Props) => {
 
   return (
     <>
-      {error && <p className="text-danger">{error}</p>}
+      {/* {error && <p className="text-danger">{error}</p>} */}
       {isLoading && (
         <div className="col text-center">
           <div className="spinner-border text-primary"></div>
@@ -143,11 +145,11 @@ const List = ({ refresh, setRefresh }: Props) => {
           </p>
         </div>
       </div>
-      <div className={`table-responsive ${dmSans.className}`}>
+      <div className="table-responsive">
         <table className="table mb-5" style={{ border: ".5px solid #858585" }}>
           <thead>
             <tr
-              className="color-dark-blue cursor-pointer"
+              className={`color-dark-blue cursor-pointer ${inter.className}`}
               style={{
                 border: ".41px solid rgba(81,81,81,0.20) !important",
                 fontSize: ".9rem",
@@ -234,7 +236,11 @@ const List = ({ refresh, setRefresh }: Props) => {
           <tbody>
             {currentData?.map((d) => (
               <tr
-                style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
+                className={dmSans.className}
+                style={{
+                  border: ".41px solid rgba(81,81,81,0.20) !important",
+                  fontSize: ".9rem",
+                }}
                 key={d.attributeId}
               >
                 <td>{d.attributeId}</td>

@@ -1,24 +1,41 @@
 "use client";
 import ProjectsList from "@/app/projects/components/ProjectsList";
-import Chart1 from "./Chart1";
-import Chart2 from "./Chart2";
-import ChartMenu from "./ChartMenu";
 import Map from "./Map";
 import Menu from "./Menu";
 import Visits from "./Visits";
-import { useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
-import coin from "../../../public/icons/coin.svg";
-import locationPoint from "../../../public/icons/locationPoint.svg";
-import files from "../../../public/icons/files.svg";
-import pieChart from "../../../public/icons/pieChart.svg";
+import ChartMenu from "./ChartMenu";
+import VerticalComposedChart from "./VerticalComposedChart";
+import SimplePieChart from "./SimplePieChart";
+import SimpleBarChart from "./SimpleBarChart";
+import downloadLineBlack from "../../../public/icons/downloadLineBlack.svg";
+import SampleTable from "./SampleTable";
+import { Lexend } from "next/font/google";
+
+const lexend = Lexend({
+  subsets: ["latin"],
+  weight: "300",
+});
 
 const Dashboard = () => {
   const [refresh, setRefresh] = useState(false);
 
+  useEffect(() => {
+    // Set the background for the body
+    document.body.style.background = "#7ABEF0";
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundRepeat = "no-repeat";
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.backgroundImage = "";
+    };
+  }, []);
+
   return (
     <div
-      className="container p-3 mt-3 mb-4"
+      className="container-fluid p-3 mt-3 mb-4"
       style={{
         background: "rgba(209, 209, 209, 0.4)",
         border: "2px solid #dbdbdb",
@@ -26,8 +43,8 @@ const Dashboard = () => {
         borderRadius: "10px",
       }}
     >
-      <div className="row">
-        <div className="col-lg-9 col-md-10 col-sm-6 border">
+      <div className={`row ${lexend.className}`}>
+        <div className="col-lg-9 col-md-6 col-sm-6">
           <div className="row">
             <div className="col-lg-12 col-md-12 col-sm-12">
               <Menu />
@@ -37,85 +54,40 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="col-3">
-          <div className="row d-flex flex-column">
-            <div
-              className="col p-4 shadow-sm"
-              style={{ background: "#C6D9F1", borderRadius: "15px" }}
-            >
-              <div className="row d-flex">
-                <div className="col-2">
-                  <Image src={locationPoint} alt="locationPoint" />
-                </div>
-                <div className="col">
-                  <p
-                    className="fw-bold pb-2"
-                    style={{ borderBottom: "1px dashed #97ABBD" }}
-                  >
-                    Lahore Ring Road - Southern Loop (SL-3)
-                  </p>
-                </div>
-              </div>
-
-              <div className="row d-flex">
-                <div className="col-2">
-                  <Image src={coin} alt="coin" />
-                </div>
-                <div className="col">
-                  <p>
-                    <span className="fw-bold">Approved Cost:</span>{" "}
-                    <span className="fw-bold" style={{ color: "#727272" }}>
-                      17,785.8 M
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div className="row d-flex">
-                <div className="col-2">
-                  <Image src={files} alt="files" />
-                </div>
-                <div className="col">
-                  <p>
-                    <span className="fw-bold">Expenditure:</span>{" "}
-                    <span className="fw-bold" style={{ color: "#727272" }}>
-                      14,797 M
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div className="row d-flex">
-                <div className="col-2">
-                  <Image src={files} alt="files" />
-                </div>
-                <div className="col">
-                  <p>
-                    <span className="fw-bold">Progress:</span>{" "}
-                    <span className="fw-bold" style={{ color: "#727272" }}>
-                      80%
-                    </span>
-                  </p>
-                </div>
-              </div>
-
-              <ChartMenu />
-            </div>
-            <div className="col">
-              <Chart1 />
-            </div>
-            <div className="col">
-              <Chart2 />
-            </div>
-            <div className="col">
-              <Visits />
-            </div>
+        <div className="col-lg-3 col-md-6 col-sm-6">
+          <ChartMenu />
+          <SimpleBarChart />
+          {/* <VerticalComposedChart /> */}
+          <SimplePieChart />
+          <div className="col">
+            <Visits />
           </div>
         </div>
       </div>
-      <div className="row">
-        <div className="col text-center">
-          <p>List of projects</p>
-          {/* <ProjectsList refresh={false} setRefresh={setRefresh} /> */}
+      <div className="row ps-2 pe-2 mt-2">
+        <div
+          className="col text-center text-white rounded"
+          style={{ background: "#0C8CE9" }}
+        >
+          <div className="row d-flex">
+            <div className="col"></div>
+            <div className="col">
+              <p className="mt-3">List of projects</p>
+            </div>
+            <div className="col text-end">
+              <button className="btn btn-light mt-2">
+                Downloads
+                <Image
+                  src={downloadLineBlack}
+                  alt="download"
+                  width={20}
+                  height={20}
+                />
+              </button>
+            </div>
+          </div>
         </div>
+        <SampleTable refresh={refresh} setRefresh={setRefresh} />
       </div>
     </div>
   );

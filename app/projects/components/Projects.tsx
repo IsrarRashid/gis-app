@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ProjectsList from "./ProjectsList";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import DownloadFile from "./DownloadFile";
 
 const Projects = () => {
   const [refresh, setRefresh] = useState(false);
@@ -13,6 +14,18 @@ const Projects = () => {
       router.push("/login");
     }
   }, [router]);
+
+  useEffect(() => {
+    // Set the background for the body
+    document.body.style.backgroundImage = `url('/images/bg.png')`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundRepeat = "no-repeat";
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.backgroundImage = "";
+    };
+  }, []);
 
   return (
     <div
@@ -26,6 +39,7 @@ const Projects = () => {
     >
       <div className="row p-3">
         <ProjectsList refresh={refresh} setRefresh={setRefresh} />
+        {/* <DownloadFile /> */}
       </div>
     </div>
   );

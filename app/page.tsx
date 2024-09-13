@@ -2,7 +2,7 @@
 import { Poppins } from "next/font/google";
 import Sectors from "./sectors/components/Sectors";
 import Projects from "./projects/components/Projects";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import AttributeGroups from "./attributeGroups/components/AttributeGroups";
 import Users from "./user/components/Users";
@@ -11,6 +11,7 @@ import Navbar from "./Navbar";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { setContent } from "./features/content/contentSlice";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -21,11 +22,17 @@ export default function Home() {
   const currentContent = useSelector(
     (state: RootState) => state.content.currentContent
   );
+  const dispatch = useDispatch();
+
+  const handleButtonClick = (content: string) => {
+    dispatch(setContent(content));
+  };
   const router = useRouter();
   useEffect(() => {
     const token = Cookies.get("token");
     if (token) {
-      router.push("/sectors");
+      router.push("/dashboard");
+      handleButtonClick("Dashboard");
     } else {
       router.push("/login");
     }

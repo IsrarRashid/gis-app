@@ -2,7 +2,7 @@ import { useRef } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import DownloadFile from "../projects/components/DownloadFile";
-import download2 from "../../public/icons/download2.svg";
+import downloadLineBlack from "../../public/icons/downloadLineBlack.svg";
 import Image from "next/image";
 
 const DownloadPDFBtn = () => {
@@ -47,7 +47,7 @@ const DownloadPDFBtn = () => {
         style={{ fontSize: ".8rem", background: "rgba(255, 255, 255,.5)" }}
         onClick={downloadPdf}
       >
-        <Image src={download2} alt="download" width={20} height={20} />
+        <Image src={downloadLineBlack} alt="download" width={20} height={20} />
       </button>
       {/* Component to be downloaded */}
       <div

@@ -10,6 +10,14 @@
   background: #72b8ea !important;
 }
 
+.bg-color-sea-blue {
+  background: #0c8ce9 !important;
+}
+
+.bg-color-matte-blue {
+  background: #4bacc6 !important;
+}
+
 .bg-color-sea-green {
   background: #108fa8 !important;
 }
@@ -18,16 +26,20 @@
   background: rgba(255, 255, 255, 0) !important;
 }
 
+.bg-white {
+  background: #fff !important;
+}
+
 .custom-modal .modal-content {
   background: rgba(255, 255, 255, 0) !important;
   border: none;
 }
 
-body {
+/* body {
   background-image: url("../public/images/bg.png");
   background-repeat: no-repeat;
   background-size: cover;
-}
+} */
 
 .bg-blur {
   background-color: rgba(255, 255, 255, 0.5);

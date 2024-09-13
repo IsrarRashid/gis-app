@@ -122,7 +122,10 @@ const GISMenu = () => {
                     <div key={d.name} className="col text-center mb-5">
                       <button
                         className="btn p-0"
-                        onClick={() => router.push(d.link)}
+                        onClick={() => {
+                          router.push(d.link);
+                          handleButtonClick(d.name);
+                        }}
                         data-bs-dismiss="modal"
                         aria-label="Close"
                       >

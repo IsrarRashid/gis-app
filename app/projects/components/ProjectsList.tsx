@@ -19,13 +19,15 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
 import useSectors, { Sector } from "@/app/hooks/useSectors";
 import useAttributeGroups from "@/app/hooks/useAttributeGroups";
-import { DM_Sans } from "next/font/google";
+import { DM_Sans, Inter } from "next/font/google";
 import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: "400",
 });
+
+const inter = Inter({ subsets: ["latin"] });
 
 interface ListProps {
   refresh: boolean;
@@ -156,7 +158,6 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
   return (
     <>
       <>
-        {error && <p className="text-danger">{error}</p>}
         {isLoading && (
           <div className="col text-center">
             <div className="spinner-border text-primary"></div>
@@ -214,14 +215,14 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
           </div>
         </div>
       </>
-      <div className={`table-responsive ${dmSans.className}`}>
+      <div className="table-responsive">
         <table
           className="table mb-5"
           style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
         >
           <thead>
             <tr
-              className="color-dark-blue cursor-pointer"
+              className={`color-dark-blue cursor-pointer ${inter.className}`}
               style={{
                 border: ".41px solid rgba(81,81,81,0.20) !important",
                 fontSize: ".9rem",
@@ -255,7 +256,11 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
           <tbody>
             {currentData?.map((d) => (
               <tr
-                style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
+                className={dmSans.className}
+                style={{
+                  border: ".41px solid rgba(81,81,81,0.20) !important",
+                  fontSize: ".9rem",
+                }}
                 key={d.id}
               >
                 <td>{d.id}</td>

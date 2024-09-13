@@ -14,6 +14,18 @@ const Driver = () => {
     }
   }, [router]);
 
+  useEffect(() => {
+    // Set the background for the body
+    document.body.style.backgroundImage = `url('/images/bg.png')`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundRepeat = "no-repeat";
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.backgroundImage = "";
+    };
+  }, []);
+
   return (
     <div
       className={"container p-3 mt-3 mb-4"}
