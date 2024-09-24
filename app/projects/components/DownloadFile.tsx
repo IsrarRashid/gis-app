@@ -328,24 +328,228 @@ const DownloadFile = () => {
             Steel fixing for the pile is in progress. Wet Rotatory Boring for
             the pile is in progress.
           </li>
+          <li>
+            Bridge-06 (RD 63+760): 28 out of 42 concrete piles are cast. Steel
+            fixing for the pile is in progress. Wet Rotatory Boring for the pile
+            is in progress.
+          </li>
         </ul>
       ),
     },
     {
-      tableHeading: "A.",
-      tableData: "Road Work",
+      tableHeading: "Underpasses/Subways",
+      tableData: (
+        <ul>
+          <li>
+            Excavation for the construction of the Underpass-1 (RD 57+308),
+            Underpass-2 (RD 57+990), Underpass-3 (RD 60+710) is completed. Lean
+            was laid for two underpasses
+          </li>
+        </ul>
+      ),
     },
     {
-      tableHeading: "A.",
-      tableData: "Road Work",
+      tableHeading: "Culverts",
+      tableData:
+        "Excavation for the construction of the 09 Culverts was completed.",
     },
+  ];
 
-    <p>
-      {/* Bridge-06 (RD 63+760): 28 out of 42 concrete piles are cast. Steel fixing for the pile is in progress. Wet Rotatory Boring for the pile is in progress.
-Underpasses/Subways	
-Excavation for the construction of the Underpass-1 (RD 57+308), Underpass-2 (RD 57+990), Underpass-3 (RD 60+710) is completed. Lean was laid for two underpasses
-Culverts	Excavation for the construction of the 09 Culverts was completed. */}
-    </p>,
+  const earnedValueAnalysis = [
+    {
+      tableHeading: "Project Cost (M)",
+      tableData1: "17,785.9",
+      tableData2: "Approved Cost",
+    },
+    {
+      tableHeading: "Percent Completed [Physical]",
+      tableData1: "9%",
+      tableData2: "Current physical progress",
+    },
+    {
+      tableHeading: "Planned Value or BCWS",
+      tableData1: "5,335.8",
+      tableData2: "Budgeted Cost of Work Scheduled",
+    },
+    {
+      tableHeading: "Earned Value or BCWP",
+      tableData1: "1.600.7",
+      tableData2: "Budgeted Cost of Work Performed",
+    },
+    {
+      tableHeading: "Actual cost of work performed (ACWP)",
+      tableData1: "2600.0",
+      tableData2: "Current financial progress",
+    },
+    {
+      tableHeading: "Scheduled Variance (SV)",
+      tableData1: "-3735.0",
+      tableData2: "---",
+    },
+    {
+      tableHeading: "Cost Variance (CV)",
+      tableData1: "-999.3",
+      tableData2: "---",
+    },
+    {
+      tableHeading: "Schedule Performance Index (SPI)",
+      tableData1: "0.3",
+      tableData2: "Project progress is behind schedule as SPI is less than 1.",
+    },
+    {
+      tableHeading: "Cost Performance Index (CPI)",
+      tableData1: "0.6",
+      tableData2: "Over Budget if CPI<1",
+    },
+    {
+      tableHeading: "Estimate Cost at Completion (m)",
+      tableData1: "18785.1",
+      tableData2: "The project is predicted to exceed its original cost.",
+    },
+    {
+      tableHeading: "Estimate Cost to Complete (m)",
+      tableData1: "16185.1",
+      tableData2:
+        "Further funds will be required for completion at the current pace of work & funds utilization.<1",
+    },
+    {
+      tableHeading: "Earned Schedule (ES)",
+      tableData1: "1",
+      tableData2:
+        "Equivalent progress of only 1 Month achieved to date instead of 1.9 months.",
+    },
+    {
+      tableHeading: "Time Variance (TV)",
+      tableData1: "-0.9",
+      tableData2: "Difference between time passed & earned schedule<1",
+    },
+    {
+      tableHeading: "Time Estimate at Completion (TEAC)",
+      tableData1: "12",
+      tableData2:
+        "12 months will be required to complete this project at the current pace",
+    },
+  ];
+
+  const observationsAndRecommendations = [
+    {
+      tableHeading: "Observation 1 (Slow progress)",
+      tableData: (
+        <p>
+          Administrative Approval (AA) of the project was issued on 01-08-2023
+          at a cost of Rs. 17,785.849 M with a gestation period of 6 months
+          expiring on 01-02-2024. However, the work was awarded to the
+          contractor on 21-08-23. Also, it was observed at the time of the visit
+          that only 9% of progress could be achieved in 01 month and 25 days,
+          against a planned progress of 30%, showing that the progress is
+          lagging by 21%. The schedule performance index of the project, is less
+          than 1, depicting a slow pace of work. <br />
+          <span className="fw-bold">Recommendation:</span> The Executing agency
+          may push the contractor to expedite work by mobilizing adequate
+          resources.
+        </p>
+      ),
+    },
+    {
+      tableHeading: "Observation 2 (Project Cost Overrun)",
+      tableData: (
+        <p>
+          The Cost Performance Index of the project, calculated from earned
+          value analysis, is less than 1 which indicates that at the current
+          pace and financial utilization, the project may face cost overrun.
+          <br />
+          <span className="fw-bold">Recommendation:</span> The Executing
+          Department may take appropriate measures to ensure completion of the
+          project within approved cost.
+        </p>
+      ),
+    },
+    {
+      tableHeading: "Observation 3 (Pile Load Test)",
+      tableData: (
+        <p>
+          Pile load test was not performed before constructing the actual
+          concrete pile of any bridge at the site. Non-conformance with the
+          standard testing raises concerns about the structural integrity and
+          safety of the foundation.
+          <br />
+          <span className="fw-bold">Recommendation:</span> The Executing
+          department must ensure the detailed load pile testing to confirm the
+          capacity, integrity and settlement as per the design requirement of
+          Bridge Foundation.
+        </p>
+      ),
+    },
+    {
+      tableHeading: "Observation 4 (Inappropriate Embankment Material)",
+      tableData: (
+        <p>
+          It was observed that at some portions of the site debris of the
+          dismantled buildings was spread over sub grade of the embankment which
+          may cause poor compaction.{" "}
+          <span className="fw-bold">[Figure 01]</span>
+          <br />
+          <span className="fw-bold">Recommendation:</span> The Executing
+          department should ensure the removal of debris and usage of engineered
+          approved borrowed material for earthwork.
+        </p>
+      ),
+    },
+    {
+      tableHeading: "Observation 5 (Delay in shifting of utilities)",
+      tableData: (
+        <p>
+          Shifting of the electric lines and poles is still pending.{" "}
+          <span className="fw-bold">[Figure 02]</span>
+          <br />
+          <span className="fw-bold">Recommendation:</span> Timely Shifting of
+          utilities may be ensured to avoid further delay.
+        </p>
+      ),
+    },
+    {
+      tableHeading: "Observation 6 (Non-barricaded Sites)",
+      tableData: (
+        <p>
+          Bridge construction sites in the urban areas were non-barricaded
+          <span className="fw-bold">[Figure 03]</span> and warning signs were
+          not displayed.
+          <br />
+          <span className="fw-bold">Recommendation:</span> Site barricading and
+          the hazard prevention sign may be displayed to avoid untoward
+          incidents.
+        </p>
+      ),
+    },
+    {
+      tableHeading: "Observation 7 (Field laboratories)",
+      tableData: (
+        <p>
+          The contractor’s site laboratory has been established at a distance of
+          around 2 km from the site. Moreover, the laboratory is not well
+          equipped, which may compromise the quality of construction.{" "}
+          <span className="fw-bold">[Figure 04]</span>
+          <br />
+          <span className="fw-bold">Recommendation:</span> The Executing
+          Department to ensure establishment of laboratory at site along with
+          availability of necessary equipment for comprehensive testing of
+          materials.
+        </p>
+      ),
+    },
+    {
+      tableHeading: "Observation 8 (Non-provision of PPEs)",
+      tableData: (
+        <p>
+          It was observed that the workers were not provided personal protection
+          equipment by the contractor{" "}
+          <span className="fw-bold">[Figure 05].</span>
+          <br />
+          <span className="fw-bold">Recommendation:</span> Personal protection
+          equipment should be provided to the workers.
+        </p>
+      ),
+    },
   ];
 
   return (
@@ -354,19 +558,38 @@ Culverts	Excavation for the construction of the 09 Culverts was completed. */}
         <div className="row">
           <div className="col-12">
             <div className="col mb-5">
-              <div className="row d-flex justify-content-center">
+              <div className="row d-flex justify-content-start">
                 <div className="col-9 border border-dark border-2">
-                  <p
-                    className="fs-4 fw-bold text-center pt-5"
-                    style={{ color: "#002060" }}
-                  >
-                    MONITORING REPORT
-                  </p>
+                  <div className="row d-flex">
+                    <div className="col"></div>
+                    <div className="col">
+                      <p
+                        className="fs-4 fw-bold text-center pt-5"
+                        style={{ color: "#00205f" }}
+                      >
+                        MONITORING REPORT
+                      </p>
+                    </div>
+                    <div className="col d-flex justify-content-end">
+                      <div
+                        className="col-6 text-center m-3 ps-3 pe-3 pt-2"
+                        style={{
+                          border: "2px solid #000",
+                          borderRadius: "10px",
+                          background: "#FFFF00",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        <p className="fw-bold">Needs Consideration</p>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="row d-flex justify-content-center">
                     <div className="col-10">
                       <p
                         className="fs-5 fw-bold text-center pt-5"
-                        style={{ color: "#002060" }}
+                        style={{ color: "#00205f" }}
                       >
                         Lahore Ring Road - Southern Loop (SL-3) Construction of
                         Road from Raiwind Road up to Multan Road
@@ -414,12 +637,13 @@ Culverts	Excavation for the construction of the 09 Culverts was completed. */}
                     </div>
                   </div>
                 </div>
+                <div style={{ marginBottom: "40px" }}></div>
               </div>
             </div>
 
             {/* <!--Table 01 Start--> */}
             <div className="col mb-5">
-              <div className="row d-flex justify-content-center">
+              <div className="row d-flex justify-content-start">
                 <div className="col-9 border border-2 border-dark p-5 pt-3">
                   <h4 className="fw-bold" style={{ color: "#0070C0" }}>
                     1. Project Profile
@@ -439,7 +663,7 @@ Culverts	Excavation for the construction of the 09 Culverts was completed. */}
                         </th>
                       </tr>
                       {projectsTableData.map((d, i) => (
-                        <tr>
+                        <tr key={i}>
                           <th scope="col" style={{ background: "#4bacc6" }}>
                             {d.columnHeading}
                           </th>
@@ -460,10 +684,11 @@ Culverts	Excavation for the construction of the 09 Culverts was completed. */}
               </div>
             </div>
             {/* <!--Table 01 End--> */}
+            <div style={{ marginBottom: "300px" }}></div>
 
             {/* <!--Table 02 Start--> */}
             <div className="col mb-5">
-              <div className="row d-flex flex-column justify-content-center align-items-center">
+              <div className="row d-flex flex-column justify-content-start align-items-start">
                 <div className="col-9 border border-2 border-dark p-5 pt-3">
                   <>
                     <h4 className="fw-bold" style={{ color: "#0070C0" }}>
@@ -503,7 +728,7 @@ Culverts	Excavation for the construction of the 09 Culverts was completed. */}
                           </th>
                         </tr>
                         {designAndScopeData.map((d, i) => (
-                          <tr>
+                          <tr key={i}>
                             <th
                               scope="col"
                               className="text-center fw-bold"
@@ -584,7 +809,7 @@ Culverts	Excavation for the construction of the 09 Culverts was completed. */}
                           </th>
                         </tr>
                         {majorDeliverables.map((d, i) => (
-                          <tr>
+                          <tr key={i}>
                             <th
                               scope="col"
                               className="text-center align-middle"
@@ -619,7 +844,10 @@ Culverts	Excavation for the construction of the 09 Culverts was completed. */}
                             >
                               <ul style={{ listStyleType: "none" }}>
                                 {d.progress.map((p, j) => (
-                                  <li className="row d-flex justify-content-end m-0">
+                                  <li
+                                    key={i}
+                                    className="row d-flex justify-content-end m-0"
+                                  >
                                     <div
                                       className={`col p-0 ${
                                         (i === 3 && j == 1) ||
@@ -685,130 +913,42 @@ Culverts	Excavation for the construction of the 09 Culverts was completed. */}
                             Progress
                           </th>
                         </tr>
-                        <tr>
-                          <th
-                            scope="col"
-                            className="text-center"
-                            style={{ background: "#4bacc6" }}
-                          >
-                            A.
-                          </th>
-                          <th
-                            scope="col"
-                            className="text-center"
-                            style={
-                              {
-                                // background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
-                              }
-                            }
-                          >
-                            Road Work
-                          </th>
-                        </tr>
-                        <tr>
-                          <th scope="col" className="">
-                            Earth Filling, Compaction Embankment
-                          </th>
-                          <th scope="col" className="fw-normal table-primary">
-                            <span>
-                              Laying and compaction of embankment earthwork
-                              material is in progress. Out of 3,801,008 m3,
-                              around 4.2%, i.e., 1,60,000 m3 earthwork material
-                              has been laid.
-                            </span>
-                          </th>
-                        </tr>
-                        <tr>
-                          <th scope="col" className="">
-                            Stacking of Material
-                          </th>
-                          <th scope="col" className="fw-normal table-info">
-                            Material Stacking is in progress for the
-                            construction of the subbase course and base course.{" "}
-                          </th>
-                        </tr>
-                        <tr>
-                          <th scope="col" className="text-center">
-                            B.
-                          </th>
-                          <th scope="col" className="text-center table-primary">
-                            Road Structures
-                          </th>
-                        </tr>
-                        <tr>
-                          <th scope="col" className="">
-                            Bridges
-                          </th>
-                          <th scope="col" className="fw-normal table-info">
-                            <ul>
-                              <li>
-                                Bridge-01 (RD 58+885): 22 out of 32 concrete
-                                piles are cast. Steel fabrication for the
-                                prestressed girders is in progress. Wet Rotatory
-                                Boring for the pile is in progress.
-                              </li>
-                              <li>
-                                Bridge-02 (RD 59+195): No Activity observed.
-                              </li>
-                              <li>
-                                Bridge-03 (RD 60+147): 19 out of 24 concrete
-                                piles are completed. Steel fabrication for the
-                                pile cap is in progress. Wet Rotatory Boring for
-                                the pile is in progress.{" "}
-                              </li>
-                              <li>
-                                Bridge-04 (RD 62+442): Wet Rotatory Boring was
-                                in progress.
-                              </li>
-                              <li>
-                                Bridge-05 (RD 63+362): 11 out of 32 concrete
-                                piles are constructed. Steel fixing for the pile
-                                is in progress. Wet Rotatory Boring for the pile
-                                is in progress.{" "}
-                              </li>
-                              <li>
-                                Bridge-06 (RD 63+760): 28 out of 42 concrete
-                                piles are cast. Steel fixing for the pile is in
-                                progress. Wet Rotatory Boring for the pile is in
-                                progress.{" "}
-                              </li>
-                            </ul>
-                          </th>
-                        </tr>
-                        <tr>
-                          <th scope="col" className="">
-                            Underpasses/Subways
-                          </th>
-                          <th scope="col" className="fw-normal table-primary">
-                            <ul>
-                              <li>
-                                Excavation for the construction of the
-                                Underpass-1 (RD 57+308), Underpass-2 (RD
-                                57+990), Underpass-3 (RD 60+710) is completed.
-                                Lean was laid for two underpasses{" "}
-                              </li>
-                            </ul>
-                          </th>
-                        </tr>
-                        <tr>
-                          <th scope="col" className="">
-                            Culverts
-                          </th>
-                          <th scope="col" className="fw-normal table-info">
-                            Excavation for the construction of the 09 Culverts
-                            was completed.
-                          </th>
-                        </tr>
+                        {ongoingActivities.map((d, i) => (
+                          <tr key={i}>
+                            <th
+                              scope="col"
+                              className={`${
+                                i === 0 || i === 3 ? "text-center" : ""
+                              }`}
+                              style={{ background: "#4bacc6" }}
+                            >
+                              {d.tableHeading}
+                            </th>
+                            <th
+                              scope="col"
+                              className={`${
+                                i === 0 || i === 3 ? "text-center" : "fw-normal"
+                              }`}
+                              style={{
+                                background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                              }}
+                            >
+                              {d.tableData}
+                            </th>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
 
                     <table
-                      className="table table-bordered border-dark"
+                      className="table table-bordered border-light"
                       style={{ backgroundColor: "yellow" }}
                     >
                       <tbody>
                         <tr>
-                          <th>Progress Analysis</th>
+                          <th className="pt-3" style={{ whiteSpace: "nowrap" }}>
+                            <span></span>Progress Analysis
+                          </th>
                           <th>Planned progress 32%</th>
                           <th>Achieved progress. 11 %</th>
                           <th>Financial progress 16%</th>
@@ -823,519 +963,407 @@ Culverts	Excavation for the construction of the 09 Culverts was completed. */}
                 </div>
               </div>
             </div>
+            <div style={{ marginBottom: "190px" }}></div>
 
             {/* <!--Table 05 Start--> */}
+            <div className="col mb-5">
+              <div className="row d-flex flex-column justify-content-start align-items-start">
+                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                  <>
+                    <h4 className="fw-bold pt-1" style={{ color: "#0070C0" }}>
+                      5. Earned Value Analysis
+                    </h4>
+                    <h5 className="text-center fw-bold">Table 5</h5>
+                    <table className="table table-bordered border-light">
+                      <tbody className="">
+                        <tr>
+                          <th
+                            scope="col"
+                            colSpan={2}
+                            className="text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Earned Value Analysis/Parameters
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            {" "}
+                            Remarks
+                          </th>
+                        </tr>
+                        {earnedValueAnalysis.map((d, i) => (
+                          <tr key={i}>
+                            <th scope="col" style={{ background: "#4bacc6" }}>
+                              {d.tableHeading}
+                            </th>
+                            <th
+                              scope="col"
+                              className="fw-normal text-center"
+                              style={{
+                                background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                              }}
+                            >
+                              {d.tableData1}
+                            </th>
+                            <th
+                              scope="col"
+                              className={`fw-normal text-center ${
+                                i > 6 ? "text-danger" : ""
+                              }`}
+                              style={{
+                                background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                              }}
+                            >
+                              {d.tableData2}
+                            </th>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
 
-            <h4 className="fw-bold pt-5" style={{ color: "#0070C0" }}>
-              5. Earned Value Analysis
-            </h4>
-            <h5 className="text-center pt-5 fw-bold">Table 5</h5>
-            <table className="table table-bordered border-dark">
-              <tbody className="">
-                <tr>
-                  <th scope="col" colSpan={2} className="">
-                    Earned Value Analysis/Parameters
-                  </th>
-                  <th scope="col" className=" text-center">
-                    {" "}
-                    Remarks
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Project Cost (M)</th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    17,785.9
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    Approved Cost
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Percent Completed [Physical]</th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    9%
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    Current physical progress
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Planned Value or BCWS</th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    5,335.8
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    Budgeted Cost of Work Scheduled
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Earned Value or BCWP</th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    1.600.7
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    Budgeted Cost of Work Performed
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Actual cost of work performed (ACWP)</th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    2600.0
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    Current financial progress
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Scheduled Variance (SV)</th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    -3735.0
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    ---
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Cost Variance (CV)</th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    -999.3
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    ---
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Schedule Performance Index (SPI)</th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    0.3
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center text-danger"
-                  >
-                    Project progress is behind schedule as SPI is less than 1.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Cost Performance Index (CPI)</th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    0.6
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-info text-center text-danger"
-                  >
-                    Over Budget if CPI&lt;1
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Estimate Cost at Completion (m)</th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    18785.1
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center text-danger"
-                  >
-                    The project is predicted to exceed its original cost.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Estimate Cost to Complete (m)</th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    16185.1
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-info text-center text-danger"
-                  >
-                    Further funds will be required for completion at the current
-                    pace of work & funds utilization.&lt;1
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Earned Schedule (ES)</th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    1
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center text-danger"
-                  >
-                    Equivalent progress of only 1 Month achieved to date instead
-                    of 1.9 months.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Time Variance (TV)</th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    -0.9
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-info text-center text-danger"
-                  >
-                    Difference between time passed & earned schedule&lt;1
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col">Time Estimate at Completion (TEAC)</th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    12
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center text-danger"
-                  >
-                    12 months will be required to complete this project at the
-                    current pace
-                  </th>
-                </tr>
-              </tbody>
-            </table>
+                    <table
+                      className="table table-bordered border-dark"
+                      style={{ background: "#FF0000" }}
+                    >
+                      <tbody>
+                        <tr>
+                          <th className="text-center text-white p-5">
+                            <p className="mt-2">Alert:</p>
+                          </th>
+                          <th className="text-white p-5 ps-1 pe-1">
+                            Earned Value Analysis shows that the project would
+                            face time and cost overrun if the same pace of work
+                            persists.
+                          </th>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </>
+                  {/* <!--Table 05 End--> */}
+                  <>
+                    {/* <!--Table 06 Start--> */}
 
-            <table
-              className="table table-bordered border-dark"
-              style={{ backgroundColor: "rgb(180, 24, 24)" }}
-            >
-              <tbody>
-                <tr>
-                  <th className="text-center ">Alert:</th>
-                  <th className="">
-                    Earned Value Analysis shows that the project would face time
-                    and cost overrun if the same pace of work persists.
-                  </th>
-                </tr>
-              </tbody>
-            </table>
+                    <h4 className="fw-bold" style={{ color: "#0070C0" }}>
+                      6. Financial Analysis
+                    </h4>
+                    <h5 className="text-center fw-bold">Table 6</h5>
+                    <table className="table table-bordered border-light">
+                      <tbody className="">
+                        <tr>
+                          <th
+                            scope="col"
+                            rowSpan={2}
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Fiscal Year
+                          </th>
+                          <th
+                            scope="col"
+                            rowSpan={2}
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Allocation (M)
+                          </th>
+                          <th
+                            scope="col"
+                            rowSpan={2}
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Releases (M)
+                          </th>
+                          <th
+                            scope="col"
+                            rowSpan={2}
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Utilization (M)
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center text-white"
+                            style={{ background: "#4bacc6" }}
+                            colSpan={6}
+                          >
+                            Financial Efficiency
+                          </th>
+                        </tr>
+                        <tr>
+                          <th
+                            scope="col"
+                            className="fw-bold table-primary text-center"
+                            style={{ background: "#B6DDE8" }}
+                          >
+                            Release/Allocation
+                          </th>
+                          <th
+                            scope="col"
+                            className="fw-bold table-primary text-center"
+                            style={{ background: "#B6DDE8" }}
+                          >
+                            Utilization/Releases
+                          </th>
+                        </tr>
+                        <tr>
+                          <th
+                            scope="col"
+                            className="text-center"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            2023-24
+                          </th>
+                          <th
+                            scope="col"
+                            className="fw-normal text-center"
+                            style={{ background: "#DAEEF3" }}
+                          >
+                            6,000
+                          </th>
+                          <th
+                            scope="col"
+                            className="fw-normal text-center"
+                            style={{ background: "#DAEEF3" }}
+                          >
+                            6,000
+                          </th>
+                          <th
+                            scope="col"
+                            className="fw-normal text-center"
+                            style={{ background: "#DAEEF3" }}
+                          >
+                            2,900
+                          </th>
+                          <th
+                            scope="col"
+                            className="fw-normal text-center"
+                            style={{ background: "#DAEEF3" }}
+                          >
+                            100 %
+                          </th>
+                          <th
+                            scope="col"
+                            className="fw-normal text-center"
+                            style={{ background: "#DAEEF3" }}
+                          >
+                            48 %
+                          </th>
+                        </tr>
+                        <tr>
+                          <th
+                            scope="col"
+                            className="text-center"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            Total
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center"
+                            style={{ background: "#B6DDE8" }}
+                          >
+                            6,000
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center"
+                            style={{ background: "#B6DDE8" }}
+                          >
+                            6,000
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center"
+                            style={{ background: "#B6DDE8" }}
+                          >
+                            2,900
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center"
+                            style={{ background: "#B6DDE8" }}
+                          >
+                            100 %
+                          </th>
+                          <th
+                            scope="col"
+                            className="text-center"
+                            style={{ background: "#B6DDE8" }}
+                          >
+                            48 %
+                          </th>
+                        </tr>
+                      </tbody>
+                    </table>
 
-            {/* <!--Table 05 End--> */}
+                    {/* <!--Table 06 End--> */}
+                  </>
+                </div>
+              </div>
+            </div>
 
-            {/* <!--Table 06 Start--> */}
-
-            <h4 className="fw-bold pt-5" style={{ color: "#0070C0" }}>
-              6. Financial Analysis
-            </h4>
-            <h5 className="text-center pt-5 fw-bold">Table 6</h5>
-            <table className="table table-bordered border-dark">
-              <thead className="table-primary"></thead>
-              <tbody className="">
-                <tr>
-                  <th scope="col" className="text-center">
-                    Fiscal Year
-                  </th>
-                  <th scope="col" className="text-center">
-                    Allocation (M)
-                  </th>
-                  <th scope="col" className="text-center">
-                    Releases (M)
-                  </th>
-                  <th scope="col" className="text-center">
-                    Utilization (M)
-                  </th>
-                  <th scope="col" className="text-center" colSpan={2}>
-                    Financial Efficiency
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center"></th>
-                  <th scope="col"></th>
-                  <th scope="col"></th>
-                  <th scope="col"></th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    Release/Allocation
-                  </th>
-                  <th
-                    scope="col"
-                    className="fw-normal table-primary text-center"
-                  >
-                    Utilization/Releases
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    2023-24
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    6,000
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    6,000
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    2,900
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    100 %
-                  </th>
-                  <th scope="col" className="fw-normal table-info text-center">
-                    48 %
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="text-center">
-                    Total
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    6,000
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    6,000
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    2,900
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    100 %
-                  </th>
-                  <th scope="col" className="table-primary text-center">
-                    48 %
-                  </th>
-                </tr>
-              </tbody>
-            </table>
-
-            {/* <!--Table 06 End--> */}
+            <div style={{ marginBottom: "110px" }}></div>
 
             {/* <!--Table 07 Start--> */}
-            <h4 className="fw-bold pt-5 pb-5" style={{ color: "#0070C0" }}>
-              7. Observations & Recommendations
-            </h4>
-            <table className="table table-bordered border-dark">
-              <tbody>
-                <tr>
-                  <th scope="col" className="">
-                    Observations
-                  </th>
-                  <th scope="col" className="">
-                    {" "}
-                    Description
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="">
-                    Observation 1 (Slow progress)
-                  </th>
-                  <th scope="col" className="fw-normal table-info">
-                    Administrative Approval (AA) of the project was issued on
-                    01-08-2023 at a cost of Rs. 17,785.849 M with a gestation
-                    period of 6 months expiring on 01-02-2024. However, the work
-                    was awarded to the contractor on 21-08-23. Also, it was
-                    observed at the time of the visit that only 9% of progress
-                    could be achieved in 01 month and 25 days, against a planned
-                    progress of 30%, showing that the progress is lagging by
-                    21%. The schedule performance index of the project, is less
-                    than 1, depicting a slow pace of work.
-                    <span className="fw-bold">Recommendation:</span> The
-                    Executing agency may push the contractor to expedite work by
-                    mobilizing adequate resources.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="">
-                    Observation 2 (Project Cost Overrun)
-                  </th>
-                  <th scope="col" className="fw-normal table-primary">
-                    The Cost Performance Index of the project, calculated from
-                    earned value analysis, is less than 1 which indicates that
-                    at the current pace and financial utilization, the project
-                    may face cost overrun.
-                    <span className="fw-bold">Recommendation:</span> The
-                    Executing Department may take appropriate measures to ensure
-                    completion of the project within approved cost.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="">
-                    Observation 3 (Pile Load Test)
-                  </th>
-                  <th scope="col" className="fw-normal table-info">
-                    Pile load test was not performed before constructing the
-                    actual concrete pile of any bridge at the site.
-                    Non-conformance with the standard testing raises concerns
-                    about the structural integrity and safety of the foundation.
-                    <span className="fw-bold">Recommendation:</span> The
-                    Executing department must ensure the detailed load pile
-                    testing to confirm the capacity, integrity and settlement as
-                    per the design requirement of Bridge Foundation.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="">
-                    Observation 4 (Inappropriate Embankment Material)
-                  </th>
-                  <th scope="col" className="fw-normal table-primary">
-                    It was observed that at some portions of the site debris of
-                    the dismantled buildings was spread over sub grade of the
-                    embankment which may cause poor compaction. [Figure 01]
-                    <span className="fw-bold">Recommendation:</span> The
-                    Executing department should ensure the removal of debris and
-                    usage of engineered approved borrowed material for
-                    earthwork.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="">
-                    Observation 5 (Delay in shifting of utilities)
-                  </th>
-                  <th scope="col" className="fw-normal table-info">
-                    Shifting of the electric lines and poles is still pending.
-                    [Figure 02]
-                    <span className="fw-bold">Recommendation:</span> Timely
-                    Shifting of utilities may be ensured to avoid further delay.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="">
-                    Observation 6 (Non-barricaded Sites)
-                  </th>
-                  <th scope="col" className="fw-normal table-primary">
-                    Bridge construction sites in the urban areas were
-                    non-barricaded [Figure 03] and warning signs were not
-                    displayed.
-                    <span className="fw-bold">Recommendation:</span> Site
-                    barricading and the hazard prevention sign may be displayed
-                    to avoid untoward incidents.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="">
-                    Observation 7 (Field laboratories)
-                  </th>
-                  <th scope="col" className="fw-normal table-info">
-                    The contractor’s site laboratory has been established at a
-                    distance of around 2 km from the site. Moreover, the
-                    laboratory is not well equipped, which may compromise the
-                    quality of construction. [Figure 04]
-                    <span className="fw-bold">Recommendation:</span> The
-                    Executing Department to ensure establishment of laboratory
-                    at site along with availability of necessary equipment for
-                    comprehensive testing of materials.
-                  </th>
-                </tr>
-                <tr>
-                  <th scope="col" className="">
-                    Observation 8 (Non-provision of PPEs)
-                  </th>
-                  <th scope="col" className="fw-normal table-primary">
-                    It was observed that the workers were not provided personal
-                    protection equipment by the contractor [Figure 05].
-                    <span className="fw-bold">Recommendation:</span> Personal
-                    protection equipment should be provided to the workers.
-                  </th>
-                </tr>
-              </tbody>
-            </table>
-
+            <div className="col mb-5">
+              <div className="row d-flex justify-content-start">
+                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                  <h4
+                    className="fw-bold pt-1 pb-1"
+                    style={{ color: "#0070C0" }}
+                  >
+                    7. Observations & Recommendations
+                  </h4>
+                  <table className="table table-bordered border-light">
+                    <tbody>
+                      <tr>
+                        <th
+                          scope="col"
+                          className="text-center"
+                          style={{ background: "#4bacc6" }}
+                        >
+                          Observations
+                        </th>
+                        <th scope="col" style={{ background: "#4bacc6" }}>
+                          Description
+                        </th>
+                      </tr>
+                      {observationsAndRecommendations.map((d, i) => (
+                        <tr key={i}>
+                          <th
+                            scope="col"
+                            className="text-white"
+                            style={{ background: "#4bacc6" }}
+                          >
+                            {d.tableHeading}
+                          </th>
+                          <th
+                            scope="col"
+                            className="fw-normal"
+                            style={{
+                              background: i % 2 === 0 ? "#B6DDE8" : "#DAEEF3",
+                            }}
+                          >
+                            {d.tableData}
+                          </th>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
             {/* <!--Table 07 End--> */}
 
+            <div style={{ marginBottom: "100px" }}></div>
+
             {/* <!--Photo Gallery--> */}
-            <h4 className="fw-bold pt-5 pb-5" style={{ color: "#0070C0" }}>
-              8. Photo Gallery
-            </h4>
-            <div className="text-center">
-              <Image
-                src={Picture3}
-                className="rounded"
-                alt="..."
-                style={{ width: "75%", height: "100%" }}
-              />
-              <h5 className="fw-bold">
-                Figure 01{" "}
-                <span className="fw-normal">
-                  [Dismantled Material laid for embankment formation]
-                </span>
-              </h5>
+            <div className="col mb-5">
+              <div className="row d-flex justify-content-start">
+                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                  <h4
+                    className="fw-bold pt-1 pb-2"
+                    style={{ color: "#0070C0" }}
+                  >
+                    8. Photo Gallery
+                  </h4>
+                  <div className="text-center border border-dark ps-2 pe-2">
+                    <Image
+                      src={Picture3}
+                      className="rounded"
+                      alt="..."
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                    <h5 className="fw-bold mt-2">
+                      Figure 01{" "}
+                      <span className="fw-normal">
+                        [Dismantled Material laid for embankment formation]
+                      </span>
+                    </h5>
+                  </div>
+                  <div className="text-center border border-dark ps-2 pe-2 mb-5">
+                    <Image
+                      src={Picture4}
+                      className="rounded"
+                      alt="..."
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                    <h5 className="fw-bold mt-2">
+                      Figure 02{" "}
+                      <span className="fw-normal">
+                        [Shifting of the Utility lines was remaining]
+                      </span>
+                    </h5>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="text-center">
-              <Image
-                src={Picture4}
-                className="rounded"
-                alt="..."
-                style={{ width: "75%", height: "100%" }}
-              />
-              <h5 className="fw-bold">
-                Figure 02{" "}
-                <span className="fw-normal">
-                  [Shifting of the Utility lines was remaining]
-                </span>
-              </h5>
+
+            <div className="col mb-5">
+              <div className="row d-flex justify-content-start">
+                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                  <div className="text-center border border-dark ps-2 pe-2">
+                    <Image
+                      src={Picture5}
+                      className="rounded"
+                      alt="..."
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                    <h5 className="fw-bold mt-2 mb-3">
+                      Figure 03{" "}
+                      <span className="fw-normal">
+                        [Non-Barricaded Bridge Construction site Bahria Town]
+                      </span>
+                    </h5>
+                  </div>
+                  <div className="text-center border border-dark ps-2 pe-2">
+                    <Image
+                      src={Picture6}
+                      className="rounded"
+                      alt="..."
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                    <h5 className="fw-bold mt-2 mb-4">
+                      Figure 04{" "}
+                      <span className="fw-normal">
+                        [Missing Essential Apparatus at Site Laboratory]
+                      </span>
+                    </h5>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="text-center">
-            <Image
-              src={Picture5}
-              className="rounded"
-              alt="..."
-              style={{ width: "75%", height: "100%" }}
-            />
-            <h5 className="fw-bold">
-              Figure 03{" "}
-              <span className="fw-normal">
-                [Non-Barricaded Bridge Construction site Bahria Town]
-              </span>
-            </h5>
-          </div>
-          <div className="text-center">
-            <Image
-              src={Picture6}
-              className="rounded"
-              alt="..."
-              style={{ width: "75%", height: "100%" }}
-            />
-            <h5 className="fw-bold">
-              Figure 04{" "}
-              <span className="fw-normal">
-                [Missing Essential Apparatus at Site Laboratory]
-              </span>
-            </h5>
-          </div>
-          <div className="text-center">
-            <Image
-              src={Picture7}
-              className="rounded"
-              alt="..."
-              style={{ width: "75%", height: "100%" }}
-            />
-            <h5 className="fw-bold">
-              Figure 05{" "}
-              <span className="fw-normal">
-                [Workers without Personal Protection Equipment]
-              </span>
-            </h5>
+
+            <div className="col mb-5">
+              <div className="row d-flex justify-content-start">
+                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                  <div className="text-center border border-dark ps-2 pe-2 mb-5">
+                    <Image
+                      src={Picture7}
+                      className="rounded"
+                      alt="..."
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                    <h5 className="fw-bold mt-1 mb-3">
+                      Figure 05{" "}
+                      <span className="fw-normal">
+                        [Workers without Personal Protection Equipment]
+                      </span>
+                    </h5>
+                  </div>
+                  <div className="row d-flex justify-content-end">
+                    <div className="col-3 mt-5 text-center pt-5">
+                      <p>Engr. Arif Ahsan Assistant Director (Buildings)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

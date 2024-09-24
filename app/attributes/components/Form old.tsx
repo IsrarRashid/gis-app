@@ -355,20 +355,28 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           style={{ background: "rgba(156,255,255,0)" }}
         >
           <div
-            className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
+            className="container-fluid pt-3 pb-3 ps-4 pe-4"
             style={{
-              backgroundImage: "linear-gradient(to left, #969696 ,#d9d9d9)",
-              borderRadius: "20px",
+              backgroundImage:
+                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
+              borderRadius: "15px",
+              border: "1.7px solid rgba(255, 255, 255, 0.6)",
             }}
           >
             <div className="row flex-column justify-content-center mb-4">
               <div className="col-lg-12">
                 {method === "POST" ? (
-                  <p className="text-center text-white mt-4 fw-bold">
+                  <p
+                    className="text-center text-white mt-4"
+                    style={{ fontSize: "1.5rem", fontWeight: "800" }}
+                  >
                     <span>ADD Attribute</span>
                   </p>
                 ) : (
-                  <p className="text-center text-white mt-4 fw-bold">
+                  <p
+                    className="text-center text-white mt-4"
+                    style={{ fontSize: "1.5rem", fontWeight: "800" }}
+                  >
                     <span>UPDATE Attribute</span>
                   </p>
                 )}
@@ -384,7 +392,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="label"
                       name="label"
                       value={formData.label}
@@ -401,7 +409,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="placeholder"
                       name="placeholder"
                       value={formData.placeholder}
@@ -417,7 +425,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Attribute DataType
                     </label>
                     <select
-                      className="form-select form-select-sm"
+                      className="form-select form-select-sm color-light-dark bg-silver"
                       aria-label="Default select example"
                       name="attributeDataType"
                       onChange={handleChange}
@@ -439,7 +447,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Attribute Type
                     </label>
                     <select
-                      className="form-select form-select-sm"
+                      className="form-select form-select-sm color-light-dark bg-silver"
                       aria-label="Default select example"
                       name="attributeType"
                       onChange={handleChange}
@@ -463,7 +471,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="string"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="unit"
                       name="unit"
                       value={formData.unit}
@@ -480,7 +488,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="validationRegx"
                       name="validationRegx"
                       value={formData.validationRegx}
@@ -496,7 +504,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="number"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="min"
                       name="min"
                       value={formData.min}
@@ -510,7 +518,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="number"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="max"
                       name="max"
                       value={formData.max}
@@ -527,7 +535,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="errorMessage"
                       name="errorMessage"
                       value={formData.errorMessage}
@@ -543,7 +551,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="number"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="sortId"
                       name="sortId"
                       value={formData.sortId}
@@ -559,7 +567,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Verification Type
                     </label>
                     <select
-                      className="form-select form-select-sm"
+                      className="form-select form-select-sm color-light-dark bg-silver"
                       aria-label="Default select example"
                       name="verificationType"
                       onChange={handleChange}
@@ -579,7 +587,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="attributeCode"
                       name="attributeCode"
                       value={formData.attributeCode}
@@ -598,7 +606,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="number"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="weightage"
                       name="weightage"
                       value={formData.weightage}
@@ -612,7 +620,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="remarks"
                       name="remarks"
                       value={formData.remarks}
@@ -634,7 +642,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         </label>
                         <input
                           type="text"
-                          className="form-control form-control-sm"
+                          className="form-control form-control-sm color-light-dark bg-silver"
                           id="evaluationFormula"
                           name="evaluationFormula"
                           value={formData.evaluationFormula}
@@ -650,7 +658,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           Search Attribute Codes
                         </label>
                         <select
-                          className="form-select form-select-sm"
+                          className="form-select form-select-sm color-light-dark bg-silver"
                           aria-label="Default select example"
                           name="searchAttributeCodes"
                           onChange={handleDatalistSelect}
@@ -772,7 +780,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </label>
                           <input
                             type="text"
-                            className="form-control form-control-sm"
+                            className="form-control form-control-sm color-light-dark bg-silver"
                             id={`value-${index}`}
                             name="value"
                             value={option.value}
@@ -789,7 +797,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </label>
                           <input
                             type="text"
-                            className="form-control form-control-sm"
+                            className="form-control form-control-sm color-light-dark bg-silver"
                             id={`label-${index}`}
                             name="label"
                             value={option.label}
@@ -806,7 +814,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </label>
                           <input
                             type="number"
-                            className="form-control form-control-sm"
+                            className="form-control form-control-sm color-light-dark bg-silver"
                             id="sortId"
                             name="sortId"
                             value={option.sortId}

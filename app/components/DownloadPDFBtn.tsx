@@ -18,8 +18,8 @@ const DownloadPDFBtn = () => {
         const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF("p", "mm", "a4");
 
-        const imgWidth = 210; // A4 size in mm (width)
-        const pageHeight = 295; // A4 size in mm (height)
+        const imgWidth = 280; // A4 size in mm (width)
+        const pageHeight = 280; // A4 size in mm (height)
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         let heightLeft = imgHeight;
         let position = 0;

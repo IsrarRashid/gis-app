@@ -3,17 +3,19 @@ import ProjectsList from "./ProjectsList";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import DownloadFile from "./DownloadFile";
+import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
+import DownloadTextPDFBtn from "@/app/components/DownloadTextPDFBtn";
 
 const Projects = () => {
   const [refresh, setRefresh] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   const token = Cookies.get("token");
+  //   if (!token) {
+  //     router.push("/login");
+  //   }
+  // }, [router]);
 
   useEffect(() => {
     // Set the background for the body
@@ -39,7 +41,11 @@ const Projects = () => {
     >
       <div className="row p-3">
         <ProjectsList refresh={refresh} setRefresh={setRefresh} />
-        {/* <DownloadFile /> */}
+        {/* <span>
+          Image:
+          <DownloadPDFBtn />
+        </span>
+        <DownloadFile /> */}
       </div>
     </div>
   );

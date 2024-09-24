@@ -18,9 +18,8 @@ import { ToastContainer, toast } from "react-toastify";
 import useSectors, { Sector } from "@/app/hooks/useSectors";
 import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 import { DM_Sans, Inter } from "next/font/google";
-import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
 import ProjectForm from "@/app/projects/components/ProjectForm";
-import GroupingForm from "@/app/projects/components/GroupingForm";
+import { motion } from "framer-motion";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -158,11 +157,6 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
   return (
     <>
       <>
-        {isLoading && (
-          <div className="col text-center">
-            <div className="spinner-border text-primary"></div>
-          </div>
-        )}
         {/* <div className="row d-flex p-3">
           <div className="col-lg-6 col-md-6 col-sm-12">
             <h4 className="fw-bold">Projects</h4>
@@ -187,12 +181,18 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
             </div>
           </div>
         </div> */}
-        <div className="row p-3">
-          <div className="col-lg-6 col-md-6 col-sm-12">
+        <div className="row p-2">
+          {/* {isLoading && (
+            <div className="col text-center">
+              <div className="spinner-border text-primary"></div>
+            </div>
+          )} */}
+
+          {/* <div className="col-lg-6 col-md-6 col-sm-12">
             <p>
               Showing: <span className="fw-bold">{data?.length} Projects</span>
             </p>
-          </div>
+          </div> */}
           <div className="col-lg-6 col-md-6 col-sm-12">
             {/* <div className="row d-flex justify-content-end align-items-center">
               <div className="col-lg-4 col-md-4 col-sm-12 text-center">
@@ -217,15 +217,15 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
       </>
       <div className="table-responsive">
         <table
-          className="table mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
+          className="table mb-5 "
+          style={{ border: ".41px solid rgba(159, 159, 159, 0.75) !important" }}
         >
           <thead>
             <tr
               className={`color-dark-blue cursor-pointer ${inter.className}`}
               style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".9rem",
+                border: ".41px solid rgba(159, 159, 159, 0.75) !important",
+                fontSize: ".85rem",
               }}
             >
               <th>ID</th>
@@ -245,7 +245,7 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
               className={dmSans.className}
               style={{
                 border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".9rem",
+                fontSize: ".85rem",
               }}
             >
               <td>0</td>
@@ -263,9 +263,10 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                   className="progress rounded rounded-pill mt-2"
                   style={{ height: "10px" }}
                 >
-                  <div
-                    className="progress-bar rounded rounded-pill w-75"
+                  <motion.div
+                    className="progress-bar rounded rounded-pill"
                     style={{
+                      width: "75%",
                       backgroundImage:
                         "linear-gradient(to right, #0C8CE9 , #1A67A0)",
                     }}
@@ -273,7 +274,13 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                     aria-valuenow={75}
                     aria-valuemin={0}
                     aria-valuemax={100}
-                  ></div>
+                    initial={{ width: "0%" }}
+                    whileInView={{ width: "75%" }}
+                    transition={{
+                      duration: 1,
+                      ease: "easeIn",
+                    }}
+                  ></motion.div>
                 </div>
               </td>
               <td>
@@ -283,17 +290,24 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                       className="progress rounded rounded-pill mt-2"
                       style={{ height: "10px" }}
                     >
-                      <div
-                        className="progress-bar rounded rounded-pill w-75"
+                      <motion.div
+                        className="progress-bar rounded rounded-pill"
                         style={{
+                          width: "75%",
                           backgroundImage:
                             "linear-gradient(to right, #0C8CE9 , #1A67A0)",
                         }}
                         role="progressbar"
-                        aria-valuenow={75}
+                        aria-valuenow={62}
                         aria-valuemin={0}
                         aria-valuemax={100}
-                      ></div>
+                        initial={{ width: "0%" }}
+                        whileInView={{ width: "62%" }}
+                        transition={{
+                          duration: 1,
+                          ease: "easeIn",
+                        }}
+                      ></motion.div>
                     </div>
                   </div>
                   <div className="col-1 p-0">
@@ -301,13 +315,15 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                   </div>
                 </div>
               </td>
-              <td>65%</td>
+              <td>
+                <div className="text-center">65%</div>
+              </td>
             </tr>
             <tr
               className={dmSans.className}
               style={{
                 border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".9rem",
+                fontSize: ".85rem",
               }}
             >
               <td>1</td>
@@ -325,18 +341,24 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                   className="progress rounded rounded-pill mt-2"
                   style={{ height: "10px" }}
                 >
-                  <div
-                    className="progress-bar rounded rounded-pill "
-                    role="progressbar"
+                  <motion.div
+                    className="progress-bar rounded rounded-pill"
                     style={{
                       width: "40%",
                       backgroundImage:
                         "linear-gradient(to right, #0C8CE9 , #1A67A0)",
                     }}
+                    role="progressbar"
                     aria-valuenow={40}
                     aria-valuemin={0}
                     aria-valuemax={100}
-                  ></div>
+                    initial={{ width: "0%" }}
+                    whileInView={{ width: "40%" }}
+                    transition={{
+                      duration: 1,
+                      ease: "easeIn",
+                    }}
+                  ></motion.div>
                 </div>
               </td>
               <td>
@@ -346,18 +368,24 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                       className="progress rounded rounded-pill mt-2"
                       style={{ height: "10px" }}
                     >
-                      <div
+                      <motion.div
                         className="progress-bar rounded rounded-pill"
-                        role="progressbar"
-                        aria-valuenow={40}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
                         style={{
                           width: "40%",
                           backgroundImage:
                             "linear-gradient(to right, #0C8CE9 , #1A67A0)",
                         }}
-                      ></div>
+                        role="progressbar"
+                        aria-valuenow={40}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        initial={{ width: "0%" }}
+                        whileInView={{ width: "40%" }}
+                        transition={{
+                          duration: 1,
+                          ease: "easeIn",
+                        }}
+                      ></motion.div>
                     </div>
                   </div>
                   <div className="col-1 p-0">
@@ -365,13 +393,15 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                   </div>
                 </div>
               </td>
-              <td>35%</td>
+              <td>
+                <div className="text-center">35%</div>
+              </td>
             </tr>
             <tr
               className={dmSans.className}
               style={{
                 border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".9rem",
+                fontSize: ".85rem",
               }}
             >
               <td>2</td>
@@ -389,18 +419,24 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                   className="progress rounded rounded-pill mt-2"
                   style={{ height: "10px" }}
                 >
-                  <div
+                  <motion.div
                     className="progress-bar rounded rounded-pill"
-                    role="progressbar"
-                    aria-valuenow={15}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
                     style={{
                       width: "15%",
                       backgroundImage:
                         "linear-gradient(to right, #0C8CE9 , #1A67A0)",
                     }}
-                  ></div>
+                    role="progressbar"
+                    aria-valuenow={15}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    initial={{ width: "0%" }}
+                    whileInView={{ width: "15%" }}
+                    transition={{
+                      duration: 1,
+                      ease: "easeIn",
+                    }}
+                  ></motion.div>
                 </div>
               </td>
               <td>
@@ -410,18 +446,24 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                       className="progress rounded rounded-pill mt-2"
                       style={{ height: "10px" }}
                     >
-                      <div
+                      <motion.div
                         className="progress-bar rounded rounded-pill"
-                        role="progressbar"
-                        aria-valuenow={15}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
                         style={{
                           width: "15%",
                           backgroundImage:
                             "linear-gradient(to right, #0C8CE9 , #1A67A0)",
                         }}
-                      ></div>
+                        role="progressbar"
+                        aria-valuenow={15}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        initial={{ width: "0%" }}
+                        whileInView={{ width: "15%" }}
+                        transition={{
+                          duration: 1,
+                          ease: "easeIn",
+                        }}
+                      ></motion.div>
                     </div>
                   </div>
                   <div className="col-1 p-0">
@@ -429,13 +471,15 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                   </div>
                 </div>
               </td>
-              <td>25%</td>
+              <td>
+                <div className="text-center">15%</div>
+              </td>
             </tr>
             <tr
               className={dmSans.className}
               style={{
                 border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".9rem",
+                fontSize: ".85rem",
               }}
             >
               <td>3</td>
@@ -453,18 +497,24 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                   className="progress rounded rounded-pill mt-2"
                   style={{ height: "10px" }}
                 >
-                  <div
+                  <motion.div
                     className="progress-bar rounded rounded-pill"
-                    role="progressbar"
-                    aria-valuenow={90}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
                     style={{
                       width: "90%",
                       backgroundImage:
                         "linear-gradient(to right, #0C8CE9 , #1A67A0)",
                     }}
-                  ></div>
+                    role="progressbar"
+                    aria-valuenow={90}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    initial={{ width: "0%" }}
+                    whileInView={{ width: "90%" }}
+                    transition={{
+                      duration: 1,
+                      ease: "easeIn",
+                    }}
+                  ></motion.div>
                 </div>
               </td>
               <td>
@@ -474,18 +524,24 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                       className="progress rounded rounded-pill mt-2"
                       style={{ height: "10px" }}
                     >
-                      <div
+                      <motion.div
                         className="progress-bar rounded rounded-pill"
-                        role="progressbar"
-                        aria-valuenow={90}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
                         style={{
-                          width: "90%",
+                          width: "95%",
                           backgroundImage:
                             "linear-gradient(to right, #0C8CE9 , #1A67A0)",
                         }}
-                      ></div>
+                        role="progressbar"
+                        aria-valuenow={95}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        initial={{ width: "0%" }}
+                        whileInView={{ width: "95%" }}
+                        transition={{
+                          duration: 1,
+                          ease: "easeIn",
+                        }}
+                      ></motion.div>
                     </div>
                   </div>
                   <div className="col-1 p-0">
@@ -493,40 +549,51 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                   </div>
                 </div>
               </td>
-              <td>25%</td>
+              <td>
+                <div className="text-center">25%</div>
+              </td>
             </tr>
           </tbody>
         </table>
         <div className="row d-flex mb-3">
-          <div className="col-lg-6 col-md-6 col-sm-12 mt-2">
-            {/* Display the current range and total */}
-            {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
-            {data.length}
+          <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
+            <div className="row d-flex">
+              <div className="col-lg-2 col-md-8">
+                {/* Display the current range and total */}
+                {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)}{" "}
+                of {data.length}
+              </div>
+
+              <div className="col">
+                <p>
+                  Showing:{" "}
+                  <span className="fw-bold">{data?.length} Projects</span>
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="col-lg-6 col-md-6 col-sm-12">
+          <div className="col-lg-6 col-md-9 col">
             <div className="row d-flex justify-content-end">
-              <div className="col-lg-2 col-md-1 col-sm-12"></div>
-              <div className="col-lg-5 col-md-6 col-sm-12 text-end">
-                <label
-                  htmlFor="rowPerPage"
-                  className="form-label mt-2 text-white"
-                >
+              <div className="col-lg-2 col-md-1 col"></div>
+              <div className="col-lg-5 col-md-4 col text-end">
+                <label htmlFor="rowPerPage" className="form-label mt-1">
                   Rows Per Page:
                 </label>
               </div>
-              <div className="col-lg-1 col-md-6 col-sm-12 text-start p-0">
+              <div className="col-lg-1 col-md-3 col text-start p-0">
                 <select
-                  className="form-select form-select-sm bg-color-sea-blue rounded text-white shadow"
+                  className="rounded bg-color-sea-blue text-white shadow p-1"
                   style={{
                     color: "#fff",
                     border: "1px solid #1580CF",
+                    outline: "none",
                   }}
                   aria-label="Rows per page"
                   name="rowPerPage"
                   value={rows}
                   onChange={handleRowsPerPage}
                 >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                  {[10, 20, 30, 40, 50].map((num) => (
                     <option key={num} value={num}>
                       &nbsp;{num}
                     </option>
@@ -535,7 +602,7 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
               </div>
               <div className="col-lg-3 col-md-4 col-sm-12 text-end">
                 <button
-                  className="btn bg-color-sea-blue shadow me-2"
+                  className="btn btn-sm bg-color-sea-blue shadow me-2"
                   style={{ border: "1px solid #1580CF" }}
                   onClick={handlePreviousPage}
                   disabled={currentPage === 1}
@@ -543,7 +610,7 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                   <Image src={arrowLeft} alt="arrow left" />
                 </button>
                 <button
-                  className="btn bg-color-sea-blue shadow"
+                  className="btn btn-sm bg-color-sea-blue shadow"
                   style={{ border: "1px solid #1580CF" }}
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages}

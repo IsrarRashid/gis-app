@@ -75,10 +75,15 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     console.log("Form Data:", formData);
     console.log(errors);
     try {
+      const modifiedFormData = {
+        ...formData,
+        parentId: formData.parentId === 0 ? null : formData.parentId, // Change 0 to null
+      };
+
       const response = await apiClient({
         method: method,
         url: method === "POST" ? api : `${api}/${id}`,
-        data: formData,
+        data: modifiedFormData,
       });
       console.log("Response:", response);
       setRefresh((prev) => !prev);
@@ -127,15 +132,20 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           style={{ background: "rgba(156,255,255,0)" }}
         >
           <div
-            className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
+            className="container-fluid pt-3 pb-3 ps-4 pe-4"
             style={{
-              backgroundImage: "linear-gradient(to left, #969696 ,#d9d9d9)",
-              borderRadius: "20px",
+              backgroundImage:
+                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
+              borderRadius: "15px",
+              border: "1.7px solid rgba(255, 255, 255, 0.6)",
             }}
           >
             <div className="row flex-column justify-content-center mb-4">
               <div className="col-lg-12">
-                <p className="text-center text-white mt-4 fw-bold">
+                <p
+                  className="text-center text-white mt-4"
+                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
+                >
                   {method === "POST"
                     ? "ADD ATTRIBUTE GROUP"
                     : "UPDATE ATTRIBUTE GROUP"}
@@ -150,7 +160,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("name")}
                     id="name"
                     type="text"
-                    className="form-control form-control-sm"
+                    className="form-control form-control-sm color-light-dark bg-silver"
                     placeholder="Enter Attribute Group Name"
                   />
                   {errors.name && (
@@ -168,7 +178,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <select
                         {...register("parentId", { valueAsNumber: true })}
-                        className="form-select form-select-sm"
+                        className="form-select form-select-sm color-light-dark bg-silver"
                       >
                         <option value="0">None</option>
                         {data?.map((d) => (
@@ -186,7 +196,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("sortId", { valueAsNumber: true })}
                         id="sortId"
                         type="number"
-                        className="form-control form-control-sm"
+                        className="form-control form-control-sm color-light-dark bg-silver"
                         placeholder="Enter Sort ID"
                       />
                       {errors.sortId && (
@@ -207,14 +217,19 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   <textarea
                     id="description"
                     {...register("description")}
-                    className="form-control form-control-sm"
+                    className="form-control form-control-sm color-light-dark bg-silver"
                     placeholder="Write Brief Description..."
                     style={{ height: "100px" }}
                   />
                 </div>
                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
                   <button
-                    className="btn bg-color-sea-green text-white w-100"
+                    className="btn text-white w-100 border-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
+                      borderRadius: "12px",
+                    }}
                     type="submit"
                   >
                     Done

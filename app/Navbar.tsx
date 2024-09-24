@@ -17,6 +17,7 @@ import profilePic from "../public/images/profilePic.png";
 import locationPointBlue from "../public/icons/locationPointBlue.svg";
 import dashboardBlue from "../public/icons/dashboardBlue.svg";
 import filter from "../public/icons/filter.svg";
+import FilterMenu from "./dashboard/components/FilterMenu";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -94,34 +95,11 @@ const Navbar = () => {
             <>
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li className="nav-item me-2">
-                  <button
-                    className="nav-link btn btn-sm badge rounded-pill shadow-sm fs-6 bg-white"
-                    style={{
-                      padding: "5px 15px 5px 8px",
-                    }}
-                    id="navbarDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <div className="col p-2 ms-2 ">
-                      <div className="row">
-                        <div className="col p-0 ps-2">
-                          <Image src={filter} alt="filter" />
-                        </div>
-                        <div
-                          className="col p-0 pe-2 "
-                          style={{ marginTop: "2px" }}
-                        >
-                          &nbsp;<span>Filter</span>
-                        </div>
-                      </div>
-                    </div>
-                  </button>
+                  <FilterMenu />
                 </li>
                 <li className="nav-item me-2">
                   <button
-                    className="nav-link btn btn-sm badge rounded shadow-sm fs-6 bg-white "
+                    className="nav-link btn btn-sm badge rounded shadow-sm fs-6 bg-white mb-1"
                     style={{
                       padding: "5px 15px 5px 8px",
                     }}

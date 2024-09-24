@@ -37,8 +37,9 @@ const DeleteModal = ({ handleDelete, id }: Props) => {
                 className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
                 style={{
                   backgroundImage:
-                    "linear-gradient(to left, #969696 ,#e3e3e3 )",
-                  borderRadius: "20px",
+                    "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
+                  borderRadius: "15px",
+                  border: "1.7px solid rgba(255, 255, 255, 0.6)",
                 }}
               >
                 <div className="row flex-column justify-content-center mb-4">
@@ -60,11 +61,20 @@ const DeleteModal = ({ handleDelete, id }: Props) => {
                   </div> */}
                   <div className="col">
                     <div className="row d-flex">
-                      <div className="col-lg-6 col-md-6 col-sm-12 text-end">
+                      <div
+                        className="col-lg-6 col-md-6 col-sm-12 text-end"
+                        style={{
+                          boxSizing: "border-box",
+                        }}
+                      >
                         <button
-                          className="btn btn-outline-light w-50 p-3 fs-5"
+                          className="btn shadow btn-outline-light w-50 p-3 fs-5"
                           data-bs-dismiss="modal"
                           aria-label="Close"
+                          style={{
+                            borderRadius: "12px",
+                            boxSizing: "border-box",
+                          }}
                         >
                           Cancel
                         </button>
@@ -72,7 +82,13 @@ const DeleteModal = ({ handleDelete, id }: Props) => {
                       <div className="col-lg-6 col-md-6 col-sm-12 text-start">
                         <button
                           onClick={() => handleDelete(id)}
-                          className="btn btn-danger w-50 p-3 fs-5"
+                          className="btn shadow border-0 text-white w-50 p-3 fs-5"
+                          style={{
+                            backgroundImage:
+                              "linear-gradient(to bottom, #DF1130 ,#A50223)",
+                            borderRadius: "12px",
+                            boxSizing: "border-box",
+                          }}
                           data-bs-dismiss="modal"
                           aria-label="Close"
                         >

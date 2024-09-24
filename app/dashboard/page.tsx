@@ -2,7 +2,7 @@ import Dashboard from "./components/Dashboard";
 
 const DashboardPage = () => {
   return (
-    <div>
+    <div className="p-3">
       <Dashboard />
     </div>
   );

@@ -10,6 +10,7 @@ import user from "../../public/icons/user.svg";
 import group from "../../public/icons/group.svg";
 import driver from "../../public/icons/driver.svg";
 import truck from "../../public/icons/truck.svg";
+import superGroup from "../../public/icons/superGroup.svg";
 import { useDispatch } from "react-redux";
 import { setContent } from "../features/content/contentSlice";
 import { useRouter } from "next/navigation";
@@ -31,6 +32,18 @@ const GISMenu = () => {
       backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
     },
     {
+      name: "DashboardTwo",
+      link: "/dashboardTwo",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #DA5569 , #E73A80)",
+    },
+    {
+      name: "DashboardThree",
+      link: "/dashboardThree",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
+    },
+    {
       name: "Sectors",
       link: "/sectors",
       icon: clock2,
@@ -41,6 +54,12 @@ const GISMenu = () => {
       link: "/projects",
       icon: qr,
       backgroundColor: "linear-gradient(to bottom right, #8B5ABF , #5345DF)",
+    },
+    {
+      name: "Super Group",
+      link: "/superGroup",
+      icon: superGroup,
+      backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
     },
     {
       name: "Attribute Groups",
@@ -70,6 +89,12 @@ const GISMenu = () => {
       name: "Driver",
       link: "/driver",
       icon: driver,
+      backgroundColor: "linear-gradient(to bottom right, #28A897 , #E73A80)",
+    },
+    {
+      name: "SMDP Sync",
+      link: "/smdpSync",
+      icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #28A897 , #E73A80)",
     },
   ];

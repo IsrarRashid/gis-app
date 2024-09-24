@@ -162,7 +162,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               className={`color-dark-blue cursor-pointer ${inter.className}`}
               style={{
                 border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".9rem",
+                fontSize: ".85rem",
               }}
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
@@ -189,7 +189,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 className={dmSans.className}
                 style={{
                   border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".9rem",
+                  fontSize: ".85rem",
                 }}
                 key={d.id}
               >
@@ -220,29 +220,33 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           </tbody>
         </table>
         <div className="row d-flex mb-3">
-          <div className="col-lg-6 col-md-6 col-sm-12 mt-2">
+          <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
             {/* Display the current range and total */}
             {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
             {data.length}
           </div>
-          <div className="col-lg-6 col-md-6 col-sm-12">
+          <div className="col-lg-6 col-md-9 col">
             <div className="row d-flex justify-content-end">
-              <div className="col-lg-2 col-md-1 col-sm-12"></div>
-              <div className="col-lg-5 col-md-6 col-sm-12 text-end">
+              <div className="col-lg-2 col-md-1 col"></div>
+              <div className="col-lg-5 col-md-4 col text-end">
                 <label htmlFor="rowPerPage" className="form-label mt-2">
                   Rows Per Page:
                 </label>
               </div>
-              <div className="col-lg-1 col-md-6 col-sm-12 text-start p-0">
+              <div className="col-lg-1 col-md-3 col text-start p-0">
                 <select
-                  className="form-select form-select-sm rounded bg-color-sea-green text-white shadow"
-                  style={{ color: "#fff" }}
+                  className="rounded bg-color-sea-green text-white shadow p-2"
+                  style={{
+                    color: "#fff",
+                    border: "1px solid #445E84",
+                    outline: "none",
+                  }}
                   aria-label="Rows per page"
                   name="rowPerPage"
                   value={rows}
                   onChange={handleRowsPerPage}
                 >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                  {[10, 20, 30, 40, 50].map((num) => (
                     <option key={num} value={num}>
                       &nbsp;{num}
                     </option>
@@ -254,6 +258,9 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   className="btn bg-color-sea-green shadow me-2"
                   onClick={handlePreviousPage}
                   disabled={currentPage === 1}
+                  style={{
+                    border: "1px solid #445E84",
+                  }}
                 >
                   <Image src={arrowLeft} alt="arrow left" />
                 </button>
@@ -261,6 +268,9 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   className="btn bg-color-sea-green shadow"
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages}
+                  style={{
+                    border: "1px solid #445E84",
+                  }}
                 >
                   <Image src={arrowRight} alt="arrow right" />
                 </button>

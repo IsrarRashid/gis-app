@@ -29,6 +29,7 @@ interface Form {
   evaluationFormula: string;
   weightage: number;
   remarks: string;
+  parentId: number;
 }
 
 interface Option {
@@ -72,7 +73,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
   const [formData, setFormData] = useState<Form>({
     attributeId: 0,
-    attributeDataType: "",
+    attributeDataType: "string",
     multiselect: 0,
     label: "",
     validationRegx: "",
@@ -84,7 +85,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     placeholder: "",
-    attributeType: "",
+    attributeType: "textfield",
     unit: "",
     errorMessage: "",
     verificationType: "",
@@ -93,6 +94,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     evaluationFormula: "",
     weightage: 0,
     remarks: "",
+    parentId: 0,
   });
 
   const [optionsData, setOptionsData] = useState<Option[]>([
@@ -151,6 +153,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           evaluationFormula: itemData.evaluationFormula,
           weightage: itemData.weightage,
           remarks: itemData.remarks,
+          parentId: itemData.parentId,
         });
         setOptionsData(
           itemData.options || [
@@ -266,20 +269,46 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         notifyError(errorMessages.labelError);
         break;
 
-      case !formData.attributeDataType:
-        notifyError(errorMessages.attributeDataTypeError);
-        break;
-
       default:
         try {
           console.log("data:", { attribute: formData, options: optionsData });
+
+          const modifiedFormData = {
+            ...formData,
+            required: isRequired ? 1 : 0,
+            multiselect: isMultiSelect ? 1 : 0,
+            status: isStatus ? 1 : 0,
+            hidden: isHidden ? 1 : 0,
+            attributeCode:
+              formData.attributeCode === "" ? null : formData.attributeCode, // Change 0 to null
+            validationRegx:
+              formData.validationRegx === "" ? null : formData.validationRegx, // Change 0 to null
+            placeholder:
+              formData.placeholder === "" ? null : formData.placeholder, // Change 0 to null
+            attributeType:
+              formData.attributeType === "" ? null : formData.attributeType, // Change 0 to null
+            unit: formData.unit === "" ? null : formData.unit, // Change 0 to null
+            verificationType:
+              formData.verificationType === ""
+                ? null
+                : formData.verificationType, // Change 0 to null
+            evaluationFormula:
+              formData.evaluationFormula === ""
+                ? null
+                : formData.evaluationFormula, // Change 0 to null
+            errorMessage:
+              formData.errorMessage === "" ? null : formData.errorMessage, // Change 0 to null
+            remarks: formData.remarks === "" ? null : formData.remarks, // Change 0 to null
+            parentId: formData.parentId === 0 ? null : formData.parentId, // Change 0 to null
+          };
+
           // send a POST request to the server to add the product
           if (method === "POST") {
             const response = await apiClient({
               method: method,
               url: api,
               data: {
-                attribute: formData,
+                attribute: modifiedFormData,
                 options:
                   formData.attributeType === "radio" ||
                   formData.attributeType === "select" ||
@@ -292,7 +321,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             handleClose();
             setFormData({
               attributeId: 0,
-              attributeDataType: "",
+              attributeDataType: "string",
               multiselect: 0,
               label: "",
               validationRegx: "",
@@ -304,7 +333,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
               placeholder: "",
-              attributeType: "",
+              attributeType: "textfield",
               unit: "",
               errorMessage: "",
               verificationType: "",
@@ -313,14 +342,39 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               evaluationFormula: "",
               weightage: 0,
               remarks: "",
+              parentId: 0,
             });
+            setOptionsData([
+              {
+                attributeId: 0,
+                value: "",
+                sortId: 0,
+                isActive: 0,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                label: "",
+              },
+            ]);
+            setActiveStates({});
+            setRequired(false);
+            setMultiSelect(false);
+            setStatus(false);
+            setHidden(false);
             console.log("Submit Response:", response.data);
             setRefresh((prev) => !prev);
           } else {
             const response = await apiClient({
               method: method,
               url: `${api}/${id}`,
-              data: formData,
+              data: {
+                attribute: modifiedFormData,
+                options:
+                  formData.attributeType === "radio" ||
+                  formData.attributeType === "select" ||
+                  formData.attributeType === "checkbox"
+                    ? optionsData
+                    : null,
+              },
             });
             console.log("response", response);
             setRefresh((prev) => !prev);
@@ -370,15 +424,20 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           style={{ background: "rgba(156,255,255,0)" }}
         >
           <div
-            className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
+            className="container-fluid pt-3 pb-3 ps-4 pe-4"
             style={{
-              backgroundImage: "linear-gradient(to left, #969696 ,#d9d9d9)",
-              borderRadius: "20px",
+              backgroundImage:
+                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
+              borderRadius: "15px",
+              border: "1.7px solid rgba(255, 255, 255, 0.6)",
             }}
           >
             <div className="row flex-column justify-content-center mb-4">
               <div className="col-lg-12">
-                <p className="text-center text-white mt-4 fw-bold">
+                <p
+                  className="text-center text-white mt-4"
+                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
+                >
                   {method === "POST" ? "ADD ATTRIBUTE" : "UPDATE ATTRIBUTE"}
                 </p>
               </div>
@@ -393,7 +452,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="label"
                       name="label"
                       value={formData.label}
@@ -410,7 +469,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="placeholder"
                       name="placeholder"
                       value={formData.placeholder}
@@ -426,15 +485,16 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Attribute DataType
                     </label>
                     <select
-                      className="form-select form-select-sm"
+                      className="form-select form-select-sm color-light-dark bg-silver"
                       aria-label="Default select example"
                       name="attributeDataType"
                       onChange={handleChange}
                       value={formData.attributeDataType}
                     >
-                      <option value="">None</option>
+                      <option value="string" selected>
+                        String
+                      </option>
                       <option value="number">Number</option>
-                      <option value="string">String</option>
                       <option value="date">Date</option>
                     </select>
                   </div>
@@ -448,14 +508,14 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Attribute Type
                     </label>
                     <select
-                      className="form-select form-select-sm"
+                      className="form-select form-select-sm color-light-dark bg-silver"
                       aria-label="Default select example"
                       name="attributeType"
                       onChange={handleChange}
                       value={formData.attributeType}
                     >
                       <option value="">None</option>
-                      <option value="text">Text</option>
+                      <option value="textfield">TextField</option>
                       <option value="select">Select</option>
                       <option value="file">File</option>
                       <option value="radio">Radio</option>
@@ -471,8 +531,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Unit
                     </label>
                     <input
-                      type="string"
-                      className="form-control form-control-sm"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="unit"
                       name="unit"
                       value={formData.unit}
@@ -489,7 +549,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="validationRegx"
                       name="validationRegx"
                       value={formData.validationRegx}
@@ -505,7 +565,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="number"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="min"
                       name="min"
                       value={formData.min}
@@ -519,7 +579,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="number"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="max"
                       name="max"
                       value={formData.max}
@@ -536,7 +596,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="errorMessage"
                       name="errorMessage"
                       value={formData.errorMessage}
@@ -552,7 +612,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="number"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="sortId"
                       name="sortId"
                       value={formData.sortId}
@@ -568,7 +628,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Verification Type
                     </label>
                     <select
-                      className="form-select form-select-sm"
+                      className="form-select form-select-sm color-light-dark bg-silver"
                       aria-label="Default select example"
                       name="verificationType"
                       onChange={handleChange}
@@ -588,7 +648,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="attributeCode"
                       name="attributeCode"
                       value={formData.attributeCode}
@@ -607,7 +667,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="number"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="weightage"
                       name="weightage"
                       value={formData.weightage}
@@ -621,7 +681,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="remarks"
                       name="remarks"
                       value={formData.remarks}
@@ -643,7 +703,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         </label>
                         <input
                           type="text"
-                          className="form-control form-control-sm"
+                          className="form-control form-control-sm color-light-dark bg-silver"
                           id="evaluationFormula"
                           name="evaluationFormula"
                           value={formData.evaluationFormula}
@@ -659,7 +719,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           Search Attribute Codes
                         </label>
                         <select
-                          className="form-select form-select-sm"
+                          className="form-select form-select-sm color-light-dark bg-silver"
                           aria-label="Default select example"
                           name="searchAttributeCodes"
                           onChange={handleDatalistSelect}
@@ -754,11 +814,16 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   <>
                     <div className="row d-flex justify-content-between mb-3">
                       <div className="col-lg-10 col-md-6 col-sm-4 my-auto">
-                        <h5 className="m-0">Attribute Options</h5>
+                        <h5 className="m-0 text-white">Attribute Options</h5>
                       </div>
                       <div className="col-lg-2 col-md-6 col-sm-4">
                         <button
-                          className="btn bg-color-sea-green text-white"
+                          className="btn text-white"
+                          style={{
+                            backgroundImage:
+                              "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
+                            borderRadius: "12px",
+                          }}
                           type="button"
                           onClick={addNewOption}
                         >
@@ -781,7 +846,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </label>
                           <input
                             type="text"
-                            className="form-control form-control-sm"
+                            className="form-control form-control-sm color-light-dark bg-silver"
                             id={`value-${index}`}
                             name="value"
                             value={option.value}
@@ -798,7 +863,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </label>
                           <input
                             type="text"
-                            className="form-control form-control-sm"
+                            className="form-control form-control-sm color-light-dark bg-silver"
                             id={`label-${index}`}
                             name="label"
                             value={option.label}
@@ -815,7 +880,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </label>
                           <input
                             type="number"
-                            className="form-control form-control-sm"
+                            className="form-control form-control-sm color-light-dark bg-silver"
                             id="sortId"
                             name="sortId"
                             value={option.sortId}
@@ -858,7 +923,12 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                 )}
                 <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
                   <button
-                    className="btn bg-color-sea-green text-white w-100"
+                    className="btn text-white w-100 border-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
+                      borderRadius: "12px",
+                    }}
                     type="submit"
                   >
                     Done

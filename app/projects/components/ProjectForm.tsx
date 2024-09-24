@@ -131,15 +131,20 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
           style={{ background: "rgba(156,255,255,0)" }}
         >
           <div
-            className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
+            className="container-fluid pt-3 pb-3 ps-4 pe-4"
             style={{
-              backgroundImage: "linear-gradient(to left, #969696 ,#d9d9d9)",
-              borderRadius: "20px",
+              backgroundImage:
+                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
+              borderRadius: "15px",
+              border: "1.7px solid rgba(255, 255, 255, 0.6)",
             }}
           >
             <div className="row flex-column justify-content-center mb-4">
               <div className="col-lg-12">
-                <p className="text-center text-white mt-4 fw-bold">
+                <p
+                  className="text-center text-white mt-4"
+                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
+                >
                   {method === "POST" ? "ADD PROJECT" : "UPDATE PROJECT"}
                 </p>
               </div>
@@ -152,7 +157,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("name")}
                     id="name"
                     type="text"
-                    className="form-control form-control-sm"
+                    className="form-control form-control-sm color-light-dark bg-silver"
                     placeholder="Enter Project Name"
                   />
                   {errors.name && (
@@ -168,7 +173,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("address")}
                       id="address"
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       placeholder="Enter Address"
                     />
                   </div>
@@ -180,7 +185,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("city")}
                       id="city"
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       placeholder="Enter City Name"
                     />
                   </div>
@@ -192,7 +197,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <select
                       {...register("status")}
-                      className="form-select form-select-sm"
+                      className="form-select form-select-sm color-light-dark bg-silver"
                     >
                       <option value="">Select</option>
                       <option value="active">Active</option>
@@ -206,7 +211,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <select
                       {...register("sectorId", { valueAsNumber: true })}
-                      className="form-select form-select-sm"
+                      className="form-select form-select-sm color-light-dark bg-silver"
                     >
                       <option value="">None</option>
                       {sectorsData?.map((d) => (
@@ -233,13 +238,18 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("locationCoordinates")}
                     id="locationCoordinates"
                     type="text"
-                    className="form-control form-control-sm"
+                    className="form-control form-control-sm color-light-dark bg-silver"
                     placeholder="Enter Location Coordinates"
                   />
                 </div>
                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
                   <button
-                    className="btn bg-color-sea-green text-white w-100"
+                    className="btn text-white w-100 border-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
+                      borderRadius: "12px",
+                    }}
                     type="submit"
                   >
                     Done

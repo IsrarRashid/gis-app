@@ -4,24 +4,29 @@ import DownloadFile from "../projects/components/DownloadFile";
 import downloadLineBlack from "../../public/icons/downloadLineBlack.svg";
 import Image from "next/image";
 
-const DownloadPDFBtn = () => {
+const DownloadTextPDFBtn = () => {
   const componentRef = useRef<HTMLDivElement | null>(null);
 
   const downloadPdf = () => {
     const input = componentRef.current;
 
     if (input) {
+      const clonedElement = input.cloneNode(true) as HTMLElement; // Clone the component
+      document.body.appendChild(clonedElement); // Temporarily append to DOM for rendering
+
       const pdf = new jsPDF("p", "mm", "a4");
 
-      pdf.html(input, {
+      pdf.html(clonedElement, {
         callback: function (pdf) {
-          // Save the generated PDF
           pdf.save("download.pdf");
+
+          // Remove the cloned element from the DOM after PDF generation
+          document.body.removeChild(clonedElement);
         },
-        x: 10, // Left margin for the PDF
-        y: 10, // Top margin for the PDF
+        x: 10,
+        y: 10,
         html2canvas: {
-          scale: 1, // Adjust the scale factor for better quality and size adjustment
+          scale: 1, // Adjust the scale factor if needed
         },
         width: 190, // A4 page width minus margins
       });
@@ -38,17 +43,12 @@ const DownloadPDFBtn = () => {
         <Image src={downloadLineBlack} alt="download" width={20} height={20} />
       </button>
 
-      {/* Hidden component that is passed to the PDF generator */}
-      <div
-        ref={componentRef}
-        style={{
-          display: "none", // Hide the component on the screen but keep it in the DOM
-        }}
-      >
+      {/* Hidden component */}
+      <div ref={componentRef} style={{ display: "none" }}>
         <DownloadFile />
       </div>
     </>
   );
 };
 
-export default DownloadPDFBtn;
+export default DownloadTextPDFBtn;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, FormEvent } from "react";
 import { Modal } from "react-bootstrap";
-import Select, { ActionMeta, MultiValue } from "react-select";
-import { attributeGroupsToProjectMappingAPI } from "@/app/APIs";
+import Select, { ActionMeta, MultiValue, SingleValue } from "react-select";
+import { projectAPI, superGroupApi } from "@/app/APIs";
 import { ToastContainer, toast } from "react-toastify";
 import { Option } from "./ProjectsList";
 import apiClient from "@/app/services/api-client";
@@ -28,11 +28,18 @@ const GroupingForm = ({ id, options }: Props) => {
   useEffect(() => {
     const fetchSelectedOptions = async () => {
       try {
-        const response = await apiClient.get(
-          `${attributeGroupsToProjectMappingAPI}/${0}?projectId=${id}`
-        );
+        const response = await apiClient.get(`${projectAPI}/${id}`);
         const data = response.data.data; // Assuming this returns an array of group objects
-        setSelectedOptions(data); // Set the selected groups as objects
+        if (data.superGroupID) {
+          const selectedOptions = {
+            id: data.superGroupID,
+            superGroupLabel:
+              options.find((option) => option.id === data.superGroupID)
+                ?.superGroupLabel || "",
+          };
+          setSelectedOptions([selectedOptions]);
+        }
+        // setSelectedOptions(data.superGroupID); // Set the selected groups as objects
       } catch (error) {
         console.error("Error fetching selected groups:", error);
       }
@@ -42,18 +49,18 @@ const GroupingForm = ({ id, options }: Props) => {
   }, [id, refresh]);
 
   const handleSelectGroup = (
-    newValue: MultiValue<{ value: number; label: string }>,
+    newValue: SingleValue<{ value: number; label: string }>,
     actionMeta: ActionMeta<{ value: number; label: string }>
   ) => {
-    // Map selected groups to the original format (GroupOption)
-    const selectedOptions = newValue
-      ? newValue.map((option) => ({
-          id: option.value,
-          name: option.label,
-        }))
-      : [];
-
-    setSelectedOptions(selectedOptions);
+    if (newValue) {
+      const selectedOptions = {
+        id: newValue.value,
+        superGroupLabel: newValue.label,
+      };
+      setSelectedOptions([selectedOptions]);
+    } else {
+      setSelectedOptions([]);
+    }
   };
 
   const updated = "Updated Successfully";
@@ -65,20 +72,25 @@ const GroupingForm = ({ id, options }: Props) => {
   // Handle form submission
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const optionIds = selectedOptions.map((group) => group.id);
+    const optionId = selectedOptions
+      ? selectedOptions.map((group) => group.id)
+      : null;
 
-    const data = {
-      projectID: id,
-      groupsIds: optionIds,
-    };
-
+    console.log("selectedOptions", selectedOptions);
     try {
-      const response = await apiClient.post(
-        attributeGroupsToProjectMappingAPI,
-        data
-      );
+      if (selectedOptions.length > 0) {
+        const response = await apiClient.post(
+          `${superGroupApi}/AssignSuperGroupToProject?superGroupID=${optionId}&projectID=${id}`
+        );
+        console.log(response);
+      } else {
+        const response = await apiClient.post(
+          `${superGroupApi}/AssignSuperGroupToProject?projectID=${id}`
+        );
+        console.log(response);
+      }
       // notifyCreate(updated);
-      console.log(response);
+      // console.log(response);
       handleClose();
     } catch (error) {
       console.error("Error submitting data:", error);
@@ -88,13 +100,13 @@ const GroupingForm = ({ id, options }: Props) => {
   // Prepare options for react-select in {value, label} format
   const availableOptions = options.map((group) => ({
     value: group.id,
-    label: group.name,
+    label: group.superGroupLabel,
   }));
 
   // Prepare selected values for react-select in {value, label} format
   const selectedValues = selectedOptions.map((group) => ({
     value: group.id,
-    label: group.name,
+    label: group.superGroupLabel,
   }));
 
   // Custom styles for react-select options
@@ -122,7 +134,7 @@ const GroupingForm = ({ id, options }: Props) => {
           data-bs-target={`#${modalId}`}
           data-bs-toggle="tooltip"
           data-bs-placement="top"
-          title="Attribute Groups"
+          title="Super Group"
         >
           <Image src={groupGrey} alt="groupGrey" width={20} height={20} />
         </button>
@@ -142,48 +154,47 @@ const GroupingForm = ({ id, options }: Props) => {
             <div
               className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
               style={{
-                backgroundImage: "linear-gradient(to left, #969696 ,#d9d9d9)",
-                borderRadius: "20px",
+                backgroundImage:
+                  "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
+                borderRadius: "15px",
+                border: "1.7px solid rgba(255, 255, 255, 0.6)",
               }}
             >
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <div className="row d-flex">
                     <div className="col">
-                      <label htmlFor="groupSelect" className="form-label">
-                        Select Groups
-                      </label>
-                    </div>
-
-                    <div className="col text-end">
-                      <button
-                        className="btn fs-5 fw-bold"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                        onClick={handleClose}
+                      <p
+                        className="text-center text-white"
+                        style={{ fontSize: "1.5rem", fontWeight: "800" }}
                       >
-                        X
-                      </button>
+                        SELECT SUPER GROUP
+                      </p>
                     </div>
                   </div>
 
                   <Select
                     id="groupSelect"
-                    isMulti
                     options={availableOptions} // Correctly mapped options
                     value={selectedValues} // Correctly mapped selected values
                     onChange={handleSelectGroup} // Correct handler
                     styles={customStyles}
                     closeMenuOnSelect={false}
-                    placeholder="Choose Attribute Groups..."
+                    placeholder="Choose Super Group"
+                    isClearable={true}
                   />
                 </div>
-                <div className="col text-center">
+                <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
                   <button
+                    className="btn text-white w-100 border-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
+                      borderRadius: "12px",
+                    }}
                     type="submit"
-                    className="btn text-white bg-color-sea-green"
                   >
-                    Submit
+                    Done
                   </button>
                 </div>
               </form>

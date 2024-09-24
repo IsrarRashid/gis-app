@@ -118,14 +118,19 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           style={{ background: "rgba(156,255,255,0)" }}
         >
           <div
-            className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
+            className="container-fluid pt-3 pb-3 ps-4 pe-4"
             style={{
-              backgroundImage: "linear-gradient(to left, #969696 ,#d9d9d9)",
-              borderRadius: "20px",
+              backgroundImage:
+                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
+              borderRadius: "15px",
+              border: "1.7px solid rgba(255, 255, 255, 0.6)",
             }}
           >
             <div className="col-lg-12">
-              <p className="text-center text-white mt-4 fw-bold">
+              <p
+                className="text-center text-white mt-4"
+                style={{ fontSize: "1.5rem", fontWeight: "800" }}
+              >
                 {method === "POST" ? "ADD DRIVER" : "UPDATE DRIVER"}
               </p>
             </div>
@@ -139,7 +144,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("driverName")}
                     id="driverName"
                     type="text"
-                    className="form-control form-control-sm"
+                    className="form-control form-control-sm color-light-dark bg-silver"
                     placeholder="Enter Driver Name"
                   />
                   {errors.driverName && (
@@ -159,7 +164,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("mobileNumber")}
                     id="mobileNumber"
                     type="text"
-                    className="form-control form-control-sm"
+                    className="form-control form-control-sm color-light-dark bg-silver"
                     placeholder="Enter Mobile Number"
                   />
                   {errors.mobileNumber && (

@@ -158,7 +158,7 @@ const Login = () => {
                     </span>
                     <input
                       type="text"
-                      className="form-control border-0"
+                      className="form-control border-0 bg-white"
                       id="username"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}

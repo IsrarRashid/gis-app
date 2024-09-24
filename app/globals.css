@@ -18,6 +18,10 @@
   background: #4bacc6 !important;
 }
 
+.bg-color-matte-light-blue {
+  background: #c6d9f1 !important;
+}
+
 .bg-color-sea-green {
   background: #108fa8 !important;
 }
@@ -28,6 +32,13 @@
 
 .bg-white {
   background: #fff !important;
+}
+
+.color-light-dark {
+  color: #7e7e7e !important;
+}
+.bg-silver {
+  background: #d9d9d9 !important;
 }
 
 .custom-modal .modal-content {
@@ -66,27 +77,53 @@
 input[type="text"] {
   font-size: 0.8rem;
   padding: 10px;
-  color: #7e7e7e !important;
+  border-radius: 5px;
 }
 
 input[type="password"] {
   font-size: 0.8rem;
   padding: 10px;
-  color: #7e7e7e !important;
+  border-radius: 5px;
 }
 
 input[type="number"] {
   font-size: 0.8rem;
   padding: 10px;
-  color: #7e7e7e !important;
+  border-radius: 5px;
 }
 textarea {
   font-size: 0.8rem !important;
   padding: 10px !important;
-  color: #7e7e7e !important;
+  border-radius: 5px;
 }
 select {
   font-size: 0.8rem !important;
   padding: 9px !important;
-  color: #7e7e7e !important;
+  border-radius: 5px;
+}
+
+.fs14px {
+  font-size: 0.875rem;
+}
+
+.fs12px {
+  font-size: 0.75rem !important;
+}
+
+.fs13px {
+  font-size: 0.813rem;
+}
+
+.fs10px {
+  font-size: 0.625rem;
+}
+
+.fs9px {
+  font-size: 0.563rem;
+}
+
+/* dashboardThree search input */
+.dSearchInput::placeholder {
+  color: #1b2559 !important;
+  font-weight: 500 !important;
 }

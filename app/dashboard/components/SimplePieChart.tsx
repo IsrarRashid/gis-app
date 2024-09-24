@@ -1,36 +1,49 @@
+// components/SimplePie.tsx
+import dynamic from "next/dynamic";
+import { ApexOptions } from "apexcharts"; // Import ApexOptions type
 import Image from "next/image";
 import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from "recharts";
 import downArrowWhite from "../../../public/icons/downArrowWhite.svg";
 import { useEffect, useState } from "react";
 
-const data01 = [
-  { name: "Group A", value: 400 },
-  { name: "Group B", value: 300 },
-  { name: "Group C", value: 300 },
-  { name: "Group D", value: 200 },
-  { name: "Group E", value: 278 },
-  { name: "Group F", value: 189 },
-];
+// Dynamically import the ApexChart component (for SSR)
+const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-const data02 = [
-  { name: "Group A", value: 2400 },
-  { name: "Group B", value: 4567 },
-  { name: "Group C", value: 1398 },
-  { name: "Group D", value: 9800 },
-  { name: "Group E", value: 3908 },
-  { name: "Group F", value: 4800 },
-];
-
-const SimplePieChart = () => {
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    // Prevent rendering on the server side
-    return null;
-  }
+const SimplePie = () => {
+  // Define chart options and data
+  const [chartData] = useState<{
+    options: ApexOptions; // Set the type as ApexOptions
+    series: number[]; // The series type is an array of numbers
+  }>({
+    series: [20, 30, 10, 35], // Data for the pie chart
+    options: {
+      chart: {
+        type: "pie", // Correct type as per ApexOptions
+      },
+      labels: ["Allocated", "Expenditure", "Releases", "Approved Cost"], // Labels for each slice
+      colors: ["#5A3FFF", "#1ED6FF", "#ADE1FF", "#3DFFDC"],
+      stroke: {
+        show: false,
+        width: 0,
+      },
+      legend: {
+        show: false, // Keep the legend visible if needed
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+    },
+  });
 
   return (
     <div
@@ -55,32 +68,18 @@ const SimplePieChart = () => {
           </div>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={300}>
-        <PieChart width={300} height={300}>
-          <Pie
-            dataKey="value"
-            isAnimationActive={false}
-            data={data01}
-            cx="50%"
-            cy="50%"
-            outerRadius={80}
-            fill="#8884d8"
-            label
+      <div className="d-flex justify-content-center mt-2 pb-2">
+        <div className="col">
+          <ApexChart
+            options={chartData.options}
+            series={chartData.series}
+            type="pie"
+            width={380}
           />
-          <Pie
-            dataKey="value"
-            data={data02}
-            cx={500}
-            cy={200}
-            innerRadius={40}
-            outerRadius={80}
-            fill="#82ca9d"
-          />
-          <Tooltip />
-        </PieChart>
-      </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default SimplePieChart;
+export default SimplePie;

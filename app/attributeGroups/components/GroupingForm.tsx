@@ -138,30 +138,24 @@ const GroupingForm = ({ id, options }: Props) => {
             style={{ background: "rgba(156,255,255,0)" }}
           >
             <div
-              className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
+              className="container-fluid pt-3 pb-3 ps-4 pe-4"
               style={{
-                backgroundImage: "linear-gradient(to left, #969696 ,#d9d9d9)",
-                borderRadius: "20px",
+                backgroundImage:
+                  "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
+                borderRadius: "15px",
+                border: "1.7px solid rgba(255, 255, 255, 0.6)",
               }}
             >
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <div className="row d-flex">
                     <div className="col">
-                      <label htmlFor="groupSelect" className="form-label">
-                        Select Groups
-                      </label>
-                    </div>
-
-                    <div className="col text-end">
-                      <button
-                        className="btn fs-5 fw-bold"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                        onClick={handleClose}
+                      <p
+                        className="text-center text-white"
+                        style={{ fontSize: "1.5rem", fontWeight: "800" }}
                       >
-                        X
-                      </button>
+                        SELECT ATTRIBUTES
+                      </p>
                     </div>
                   </div>
 
@@ -176,12 +170,17 @@ const GroupingForm = ({ id, options }: Props) => {
                     placeholder="Choose Attributes..."
                   />
                 </div>
-                <div className="col text-center">
+                <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
                   <button
+                    className="btn text-white w-100 border-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
+                      borderRadius: "12px",
+                    }}
                     type="submit"
-                    className="btn text-white bg-color-sea-green"
                   >
-                    Submit
+                    Done
                   </button>
                 </div>
               </form>

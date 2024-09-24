@@ -20,18 +20,12 @@ const Visits = () => {
         <div className="col">
           <div className="row d-flex">
             <div className="col-8">
-              <p
-                className="text-secondary m-0 pt-1"
-                style={{ fontSize: ".9rem" }}
-              >
-                Visits of ring road Project{" "}
+              <p className="text-secondary mt-1 mb-0 fs14px fw-normal">
+                Visits of ring road <br /> Project
               </p>
             </div>
             <div className="col pt-2">
-              <p
-                className="m-0"
-                style={{ fontSize: ".6rem", color: "#E9E9E9" }}
-              >
+              <p className="m-0 text-white" style={{ fontSize: ".6rem" }}>
                 Am
               </p>
               <p className="m-0 text-white" style={{ fontSize: ".8rem" }}>

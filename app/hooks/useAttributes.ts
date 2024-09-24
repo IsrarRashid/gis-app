@@ -24,6 +24,7 @@ export interface Attribute {
   weightage: number;
   attributeCode: string;
   evaluationFormula: string;
+  parentId: number;
   options?: [
     {
       value: string;

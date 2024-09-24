@@ -166,20 +166,28 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
           style={{ background: "rgba(156,255,255,0)" }}
         >
           <div
-            className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
+            className="container-fluid pt-3 pb-3 ps-4 pe-4"
             style={{
-              backgroundImage: "linear-gradient(to left, #969696 ,#d9d9d9)",
-              borderRadius: "20px",
+              backgroundImage:
+                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
+              borderRadius: "15px",
+              border: "1.7px solid rgba(255, 255, 255, 0.6)",
             }}
           >
             <div className="row flex-column justify-content-center mb-4">
               <div className="col-lg-12">
                 {method === "POST" ? (
-                  <p className="text-center text-white mt-4 fw-bold">
+                  <p
+                    className="text-center text-white mt-4"
+                    style={{ fontSize: "1.5rem", fontWeight: "800" }}
+                  >
                     <span>ADD PROJECT</span>
                   </p>
                 ) : (
-                  <p className="text-center text-white mt-4 fw-bold">
+                  <p
+                    className="text-center text-white mt-4"
+                    style={{ fontSize: "1.5rem", fontWeight: "800" }}
+                  >
                     <span>UPDATE PROJECT</span>
                   </p>
                 )}
@@ -191,7 +199,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                   </label>
                   <input
                     type="text"
-                    className="form-control form-control-sm"
+                    className="form-control form-control-sm color-light-dark bg-silver"
                     id="name"
                     name="name"
                     value={formData.name}
@@ -206,7 +214,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="address"
                       name="address"
                       value={formData.address}
@@ -220,7 +228,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Status
                       </label>
                       <select
-                        className="form-select form-select-sm"
+                        className="form-select form-select-sm color-light-dark bg-silver"
                         aria-label="Default select example"
                         name="status"
                         onChange={handleChange}
@@ -239,7 +247,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Sector
                       </label>
                       <select
-                        className="form-select form-select-sm"
+                        className="form-select form-select-sm color-light-dark bg-silver"
                         name="sectorId"
                         onChange={handleChange}
                         value={formData.sectorId}
@@ -265,7 +273,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="form-control form-control-sm color-light-dark bg-silver"
                       id="city"
                       name="city"
                       value={formData.city}
@@ -283,7 +291,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                   </label>
                   <input
                     type="text"
-                    className="form-control form-control-sm"
+                    className="form-control form-control-sm color-light-dark bg-silver"
                     id="locationCoordinates"
                     name="locationCoordinates"
                     value={formData.locationCoordinates}
@@ -293,7 +301,12 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                 </div>
                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
                   <button
-                    className="btn bg-color-sea-green text-white w-100"
+                    className="btn text-white w-100 border-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
+                      borderRadius: "12px",
+                    }}
                     type="submit"
                   >
                     Done
