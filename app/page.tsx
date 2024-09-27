@@ -1,13 +1,7 @@
 "use client";
 import { Poppins } from "next/font/google";
-import Sectors from "./sectors/components/Sectors";
-import Projects from "./projects/components/Projects";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
-import AttributeGroups from "./attributeGroups/components/AttributeGroups";
-import Users from "./user/components/Users";
-import Attributes from "./attributes/components/Attributes";
-import Navbar from "./Navbar";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";

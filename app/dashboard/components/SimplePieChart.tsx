@@ -2,14 +2,13 @@
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts"; // Import ApexOptions type
 import Image from "next/image";
-import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from "recharts";
 import downArrowWhite from "../../../public/icons/downArrowWhite.svg";
 import { useEffect, useState } from "react";
 
 // Dynamically import the ApexChart component (for SSR)
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-const SimplePie = () => {
+const SimplePieChart = () => {
   // Define chart options and data
   const [chartData] = useState<{
     options: ApexOptions; // Set the type as ApexOptions
@@ -28,6 +27,11 @@ const SimplePie = () => {
       },
       legend: {
         show: false, // Keep the legend visible if needed
+      },
+      dataLabels: {
+        dropShadow: {
+          opacity: 0.3,
+        },
       },
       responsive: [
         {
@@ -74,7 +78,6 @@ const SimplePie = () => {
             options={chartData.options}
             series={chartData.series}
             type="pie"
-            width={380}
           />
         </div>
       </div>
@@ -82,4 +85,4 @@ const SimplePie = () => {
   );
 };
 
-export default SimplePie;
+export default SimplePieChart;

@@ -1,4 +1,3 @@
-"use client";
 import Attributes from "./components/Attributes";
 
 const AttributesPage = () => {

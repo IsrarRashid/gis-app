@@ -2,9 +2,26 @@ import Image from "next/image";
 import downloadLineBlack from "../../../public/icons/downloadLineBlack.svg";
 import blueClock from "../../../public/icons/blueClock.svg";
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const VisitDate = () => {
   const items = ["a", "a", "a", "a"];
+
+  const refContainer1 = useRef<HTMLDivElement>(null);
+  const refContent1 = useRef<HTMLDivElement>(null);
+  const [constraints1, setConstraints1] = useState({});
+
+  useEffect(() => {
+    // Wait until both container and content are rendered
+    if (refContainer1.current && refContent1.current) {
+      // Calculate the width difference between container and content
+      const containerHeight = refContainer1.current.offsetHeight;
+      const contentHeight = refContent1.current.scrollHeight;
+      // Set drag constraints dynamically based on the difference
+      setConstraints1({ bottom: 0, top: -(contentHeight - containerHeight) });
+    }
+  }, []); // Recalculate if the items change
+
   return (
     <div
       className="col shadow-sm mb-3 ms-3 me-3 pt-4 ps-4 pe-4 "
@@ -23,6 +40,7 @@ const VisitDate = () => {
       <div className="row pb-2">
         <div
           className="col"
+          ref={refContainer1}
           style={{
             height: "255px",
             whiteSpace: "nowrap",
@@ -32,8 +50,9 @@ const VisitDate = () => {
         >
           <motion.div
             className="d-flex flex-column"
+            ref={refContent1}
             drag="y" // Allow horizontal dragging
-            dragConstraints={{ top: -(items.length * 90), bottom: 0 }} // Adjust based on content size
+            dragConstraints={constraints1} // Adjust based on content size
             whileTap={{ cursor: "grabbing" }}
           >
             {items.map((d, i) => (

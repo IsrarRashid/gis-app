@@ -50,7 +50,7 @@ const FilterMenu = () => {
                       Year
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm"
                       aria-label="Default select example"
                       name="status"
                       //   onChange={handleChange}
@@ -66,7 +66,7 @@ const FilterMenu = () => {
                       Department
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm"
                       name="sectorId"
                       //   onChange={}
                       //   value={}
@@ -82,7 +82,7 @@ const FilterMenu = () => {
                       Division
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm"
                       aria-label="Default select example"
                       name="status"
                       //   onChange={handleChange}
@@ -98,7 +98,7 @@ const FilterMenu = () => {
                       District
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm"
                       name="sectorId"
                       //   onChange={}
                       //   value={}
@@ -114,7 +114,7 @@ const FilterMenu = () => {
                       Scheme
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm"
                       aria-label="Default select example"
                       name="status"
                       //   onChange={handleChange}
@@ -130,7 +130,7 @@ const FilterMenu = () => {
                       Sector
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm"
                       name="sectorId"
                       //   onChange={}
                       //   value={}
@@ -146,7 +146,7 @@ const FilterMenu = () => {
                       Region
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm"
                       aria-label="Default select example"
                       name="status"
                       //   onChange={handleChange}
@@ -162,7 +162,7 @@ const FilterMenu = () => {
                       SubType Package
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm"
                       name="sectorId"
                       //   onChange={}
                       //   value={}
@@ -178,7 +178,7 @@ const FilterMenu = () => {
                       Project Cast Type
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm"
                       aria-label="Default select example"
                       name="status"
                       //   onChange={handleChange}
@@ -194,7 +194,7 @@ const FilterMenu = () => {
                       Approval Status
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm"
                       name="sectorId"
                       //   onChange={}
                       //   value={}

@@ -10,6 +10,7 @@ import user from "../../public/icons/user.svg";
 import group from "../../public/icons/group.svg";
 import driver from "../../public/icons/driver.svg";
 import truck from "../../public/icons/truck.svg";
+import roles from "../../public/icons/roles.svg";
 import superGroup from "../../public/icons/superGroup.svg";
 import { useDispatch } from "react-redux";
 import { setContent } from "../features/content/contentSlice";
@@ -38,7 +39,12 @@ const GISMenu = () => {
       backgroundColor: "linear-gradient(to bottom right, #DA5569 , #E73A80)",
     },
     {
-      name: "DashboardThree",
+      name: (
+        <p>
+          Summary <br />
+          Dashboard
+        </p>
+      ),
       link: "/dashboardThree",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
@@ -74,10 +80,16 @@ const GISMenu = () => {
       backgroundColor: "linear-gradient(to bottom right, #F08630 , #E75161)",
     },
     {
-      name: "User",
-      link: "/user",
+      name: "Users",
+      link: "/users",
       icon: user,
       backgroundColor: "linear-gradient(to bottom right, #E8A070 , #DA4A6A)",
+    },
+    {
+      name: "Roles",
+      link: "/roles",
+      icon: roles,
+      backgroundColor: "linear-gradient(to bottom right, #e2e870 , #daaf4a)",
     },
     {
       name: "Vehicle",
@@ -133,7 +145,7 @@ const GISMenu = () => {
                   borderRadius: "20px",
                 }}
               >
-                <div className="col mb-4">
+                <div className="col">
                   <button
                     className="btn p-0"
                     data-bs-dismiss="modal"
@@ -144,12 +156,15 @@ const GISMenu = () => {
                 </div>
                 <div className="row d-flex justify-content-center p-4">
                   {data.map((d) => (
-                    <div key={d.name} className="col text-center mb-5">
+                    <div
+                      key={d.name.toString()}
+                      className="col text-center mb-3"
+                    >
                       <button
                         className="btn p-0"
                         onClick={() => {
                           router.push(d.link);
-                          handleButtonClick(d.name);
+                          handleButtonClick(d.name.toString());
                         }}
                         data-bs-dismiss="modal"
                         aria-label="Close"

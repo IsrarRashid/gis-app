@@ -282,8 +282,8 @@
 //             <div className="row flex-column justify-content-center mb-4">
 //               <div className="col-lg-12">
 //                 <p className="text-center text-white mt-4"
-                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
-                >
+//   style={{ fontSize: "1.5rem", fontWeight: "800" }}
+// >
 //                   {method === "POST" ? "ADD ATTRIBUTE" : "UPDATE ATTRIBUTE"}
 //                 </p>
 //               </div>

@@ -5,7 +5,7 @@ import arrowRight from "../../../public/icons/arrow-right.svg";
 import DeleteModal from "@/app/components/DeleteModal";
 import { superGroupApi } from "@/app/APIs";
 import Form from "./Form";
-import TableHeading from "@/app/sectors/components/TableHeading";
+import TableHeading from "@/app/components/TableHeading";
 import { sort } from "fast-sort";
 import GroupingForm from "./GroupingForm";
 import useSuperGroups, { SuperGroup } from "@/app/hooks/useSuperGroups";

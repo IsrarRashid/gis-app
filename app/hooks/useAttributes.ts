@@ -25,6 +25,7 @@ export interface Attribute {
   attributeCode: string;
   evaluationFormula: string;
   parentId: number;
+  readOnly: number;
   options?: [
     {
       value: string;

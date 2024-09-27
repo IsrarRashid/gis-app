@@ -1,5 +1,5 @@
 import Image from "next/image";
-import upDownArrow from "../../../public/icons/upDownArrow.svg";
+import upDownArrow from "../../public/icons/upDownArrow.svg";
 
 interface Props {
   name: string;

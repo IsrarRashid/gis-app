@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import ProjectsList from "./ProjectsList";
 import { useRouter } from "next/navigation";

@@ -30,6 +30,7 @@ interface Form {
   weightage: number;
   remarks: string;
   parentId: number;
+  readOnly: number;
 }
 
 interface Option {
@@ -56,6 +57,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   const [isMultiSelect, setMultiSelect] = useState(false);
   const [isStatus, setStatus] = useState(false);
   const [isHidden, setHidden] = useState(false);
+  const [isReadOnly, setReadOnly] = useState(false);
   const [activeStates, setActiveStates] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -95,6 +97,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     weightage: 0,
     remarks: "",
     parentId: 0,
+    readOnly: 0,
   });
 
   const [optionsData, setOptionsData] = useState<Option[]>([
@@ -154,6 +157,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           weightage: itemData.weightage,
           remarks: itemData.remarks,
           parentId: itemData.parentId,
+          readOnly: itemData.readOnly,
         });
         setOptionsData(
           itemData.options || [
@@ -179,6 +183,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         setMultiSelect(itemData.multiselect === 1 ? true : false);
         setStatus(itemData.status === 1 ? true : false);
         setHidden(itemData.hidden === 1 ? true : false);
+        setReadOnly(itemData.readOnly === 1 ? true : false);
       } catch (error) {
         console.log(error);
       }
@@ -248,6 +253,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       multiselect: isMultiSelect ? 1 : 0,
       status: isStatus ? 1 : 0,
       hidden: isHidden ? 1 : 0,
+      readOnly: isReadOnly ? 1 : 0,
     });
   }, [isRequired, isMultiSelect, isStatus, isHidden, formData.attributeType]);
 
@@ -279,6 +285,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             multiselect: isMultiSelect ? 1 : 0,
             status: isStatus ? 1 : 0,
             hidden: isHidden ? 1 : 0,
+            readOnly: isReadOnly ? 1 : 0,
             attributeCode:
               formData.attributeCode === "" ? null : formData.attributeCode, // Change 0 to null
             validationRegx:
@@ -343,6 +350,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               weightage: 0,
               remarks: "",
               parentId: 0,
+              readOnly: 0,
             });
             setOptionsData([
               {
@@ -366,15 +374,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             const response = await apiClient({
               method: method,
               url: `${api}/${id}`,
-              data: {
-                attribute: modifiedFormData,
-                options:
-                  formData.attributeType === "radio" ||
-                  formData.attributeType === "select" ||
-                  formData.attributeType === "checkbox"
-                    ? optionsData
-                    : null,
-              },
+              data: modifiedFormData,
             });
             console.log("response", response);
             setRefresh((prev) => !prev);
@@ -491,9 +491,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       onChange={handleChange}
                       value={formData.attributeDataType}
                     >
-                      <option value="string" selected>
-                        String
-                      </option>
+                      <option value="string">String</option>
                       <option value="number">Number</option>
                       <option value="date">Date</option>
                     </select>
@@ -653,7 +651,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       name="attributeCode"
                       value={formData.attributeCode}
                       onChange={handleChange}
-                      placeholder="Enter Verification Content"
+                      placeholder="Enter Attribute Code"
                     />
                   </div>
                 </div>
@@ -686,7 +684,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       name="remarks"
                       value={formData.remarks}
                       onChange={handleChange}
-                      placeholder="Enter Verification Content"
+                      placeholder="Enter Remarks"
                     />
                   </div>
                 </div>
@@ -804,6 +802,24 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         name="hidden"
                         checked={isHidden}
                         onChange={() => setHidden(!isHidden)}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-lg-2 col-md-4 col-sm-12 text-start">
+                    <div className="form-check form-switch">
+                      <label
+                        className="form-check-label text-white"
+                        htmlFor="readoOnly"
+                      >
+                        Is ReadOnly
+                      </label>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="readoOnly"
+                        name="readoOnly"
+                        checked={isReadOnly}
+                        onChange={() => setReadOnly(!isReadOnly)}
                       />
                     </div>
                   </div>

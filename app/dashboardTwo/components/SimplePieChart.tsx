@@ -2,14 +2,14 @@
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts"; // Import ApexOptions type
 import Image from "next/image";
-import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from "recharts";
 import downArrowWhite from "../../../public/icons/downArrowWhite.svg";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Dynamically import the ApexChart component (for SSR)
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-const SimplePie = () => {
+const SimplePieChart = () => {
+  const chartRef = useRef<HTMLDivElement>(null);
   // Define chart options and data
   const [chartData] = useState<{
     options: ApexOptions; // Set the type as ApexOptions
@@ -28,6 +28,11 @@ const SimplePie = () => {
       },
       legend: {
         show: false, // Keep the legend visible if needed
+      },
+      dataLabels: {
+        dropShadow: {
+          opacity: 0.3,
+        },
       },
       responsive: [
         {
@@ -61,19 +66,26 @@ const SimplePie = () => {
         >
           <div className="row d-flex">
             <div className="col">
-              <p className="m-0 fs-2 fw-bold">Project Brief</p>
+              <p className="m-0 fw-bold" style={{ fontSize: "1.563rem" }}>
+                Project Brief
+              </p>
             </div>
             <div className="col mt-2 text-end">
-              <button className="btn btn-sm btn-secondary">
+              <button className="btn btn-sm btn-secondary fs12px">
                 Export&nbsp;
-                <Image src={downArrowWhite} alt="downArrowWhite" />
+                <Image
+                  src={downArrowWhite}
+                  alt="downArrowWhite"
+                  width={10}
+                  height={10}
+                />
               </button>
             </div>
           </div>
         </div>
       </div>
       <div className="d-flex justify-content-center mt-4">
-        <div className="col">
+        <div className="col ps-3 pe-3">
           <ApexChart
             options={chartData.options}
             series={chartData.series}
@@ -85,4 +97,4 @@ const SimplePie = () => {
   );
 };
 
-export default SimplePie;
+export default SimplePieChart;

@@ -5,9 +5,7 @@ import Visits from "./Visits";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import ChartMenu from "./ChartMenu";
-import VerticalComposedChart from "./VerticalComposedChart";
 import SimplePieChart from "./SimplePieChart";
-import SimpleBarChart from "./SimpleBarChart";
 import downloadLineBlack from "../../../public/icons/downloadLineBlack.svg";
 import SampleTable from "./SampleTable";
 import { Lexend } from "next/font/google";
@@ -31,7 +29,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     // Set the background for the body
-    document.body.style.background = "#7ABEF0";
+    document.body.style.background = "#CFE6F8";
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundRepeat = "no-repeat";
 

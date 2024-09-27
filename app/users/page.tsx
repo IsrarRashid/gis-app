@@ -1,4 +1,3 @@
-"use client";
 import Users from "./components/Users";
 
 const UsersPage = () => {

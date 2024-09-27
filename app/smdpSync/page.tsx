@@ -1,4 +1,3 @@
-"use client";
 import SmdpSync from "./components/SmdpSync";
 
 const SmdpSyncPage = () => {

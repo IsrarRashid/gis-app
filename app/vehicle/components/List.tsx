@@ -7,7 +7,7 @@ import DeleteModal from "@/app/components/DeleteModal";
 import { vehicleApi } from "@/app/APIs";
 import Form from "./Form";
 import { sort } from "fast-sort";
-import TableHeading from "@/app/sectors/components/TableHeading";
+import TableHeading from "@/app/components/TableHeading";
 import { getFormattedDate } from "@/app/utils";
 import useVehicle, { Vehicle } from "@/app/hooks/useVehicle";
 import apiClient, { AxiosError } from "@/app/services/api-client";

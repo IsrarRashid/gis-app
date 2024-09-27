@@ -2,17 +2,17 @@
 import Image from "next/image";
 import arrowLeft from "../../../public/icons/arrow-left.svg";
 import arrowRight from "../../../public/icons/arrow-right.svg";
-import { useState } from "react";
 import DeleteModal from "@/app/components/DeleteModal";
-import { sectorAPI } from "@/app/APIs";
-import SectorForm from "./SectorForm";
-import { sort } from "fast-sort";
+import { roleAPI } from "@/app/APIs";
+import Form from "./Form";
+import useRoles, { Role } from "@/app/hooks/useRoles";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
-import useSectors, { Sector } from "@/app/hooks/useSectors";
+import { useState } from "react";
+import { sort } from "fast-sort";
+import TableHeading from "@/app/components/TableHeading";
 import { DM_Sans, Inter } from "next/font/google";
 import { getFormattedDate } from "@/app/utils";
-import TableHeading from "@/app/components/TableHeading";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -21,23 +21,39 @@ const dmSans = DM_Sans({
 
 const inter = Inter({ subsets: ["latin"] });
 
-interface SectorsTableProps {
+interface ListProps {
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
-  const { data, setData, error, setError, isLoading } = useSectors({ refresh });
+
+const List = ({ refresh, setRefresh }: ListProps) => {
+  const { data, setData, setError, error, isLoading } = useRoles({ refresh });
   const deleteMessage = "Deleted Successfully!";
+
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
 
+  const handleDelete = async (id: number) => {
+    try {
+      await apiClient.delete(`${roleAPI}/${id}`);
+      // remove the deleted item from the data array
+      setData((prevData) => prevData.filter((item) => item.id !== id));
+      notifyCreate(deleteMessage);
+      console.log("item deleted successfully");
+    } catch (err) {
+      console.error("failed to delete item", err);
+      setError((err as AxiosError).message);
+      notifyError((err as AxiosError).message);
+    }
+  };
+
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
-    key: keyof Sector;
+    key: keyof Role;
     direction: "asc" | "desc";
   } | null>(null);
 
-  const handleSort = (key: keyof Sector) => {
+  const handleSort = (key: keyof Role) => {
     let direction: "asc" | "desc" = "asc";
 
     if (
@@ -53,7 +69,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   };
 
   // for selecting rows per page
-  const [rows, setRows] = useState(11); // Default to 11 rows per page
+  const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
   const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -88,25 +104,6 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
     currentPage * rows
   );
 
-  const getParentSector = (parsentSectorId: number, data: Sector[]) => {
-    const sector = data.find((sector) => sector.id === parsentSectorId);
-    return sector?.name;
-  };
-
-  const handleDelete = async (id: number) => {
-    try {
-      await apiClient.delete(`${sectorAPI}/${id}`);
-      // remove the deleted item from the data array
-      setData((prevData) => prevData.filter((item) => item.id !== id));
-      notifyCreate(deleteMessage);
-      console.log("item deleted successfully");
-    } catch (err) {
-      console.error("failed to delete item", err);
-      setError((err as AxiosError).message);
-      notifyError((err as AxiosError).message);
-    }
-  };
-
   return (
     <>
       {isLoading && (
@@ -116,20 +113,20 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
       )}
       <div className="row d-flex p-3">
         <div className="col-lg-6 col-md-6 col-sm-12">
-          <h4 className="fw-bold">Sectors</h4>
+          <h4 className="fw-bold">Roles</h4>
         </div>
         <div className="col-lg-6 col-md-6 col-sm-12">
           <div className="row d-flex ">
             <div className="col d-none d-lg-block"></div>
-            <div className="col text-end mt-2">
+            <div className="col text-end">
               <span className="fw-bold">
                 {getFormattedDate(new Date(), "short")}
-              </span>
-              &nbsp;Today
+              </span>{" "}
+              Today
             </div>
             <div className="col text-end">
-              <SectorForm
-                api={sectorAPI}
+              <Form
+                api={roleAPI}
                 method="POST"
                 setRefresh={setRefresh}
                 refresh={refresh}
@@ -141,7 +138,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
       <div className="row p-3">
         <div className="col-lg-6 col-md-6 col-sm-12">
           <p>
-            Showing: <span className="fw-bold">{data?.length} Sectors</span>
+            Showing: <span className="fw-bold">{data?.length} Roles</span>
           </p>
         </div>
       </div>
@@ -161,24 +158,12 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
-                name="description"
-                handleSort={() => handleSort("description")}
+                name="normalized Name"
+                handleSort={() => handleSort("normalizedName")}
               />
               <TableHeading
-                name="parent sector"
-                handleSort={() => handleSort("parentId")}
-              />
-              <TableHeading
-                name="sort id"
-                handleSort={() => handleSort("sortId")}
-              />
-              <TableHeading
-                name="created at"
-                handleSort={() => handleSort("createdAt")}
-              />
-              <TableHeading
-                name="update at"
-                handleSort={() => handleSort("updateAt")}
+                name="concurrency Stamp"
+                handleSort={() => handleSort("concurrencyStamp")}
               />
               <th colSpan={2}></th>
             </tr>
@@ -195,23 +180,14 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
               >
                 <td>{d.id}</td>
                 <td>{d.name}</td>
-                <td>{d.description}</td>
-                <td>{getParentSector(d.parentId, data)}</td>
-                <td>{d.sortId}</td>
-                <td>
-                  {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "numeric")}
-                </td>
-                <td>
-                  {d.updateAt &&
-                    getFormattedDate(new Date(d.updateAt), "numeric")}
-                </td>
+                <td>{d.normalizedName}</td>
+                <td>{d.concurrencyStamp}</td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
                 </td>
                 <td>
-                  <SectorForm
-                    api={sectorAPI}
+                  <Form
+                    api={roleAPI}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}
@@ -287,4 +263,4 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   );
 };
 
-export default SectorsTable;
+export default List;

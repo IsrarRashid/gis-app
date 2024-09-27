@@ -7,7 +7,7 @@ import DeleteModal from "@/app/components/DeleteModal";
 import { attributesAPI } from "@/app/APIs";
 import Form from "./Form";
 import { sort } from "fast-sort";
-import TableHeading from "@/app/sectors/components/TableHeading";
+import TableHeading from "@/app/components/TableHeading";
 import useAttributes, { Attribute } from "../../hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
@@ -175,6 +175,10 @@ const List = ({ refresh, setRefresh }: Props) => {
                 name="validation regx"
                 handleSort={() => handleSort("validationRegx")}
               />
+              <TableHeading
+                name="attribute code"
+                handleSort={() => handleSort("attributeCode")}
+              />
               <TableHeading name="min" handleSort={() => handleSort("min")} />
               <TableHeading name="max" handleSort={() => handleSort("max")} />
               <TableHeading
@@ -248,6 +252,7 @@ const List = ({ refresh, setRefresh }: Props) => {
                 <td>{d.multiselect}</td>
                 <td>{d.label}</td>
                 <td>{d.validationRegx}</td>
+                <td>{d.attributeCode}</td>
                 <td>{d.min}</td>
                 <td>{d.max}</td>
                 <td>{d.required}</td>

@@ -10,3 +10,4 @@ export const vehicleApi = `/api/Vehicle`;
 export const driverApi = `/api/Driver`;
 export const smdpSyncApi = `/api/Smdp/sync`;
 export const superGroupApi = `/api/SuperGroup`;
+export const roleAPI = `/api/Roles`;

@@ -207,7 +207,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 text-start">
                     <label htmlFor="sectorId" className="form-label text-white">
-                      Sector ID
+                      Sector
                     </label>
                     <select
                       {...register("sectorId", { valueAsNumber: true })}

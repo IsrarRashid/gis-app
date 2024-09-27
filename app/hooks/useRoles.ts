@@ -1,0 +1,18 @@
+import { roleAPI } from "../APIs";
+import useData from "./useData";
+
+export interface Role {
+  id: number;
+  name: string;
+  normalizedName: string;
+  concurrencyStamp: string;
+}
+
+interface Props {
+  refresh: boolean;
+}
+
+const useRoles = ({ refresh }: Props) =>
+  useData<Role>({ refresh, endpoint: roleAPI });
+
+export default useRoles;

@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import DeleteModal from "@/app/components/DeleteModal";
 import { projectAPI } from "@/app/APIs";
 import { sort } from "fast-sort";
-import TableHeading from "@/app/sectors/components/TableHeading";
+import TableHeading from "@/app/components/TableHeading";
 import { getFormattedDate } from "@/app/utils";
 import useProjects, { Project } from "@/app/hooks/useProjects";
 import apiClient, { AxiosError } from "@/app/services/api-client";

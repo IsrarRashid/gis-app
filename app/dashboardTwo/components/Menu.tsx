@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 
 const Menu = () => {
   return (
-    <div className="row d-flex justify-content-center">
+    <div className="row d-flex justify-content-start ms-1">
       <div
         className="me-2 mb-2 p-0"
         style={{

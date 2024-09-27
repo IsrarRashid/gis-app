@@ -2,12 +2,9 @@
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts"; // Import ApexOptions type
 import Image from "next/image";
-import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from "recharts";
-import downArrowWhite from "../../../public/icons/downArrowWhite.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import seaGreenCircle from "../../../public/icons/seaGreenCircle.svg";
 import blueCircle2 from "../../../public/icons/blueCircle2.svg";
-import redCircle2 from "../../../public/icons/redCircle2.svg";
 
 // Dynamically import the ApexChart component (for SSR)
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -70,7 +67,7 @@ const SimplePieChart2 = ({ title }: Props) => {
             <div className="col">
               <p className="m-0 fw-bold mt-1 fs-5">{title}</p>
             </div>
-            <div className="col-lg-2 col-md-1 col me-3">
+            <div className="col-lg-2 col-md-2 col me-3">
               <select
                 className="fw-bold shadow-sm"
                 style={{
@@ -82,9 +79,7 @@ const SimplePieChart2 = ({ title }: Props) => {
                 aria-label="Rows per page"
                 name="rowPerPage"
               >
-                <option value="day" selected>
-                  Daily
-                </option>
+                <option value="day">Daily</option>
                 <option value="month">Monthly</option>
                 <option value="year">Yearly</option>
               </select>

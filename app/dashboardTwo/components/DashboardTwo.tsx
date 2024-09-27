@@ -6,14 +6,13 @@ import Menu from "./Menu";
 import Visits from "./Visits";
 import { useDispatch } from "react-redux";
 import { setContent } from "@/app/features/content/contentSlice";
-import SimplePieChart from "./SimplePieChart";
-import SimpleBarChart from "./SimpleBarChart";
 import VehicleTracking from "./VehicleTracking";
 import StaffTracking from "./StaffTracking";
 import Reports from "./Reports";
 import VisitDate from "./VisitDate";
 import BottomArea from "./BottomArea";
 import DistributedColumnChart from "./DistributedColumnChart";
+import SimplePieChart from "./SimplePieChart";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -23,14 +22,13 @@ const lexend = Lexend({
 const DashboardTwo = () => {
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
-
   const handleButtonClick = (content: string) => {
     dispatch(setContent(content));
   };
 
   useEffect(() => {
     // Set the background for the body
-    document.body.style.background = "#7ABEF0";
+    document.body.style.background = "#CFE6F8";
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundRepeat = "no-repeat";
 
@@ -52,7 +50,7 @@ const DashboardTwo = () => {
         borderRadius: "10px",
       }}
     >
-      <div className="row mb-3">
+      <div className="row mb-3 ms-2 me-2">
         <div className="col-lg-9 col-md-6 col">
           <Menu />
         </div>
@@ -60,17 +58,19 @@ const DashboardTwo = () => {
           <Visits />
         </div>
       </div>
-      <div className="row mb-3">
-        <div className="col-lg-5 col-md-6 col">
+      <div className="row mb-3 ms-2 me-2">
+        <div className="col-lg-5 col-md-12 col">
           <SimplePieChart />
         </div>
-        <div className="col-lg-7 col-md-6 col">
-          {/* <SimpleBarChart /> */}
+        <div className="col-lg-7 col-md-12 col">
           <DistributedColumnChart />
         </div>
       </div>
       <VehicleTracking />
-      <div className="row mb-3">
+      <div
+        className="row mb-3"
+        style={{ marginLeft: "0px", marginRight: "0px" }}
+      >
         <div className="col-lg-6 col-md-12 col">
           <StaffTracking />
         </div>

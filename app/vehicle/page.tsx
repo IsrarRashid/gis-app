@@ -1,4 +1,3 @@
-"use client";
 import Vehicle from "./components/Vehicle";
 
 const VehiclePage = () => {

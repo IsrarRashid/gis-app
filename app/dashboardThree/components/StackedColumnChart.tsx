@@ -84,7 +84,7 @@ const StackedColumnChart = () => {
         <div className="col pb-2">
           <div className="row d-flex">
             <div className="col-lg-6 col-md-12 col-sm-12">
-              <p className="m-0 fw-bold fs-4">Grouped Stacked Chart</p>
+              <p className="m-0 fw-bold fs-4">Schedule Performance Index</p>
             </div>
             <div className="col-lg-6 col-md-12 col-sm-12">
               <div className="row d-flex justify-content-end mt-2">

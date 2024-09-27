@@ -27,6 +27,9 @@ const DistributedColumnChart = () => {
       chart: {
         type: "bar",
         height: 350,
+        toolbar: {
+          show: false, // Disable the toolbar, which includes the download button
+        },
       },
       plotOptions: {
         bar: {
@@ -117,17 +120,34 @@ const DistributedColumnChart = () => {
           style={{ borderBottom: "1px dashed #97ABBD" }}
         >
           <div className="row d-flex">
-            <div className="col">
-              <p className="m-0 fs-2 fw-bold">Scope</p>
+            <div className="col-lg-9 col-md-8 col-sm-12">
+              <p className="m-0 fw-bold" style={{ fontSize: "1.563rem" }}>
+                Scope
+              </p>
             </div>
-            <div className="col">
-              <div className="row fs-5 mt-2 d-flex">
-                <div className="col">
-                  <Image src={greenCircle} alt="greenCircle" />
+            <div className="col-lg-3 col-md-4 col-sm-12">
+              <div
+                className="row mt-2 d-flex justify-content-end"
+                style={{ fontSize: "1.313rem" }}
+              >
+                <div className="col-lg-5 col-md-5 col-sm-12 fw-bold">
+                  <Image
+                    src={greenCircle}
+                    alt="greenCircle"
+                    width={14}
+                    height={14}
+                    style={{ marginBottom: "4px" }}
+                  />
                   &nbsp;KM
                 </div>
-                <div className="col">
-                  <Image src={blueCircle} alt="blueCircle" />
+                <div className="col-lg-6 col-md-6 col-sm-12 fw-bold">
+                  <Image
+                    src={blueCircle}
+                    alt="blueCircle"
+                    width={14}
+                    height={14}
+                    style={{ marginBottom: "4px" }}
+                  />
                   &nbsp;NOS
                 </div>
               </div>
@@ -140,6 +160,7 @@ const DistributedColumnChart = () => {
           options={chartData.options}
           series={chartData.series}
           type="bar"
+          height={445}
         />
       </div>
     </div>

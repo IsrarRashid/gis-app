@@ -7,8 +7,6 @@ import { useDispatch } from "react-redux";
 import Image from "next/image";
 import calendarBlack from "../../../public/icons/calendarBlack.svg";
 import Select from "react-select";
-import SimpleBarChart from "./SimpleBarChart";
-import SimplePieChart from "./SimplePieChart";
 import boxes from "../../../public/icons/boxes.svg";
 import tick from "../../../public/icons/tick.svg";
 import questionMark from "../../../public/icons/questionMark.svg";
@@ -27,9 +25,9 @@ import cow from "../../../public/icons/cow.svg";
 import calendarCircle from "../../../public/icons/calendarCircle.svg";
 import population from "../../../public/icons/population.svg";
 import heartRate from "../../../public/icons/heartRate.svg";
-import DistributedColumnChart from "./DistributedColumnChart";
 import SimplePieChart2 from "./SimplePieChart2";
 import StackedColumnChart from "./StackedColumnChart";
+import SimplePieChart from "./SimplePieChart";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -70,7 +68,7 @@ const DashboardThree = () => {
 
   useEffect(() => {
     // Set the background for the body
-    document.body.style.background = "#7ABEF0";
+    document.body.style.background = "#CFE6F8";
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundRepeat = "no-repeat";
 
@@ -134,55 +132,47 @@ const DashboardThree = () => {
       <div className="row mb-3">
         <div className="col-lg-7 col-md-12 col">
           <Menu />
-          <div className="row d-flex justify-content-between mt-3 mb-3 ms-3 me-3 ">
-            <div
-              className="col-lg-4 col-md-9 col-sm-12 pt-2 shadow-sm text-center"
-              style={{
-                background: "#C6D9F1",
-                borderRadius: "10px",
-                whiteSpace: "nowrap",
-              }}
-            >
-              <p
-                className="m-0 fs14px"
-                style={{
-                  color: "#64748B",
-                  fontWeight: "400",
-                }}
-              >
-                <Image
-                  src={calendarBlack}
-                  alt="calendarBlack"
-                  style={{ marginTop: "-4px" }}
-                />
-                &nbsp;Jan 12, 2024 - Sep 4, 2024
-              </p>
-            </div>
-            <div
-              className="col-lg-1 col-md-1 col"
-              style={{ marginRight: "40px" }}
-            >
-              <select
-                className="bg-color-matte-light-blue fw-bold shadow-sm"
-                style={{
-                  color: "#64748B",
-                  outline: "none",
-                  borderRadius: "10px",
-                  border: 0,
-                }}
-                aria-label="Rows per page"
-                name="rowPerPage"
-              >
-                <option value="day" selected>
-                  Daily
-                </option>
-                <option value="month">Monthly</option>
-                <option value="year">Yearly</option>
-              </select>
+          <div className="col">
+            <div className="row d-flex justify-content-between mt-3 mb-3">
+              <div className="col" style={{}}>
+                <p
+                  className="m-0 fs14px shadow-sm p-2 text-center"
+                  style={{
+                    color: "#64748B",
+                    fontWeight: "400",
+                    background: "#C6D9F1",
+                    borderRadius: "10px",
+                    whiteSpace: "nowrap",
+                    width: "230px",
+                  }}
+                >
+                  <Image
+                    src={calendarBlack}
+                    alt="calendarBlack"
+                    style={{ marginTop: "-4px" }}
+                  />
+                  &nbsp;Jan 12, 2024 - Sep 4, 2024
+                </p>
+              </div>
+              <div className="col text-end">
+                <select
+                  className="bg-color-matte-light-blue fw-bold shadow-sm pe-0"
+                  style={{
+                    color: "#64748B",
+                    outline: "none",
+                    borderRadius: "10px",
+                    border: 0,
+                  }}
+                  aria-label="Rows per page"
+                  name="rowPerPage"
+                >
+                  <option value="day">Daily</option>
+                  <option value="month">Monthly</option>
+                  <option value="year">Yearly</option>
+                </select>
+              </div>
             </div>
           </div>
-          {/* <SimpleBarChart /> */}
-          {/* <DistributedColumnChart /> */}
           <StackedColumnChart />
         </div>
         <div className="col-lg-5 col-md-12 col">
@@ -218,7 +208,7 @@ const DashboardThree = () => {
                 Total Schemes
               </p>
             </div>
-            <div className="col-lg-1 col-md-1 col p-0">
+            <div className="col-lg-1 col-md-1 col p-0 ps-3">
               <Image src={verticalLineLong} alt="verticalLineLong" />
             </div>
           </div>

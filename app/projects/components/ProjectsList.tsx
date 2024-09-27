@@ -11,7 +11,6 @@ import DeleteModal from "@/app/components/DeleteModal";
 import { projectAPI } from "@/app/APIs";
 import ProjectForm from "./ProjectForm";
 import { sort } from "fast-sort";
-import TableHeading from "@/app/sectors/components/TableHeading";
 import { getFormattedDate } from "@/app/utils";
 import GroupingForm from "./GroupingForm";
 import useProjects, { Project } from "@/app/hooks/useProjects";
@@ -21,6 +20,7 @@ import useSectors, { Sector } from "@/app/hooks/useSectors";
 import useSuperGroups from "@/app/hooks/useSuperGroups";
 import { DM_Sans, Inter } from "next/font/google";
 import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
+import TableHeading from "@/app/components/TableHeading";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],

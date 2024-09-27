@@ -7,6 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast, { Toaster } from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import useRoles from "@/app/hooks/useRoles";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -46,6 +47,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     reset,
     formState: { errors },
   } = useForm<User>({ resolver: zodResolver(schema) });
+  const { data: rolesData } = useRoles({ refresh });
   // console.log(errors);
   const modalId = `formModal-${id}`;
   const createdMessage = "Created Successfully";
@@ -198,15 +200,19 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </div>
                     <div className="col-lg-6 col-md-6 col-sm-12 text-start">
                       <label htmlFor="roleId" className="form-label text-white">
-                        Role Id
+                        Role
                       </label>
-                      <input
+                      <select
                         {...register("roleId", { valueAsNumber: true })}
-                        id="roleId"
-                        type="number"
-                        className="form-control form-control-sm color-light-dark bg-silver"
-                        placeholder="Enter Role ID"
-                      />
+                        className="form-select form-select-sm color-light-dark bg-silver"
+                      >
+                        <option value="">None</option>
+                        {rolesData?.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            {d.name}
+                          </option>
+                        ))}
+                      </select>
                       {errors.roleId && (
                         <p className="text-danger mt-1">
                           {errors.roleId.message}

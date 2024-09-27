@@ -5,7 +5,6 @@ import arrowRight from "../../../public/icons/arrow-right.svg";
 import DeleteModal from "@/app/components/DeleteModal";
 import { attributeGroupsAPI } from "@/app/APIs";
 import Form from "./Form";
-import TableHeading from "@/app/sectors/components/TableHeading";
 import { sort } from "fast-sort";
 import GroupingForm from "./GroupingForm";
 import useAttributeGroups, {
@@ -17,6 +16,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
 import { DM_Sans, Inter } from "next/font/google";
 import { getFormattedDate } from "@/app/utils";
+import TableHeading from "@/app/components/TableHeading";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],

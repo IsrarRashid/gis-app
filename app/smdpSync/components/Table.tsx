@@ -11,7 +11,6 @@ import DeleteModal from "@/app/components/DeleteModal";
 import { smdpSyncApi } from "@/app/APIs";
 import Form from "./Form";
 import { sort } from "fast-sort";
-import TableHeading from "@/app/sectors/components/TableHeading";
 import { getFormattedDate } from "@/app/utils";
 import useProjects, { Project } from "@/app/hooks/useProjects";
 import apiClient, { AxiosError } from "@/app/services/api-client";
@@ -21,6 +20,7 @@ import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 import { DM_Sans, Inter } from "next/font/google";
 import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
 import { motion } from "framer-motion";
+import TableHeading from "@/app/components/TableHeading";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],

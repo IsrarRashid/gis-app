@@ -9,10 +9,42 @@ import profilePic5 from "../../../public/images/profilePic5.png";
 import calendar from "../../../public/icons/calendar.svg";
 import phone from "../../../public/icons/phone.svg";
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const StaffTracking = () => {
-  const items = ["a", "a", "a", "a", "a"];
-  const items2 = ["a", "a", "a", "a", "a"];
+  const items = ["a", "a", "a", "a", "a", "a"];
+  const items2 = ["a", "a", "a", "a", "a", "a"];
+
+  const refContainer1 = useRef<HTMLDivElement>(null);
+  const refContent1 = useRef<HTMLDivElement>(null);
+  const [constraints1, setConstraints1] = useState({});
+
+  useEffect(() => {
+    // Wait until both container and content are rendered
+    if (refContainer1.current && refContent1.current) {
+      // Calculate the width difference between container and content
+      const containerHeight = refContainer1.current.offsetHeight;
+      const contentHeight = refContent1.current.scrollHeight;
+      // Set drag constraints dynamically based on the difference
+      setConstraints1({ bottom: 0, top: -(contentHeight - containerHeight) });
+    }
+  }, []); // Recalculate if the items change
+
+  const refContainer2 = useRef<HTMLDivElement>(null);
+  const refContent2 = useRef<HTMLDivElement>(null);
+  const [constraints2, setConstraints2] = useState({});
+
+  useEffect(() => {
+    // Wait until both container and content are rendered
+    if (refContainer2.current && refContent2.current) {
+      // Calculate the width difference between container and content
+      const containerHeight = refContainer2.current.offsetHeight;
+      const contentHeight = refContent2.current.scrollHeight;
+      // Set drag constraints dynamically based on the difference
+      setConstraints2({ bottom: 0, top: -(contentHeight - containerHeight) });
+    }
+  }, []); // Recalculate if the items change
+
   return (
     <div
       className="col shadow-sm mb-3 ms-2 me-2"
@@ -50,6 +82,7 @@ const StaffTracking = () => {
       <div className="row d-flex p-5 pt-0 pb-2">
         <div
           className="col-lg-5 col-md-5 col-sm-12"
+          ref={refContainer1}
           style={{
             height: "255px",
             whiteSpace: "nowrap",
@@ -60,8 +93,9 @@ const StaffTracking = () => {
           <motion.div
             className="d-flex flex-column"
             drag="y" // Allow horizontal dragging
-            dragConstraints={{ top: -(items.length * 70), bottom: 0 }} // Adjust based on content size
+            dragConstraints={constraints1} // Adjust based on content size
             whileTap={{ cursor: "grabbing" }}
+            ref={refContent1}
           >
             {items.map((d, i) => (
               <div key={i} className="row d-flex bg-white rounded-3 p-2 mb-2">
@@ -88,6 +122,7 @@ const StaffTracking = () => {
         </div>
         <div
           className="col-lg-7 col-md-7 col-sm-12"
+          ref={refContainer2}
           style={{
             height: "255px",
             whiteSpace: "nowrap",
@@ -99,8 +134,9 @@ const StaffTracking = () => {
           <motion.div
             className="d-flex flex-column"
             drag="y" // Allow horizontal dragging
-            dragConstraints={{ top: -(items.length * 140), bottom: 0 }} // Adjust based on content size
+            dragConstraints={constraints2} // Adjust based on content size
             whileTap={{ cursor: "grabbing" }}
+            ref={refContent2}
           >
             {items2.map((d, i) => (
               <div

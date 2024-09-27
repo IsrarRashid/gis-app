@@ -2,9 +2,25 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import locationImage from "../../../public/images/locationImage.png";
 import uploadBlack from "../../../public/icons/uploadBlack.svg";
+import { useEffect, useRef, useState } from "react";
 
 const BottomArea = () => {
   const items = ["a", "a", "a", "a", "a"];
+
+  const refContainer = useRef<HTMLDivElement>(null);
+  const refContent = useRef<HTMLDivElement>(null);
+  const [constraints, setConstraints] = useState({});
+
+  useEffect(() => {
+    // Wait until both container and content are rendered
+    if (refContainer.current && refContent.current) {
+      // Calculate the width difference between container and content
+      const containerWidth = refContainer.current.offsetWidth;
+      const contentWidth = refContent.current.scrollWidth;
+      // Set drag constraints dynamically based on the difference
+      setConstraints({ right: 0, left: -(contentWidth - containerWidth) });
+    }
+  }, []); // Recalculate if the items change
 
   return (
     <div
@@ -13,6 +29,7 @@ const BottomArea = () => {
     >
       <div
         className="row d-flex"
+        ref={refContainer}
         style={{
           overflowX: "scroll",
           overflow: "hidden",
@@ -20,8 +37,9 @@ const BottomArea = () => {
       >
         <motion.div
           className="d-flex"
+          ref={refContent}
           drag="x" // Allow horizontal dragging
-          dragConstraints={{ left: -(items.length * 330), right: 0 }} // Adjust based on content size
+          dragConstraints={constraints} // Adjust based on content size
           whileTap={{ cursor: "grabbing" }}
         >
           {items.map((d, i) => (

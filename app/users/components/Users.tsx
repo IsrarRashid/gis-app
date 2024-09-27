@@ -4,7 +4,7 @@ import List from "./List";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
-const Attributes = () => {
+const Users = () => {
   const [refresh, setRefresh] = useState(false);
   const router = useRouter();
   const token = Cookies.get("token");
@@ -46,4 +46,4 @@ const Attributes = () => {
   );
 };
 
-export default Attributes;
+export default Users;

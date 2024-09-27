@@ -1,4 +1,3 @@
-"use client";
 import SuperGroup from "./components/SuperGroup";
 
 const SuperGroupPage = () => {

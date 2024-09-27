@@ -1,4 +1,3 @@
-"use client";
 import Sectors from "./components/Sectors";
 
 const SectorsPage = () => {

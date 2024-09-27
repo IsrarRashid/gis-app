@@ -11,15 +11,30 @@ import message from "../../../public/icons/message.svg";
 import threeCirclesVertical from "../../../public/icons/threeCirclesVertical.svg";
 import redCircle from "../../../public/icons/redCircle.svg";
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const VehicleTracking = () => {
   const items = ["a", "a", "a", "a", "a"];
+  const refContainer = useRef<HTMLDivElement>(null);
+  const refContent = useRef<HTMLDivElement>(null);
+  const [constraints, setConstraints] = useState({});
+
+  useEffect(() => {
+    // Wait until both container and content are rendered
+    if (refContainer.current && refContent.current) {
+      // Calculate the width difference between container and content
+      const containerWidth = refContainer.current.offsetWidth;
+      const contentWidth = refContent.current.scrollWidth;
+      // Set drag constraints dynamically based on the difference
+      setConstraints({ right: 0, left: -(contentWidth - containerWidth) });
+    }
+  }, []); // Recalculate if the items change
 
   return (
     <>
       <div className="row d-flex mb-3 ps-3 pe-3">
         <div className="col">
-          <h4 className="fw-bold">Vehicle Tracking</h4>
+          <h4 className="fw-bold fs-3">Vehicle Tracking</h4>
         </div>
         <div className="col text-end">
           <button
@@ -35,6 +50,7 @@ const VehicleTracking = () => {
       </div>
       <div
         className="row p-3 mt-3 mb-4 shadow-sm ms-3 me-3"
+        ref={refContainer}
         style={{
           background: "rgba(209, 209, 209, 0.4)",
           padding: "10px",
@@ -47,7 +63,8 @@ const VehicleTracking = () => {
         <motion.div
           className="d-flex"
           drag="x" // Allow horizontal dragging
-          dragConstraints={{ left: -(items.length * 480), right: 0 }} // Adjust based on content size
+          dragConstraints={constraints} // Adjust based on content size
+          ref={refContent}
           whileTap={{ cursor: "grabbing" }}
         >
           {items.map((d, i) => (

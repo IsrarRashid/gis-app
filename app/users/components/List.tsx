@@ -10,7 +10,7 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
 import { sort } from "fast-sort";
-import TableHeading from "@/app/sectors/components/TableHeading";
+import TableHeading from "@/app/components/TableHeading";
 import { DM_Sans, Inter } from "next/font/google";
 import { getFormattedDate } from "@/app/utils";
 

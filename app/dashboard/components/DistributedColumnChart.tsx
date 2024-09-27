@@ -27,6 +27,9 @@ const DistributedColumnChart = () => {
       chart: {
         type: "bar",
         height: 350,
+        toolbar: {
+          show: false, // Disable the toolbar, which includes the download button
+        },
       },
       plotOptions: {
         bar: {
@@ -117,16 +120,16 @@ const DistributedColumnChart = () => {
           style={{ borderBottom: "1px dashed #97ABBD" }}
         >
           <div className="row d-flex">
-            <div className="col">
+            <div className="col-lg-7 col-md-9 col-sm-12">
               <p className="m-0 fw-bold">Scope</p>
             </div>
-            <div className="col">
-              <div className="row d-flex">
-                <div className="col">
+            <div className="col-lg-5 col-md-3 col-sm-12">
+              <div className="row d-flex justify-content-end">
+                <div className="col-lg-5 col-md-5 col">
                   <Image src={greenCircle} alt="greenCircle" />
                   &nbsp;KM
                 </div>
-                <div className="col">
+                <div className="col-lg-6 col-md-5 col">
                   <Image src={blueCircle} alt="blueCircle" />
                   &nbsp;NOS
                 </div>
@@ -140,7 +143,7 @@ const DistributedColumnChart = () => {
           options={chartData.options}
           series={chartData.series}
           type="bar"
-          height={350}
+          height={250}
         />
       </div>
     </div>

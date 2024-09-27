@@ -1,9 +1,10 @@
+"use client";
 import { useEffect, useState } from "react";
 import List from "./List";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
-const Users = () => {
+const Roles = () => {
   const [refresh, setRefresh] = useState(false);
   const router = useRouter();
   const token = Cookies.get("token");
@@ -45,4 +46,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Roles;
