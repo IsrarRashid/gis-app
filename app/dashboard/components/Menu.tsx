@@ -264,7 +264,7 @@ const Menu = () => {
           </div>
         </div>
       </div>
-      <div className="col-lg-1 col-md-1 col p-0">
+      {/* <div className="col-lg-1 col-md-1 col p-0">
         <button
           className="btn fw-bold me-2 mb-2"
           style={{
@@ -276,7 +276,7 @@ const Menu = () => {
         >
           Add
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

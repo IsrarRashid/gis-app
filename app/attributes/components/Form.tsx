@@ -5,6 +5,7 @@ import more from "../../../public/icons/more.svg";
 import { ToastContainer, toast } from "react-toastify";
 import useAttributes from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
+import { getProjectDetailKeysAPI } from "@/app/APIs";
 
 interface Form {
   attributeId: 0;
@@ -31,6 +32,7 @@ interface Form {
   remarks: string;
   parentId: number;
   readOnly: number;
+  smdpIdentifier: string;
 }
 
 interface Option {
@@ -72,6 +74,23 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   const handleDeleteOption = (index: number) => {
     setOptionsData((prevData) => prevData.filter((_, i) => i !== index));
   };
+  const [projectDetailKeys, setProjectDetailKeys] = useState([]);
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const response = await apiClient.get(
+          `${getProjectDetailKeysAPI}?projectID=${52157}`
+        );
+        const data = response.data.data; // Assuming this returns an array of group objects
+        setProjectDetailKeys(data);
+        console.log("projectDetailKeys", projectDetailKeys);
+      } catch (error) {
+        console.error("Error fetching selected groups:", error);
+      }
+    };
+
+    fetchDetails();
+  }, []);
 
   const [formData, setFormData] = useState<Form>({
     attributeId: 0,
@@ -98,6 +117,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     remarks: "",
     parentId: 0,
     readOnly: 0,
+    smdpIdentifier: "",
   });
 
   const [optionsData, setOptionsData] = useState<Option[]>([
@@ -158,6 +178,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           remarks: itemData.remarks,
           parentId: itemData.parentId,
           readOnly: itemData.readOnly,
+          smdpIdentifier: itemData.smdpIdentifier,
         });
         setOptionsData(
           itemData.options || [
@@ -307,6 +328,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               formData.errorMessage === "" ? null : formData.errorMessage, // Change 0 to null
             remarks: formData.remarks === "" ? null : formData.remarks, // Change 0 to null
             parentId: formData.parentId === 0 ? null : formData.parentId, // Change 0 to null
+            smdpIdentifier: formData.smdpIdentifier === "" ? null : formData.smdpIdentifier, // Change 0 to null
           };
 
           // send a POST request to the server to add the product
@@ -351,6 +373,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               remarks: "",
               parentId: 0,
               readOnly: 0,
+              smdpIdentifier: "",
             });
             setOptionsData([
               {
@@ -373,8 +396,16 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           } else {
             const response = await apiClient({
               method: method,
-              url: `${api}/${id}`,
-              data: modifiedFormData,
+              url: api,
+              data: {
+                attribute: modifiedFormData,
+                options:
+                  formData.attributeType === "radio" ||
+                  formData.attributeType === "select" ||
+                  formData.attributeType === "checkbox"
+                    ? optionsData
+                    : null,
+              },
             });
             console.log("response", response);
             setRefresh((prev) => !prev);
@@ -556,53 +587,55 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     />
                   </div>
                 </div>
-                <div className="row d-flex justify-content-between mb-3">
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label htmlFor="min" className="form-label text-white">
-                      Min
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control form-control-sm color-light-dark bg-silver"
-                      id="min"
-                      name="min"
-                      value={formData.min}
-                      onChange={handleChange}
-                      placeholder="Enter Min value"
-                    />
+                {formData.attributeType === "slider" && (
+                  <div className="row d-flex justify-content-between mb-3">
+                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                      <label htmlFor="min" className="form-label text-white">
+                        Min
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control form-control-sm color-light-dark bg-silver"
+                        id="min"
+                        name="min"
+                        value={formData.min}
+                        onChange={handleChange}
+                        placeholder="Enter Min value"
+                      />
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                      <label htmlFor="max" className="form-label text-white">
+                        Max
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control form-control-sm color-light-dark bg-silver"
+                        id="max"
+                        name="max"
+                        value={formData.max}
+                        onChange={handleChange}
+                        placeholder="Enter Max value"
+                      />
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                      <label
+                        htmlFor="weightage"
+                        className="form-label text-white"
+                      >
+                        Weightage
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control form-control-sm color-light-dark bg-silver"
+                        id="weightage"
+                        name="weightage"
+                        value={formData.weightage}
+                        onChange={handleChange}
+                        placeholder="Enter Weightage"
+                      />
+                    </div>
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label htmlFor="max" className="form-label text-white">
-                      Max
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control form-control-sm color-light-dark bg-silver"
-                      id="max"
-                      name="max"
-                      value={formData.max}
-                      onChange={handleChange}
-                      placeholder="Enter Max value"
-                    />
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label
-                      htmlFor="errorMessage"
-                      className="form-label text-white"
-                    >
-                      Error Message
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
-                      id="errorMessage"
-                      name="errorMessage"
-                      value={formData.errorMessage}
-                      onChange={handleChange}
-                      placeholder="Enter Error Message"
-                    />
-                  </div>
-                </div>
+                )}
                 <div className="row d-flex justify-content-start mb-3">
                   <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
                     <label htmlFor="sortId" className="form-label text-white">
@@ -637,40 +670,43 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       <option value="video">Video</option>
                     </select>
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-lg-4 col-md-6 col-sm-12 text-start">
                     <label
-                      htmlFor="attributeCode"
+                      htmlFor="smdpIdentifier"
                       className="form-label text-white"
                     >
-                      Attribute Code
+                      Smdp Identifier
                     </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
-                      id="attributeCode"
-                      name="attributeCode"
-                      value={formData.attributeCode}
+                    <select
+                      className="form-select form-select-sm color-light-dark bg-silver"
+                      aria-label="Default select example"
+                      name="smdpIdentifier"
                       onChange={handleChange}
-                      placeholder="Enter Attribute Code"
-                    />
+                      value={formData.smdpIdentifier}
+                    >
+                      <option value="">None</option>
+                      {projectDetailKeys?.map((key) => (
+                        <option value={key}>{key}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <div className="row d-flex justify-content-start mb-3">
                   <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
                     <label
-                      htmlFor="weightage"
+                      htmlFor="errorMessage"
                       className="form-label text-white"
                     >
-                      Weightage
+                      Error Message
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       className="form-control form-control-sm color-light-dark bg-silver"
-                      id="weightage"
-                      name="weightage"
-                      value={formData.weightage}
+                      id="errorMessage"
+                      name="errorMessage"
+                      value={formData.errorMessage}
                       onChange={handleChange}
-                      placeholder="Enter Verification Content"
+                      placeholder="Enter Error Message"
                     />
                   </div>
                   <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
@@ -728,6 +764,23 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                             </option>
                           ))}
                         </select>
+                      </div>
+                      <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                        <label
+                          htmlFor="attributeCode"
+                          className="form-label text-white"
+                        >
+                          Attribute Code
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm color-light-dark bg-silver"
+                          id="attributeCode"
+                          name="attributeCode"
+                          value={formData.attributeCode}
+                          onChange={handleChange}
+                          placeholder="Enter Attribute Code"
+                        />
                       </div>
                     </>
                   )}

@@ -8,7 +8,11 @@ import arrowLeft from "../../../public/icons/arrow-left.svg";
 import arrowRight from "../../../public/icons/arrow-right.svg";
 import { useEffect, useState } from "react";
 import DeleteModal from "@/app/components/DeleteModal";
-import { projectAPI } from "@/app/APIs";
+import {
+  projectAPI,
+  smdpSyncApi,
+  smdpSyncAttributeValuesApi,
+} from "@/app/APIs";
 import ProjectForm from "./ProjectForm";
 import { sort } from "fast-sort";
 import { getFormattedDate } from "@/app/utils";
@@ -21,6 +25,10 @@ import useSuperGroups from "@/app/hooks/useSuperGroups";
 import { DM_Sans, Inter } from "next/font/google";
 import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
 import TableHeading from "@/app/components/TableHeading";
+import SyncModal from "./SyncModal";
+import SmdpSyncForm from "./SmdpSyncForm";
+import AssignUserForm from "./AssignUserForm";
+import useAuthentication from "@/app/hooks/useAuthentication";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -32,6 +40,8 @@ const inter = Inter({ subsets: ["latin"] });
 interface ListProps {
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  showData: boolean;
+  setShowData: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface Option {
@@ -39,15 +49,27 @@ export interface Option {
   superGroupLabel: string;
 }
 
-const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
+export interface UserOption {
+  id: number;
+  userName: string;
+}
+
+const ProjectsList = ({
+  refresh,
+  setRefresh,
+  showData,
+  setShowData,
+}: ListProps) => {
   const { data, setData, error, setError, isLoading } = useProjects({
     refresh,
   });
   const { data: sectorsData } = useSectors({ refresh });
   const { data: superGroups } = useSuperGroups({ refresh });
+  const { data: users } = useAuthentication({ refresh });
   const [originalData, setOriginalData] = useState<Project[]>([]); // Store the original data
 
   const deleteMessage = "Deleted Successfully!";
+  const syncMessage = "Attribute Values synced Successfully!";
 
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
@@ -76,6 +98,18 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
   useEffect(() => {
     setOriginalData(data);
   }, [refresh, data]);
+
+  const handleSync = async (id: number) => {
+    try {
+      await apiClient.post(`${smdpSyncAttributeValuesApi}?projectID=${id}`);
+      notifyCreate(syncMessage);
+      console.log("attribute values synced successfully");
+    } catch (err) {
+      console.error("failed to delete item", err);
+      setError((err as AxiosError).message);
+      notifyError((err as AxiosError).message);
+    }
+  };
 
   const handleDelete = async (id: number) => {
     try {
@@ -177,11 +211,19 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
                 Today
               </div>
               <div className="col text-end">
-                <ProjectForm
+                {/* <ProjectForm
                   api={projectAPI}
                   method="POST"
                   setRefresh={setRefresh}
                   refresh={refresh}
+                /> */}
+                <SmdpSyncForm
+                  api={smdpSyncApi}
+                  method="POST"
+                  setRefresh={setRefresh}
+                  refresh={refresh}
+                  showData={showData}
+                  setShowData={setShowData}
                 />
               </div>
             </div>
@@ -231,12 +273,12 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
-                name="sector"
-                handleSort={() => handleSort("sectorId")}
+                name="smdp Project ID"
+                handleSort={() => handleSort("smdpProjectID")}
               />
               <TableHeading
-                name="address"
-                handleSort={() => handleSort("address")}
+                name="sector"
+                handleSort={() => handleSort("sectorId")}
               />
               <TableHeading name="city" handleSort={() => handleSort("city")} />
               <TableHeading
@@ -247,6 +289,8 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
                 name="status"
                 handleSort={() => handleSort("status")}
               />
+              <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th>
+              <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th>
               <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th>
               <th colSpan={3}>
                 <div className="text-center"></div>
@@ -265,27 +309,65 @@ const ProjectsList = ({ refresh, setRefresh }: ListProps) => {
               >
                 <td>{d.id}</td>
                 <td>{d.name}</td>
+                <td>{d.smdpProjectID}</td>
                 <td>{getName(d.sectorId, sectorsData)}</td>
-                <td>{d.address}</td>
                 <td>{d.city}</td>
                 <td>{d.locationCoordinates}</td>
                 <td style={{ whiteSpace: "nowrap" }}>
-                  {d.status === "scheduled" ? (
-                    <Image src={calender} alt="calender" />
-                  ) : d.status === "not confirmed" ? (
-                    <Image src={clock} alt="clock" />
-                  ) : d.status === "cancel" ? (
-                    <Image src={cancel} alt="cancel" />
-                  ) : d.status === "completed" ? (
-                    <Image src={complete} alt="complete" />
-                  ) : d.status === "active" ? (
-                    <Image src={calender} alt="calender" />
-                  ) : d.status === "draft" ? (
-                    <Image src={clock} alt="clock" />
+                  {d.status === "scheduled" || d.status === "Scheduled" ? (
+                    <Image
+                      src={calender}
+                      style={{ marginBottom: "3px" }}
+                      alt="calender"
+                    />
+                  ) : d.status === "not confirmed" ||
+                    d.status === "Not Confirmed" ? (
+                    <Image
+                      src={clock}
+                      style={{ marginBottom: "3px" }}
+                      alt="clock"
+                    />
+                  ) : d.status === "cancel" || d.status === "Cancel" ? (
+                    <Image
+                      src={cancel}
+                      style={{ marginBottom: "3px" }}
+                      alt="cancel"
+                    />
+                  ) : d.status === "completed" || d.status === "Completed" ? (
+                    <Image
+                      src={complete}
+                      style={{ marginBottom: "3px" }}
+                      alt="complete"
+                    />
+                  ) : d.status.startsWith("approved") ||
+                    d.status.startsWith("Approved") ? (
+                    <Image
+                      src={complete}
+                      style={{ marginBottom: "3px" }}
+                      alt="complete"
+                    />
+                  ) : d.status === "active" || d.status === "Active" ? (
+                    <Image
+                      src={calender}
+                      style={{ marginBottom: "3px" }}
+                      alt="calender"
+                    />
+                  ) : d.status === "draft" || d.status === "Draft" ? (
+                    <Image
+                      src={clock}
+                      style={{ marginBottom: "3px" }}
+                      alt="clock"
+                    />
                   ) : (
                     ""
                   )}
                   &nbsp;{d.status}
+                </td>
+                <td className="text-center">
+                  <AssignUserForm id={d.id} options={users} />
+                </td>
+                <td className="text-center">
+                  <SyncModal handleSubmit={handleSync} id={d.smdpProjectID} />
                 </td>
                 <td className="text-center">
                   <GroupingForm id={d.id} options={superGroups} />

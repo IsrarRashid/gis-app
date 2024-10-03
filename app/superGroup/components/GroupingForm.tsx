@@ -15,23 +15,28 @@ interface Props {
   superGroups: SuperGroup[];
 }
 
-const GroupingForm = ({ id, options, superGroups }: Props) => {
+interface SuperGroupData {
+  data: SuperGroup[];
+}
+
+const GroupingForm = ({ id, options }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
   const modalId = `groupModal-${id}`; // Unique modal ID
   const [refresh, setRefresh] = useState(false);
   const [show, setShow] = useState(false);
-
+  const [superGroups, setSuperGroups] = useState<SuperGroup[]>();
   const handleShow = async () => {
     setShow(true);
     setRefresh(!refresh);
   };
   const handleClose = () => setShow(false);
 
-  // Fetch previously selected groups
-  useEffect(() => {
-    const fetchSelectedOptions = () => {
-      // Find the super group with the matching ID
-      const matchedSuperGroup = superGroups.find(
+  const fetchSelectedOptions = async () => {
+    try {
+      const response = await apiClient.get<SuperGroupData>(`${superGroupApi}`);
+      const data = response.data.data; // Assuming this returns an array of group objects
+      setSuperGroups(data);
+      const matchedSuperGroup = superGroups?.find(
         (superGroup) => superGroup.id === id
       );
 
@@ -45,15 +50,17 @@ const GroupingForm = ({ id, options, superGroups }: Props) => {
         const preSelectedOptions = options.filter((option) =>
           selectedGroupIds.includes(option.id)
         );
-
-        if (show) {
-          // Set the selected options
-          setSelectedOptions(preSelectedOptions);
-        }
+        setSelectedOptions(preSelectedOptions); // Set the selected groups as objects
       }
-    };
+    } catch (error) {
+      console.error("Error fetching selected groups:", error);
+    }
+  };
+
+  // Fetch previously selected groups
+  useEffect(() => {
     fetchSelectedOptions();
-  }, [id, refresh, superGroups, options, show]);
+  }, [id, refresh, show]);
 
   const handleSelectGroup = (
     newValue: MultiValue<{ value: number; label: string }>,

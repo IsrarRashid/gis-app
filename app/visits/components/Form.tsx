@@ -1,0 +1,368 @@
+import Modal from "react-bootstrap/Modal";
+import Image from "next/image";
+import { FormEvent, useState } from "react";
+import more from "../../../public/icons/more.svg";
+// import { ToastContainer, toast } from "react-toastify";
+import useDriver from "@/app/hooks/useDriver";
+import useVehicle from "@/app/hooks/useVehicle";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast, { Toaster } from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import useProjects from "@/app/hooks/useProjects";
+import useAuthentication from "@/app/hooks/useAuthentication";
+
+const schema = z.object({
+  id: z.number().optional().default(0),
+  projectId: z.number().optional().default(0),
+  assignedTo: z.number().optional().default(0),
+  status: z.string().min(1, { message: "Please add Status!" }),
+  latitude: z.string().min(1, { message: "Please add Latitude!" }),
+  longitude: z.string().min(1, { message: "Please add Longitude!" }),
+  vehicleID: z.number({ invalid_type_error: "Please add Vehicle ID!" }),
+  driverID: z.number({ invalid_type_error: "Please add Driver ID!" }),
+  fromDate: z
+    .string()
+    .optional()
+    .default(new Date().toISOString())
+    .refine((date) => !isNaN(Date.parse(date)), "Invalid date format"),
+  toDate: z
+    .string()
+    .optional()
+    .default(new Date().toISOString())
+    .refine((date) => !isNaN(Date.parse(date)), "Invalid date format"),
+  createdAt: z.string().optional().default(new Date().toISOString()),
+  updatedAt: z.string().optional().default(new Date().toISOString()),
+});
+
+type AttributeGroup = z.infer<typeof schema>;
+
+interface Props {
+  api: string;
+  method: "POST" | "PUT" | "PATCH";
+  id?: number;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  refresh: boolean;
+}
+
+const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
+  const { data: drivers, setError } = useDriver({ refresh });
+  const { data: vehicles } = useVehicle({ refresh });
+  const { data: projects } = useProjects({ refresh });
+  const { data: users } = useAuthentication({ refresh });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<AttributeGroup>({ resolver: zodResolver(schema) });
+  const [show, setShow] = useState(false);
+  const modalId = `formModal-${id}`;
+
+  const createdMessage = "Created Successfully";
+  const updatedMessage = "Visit Scheduled Successfully";
+
+  const handleClose = () => {
+    setShow(false);
+    reset();
+  };
+
+  const handleShow = async () => {
+    setShow(true);
+    if (method === "PUT") {
+      try {
+        const response = await apiClient.get(
+          `${api}/GetVisitByVisitId?VisitID=${id}`
+        );
+        const itemData = response.data.data;
+        const formatFromDate = itemData[0].fromDate.split("T")[0];
+        const formatToDate = itemData[0].toDate.split("T")[0];
+        setValue("id", itemData[0].id);
+        setValue("projectId", itemData[0].projectId);
+        setValue("assignedTo", itemData[0].assignedTo);
+        setValue("status", itemData[0].status);
+        setValue("latitude", itemData[0].latitude);
+        setValue("longitude", itemData[0].longitude);
+        setValue("vehicleID", itemData[0].vehicleID);
+        setValue("driverID", itemData[0].driverID);
+        setValue("fromDate", formatFromDate);
+        setValue("toDate", formatToDate);
+        setValue("createdAt", itemData[0].createdAt);
+        setValue("updatedAt", new Date().toISOString());
+      } catch (err) {
+        console.log((err as AxiosError).message);
+        setError((err as AxiosError).message);
+      }
+    }
+  };
+
+  const onSubmit = async (formData: AttributeGroup) => {
+    console.log("Form Data:", formData);
+    console.log("v:", formData.vehicleID);
+    console.log("d:", formData.driverID);
+    try {
+      const modifiedFormData = {
+        ...formData,
+        fromDate: `${formData.fromDate}T00:00:00`,
+        toDate: `${formData.toDate}T00:00:00`,
+      };
+
+      const response = await apiClient({
+        method: method,
+        url: api,
+        data: modifiedFormData,
+      });
+      console.log("Response:", response);
+      setRefresh((prev) => !prev);
+      toast.success(updatedMessage);
+      handleClose();
+    } catch (err) {
+      console.error("Submission error:", err);
+      toast.error((err as AxiosError).message);
+    }
+  };
+
+  return (
+    <>
+      <div>
+        <Toaster />
+      </div>
+      <button
+        type="button"
+        className={`btn shadow ${
+          method === "POST"
+            ? "text-white bg-color-sea-green"
+            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
+        }`}
+        onClick={handleShow}
+        style={{
+          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
+        }}
+      >
+        {method === "POST" ? (
+          "+ Visit"
+        ) : (
+          <Image src={more} alt="more" width={20} height={20} />
+        )}
+      </button>
+
+      <Modal
+        size="lg"
+        show={show}
+        onHide={handleClose}
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        dialogClassName="custom-modal"
+        id={modalId}
+      >
+        <Modal.Body
+          className="p-0"
+          style={{ background: "rgba(156,255,255,0)" }}
+        >
+          <div
+            className="container-fluid pt-3 pb-3 ps-4 pe-4"
+            style={{
+              backgroundImage:
+                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
+              borderRadius: "15px",
+              border: "1.7px solid rgba(255, 255, 255, 0.6)",
+            }}
+          >
+            <div className="row flex-column justify-content-center mb-4">
+              <div className="col-lg-12">
+                <p
+                  className="text-center text-white mt-4"
+                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
+                >
+                  {method === "POST" ? "VISIT SCHEDULED" : "VISIT SCHEDULED"}
+                </p>
+              </div>
+              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
+                <div className="col mb-3">
+                  <div className="row d-flex justify-content-between">
+                    <div className="col-lg-4 col-md-6 col-sm-12 text-start mb-3">
+                      <label
+                        htmlFor="projectId"
+                        className="form-label text-white"
+                      >
+                        Project ID
+                      </label>
+                      <select
+                        disabled
+                        {...register("projectId", { valueAsNumber: true })}
+                        className="form-select form-select-sm color-light-dark bg-silver"
+                      >
+                        {projects?.map((d: any) => (
+                          <option key={d.id} value={d.id}>
+                            {d.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 text-start mb-3">
+                      <label
+                        htmlFor="assignedTo"
+                        className="form-label text-white"
+                      >
+                        Assigned To
+                      </label>
+                      <select
+                        disabled
+                        {...register("assignedTo", { valueAsNumber: true })}
+                        className="form-select form-select-sm color-light-dark bg-silver"
+                      >
+                        {users?.map((d: any) => (
+                          <option key={d.id} value={d.id}>
+                            {d.userName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 text-start mb-3">
+                      <label htmlFor="status" className="form-label text-white">
+                        Status
+                      </label>
+                      <select
+                        disabled
+                        {...register("status")}
+                        className="form-select form-select-sm color-light-dark bg-silver"
+                      >
+                        <option value="">Select</option>
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="schedule">Schedule</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start mb-3">
+                      <label
+                        htmlFor="latitude"
+                        className="form-label text-white"
+                      >
+                        Latitude
+                      </label>
+                      <input
+                        disabled
+                        {...register("latitude")}
+                        id="latitude"
+                        type="text"
+                        className="form-control form-control-sm color-light-dark bg-silver"
+                        placeholder="Enter Latitude"
+                      />
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start mb-3">
+                      <label
+                        htmlFor="longitude"
+                        className="form-label text-white"
+                      >
+                        Longitude
+                      </label>
+                      <input
+                        disabled
+                        {...register("longitude")}
+                        id="longitude"
+                        type="text"
+                        className="form-control form-control-sm color-light-dark bg-silver"
+                        placeholder="Enter Longitude"
+                      />
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 text-start mb-3">
+                      <label
+                        htmlFor="vehicleID"
+                        className="form-label text-white"
+                      >
+                        Vehicle ID
+                      </label>
+                      <select
+                        {...register("vehicleID", { valueAsNumber: true })}
+                        className="form-select form-select-sm color-light-dark bg-silver"
+                      >
+                        <option value="">Select</option>
+                        {vehicles?.map((vehicle) => (
+                          <option value={vehicle.id}>
+                            {vehicle.regNumber}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.vehicleID && (
+                        <p className="text-danger mt-1">
+                          {errors.vehicleID.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 text-start mb-3">
+                      <label
+                        htmlFor="driverID"
+                        className="form-label text-white"
+                      >
+                        Driver
+                      </label>
+                      <select
+                        {...register("driverID", { valueAsNumber: true })}
+                        className="form-select form-select-sm color-light-dark bg-silver"
+                      >
+                        <option value="">Select</option>
+                        {drivers?.map((driver) => (
+                          <option value={driver.id}>{driver.driverName}</option>
+                        ))}
+                      </select>
+                      {errors.driverID && (
+                        <p className="text-danger mt-1">
+                          {errors.driverID.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start mb-3">
+                      <label
+                        htmlFor="fromDate"
+                        className="form-label text-white"
+                      >
+                        From Date
+                      </label>
+                      <input
+                        {...register("fromDate")}
+                        id="fromDate"
+                        type="date"
+                        className="form-control color-light-dark bg-silver"
+                        placeholder="Enter fromDate"
+                      />
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start mb-3">
+                      <label htmlFor="toDate" className="form-label text-white">
+                        To Date
+                      </label>
+                      <input
+                        {...register("toDate")}
+                        id="toDate"
+                        type="date"
+                        className="form-control color-light-dark bg-silver"
+                        placeholder="Enter toDate"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-5 col-md-6 col-sm-5 mx-auto">
+                  <button
+                    className="btn text-white w-100 border-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
+                      borderRadius: "12px",
+                    }}
+                    type="submit"
+                  >
+                    Schedule
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+};
+
+export default Form;

@@ -13,6 +13,8 @@ import { sort } from "fast-sort";
 import TableHeading from "@/app/components/TableHeading";
 import { DM_Sans, Inter } from "next/font/google";
 import { getFormattedDate } from "@/app/utils";
+import GroupingForm from "./GroupingForm";
+import useRights from "@/app/hooks/useRights";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -26,8 +28,14 @@ interface ListProps {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+export interface Option {
+  rightId: number;
+  rightName: string;
+}
+
 const List = ({ refresh, setRefresh }: ListProps) => {
   const { data, setData, setError, error, isLoading } = useRoles({ refresh });
+  const { data: rights } = useRights({ refresh });
   const deleteMessage = "Deleted Successfully!";
 
   const notifyCreate = (message: string) => toast.success(message);
@@ -165,6 +173,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 name="concurrency Stamp"
                 handleSort={() => handleSort("concurrencyStamp")}
               />
+              <th>RIGHTS</th>
               <th colSpan={2}></th>
             </tr>
           </thead>
@@ -182,6 +191,9 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 <td>{d.name}</td>
                 <td>{d.normalizedName}</td>
                 <td>{d.concurrencyStamp}</td>
+                <td>
+                  <GroupingForm id={d.id} name={d.name} options={rights} />
+                </td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
                 </td>

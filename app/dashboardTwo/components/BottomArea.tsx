@@ -67,6 +67,7 @@ const BottomArea = () => {
                 </div>
                 <div className="col text-end">
                   <Image
+                    className="img-fluid"
                     src={uploadBlack}
                     alt="uploadBlack"
                     width={15}

@@ -144,7 +144,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     id="name"
                     type="text"
                     className="form-control form-control-sm color-light-dark bg-silver"
-                    placeholder="Enter User Name"
+                    placeholder="Enter Role Name"
                   />
                   {errors.name && (
                     <p className="text-danger mt-1">{errors.name.message}</p>

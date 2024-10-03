@@ -9,6 +9,7 @@ export interface Project {
   city: string;
   locationCoordinates: string;
   status: string;
+  smdpProjectID: number;
 }
 
 interface Props {

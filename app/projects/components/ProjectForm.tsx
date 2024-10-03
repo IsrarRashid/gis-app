@@ -200,9 +200,9 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       className="form-select form-select-sm color-light-dark bg-silver"
                     >
                       <option value="">Select</option>
-                      <option value="active">Active</option>
-                      <option value="draft">Draft</option>
-                      <option value="completed">Completed</option>
+                      <option value="Active">Active</option>
+                      <option value="Draft">Draft</option>
+                      <option value="Completed">Completed</option>
                     </select>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 text-start">

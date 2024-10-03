@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { Option } from "./ProjectsList";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
-import groupGrey from "../../../public/icons/groupGray.svg";
+import superGroupBlack from "../../../public/icons/superGroupBlack.svg";
 interface Props {
   id: number;
   options: Option[];
@@ -136,7 +136,12 @@ const GroupingForm = ({ id, options }: Props) => {
           data-bs-placement="top"
           title="Super Group"
         >
-          <Image src={groupGrey} alt="groupGrey" width={20} height={20} />
+          <Image
+            src={superGroupBlack}
+            alt="superGroup"
+            width={20}
+            height={20}
+          />
         </button>
 
         <Modal

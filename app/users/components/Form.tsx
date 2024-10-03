@@ -8,25 +8,34 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast, { Toaster } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import useRoles from "@/app/hooks/useRoles";
+import axios from "axios";
 
 const schema = z.object({
-  id: z.number().optional().default(0),
-  name: z.string().min(1, { message: "Please add Name!" }),
+  username: z
+    .string()
+    .min(1, { message: "Please add Name!" })
+    .regex(/^\S*$/, { message: "Username should not contain spaces!" }),
   email: z
     .string()
     .min(1, { message: "Please add Email!" })
     .email({ message: "Please enter valid email!" }),
-  phone: z.string().optional().default(""),
-  roleId: z
+  password: z
+    .string()
+    .min(8, { message: "Please add Password!" })
+    .regex(/[A-Z]/, {
+      message: "Password must contain at least one uppercase letter!",
+    })
+    .regex(/\d/, { message: "Password must contain atleast on number!" })
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, {
+      message: "Password must contain at least on special character!",
+    }),
+  roleID: z
     .preprocess(
-      (val) => (val === "" ? undefined : val),
-      z.number({ invalid_type_error: "Please add Role Id!" })
+      (val) => (val === "" || val === undefined ? undefined : String(val)),
+      z.string({ invalid_type_error: "Please add Role Id!" })
     )
     .optional()
-    .default(0),
-  password: z.string().min(1, { message: "Please add Password!" }),
-  createdAt: z.string().optional().default(new Date().toISOString()),
-  updatedAt: z.string().optional().default(new Date().toISOString()),
+    .default(""),
 });
 
 type User = z.infer<typeof schema>;
@@ -66,14 +75,10 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       try {
         const response = await apiClient.get(`${api}/${id}`);
         const itemData = response.data.data;
-        setValue("id", itemData.id);
-        setValue("name", itemData.name);
+        setValue("username", itemData.username);
         setValue("email", itemData.email);
-        setValue("phone", itemData.phone);
-        setValue("roleId", itemData.roleId);
         setValue("password", itemData.password);
-        setValue("createdAt", itemData.createdAt);
-        setValue("updatedAt", new Date().toISOString());
+        setValue("roleID", itemData.roleID);
       } catch (error) {
         console.log(error);
       }
@@ -154,23 +159,25 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                 </p>
               </div>
               <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
-                <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
-                  <label htmlFor="name" className="form-label text-white">
-                    Name
-                  </label>
-                  <input
-                    {...register("name")}
-                    id="name"
-                    type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
-                    placeholder="Enter User Name"
-                  />
-                  {errors.name && (
-                    <p className="text-danger mt-1">{errors.name.message}</p>
-                  )}
-                </div>
-                <div className="col mb-3">
-                  <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
+                <div className="row d-flex justify-content-between">
+                  <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
+                    <label htmlFor="username" className="form-label text-white">
+                      UserName
+                    </label>
+                    <input
+                      {...register("username")}
+                      id="username"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter User Name"
+                    />
+                    {errors.username && (
+                      <p className="text-danger mt-1">
+                        {errors.username.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
                     <label htmlFor="email" className="form-label text-white">
                       Email
                     </label>
@@ -185,59 +192,48 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       <p className="text-danger mt-1">{errors.email.message}</p>
                     )}
                   </div>
-                  <div className="row d-flex justify-content-between">
-                    <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
-                      <label htmlFor="phone" className="form-label text-white">
-                        Phone
-                      </label>
-                      <input
-                        {...register("phone")}
-                        id="phone"
-                        type="text"
-                        className="form-control form-control-sm color-light-dark bg-silver"
-                        placeholder="Enter Phone"
-                      />
-                    </div>
-                    <div className="col-lg-6 col-md-6 col-sm-12 text-start">
-                      <label htmlFor="roleId" className="form-label text-white">
-                        Role
-                      </label>
-                      <select
-                        {...register("roleId", { valueAsNumber: true })}
-                        className="form-select form-select-sm color-light-dark bg-silver"
-                      >
-                        <option value="">None</option>
-                        {rolesData?.map((d) => (
-                          <option key={d.id} value={d.id}>
-                            {d.name}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.roleId && (
-                        <p className="text-danger mt-1">
-                          {errors.roleId.message}
-                        </p>
-                      )}
-                    </div>
+                </div>
+                <div className="row d-flex justify-content-between">
+                  <div className="col-lg-6 col-md-6 col-sm-12 text-start">
+                    <label htmlFor="roleID" className="form-label text-white">
+                      Role
+                    </label>
+                    <select
+                      {...register("roleID", { valueAsNumber: true })}
+                      className="form-select form-select-sm color-light-dark bg-silver"
+                    >
+                      <option value="">None</option>
+                      {rolesData?.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.roleID && (
+                      <p className="text-danger mt-1">
+                        {errors.roleID.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
+                    <label htmlFor="password" className="form-label text-white">
+                      Password
+                    </label>
+                    <input
+                      {...register("password")}
+                      id="password"
+                      type="password"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter Password"
+                    />
+                    {errors.password && (
+                      <p className="text-danger mt-1">
+                        {errors.password.message}
+                      </p>
+                    )}
                   </div>
                 </div>
-                <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
-                  <label htmlFor="password" className="form-label text-white">
-                    Password
-                  </label>
-                  <input
-                    {...register("password")}
-                    id="password"
-                    type="password"
-                    className="form-control form-control-sm color-light-dark bg-silver"
-                    placeholder="Enter Password"
-                  />
-                  {errors.password && (
-                    <p className="text-danger mt-1">
-                      {errors.password.message}
-                    </p>
-                  )}
-                </div>
+
                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
                   <button
                     className="btn text-white w-100 border-0"

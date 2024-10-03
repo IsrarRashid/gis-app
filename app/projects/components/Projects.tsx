@@ -9,6 +9,7 @@ import DownloadTextPDFBtn from "@/app/components/DownloadTextPDFBtn";
 
 const Projects = () => {
   const [refresh, setRefresh] = useState(false);
+  const [showData, setShowData] = useState(false);
   const router = useRouter();
 
   // useEffect(() => {
@@ -41,7 +42,12 @@ const Projects = () => {
       }}
     >
       <div className="row p-3">
-        <ProjectsList refresh={refresh} setRefresh={setRefresh} />
+        <ProjectsList
+          refresh={refresh}
+          setRefresh={setRefresh}
+          showData={showData}
+          setShowData={setShowData}
+        />
         {/* <span>
           Image:
           <DownloadPDFBtn />

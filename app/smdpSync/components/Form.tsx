@@ -20,7 +20,7 @@ interface SmdpSync {
   schemeId: string;
 }
 
-const SectorForm = ({
+const Form = ({
   api,
   method,
   id,
@@ -112,8 +112,9 @@ const SectorForm = ({
           type="button"
           className="btn btn-sm text-white bg-color-sea-green"
           onClick={handleShow}
+          style={{ whiteSpace: "nowrap" }}
         >
-          + SMDP SYNCHRONIZATION
+          + SMDP SYNCHRONIZE
         </button>
       ) : (
         <button
@@ -202,4 +203,4 @@ const SectorForm = ({
   );
 };
 
-export default SectorForm;
+export default Form;

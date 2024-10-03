@@ -2,10 +2,11 @@
 import Image from "next/image";
 import arrowLeft from "../../../public/icons/arrow-left.svg";
 import arrowRight from "../../../public/icons/arrow-right.svg";
-import DeleteModal from "@/app/components/DeleteModal";
-import { userAPI } from "@/app/APIs";
+import { deleteUserAPI, registerUserAPI, userAPI } from "@/app/APIs";
 import Form from "./Form";
-import useUsers, { User } from "@/app/hooks/useUsers";
+import useAuthentication, {
+  Authentication,
+} from "@/app/hooks/useAuthentication";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
@@ -13,6 +14,10 @@ import { sort } from "fast-sort";
 import TableHeading from "@/app/components/TableHeading";
 import { DM_Sans, Inter } from "next/font/google";
 import { getFormattedDate } from "@/app/utils";
+import DeleteModal2 from "@/app/components/DeleteModal2";
+// import GroupingForm from "./GroupingForm";
+import useRoles from "@/app/hooks/useRoles";
+import GroupingForm from "./GroupingForm";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -26,18 +31,28 @@ interface ListProps {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+export interface Option {
+  id: number;
+  name: string;
+}
+
 const List = ({ refresh, setRefresh }: ListProps) => {
-  const { data, setData, setError, error, isLoading } = useUsers({ refresh });
+  const { data, setData, setError, error, isLoading } = useAuthentication({
+    refresh,
+  });
+  const { data: roles } = useRoles({ refresh });
   const deleteMessage = "Deleted Successfully!";
 
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (userName: string) => {
     try {
-      await apiClient.delete(`${userAPI}/${id}`);
+      await apiClient.delete(`${deleteUserAPI}?UserName=${userName}`);
       // remove the deleted item from the data array
-      setData((prevData) => prevData.filter((item) => item.id !== id));
+      setData((prevData) =>
+        prevData.filter((item) => item.userName !== userName)
+      );
       notifyCreate(deleteMessage);
       console.log("item deleted successfully");
     } catch (err) {
@@ -49,11 +64,11 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
-    key: keyof User;
+    key: keyof Authentication;
     direction: "asc" | "desc";
   } | null>(null);
 
-  const handleSort = (key: keyof User) => {
+  const handleSort = (key: keyof Authentication) => {
     let direction: "asc" | "desc" = "asc";
 
     if (
@@ -126,7 +141,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             </div>
             <div className="col text-end">
               <Form
-                api={userAPI}
+                api={registerUserAPI}
                 method="POST"
                 setRefresh={setRefresh}
                 refresh={refresh}
@@ -156,27 +171,15 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               }}
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
-              <TableHeading name="name" handleSort={() => handleSort("name")} />
+              <TableHeading
+                name="username"
+                handleSort={() => handleSort("userName")}
+              />
               <TableHeading
                 name="email"
                 handleSort={() => handleSort("email")}
               />
-              <TableHeading
-                name="phone"
-                handleSort={() => handleSort("phone")}
-              />
-              <TableHeading
-                name="role id"
-                handleSort={() => handleSort("roleId")}
-              />
-              <TableHeading
-                name="created at"
-                handleSort={() => handleSort("createdAt")}
-              />
-              <TableHeading
-                name="updated at"
-                handleSort={() => handleSort("updatedAt")}
-              />
+              <th>ROLE</th>
               <th colSpan={2}></th>
             </tr>
           </thead>
@@ -191,22 +194,23 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 key={d.id}
               >
                 <td>{d.id}</td>
-                <td>{d.name}</td>
+                <td>{d.userName}</td>
                 <td>{d.email}</td>
-                <td>{d.phone}</td>
-                <td>{d.roleId}</td>
                 <td>
-                  {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "numeric")}
+                  <GroupingForm
+                    id={d.id}
+                    options={roles}
+                    userName={d.userName}
+                  />
                 </td>
                 <td>
-                  {d.updatedAt &&
-                    getFormattedDate(new Date(d.updatedAt), "numeric")}
+                  <DeleteModal2
+                    handleDelete={handleDelete}
+                    userName={d.userName}
+                  />
                 </td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
-                <td>
+
+                {/* <td>
                   <Form
                     api={userAPI}
                     method="PUT"
@@ -214,7 +218,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                     setRefresh={setRefresh}
                     refresh={refresh}
                   />
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>

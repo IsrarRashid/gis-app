@@ -189,6 +189,7 @@ const StaffTracking = () => {
                   </div>
                   <div className="col text-end mt-3">
                     <Image
+                      className="img-fluid"
                       src={profilePic4}
                       alt="profilePic4"
                       style={{ position: "absolute", marginLeft: "0px" }}
@@ -196,6 +197,7 @@ const StaffTracking = () => {
                       height={20}
                     />
                     <Image
+                      className="img-fluid"
                       src={profilePic4}
                       style={{ position: "absolute", marginLeft: "-10px" }}
                       alt="profilePic4"
@@ -204,6 +206,7 @@ const StaffTracking = () => {
                     />
 
                     <Image
+                      className="img-fluid"
                       src={profilePic4}
                       style={{ position: "absolute", marginLeft: "-20px" }}
                       alt="profilePic4"
@@ -214,7 +217,11 @@ const StaffTracking = () => {
                 </div>
                 <div className="row d-flex justify-content-between pe-0">
                   <div className="col fs12px">
-                    <Image src={profilePic5} alt="profilePic5" />
+                    <Image
+                      className="img-fluid"
+                      src={profilePic5}
+                      alt="profilePic5"
+                    />
                     &nbsp;Areef
                   </div>
                   <div className="col fs10px text-center">

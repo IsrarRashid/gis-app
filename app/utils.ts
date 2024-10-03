@@ -34,3 +34,11 @@ export const getFormattedDate = (
 // Usage examples
 const shortDate = getFormattedDate(new Date(), "short"); // Outputs: "Sep 10, 2024"
 const numericDate = getFormattedDate(new Date(), "numeric"); // Outputs: "10.9.2024"
+
+export const getName = (id: number, data: any) => {
+  const record = data.find((item: any) => item.id === id);
+  if (record?.name) return record?.name;
+  if (record?.userName) return record?.userName;
+  if (record?.regNumber) return record?.regNumber;
+  if (record?.driverName) return record?.driverName;
+};

@@ -151,8 +151,14 @@ const Navbar = () => {
                     aria-expanded="false"
                   >
                     <div className="row d-flex">
-                      <div className="col">
-                        <Image src={profilePic} alt="profilePic" />
+                      <div className="col-4">
+                        <Image
+                          className="img-fluid mt-1"
+                          src={profilePic}
+                          alt="profilePic"
+                          width={38}
+                          height={38}
+                        />
                       </div>
                       <div className="col mt-2 p-0 me-2">
                         <p

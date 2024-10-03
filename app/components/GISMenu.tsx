@@ -6,12 +6,14 @@ import clock2 from "../../public/icons/clock-2.svg";
 import db from "../../public/icons/db.svg";
 import qr from "../../public/icons/qr.svg";
 import dashboard from "../../public/icons/dashboard.svg";
-import user from "../../public/icons/user.svg";
+import user3White from "../../public/icons/user3White.svg";
 import group from "../../public/icons/group.svg";
 import driver from "../../public/icons/driver.svg";
 import truck from "../../public/icons/truck.svg";
-import roles from "../../public/icons/roles.svg";
-import superGroup from "../../public/icons/superGroup.svg";
+import visits from "../../public/icons/visits.svg";
+import rolesWhite from "../../public/icons/rolesWhite.svg";
+import rightsWhite from "../../public/icons/rightsWhite.svg";
+import superGroupWhite from "../../public/icons/superGroupWhite.svg";
 import { useDispatch } from "react-redux";
 import { setContent } from "../features/content/contentSlice";
 import { useRouter } from "next/navigation";
@@ -50,6 +52,12 @@ const GISMenu = () => {
       backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
     },
     {
+      name: "DashboardTO",
+      link: "/dashboardTO",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #a82897 , #2871a8)",
+    },
+    {
       name: "Sectors",
       link: "/sectors",
       icon: clock2,
@@ -64,8 +72,8 @@ const GISMenu = () => {
     {
       name: "Super Group",
       link: "/superGroup",
-      icon: superGroup,
-      backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
+      icon: superGroupWhite,
+      backgroundColor: "linear-gradient(to bottom right, #28A897 , #E73A80)",
     },
     {
       name: "Attribute Groups",
@@ -82,14 +90,20 @@ const GISMenu = () => {
     {
       name: "Users",
       link: "/users",
-      icon: user,
+      icon: user3White,
       backgroundColor: "linear-gradient(to bottom right, #E8A070 , #DA4A6A)",
     },
     {
       name: "Roles",
       link: "/roles",
-      icon: roles,
+      icon: rolesWhite,
       backgroundColor: "linear-gradient(to bottom right, #e2e870 , #daaf4a)",
+    },
+    {
+      name: "Rights",
+      link: "/rights",
+      icon: rightsWhite,
+      backgroundColor: "linear-gradient(to bottom right, brown , pink)",
     },
     {
       name: "Vehicle",
@@ -101,7 +115,13 @@ const GISMenu = () => {
       name: "Driver",
       link: "/driver",
       icon: driver,
-      backgroundColor: "linear-gradient(to bottom right, #28A897 , #E73A80)",
+      backgroundColor: "linear-gradient(to bottom right, #a2a828 , #b93ae7)",
+    },
+    {
+      name: "Visits",
+      link: "/visits",
+      icon: visits,
+      backgroundColor: "linear-gradient(to bottom right, #28A897 , yellow)",
     },
     {
       name: "SMDP Sync",
