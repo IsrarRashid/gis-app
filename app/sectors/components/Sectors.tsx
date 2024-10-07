@@ -17,7 +17,7 @@ const Sectors = () => {
 
   useEffect(() => {
     // Set the background for the body
-    document.body.style.backgroundImage = `url('/images/bg.png')`;
+    document.body.style.backgroundImage = `url('/images/bg2.png')`;
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundRepeat = "no-repeat";
 

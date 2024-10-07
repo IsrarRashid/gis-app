@@ -101,7 +101,10 @@ const ProjectsList = ({
 
   const handleSync = async (id: number) => {
     try {
-      await apiClient.post(`${smdpSyncAttributeValuesApi}?projectID=${id}`);
+      const response = await apiClient.post(
+        `${smdpSyncAttributeValuesApi}?SmdpProjectID=${id}`
+      );
+      console.log(response);
       notifyCreate(syncMessage);
       console.log("attribute values synced successfully");
     } catch (err) {
@@ -111,7 +114,7 @@ const ProjectsList = ({
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: number): Promise<void> => {
     try {
       await apiClient.delete(`${projectAPI}/${id}`);
       // remove the deleted item from the data array

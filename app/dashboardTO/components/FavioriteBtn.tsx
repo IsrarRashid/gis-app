@@ -13,7 +13,7 @@ const FavioriteBtn = () => {
       }}
     >
       {favorite ? (
-        <GoHeartFill style={{ width: "21", height: "18" }} />
+        <GoHeartFill style={{ width: "21", height: "18", color: "#0153AF" }} />
       ) : (
         <GoHeart style={{ width: "21", height: "18" }} />
       )}

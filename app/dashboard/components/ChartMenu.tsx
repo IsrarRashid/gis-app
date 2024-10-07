@@ -2,7 +2,7 @@ import Image from "next/image";
 import coin from "../../../public/icons/coin.svg";
 import locationPoint from "../../../public/icons/locationPoint.svg";
 import files from "../../../public/icons/files.svg";
-import pieChart from "../../../public/icons/pieChart.svg";
+import pieChart from "../../../public/images/pieChart.png";
 import topRightArrow from "../../../public/icons/topRightArrow.svg";
 
 const ChartMenu = () => {

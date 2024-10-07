@@ -7,6 +7,7 @@ import { setContent } from "@/app/features/content/contentSlice";
 import Drivers from "./Drivers";
 import Vehicles from "./Vehicles";
 import Destination from "./Destination";
+import MapCars from "./MapCars";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -50,7 +51,9 @@ const DashboardTO = () => {
         <div className="col-lg-9 col-md-12 col">
           <div className="row">
             <div className="col-lg-12 col-md-12 col">
-              <Map />
+              {/* <Map /> */}
+              <MapCars />
+
               <Destination />
             </div>
           </div>

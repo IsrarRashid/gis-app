@@ -20,8 +20,12 @@ const schema = z.object({
   status: z.string().min(1, { message: "Please add Status!" }),
   latitude: z.string().min(1, { message: "Please add Latitude!" }),
   longitude: z.string().min(1, { message: "Please add Longitude!" }),
-  vehicleID: z.number({ invalid_type_error: "Please add Vehicle ID!" }),
-  driverID: z.number({ invalid_type_error: "Please add Driver ID!" }),
+  vehicleID: z
+    .number({ invalid_type_error: "Please add Vehicle ID!" })
+    .gt(0, { message: "Please select Valid Id" }),
+  driverID: z
+    .number({ invalid_type_error: "Please add Driver ID!" })
+    .gt(0, { message: "Please select Valid Id" }),
   fromDate: z
     .string()
     .optional()
@@ -100,13 +104,12 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
   const onSubmit = async (formData: AttributeGroup) => {
     console.log("Form Data:", formData);
-    console.log("v:", formData.vehicleID);
-    console.log("d:", formData.driverID);
     try {
       const modifiedFormData = {
         ...formData,
         fromDate: `${formData.fromDate}T00:00:00`,
         toDate: `${formData.toDate}T00:00:00`,
+        status: (formData.status = "scheduled"),
       };
 
       const response = await apiClient({
@@ -229,11 +232,10 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("status")}
                         className="form-select form-select-sm color-light-dark bg-silver"
                       >
-                        <option value="">Select</option>
-                        <option value="active">Active</option>
                         <option value="pending">Pending</option>
-                        <option value="schedule">Schedule</option>
+                        <option value="scheduled">Scheduled</option>
                         <option value="completed">Completed</option>
+                        <option value="active">Active</option>
                       </select>
                     </div>
                     <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start mb-3">
@@ -281,7 +283,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       >
                         <option value="">Select</option>
                         {vehicles?.map((vehicle) => (
-                          <option value={vehicle.id}>
+                          <option key={vehicle.id} value={vehicle.id}>
                             {vehicle.regNumber}
                           </option>
                         ))}
@@ -305,7 +307,9 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       >
                         <option value="">Select</option>
                         {drivers?.map((driver) => (
-                          <option value={driver.id}>{driver.driverName}</option>
+                          <option key={driver.id} value={driver.id}>
+                            {driver.driverName}
+                          </option>
                         ))}
                       </select>
                       {errors.driverID && (

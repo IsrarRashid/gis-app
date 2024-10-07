@@ -2,23 +2,12 @@ import Image from "next/image";
 import profilePic6 from "../../../public/images/profilePic6.png";
 import locationPointRoad from "../../../public/images/locationPointRoad.png";
 import carTop from "../../../public/images/carTop.png";
-import phone from "../../../public/icons/phone.svg";
-import locationPointDash from "../../../public/icons/locationPointDash.svg";
-import carFrontBlue from "../../../public/icons/carFrontBlue.svg";
-import warning from "../../../public/icons/warning.svg";
-import moreCircle from "../../../public/icons/moreCircle.svg";
-import rightArrowCircle from "../../../public/icons/rightArrowCircle.svg";
 import radioGreen from "../../../public/icons/radioGreen.svg";
 import radioBlue from "../../../public/icons/radioBlue.svg";
 import blueCircle from "../../../public/icons/blueCircle.svg";
 import greenCircle from "../../../public/icons/greenCircle.svg";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import {
-  MdOutlineStar,
-  MdOutlineStarHalf,
-  MdOutlineStarOutline,
-} from "react-icons/md";
 
 const Destination = () => {
   const [activeButton, setActiveButton] = useState<string>("available");
@@ -61,9 +50,10 @@ const Destination = () => {
             whileTap={{ cursor: "grabbing" }}
             ref={refContent}
           >
-            {items2.map((d) => (
+            {items2.map((d, i) => (
               <div
-                className="col-lg-6 col-md-8 col-sm-12 mt-2 mb-2 me-3 bg-white"
+                key={i}
+                className="col-lg-6 col-md-8 col-sm-12 mt-2 mb-2 me-3 bg-white shadow-sm"
                 style={{
                   border: "1px solid #D5DEEF",
                   borderRadius: "12px",

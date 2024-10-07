@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import useAttributes from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getProjectDetailKeysAPI } from "@/app/APIs";
+import useProjects from "@/app/hooks/useProjects";
 
 interface Form {
   attributeId: 0;
@@ -33,6 +34,7 @@ interface Form {
   parentId: number;
   readOnly: number;
   smdpIdentifier: string;
+  evaluationFormulaWeightage: number;
 }
 
 interface Option {
@@ -55,6 +57,7 @@ interface Props {
 
 const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   const { data, setError } = useAttributes({ refresh });
+  const { data: projects } = useProjects({ refresh });
   const [isRequired, setRequired] = useState(false);
   const [isMultiSelect, setMultiSelect] = useState(false);
   const [isStatus, setStatus] = useState(false);
@@ -78,9 +81,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const response = await apiClient.get(
-          `${getProjectDetailKeysAPI}?projectID=${52157}`
-        );
+        const response = await apiClient.get(`${getProjectDetailKeysAPI}`);
         const data = response.data.data; // Assuming this returns an array of group objects
         setProjectDetailKeys(data);
         console.log("projectDetailKeys", projectDetailKeys);
@@ -118,6 +119,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     parentId: 0,
     readOnly: 0,
     smdpIdentifier: "",
+    evaluationFormulaWeightage: 0,
   });
 
   const [optionsData, setOptionsData] = useState<Option[]>([
@@ -147,7 +149,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   const handleClose = () => setShow(false);
   const handleShow = async () => {
     setShow(true);
-
+    console.log("formData.readOnly:", formData.readOnly);
     if (method === "PUT") {
       try {
         // send a POST request to the server to add the product
@@ -179,6 +181,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           parentId: itemData.parentId,
           readOnly: itemData.readOnly,
           smdpIdentifier: itemData.smdpIdentifier,
+          evaluationFormulaWeightage: itemData.evaluationFormulaWeightage,
         });
         setOptionsData(
           itemData.options || [
@@ -276,7 +279,14 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       hidden: isHidden ? 1 : 0,
       readOnly: isReadOnly ? 1 : 0,
     });
-  }, [isRequired, isMultiSelect, isStatus, isHidden, formData.attributeType]);
+  }, [
+    isRequired,
+    isMultiSelect,
+    isStatus,
+    isHidden,
+    isReadOnly,
+    formData.attributeType,
+  ]);
 
   // Update optionsData state when activeStates change
   useEffect(() => {
@@ -290,6 +300,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("before submit formData.readOnly:", formData.readOnly);
 
     switch (true) {
       case !formData.label:
@@ -328,7 +339,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               formData.errorMessage === "" ? null : formData.errorMessage, // Change 0 to null
             remarks: formData.remarks === "" ? null : formData.remarks, // Change 0 to null
             parentId: formData.parentId === 0 ? null : formData.parentId, // Change 0 to null
-            smdpIdentifier: formData.smdpIdentifier === "" ? null : formData.smdpIdentifier, // Change 0 to null
+            smdpIdentifier:
+              formData.smdpIdentifier === "" ? null : formData.smdpIdentifier, // Change 0 to null
           };
 
           // send a POST request to the server to add the product
@@ -374,6 +386,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               parentId: 0,
               readOnly: 0,
               smdpIdentifier: "",
+              evaluationFormulaWeightage: 0,
             });
             setOptionsData([
               {
@@ -391,6 +404,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             setMultiSelect(false);
             setStatus(false);
             setHidden(false);
+            setReadOnly(false);
             console.log("Submit Response:", response.data);
             setRefresh((prev) => !prev);
           } else {
@@ -411,6 +425,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             setRefresh((prev) => !prev);
             // notifyCreate(updated);
             handleClose();
+            console.log("after submit formData.readOnly:", formData.readOnly);
           }
         } catch (err) {
           console.log((err as AxiosError).message);
@@ -508,7 +523,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Placeholder"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 text-start">
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
                     <label
                       htmlFor="attributeDataType"
                       className="form-label text-white"
@@ -527,9 +542,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       <option value="date">Date</option>
                     </select>
                   </div>
-                </div>
-                <div className="row d-flex justify-content-between mb-3">
-                  <div className="col-lg-4 col-md-6 col-sm-12 text-start">
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
                     <label
                       htmlFor="attributeType"
                       className="form-label text-white"
@@ -586,6 +599,109 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Validation Regx"
                     />
                   </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label htmlFor="sortId" className="form-label text-white">
+                      Sort Id
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      id="sortId"
+                      name="sortId"
+                      value={formData.sortId}
+                      onChange={handleChange}
+                      placeholder="Enter Sort Id"
+                    />
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="verificationType"
+                      className="form-label text-white"
+                    >
+                      Verification Type
+                    </label>
+                    <select
+                      className="form-select form-select-sm color-light-dark bg-silver"
+                      aria-label="Default select example"
+                      name="verificationType"
+                      onChange={handleChange}
+                      value={formData.verificationType}
+                    >
+                      <option value="">None</option>
+                      <option value="image">Image</option>
+                      <option value="video">Video</option>
+                    </select>
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="smdpIdentifier"
+                      className="form-label text-white"
+                    >
+                      Smdp Identifier
+                    </label>
+                    <select
+                      className="form-select form-select-sm color-light-dark bg-silver"
+                      aria-label="Default select example"
+                      name="smdpIdentifier"
+                      onChange={handleChange}
+                      value={formData.smdpIdentifier}
+                    >
+                      <option value="">None</option>
+                      {projectDetailKeys?.map((key, i) => (
+                        <option key={i} value={key}>
+                          {key}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="errorMessage"
+                      className="form-label text-white"
+                    >
+                      Error Message
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      id="errorMessage"
+                      name="errorMessage"
+                      value={formData.errorMessage}
+                      onChange={handleChange}
+                      placeholder="Enter Error Message"
+                    />
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label htmlFor="remarks" className="form-label text-white">
+                      Remarks
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      id="remarks"
+                      name="remarks"
+                      value={formData.remarks}
+                      onChange={handleChange}
+                      placeholder="Enter Remarks"
+                    />
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="attributeCode"
+                      className="form-label text-white"
+                    >
+                      Attribute Code
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      id="attributeCode"
+                      name="attributeCode"
+                      value={formData.attributeCode}
+                      onChange={handleChange}
+                      placeholder="Enter Attribute Code"
+                    />
+                  </div>
                 </div>
                 {formData.attributeType === "slider" && (
                   <div className="row d-flex justify-content-between mb-3">
@@ -636,155 +752,64 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </div>
                   </div>
                 )}
-                <div className="row d-flex justify-content-start mb-3">
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label htmlFor="sortId" className="form-label text-white">
-                      Sort Id
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control form-control-sm color-light-dark bg-silver"
-                      id="sortId"
-                      name="sortId"
-                      value={formData.sortId}
-                      onChange={handleChange}
-                      placeholder="Enter Sort Id"
-                    />
+                {formData.attributeType === "formula" && (
+                  <div className="row d-flex justify-content-start mb-3">
+                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                      <label
+                        htmlFor="evaluationFormula"
+                        className="form-label text-white"
+                      >
+                        Evaluation Formula
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control form-control-sm color-light-dark bg-silver"
+                        id="evaluationFormula"
+                        name="evaluationFormula"
+                        value={formData.evaluationFormula}
+                        onChange={handleChange}
+                        placeholder="Enter Evaluation Formula"
+                      />
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 text-start">
+                      <label
+                        htmlFor="searchAttributeCodes"
+                        className="form-label text-white"
+                      >
+                        Search Attribute Codes
+                      </label>
+                      <select
+                        className="form-select form-select-sm color-light-dark bg-silver"
+                        aria-label="Default select example"
+                        name="searchAttributeCodes"
+                        onChange={handleDatalistSelect}
+                      >
+                        {data.map((d) => (
+                          <option key={d.label} value={d.label}>
+                            {d.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                      <label
+                        htmlFor="evaluationFormulaWeightage"
+                        className="form-label text-white"
+                      >
+                        Evaluation Formula Weightage
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control form-control-sm color-light-dark bg-silver"
+                        id="evaluationFormulaWeightage"
+                        name="evaluationFormulaWeightage"
+                        value={formData.evaluationFormulaWeightage}
+                        onChange={handleChange}
+                        placeholder="Enter Evaluation Formula Weightage"
+                      />
+                    </div>
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 text-start">
-                    <label
-                      htmlFor="verificationType"
-                      className="form-label text-white"
-                    >
-                      Verification Type
-                    </label>
-                    <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
-                      aria-label="Default select example"
-                      name="verificationType"
-                      onChange={handleChange}
-                      value={formData.verificationType}
-                    >
-                      <option value="">None</option>
-                      <option value="image">Image</option>
-                      <option value="video">Video</option>
-                    </select>
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 text-start">
-                    <label
-                      htmlFor="smdpIdentifier"
-                      className="form-label text-white"
-                    >
-                      Smdp Identifier
-                    </label>
-                    <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
-                      aria-label="Default select example"
-                      name="smdpIdentifier"
-                      onChange={handleChange}
-                      value={formData.smdpIdentifier}
-                    >
-                      <option value="">None</option>
-                      {projectDetailKeys?.map((key) => (
-                        <option value={key}>{key}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="row d-flex justify-content-start mb-3">
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label
-                      htmlFor="errorMessage"
-                      className="form-label text-white"
-                    >
-                      Error Message
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
-                      id="errorMessage"
-                      name="errorMessage"
-                      value={formData.errorMessage}
-                      onChange={handleChange}
-                      placeholder="Enter Error Message"
-                    />
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label htmlFor="remarks" className="form-label text-white">
-                      Remarks
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
-                      id="remarks"
-                      name="remarks"
-                      value={formData.remarks}
-                      onChange={handleChange}
-                      placeholder="Enter Remarks"
-                    />
-                  </div>
-                </div>
-
-                <div className="row d-flex justify-content-start mb-3">
-                  {formData.attributeType === "formula" && (
-                    <>
-                      <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                        <label
-                          htmlFor="evaluationFormula"
-                          className="form-label text-white"
-                        >
-                          Evaluation Formula
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control form-control-sm color-light-dark bg-silver"
-                          id="evaluationFormula"
-                          name="evaluationFormula"
-                          value={formData.evaluationFormula}
-                          onChange={handleChange}
-                          placeholder="Enter Evaluation Formula"
-                        />
-                      </div>
-                      <div className="col-lg-4 col-md-6 col-sm-12 text-start">
-                        <label
-                          htmlFor="searchAttributeCodes"
-                          className="form-label text-white"
-                        >
-                          Search Attribute Codes
-                        </label>
-                        <select
-                          className="form-select form-select-sm color-light-dark bg-silver"
-                          aria-label="Default select example"
-                          name="searchAttributeCodes"
-                          onChange={handleDatalistSelect}
-                        >
-                          {data.map((d) => (
-                            <option key={d.label} value={d.label}>
-                              {d.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                        <label
-                          htmlFor="attributeCode"
-                          className="form-label text-white"
-                        >
-                          Attribute Code
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control form-control-sm color-light-dark bg-silver"
-                          id="attributeCode"
-                          name="attributeCode"
-                          value={formData.attributeCode}
-                          onChange={handleChange}
-                          placeholder="Enter Attribute Code"
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
+                )}
                 <div className="row d-flex justify-content-start mb-3">
                   <div className="col-lg-2 col-md-4 col-sm-12 text-start">
                     <div className="form-check form-switch">

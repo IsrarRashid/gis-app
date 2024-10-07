@@ -69,7 +69,7 @@ const Drivers = () => {
       <div className="row d-flex mb-1">
         <div className="col text-center pe-0">
           <button
-            className="btn mt-2 p-0 w-100 fs14px"
+            className="btn mt-2 p-0 w-100 fs14px rounded-0"
             style={{
               borderBottom:
                 activeButton === "available"
@@ -86,7 +86,7 @@ const Drivers = () => {
         </div>
         <div className="col text-center ps-0">
           <button
-            className="btn mt-2 p-0 w-100 fs14px"
+            className="btn mt-2 p-0 w-100 fs14px rounded-0"
             style={{
               letterSpacing: "1px",
               borderBottom:

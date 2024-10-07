@@ -20,6 +20,7 @@ const schema = z.object({
   city: z.string().optional().default(""),
   locationCoordinates: z.string().optional().default(""),
   status: z.string().optional().default(""),
+  smdpProjectID: z.number().optional().default(0),
 });
 
 type Project = z.infer<typeof schema>;
@@ -68,6 +69,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
         setValue("city", itemData.city);
         setValue("locationCoordinates", itemData.locationCoordinates);
         setValue("status", itemData.status);
+        setValue("smdpProjectID", itemData.smdpProjectID);
       } catch (err) {
         console.log((err as AxiosError).message);
         toast.error((err as AxiosError).message);
@@ -78,11 +80,18 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
   const onSubmit = async (formData: Project) => {
     console.log("Form Data:", formData);
     console.log(errors);
+
+    const modifiedFormData = {
+      ...formData,
+      smdpProjectID:
+        formData.smdpProjectID === 0 ? null : formData.smdpProjectID,
+    };
+
     try {
       const response = await apiClient({
         method: method,
         url: method === "POST" ? api : `${api}/${id}`,
-        data: formData,
+        data: modifiedFormData,
       });
       console.log("Response:", response);
       setRefresh((prev) => !prev);

@@ -97,13 +97,15 @@ const Vehicles = () => {
       <div className="row d-flex mb-1">
         <div className="col text-center pe-0">
           <button
-            className="btn mt-2 p-0 w-100 fs14px"
+            className="btn mt-2 p-0 w-100 fs14px rounded-0"
             style={{
               borderBottom:
                 activeButton === "available"
                   ? "2px solid #0153AF"
                   : "2px solid #E0E0E0",
               letterSpacing: "1px",
+              outline: "none",
+              boxShadow: "none",
             }}
             onClick={() => setActiveButton("available")}
           >
@@ -112,13 +114,15 @@ const Vehicles = () => {
         </div>
         <div className="col text-center ps-0">
           <button
-            className="btn mt-2 p-0 w-100 fs14px"
+            className="btn mt-2 p-0 w-100 fs14px rounded-0"
             style={{
               letterSpacing: "1px",
               borderBottom:
                 activeButton === "inUse"
                   ? "2px solid #0153AF"
                   : "2px solid #E0E0E0",
+              outline: "none",
+              boxShadow: "none",
             }}
             onClick={() => setActiveButton("inUse")}
           >
