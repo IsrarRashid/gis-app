@@ -2,7 +2,7 @@
 import { Poppins } from "next/font/google";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { setContent } from "./features/content/contentSlice";
@@ -22,11 +22,20 @@ export default function Home() {
     dispatch(setContent(content));
   };
   const router = useRouter();
+  const [role, setRole] = useState("");
+
   useEffect(() => {
     const token = Cookies.get("token");
+    const role = Cookies.get("role") || "";
+    setRole(role);
     if (token) {
-      router.push("/dashboard");
-      handleButtonClick("Dashboard");
+      if (role === "Transport Officier") {
+        router.push("/dashboardTO");
+        handleButtonClick("DashboardTO");
+      } else {
+        router.push("/dashboard");
+        handleButtonClick("Dashboard");
+      }
     } else {
       router.push("/login");
     }

@@ -23,3 +23,5 @@ export const addRightsToRoleAPI = `/api/Rights/AddRightsToRole`;
 export const assignUserToProjectAPI = `/api/ProjectUserAssigning/PostAttributeGroupMapping`;
 export const getAssignedUsersToProjectAPI = `/api/ProjectUserAssigning/UsersMapToProject`;
 export const visitAPI = `/api/Visits`;
+export const trackingAPI = `https://webtrack.itecknologi.com/fleet/api/Directorate/reporting.php`;
+export const staffTrackingAPI = `/api/Coordinates`;

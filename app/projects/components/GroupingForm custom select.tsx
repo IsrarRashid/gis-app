@@ -5,6 +5,7 @@ import { Modal } from "react-bootstrap";
 import Cookies from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
+import Button from "@/app/components/Button";
 
 export interface GroupOption {
   id: number;
@@ -112,14 +113,14 @@ const GroupingForm: React.FC<GroupingFormProps> = ({
   return (
     <>
       <div>
-        <button
+        <Button
           type="button"
           onClick={handleShow}
           className="btn btn-sm text-white bg-color-sea-green"
           data-bs-target={`#${modalId}`}
         >
           Attribute Groups
-        </button>
+        </Button>
 
         <Modal
           show={show}
@@ -153,13 +154,13 @@ const GroupingForm: React.FC<GroupingFormProps> = ({
                     </div>
 
                     <div className="col-2 text-end">
-                      <button
+                      <Button
                         className="btn fs-5 fw-bold"
                         data-bs-dismiss="modal"
                         aria-label="Close"
                       >
                         X
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -199,12 +200,12 @@ const GroupingForm: React.FC<GroupingFormProps> = ({
                               groupOptions.find((group) => group.id === groupId)
                                 ?.name
                             }
-                            <button
+                            <Button
                               type="button"
                               className="btn-close ms-2"
                               aria-label="Close"
                               onClick={() => handleRemoveGroup(groupId)}
-                            ></button>
+                            ></Button>
                           </div>
                           &nbsp; &nbsp;
                         </>
@@ -213,12 +214,12 @@ const GroupingForm: React.FC<GroupingFormProps> = ({
                   )}
                 </div>
                 <div className="col text-center">
-                  <button
+                  <Button
                     type="submit"
                     className="btn text-white bg-color-sea-green"
                   >
                     Submit
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

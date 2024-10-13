@@ -13,6 +13,7 @@ import apiClient, { AxiosError } from "../services/api-client";
 import { loginAPI } from "../APIs";
 import { ToastContainer, toast } from "react-toastify";
 import Link from "next/link";
+import Button from "./Button";
 
 export interface UserData {
   userName: string;
@@ -23,6 +24,7 @@ interface Props {
   data: {
     token: string;
     expiration: string;
+    role: [string];
     userData: UserData;
   };
 }
@@ -59,12 +61,19 @@ const Login = () => {
       Cookies.set("email", response.data.data.userData.email, {
         expires: new Date(response.data.data.expiration),
       });
-      localStorage.setItem("token", response.data.data.token);
+      console.log("roles", response.data.data.role);
+      if (response.data.data.role.length > 0) {
+        Cookies.set("role", response.data.data.role[0], {
+          expires: new Date(response.data.data.expiration),
+        });
+      }
+
+      // localStorage.setItem("token", response.data.data.token);
       window.location.href = "/";
       notifyCreate(createdMessage);
     } catch (err) {
       console.log((err as AxiosError).message);
-      notifyError(errorMessage);
+      // notifyError(errorMessage);
     }
   };
 
@@ -124,7 +133,7 @@ const Login = () => {
             </div>
             <div className="row">
               <div className="col text-center">
-                <h3 className=" text-white">
+                <h3 className="text-white fw-bold">
                   Directorate General Monitoring & Evaluation
                 </h3>
               </div>
@@ -200,13 +209,13 @@ const Login = () => {
                       className="input-group-text bg-white border-0"
                       id="basic-addon1"
                     >
-                      <button
+                      <Button
                         className="btn p-0"
                         type="button"
                         onClick={() => setButtonType(!buttonType)}
                       >
                         <Image src={eye} alt="eye" width={17} height={17} />
-                      </button>
+                      </Button>
                     </span>
                   </div>
                 </div>
@@ -224,17 +233,18 @@ const Login = () => {
               </div>
               <div className="row d-flex flex-colum justify-content-center mb-3">
                 <div className="col-9">
-                  <button
+                  <Button
                     type="submit"
                     style={{
                       borderRadius: "6px",
                       backgroundImage:
                         "linear-gradient(to right, #37b53c , #39953d)",
+                      letterSpacing: 1,
                     }}
-                    className="btn text-white w-100 mb-3 pt-3 pb-3"
+                    className="btn shadow text-white w-100 mb-3 pt-3 pb-3 fw-bold"
                   >
                     LOGIN
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>

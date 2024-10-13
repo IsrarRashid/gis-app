@@ -29,6 +29,7 @@ import SyncModal from "./SyncModal";
 import SmdpSyncForm from "./SmdpSyncForm";
 import AssignUserForm from "./AssignUserForm";
 import useAuthentication from "@/app/hooks/useAuthentication";
+import Button from "@/app/components/Button";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -293,7 +294,7 @@ const ProjectsList = ({
                 handleSort={() => handleSort("status")}
               />
               <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th>
-              <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th>
+              {/* <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th> */}
               <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th>
               <th colSpan={3}>
                 <div className="text-center"></div>
@@ -369,9 +370,9 @@ const ProjectsList = ({
                 <td className="text-center">
                   <AssignUserForm id={d.id} options={users} />
                 </td>
-                <td className="text-center">
+                {/* <td className="text-center">
                   <SyncModal handleSubmit={handleSync} id={d.smdpProjectID} />
-                </td>
+                </td> */}
                 <td className="text-center">
                   <GroupingForm id={d.id} options={superGroups} />
                 </td>
@@ -429,7 +430,7 @@ const ProjectsList = ({
                 </select>
               </div>
               <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                <button
+                <Button
                   className="btn bg-color-sea-green shadow me-2"
                   onClick={handlePreviousPage}
                   disabled={currentPage === 1}
@@ -438,8 +439,8 @@ const ProjectsList = ({
                   }}
                 >
                   <Image src={arrowLeft} alt="arrow left" />
-                </button>
-                <button
+                </Button>
+                <Button
                   className="btn bg-color-sea-green shadow"
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages}
@@ -448,7 +449,7 @@ const ProjectsList = ({
                   }}
                 >
                   <Image src={arrowRight} alt="arrow right" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>

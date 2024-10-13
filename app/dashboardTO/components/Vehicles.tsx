@@ -10,6 +10,7 @@ import fuel from "../../../public/icons/fuel.svg";
 import seat from "../../../public/icons/seat.svg";
 import transmission from "../../../public/icons/transmission.svg";
 import FavioriteBtn from "./FavioriteBtn";
+import Button from "@/app/components/Button";
 
 const Vehicles = () => {
   const [activeButton, setActiveButton] = useState<string>("available");
@@ -81,7 +82,7 @@ const Vehicles = () => {
             </h4>
           </div>
           <div className="col text-end">
-            <button
+            <Button
               className="btn p-1 mt-1 fs12px"
               style={{
                 padding: "15px 20px 15px 20px",
@@ -90,13 +91,13 @@ const Vehicles = () => {
               }}
             >
               See All
-            </button>
+            </Button>
           </div>
         </div>
       </div>
       <div className="row d-flex mb-1">
         <div className="col text-center pe-0">
-          <button
+          <Button
             className="btn mt-2 p-0 w-100 fs14px rounded-0"
             style={{
               borderBottom:
@@ -110,10 +111,10 @@ const Vehicles = () => {
             onClick={() => setActiveButton("available")}
           >
             Available
-          </button>
+          </Button>
         </div>
         <div className="col text-center ps-0">
-          <button
+          <Button
             className="btn mt-2 p-0 w-100 fs14px rounded-0"
             style={{
               letterSpacing: "1px",
@@ -127,7 +128,7 @@ const Vehicles = () => {
             onClick={() => setActiveButton("inUse")}
           >
             In Use
-          </button>
+          </Button>
         </div>
       </div>
       <div className="row d-flex pt-0 pb-2 m-2 ms-0 me-0">
@@ -165,9 +166,8 @@ const Vehicles = () => {
                     <Image
                       src={d.carIcon}
                       alt={d.carName}
+                      style={{ width: "auto", height: "auto" }}
                       className="img-fluid"
-                      width={237}
-                      height={117}
                     />
                   </div>
                   <div className="col-lg-1 col-md-1 col text-end p-0">

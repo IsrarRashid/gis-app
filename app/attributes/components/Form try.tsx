@@ -244,7 +244,7 @@
 //       <div>
 //         <Toaster />
 //       </div>
-//       <button
+//       <Button
 //         type="button"
 //         className={`btn btn-sm ${
 //           method === "POST" ? "text-white bg-color-sea-green" : "rounded-pill"
@@ -257,7 +257,7 @@
 //         ) : (
 //           <Image src={more} alt="more" />
 //         )}
-//       </button>
+//       </Button>
 
 //       <Modal
 //         size="xl"
@@ -634,13 +634,13 @@
 //                         <h5 className="m-0">Attribute Options</h5>
 //                       </div>
 //                       <div className="col-lg-2 col-md-6 col-sm-4">
-//                         <button
+//                         <Button
 //                           className="btn bg-color-sea-green text-white"
 //                           type="button"
 //                           onClick={addNewOption}
 //                         >
 //                           Add More +
-//                         </button>
+//                         </Button>
 //                       </div>
 //                     </div>
 //                     <hr />
@@ -719,13 +719,13 @@
 //                           </div>
 //                         </div>
 //                         <div className="col-lg-2 col-md-6 col-sm-4 mx-auto">
-//                           <button
+//                           <Button
 //                             className="btn btn-danger text-white w-100"
 //                             type="button"
 //                             onClick={() => handleDeleteOption(index)}
 //                           >
 //                             Delete
-//                           </button>
+//                           </Button>
 //                         </div>
 //                       </div>
 //                     ))}
@@ -734,12 +734,12 @@
 //                   ""
 //                 )}
 //                 <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
-//                   <button
+//                   <Button
 //                     className="btn bg-color-sea-green text-white w-100"
 //                     type="submit"
 //                   >
 //                     Done
-//                   </button>
+//                   </Button>
 //                 </div>
 //               </form>
 //             </div>

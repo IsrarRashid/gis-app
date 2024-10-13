@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 import DownloadFile from "../projects/components/DownloadFile";
 import downloadLineBlack from "../../public/icons/downloadLineBlack.svg";
 import Image from "next/image";
+import Button from "./Button";
 
 const DownloadPDFBtn = () => {
   // Correctly typing useRef as an HTMLDivElement or null
@@ -42,13 +43,13 @@ const DownloadPDFBtn = () => {
 
   return (
     <>
-      <button
+      <Button
         className="btn text-white rounded-pill shadow ps-3 pe-3 pt-1 pb-1"
         style={{ fontSize: ".8rem", background: "rgba(255, 255, 255,.5)" }}
         onClick={downloadPdf}
       >
         <Image src={downloadLineBlack} alt="download" width={20} height={20} />
-      </button>
+      </Button>
       {/* Component to be downloaded */}
       <div
         style={{

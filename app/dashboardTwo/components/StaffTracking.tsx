@@ -10,6 +10,7 @@ import calendar from "../../../public/icons/calendar.svg";
 import phone from "../../../public/icons/phone.svg";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import Button from "@/app/components/Button";
 
 const StaffTracking = () => {
   const items = ["a", "a", "a", "a", "a", "a"];
@@ -65,7 +66,7 @@ const StaffTracking = () => {
             <h4 className="fw-bold mt-2">Staff Tracking</h4>
           </div>
           <div className="col text-end">
-            <button
+            <Button
               className="btn bg-color-sea-blue text-white shadow"
               style={{
                 fontSize: ".75rem",
@@ -75,7 +76,7 @@ const StaffTracking = () => {
               }}
             >
               VISIT DETAILS
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -141,7 +142,8 @@ const StaffTracking = () => {
             {items2.map((d, i) => (
               <div
                 key={i}
-                className="row d-flex bg-white rounded-3 p-2 mb-2 ms-2"
+                className="row d-flex bg-white p-2 mb-2 ms-2"
+                style={{ borderRadius: "8px" }}
               >
                 <div className="row d-flex pe-0">
                   <div className="col-lg-10 col-md-10 col-sm-12 p-0">
@@ -161,13 +163,13 @@ const StaffTracking = () => {
                     </div>
                   </div>
                   <div className="col-lg-2 col-md-2 col text-end p-0">
-                    <button className="btn p-0">
+                    <Button className="btn p-0">
                       <Image
                         style={{ transform: "rotate(90deg)" }}
                         src={more}
                         alt="more"
                       />
-                    </button>
+                    </Button>
                   </div>
                 </div>
                 <div className="row d-flex ps-3 mb-2">
@@ -222,15 +224,21 @@ const StaffTracking = () => {
                       src={profilePic5}
                       alt="profilePic5"
                     />
-                    &nbsp;Areef
+                    &nbsp;&nbsp;Areef
                   </div>
-                  <div className="col fs10px text-center">
+                  <div
+                    className="col fs10px text-center"
+                    style={{ marginTop: "3px" }}
+                  >
                     <Image src={phone} alt="phone" />
-                    &nbsp;03182300642
+                    &nbsp;&nbsp;03182300642
                   </div>
-                  <div className="col fs10px text-end pe-1">
-                    <Image src={calendar} alt="calendar" />
-                    &nbsp;5 Sep 2024
+                  <div
+                    className="col fs10px text-end pe-1"
+                    style={{ marginTop: "1px" }}
+                  >
+                    <Image src={calendar} alt="calendar" className="mb-1" />
+                    &nbsp;&nbsp;5 Sep 2024
                   </div>
                 </div>
               </div>

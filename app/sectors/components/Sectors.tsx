@@ -8,12 +8,12 @@ const Sectors = () => {
   const [refresh, setRefresh] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   const token = Cookies.get("token");
+  //   if (!token) {
+  //     router.push("/login");
+  //   }
+  // }, [router]);
 
   useEffect(() => {
     // Set the background for the body

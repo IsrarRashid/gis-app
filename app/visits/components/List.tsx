@@ -11,7 +11,7 @@ import { visitAPI } from "@/app/APIs";
 import Form from "./Form";
 import { sort } from "fast-sort";
 import GroupingForm from "./GroupingForm";
-import useVisits, { AttributeGroup } from "@/app/hooks/useVisits";
+import useVisits, { Visit } from "@/app/hooks/useVisits";
 import useProjects from "@/app/hooks/useProjects";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
@@ -22,6 +22,8 @@ import TableHeading from "@/app/components/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import useVehicle from "@/app/hooks/useVehicle";
 import useDriver from "@/app/hooks/useDriver";
+import Button from "@/app/components/Button";
+import { letterSpacing } from "html2canvas/dist/types/css/property-descriptors/letter-spacing";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -48,6 +50,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const { data: users } = useAuthentication({ refresh });
   const { data: vehicles } = useVehicle({ refresh });
   const { data: drivers } = useDriver({ refresh });
+  const [status, setStatus] = useState("");
   const deleteMessage = "Deleted Successfully!";
 
   const notifyCreate = (message: string) => toast.success(message);
@@ -55,11 +58,11 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
-    key: keyof AttributeGroup;
+    key: keyof Visit;
     direction: "asc" | "desc";
   } | null>(null);
 
-  const handleSort = (key: keyof AttributeGroup) => {
+  const handleSort = (key: keyof Visit) => {
     let direction: "asc" | "desc" = "asc";
 
     if (
@@ -100,7 +103,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   // Determine the data to display for the current page
   const indexOfLastRow = currentPage * rows;
   const indexOfFirstRow = indexOfLastRow - rows;
-  const currentData = data.slice(indexOfFirstRow, indexOfLastRow);
+  const currentData: Visit[] = data.slice(indexOfFirstRow, indexOfLastRow);
 
   // for pagination buttons
   const totalPages = Math.ceil(data.length / rows);
@@ -124,6 +127,10 @@ const List = ({ refresh, setRefresh }: ListProps) => {
     currentPage * rows
   );
 
+  const handleFilterData = (data: Visit[], status: string) => {
+    return data?.filter((d: any) => d.status === status);
+  };
+
   return (
     <>
       {isLoading && (
@@ -132,10 +139,10 @@ const List = ({ refresh, setRefresh }: ListProps) => {
         </div>
       )}
       <div className="row d-flex p-3">
-        <div className="col-lg-6 col-md-6 col-sm-12">
+        <div className="col-lg-6 col-md-6 col">
           <h4 className="fw-bold">Visits</h4>
         </div>
-        <div className="col-lg-6 col-md-6 col-sm-12">
+        <div className="col-lg-6 col-md-6 col">
           <div className="row d-flex ">
             <div className="col d-none d-lg-block"></div>
             <div className="col text-end">
@@ -145,6 +152,35 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               Today
             </div>
           </div>
+        </div>
+      </div>
+      <div className="row d-flex">
+        <div className="col-lg-4 col-md-4 col-sm-12 mb-2">
+          <Button
+            className="btn btn-warning w-100 text-white fw-bold"
+            style={{ letterSpacing: 1 }}
+            onClick={() => setStatus("pending")}
+          >
+            Pending
+          </Button>
+        </div>
+        <div className="col-lg-4 col-md-4 col-sm-12 mb-2">
+          <Button
+            style={{ letterSpacing: 1 }}
+            className="btn btn-info w-100 text-white fw-bold"
+            onClick={() => setStatus("scheduled")}
+          >
+            Scheduled
+          </Button>
+        </div>
+        <div className="col-lg-4 col-md-4 col-sm-12 mb-2">
+          <Button
+            style={{ letterSpacing: 1 }}
+            className="btn btn-success w-100 text-white fw-bold"
+            onClick={() => setStatus("completed")}
+          >
+            Completed
+          </Button>
         </div>
       </div>
       <div className="row p-3">
@@ -218,99 +254,97 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             </tr>
           </thead>
           <tbody>
-            {currentData
-              ?.filter((data) => data.status === "pending")
-              ?.map((d) => (
-                <tr
-                  style={{
-                    border: ".41px solid rgba(81,81,81,0.20) !important",
-                    fontSize: ".85rem",
-                  }}
-                  key={d.id}
-                >
-                  <td>{d.id}</td>
-                  <td>{getName(d.projectId, projects)}</td>
-                  <td>{getName(d.assignedTo, users)}</td>
-                  <td style={{ whiteSpace: "nowrap" }}>
-                    {d.status === "scheduled" || d.status === "Scheduled" ? (
-                      <Image
-                        src={calender}
-                        style={{ marginBottom: "3px" }}
-                        alt="calender"
-                      />
-                    ) : d.status === "not confirmed" ||
-                      d.status === "Not Confirmed" ||
-                      d.status === "pending" ||
-                      d.status === "Pending" ? (
-                      <Image
-                        src={clock}
-                        style={{ marginBottom: "3px" }}
-                        alt="clock"
-                      />
-                    ) : d.status === "cancel" || d.status === "Cancel" ? (
-                      <Image
-                        src={cancel}
-                        style={{ marginBottom: "3px" }}
-                        alt="cancel"
-                      />
-                    ) : d.status === "completed" || d.status === "Completed" ? (
-                      <Image
-                        src={complete}
-                        style={{ marginBottom: "3px" }}
-                        alt="complete"
-                      />
-                    ) : d.status.startsWith("approved") ||
-                      d.status.startsWith("Approved") ? (
-                      <Image
-                        src={complete}
-                        style={{ marginBottom: "3px" }}
-                        alt="complete"
-                      />
-                    ) : d.status === "active" || d.status === "Active" ? (
-                      <Image
-                        src={calender}
-                        style={{ marginBottom: "3px" }}
-                        alt="calender"
-                      />
-                    ) : d.status === "draft" || d.status === "Draft" ? (
-                      <Image
-                        src={clock}
-                        style={{ marginBottom: "3px" }}
-                        alt="clock"
-                      />
-                    ) : (
-                      ""
-                    )}
-                    &nbsp;{d.status}
-                  </td>
-                  <td>{d.latitude}</td>
-                  <td>{d.longitude}</td>
-                  <td>{d.vehicleID ? getName(d.vehicleID, vehicles) : ""}</td>
-                  <td>{d.driverID ? getName(d.driverID, drivers) : ""}</td>
-                  <td>{getFormattedDate(new Date(d.fromDate), "numeric")}</td>
-                  <td>{getFormattedDate(new Date(d.toDate), "numeric")}</td>
-                  <td>
-                    {d.createdAt &&
-                      getFormattedDate(new Date(d.createdAt), "numeric")}
-                  </td>
-                  <td>
-                    {d.updatedAt &&
-                      getFormattedDate(new Date(d.updatedAt), "numeric")}
-                  </td>
-                  <td>
-                    <DeleteModal handleDelete={handleDelete} id={d.id} />
-                  </td>
-                  <td>
-                    <Form
-                      api={visitAPI}
-                      method="PUT"
-                      id={d.id}
-                      setRefresh={setRefresh}
-                      refresh={refresh}
+            {handleFilterData(currentData, status)?.map((d) => (
+              <tr
+                style={{
+                  border: ".41px solid rgba(81,81,81,0.20) !important",
+                  fontSize: ".85rem",
+                }}
+                key={d.id}
+              >
+                <td>{d.id}</td>
+                <td>{getName(d.projectId, projects)}</td>
+                <td>{getName(d.assignedTo, users)}</td>
+                <td style={{ whiteSpace: "nowrap" }}>
+                  {d.status === "scheduled" || d.status === "Scheduled" ? (
+                    <Image
+                      src={calender}
+                      style={{ marginBottom: "3px" }}
+                      alt="calender"
                     />
-                  </td>
-                </tr>
-              ))}
+                  ) : d.status === "not confirmed" ||
+                    d.status === "Not Confirmed" ||
+                    d.status === "pending" ||
+                    d.status === "Pending" ? (
+                    <Image
+                      src={clock}
+                      style={{ marginBottom: "3px" }}
+                      alt="clock"
+                    />
+                  ) : d.status === "cancel" || d.status === "Cancel" ? (
+                    <Image
+                      src={cancel}
+                      style={{ marginBottom: "3px" }}
+                      alt="cancel"
+                    />
+                  ) : d.status === "completed" || d.status === "Completed" ? (
+                    <Image
+                      src={complete}
+                      style={{ marginBottom: "3px" }}
+                      alt="complete"
+                    />
+                  ) : d.status.startsWith("approved") ||
+                    d.status.startsWith("Approved") ? (
+                    <Image
+                      src={complete}
+                      style={{ marginBottom: "3px" }}
+                      alt="complete"
+                    />
+                  ) : d.status === "active" || d.status === "Active" ? (
+                    <Image
+                      src={calender}
+                      style={{ marginBottom: "3px" }}
+                      alt="calender"
+                    />
+                  ) : d.status === "draft" || d.status === "Draft" ? (
+                    <Image
+                      src={clock}
+                      style={{ marginBottom: "3px" }}
+                      alt="clock"
+                    />
+                  ) : (
+                    ""
+                  )}
+                  &nbsp;{d.status}
+                </td>
+                <td>{d.latitude}</td>
+                <td>{d.longitude}</td>
+                <td>{d.vehicleID ? getName(d.vehicleID, vehicles) : ""}</td>
+                <td>{d.driverID ? getName(d.driverID, drivers) : ""}</td>
+                <td>{getFormattedDate(new Date(d.fromDate), "numeric")}</td>
+                <td>{getFormattedDate(new Date(d.toDate), "numeric")}</td>
+                <td>
+                  {d.createdAt &&
+                    getFormattedDate(new Date(d.createdAt), "numeric")}
+                </td>
+                <td>
+                  {d.updatedAt &&
+                    getFormattedDate(new Date(d.updatedAt), "numeric")}
+                </td>
+                <td>
+                  <DeleteModal handleDelete={handleDelete} id={d.id} />
+                </td>
+                <td>
+                  <Form
+                    api={visitAPI}
+                    method="PUT"
+                    id={d.id}
+                    setRefresh={setRefresh}
+                    refresh={refresh}
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
         <div className="row d-flex mb-3">
@@ -348,7 +382,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 </select>
               </div>
               <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                <button
+                <Button
                   className="btn bg-color-sea-green shadow me-2"
                   onClick={handlePreviousPage}
                   disabled={currentPage === 1}
@@ -357,8 +391,8 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   }}
                 >
                   <Image src={arrowLeft} alt="arrow left" />
-                </button>
-                <button
+                </Button>
+                <Button
                   className="btn bg-color-sea-green shadow"
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages}
@@ -367,7 +401,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   }}
                 >
                   <Image src={arrowRight} alt="arrow right" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>

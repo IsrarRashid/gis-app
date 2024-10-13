@@ -17,6 +17,16 @@ import superGroupWhite from "../../public/icons/superGroupWhite.svg";
 import { useDispatch } from "react-redux";
 import { setContent } from "../features/content/contentSlice";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import Button from "./Button";
+
+interface Data {
+  name: string;
+  link: string;
+  icon: any;
+  backgroundColor: string;
+}
 
 const GISMenu = () => {
   const dispatch = useDispatch();
@@ -26,6 +36,12 @@ const GISMenu = () => {
   };
 
   const router = useRouter();
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    const role = Cookies.get("role") || "";
+    setRole(role);
+  }, [router]);
 
   const data = [
     {
@@ -41,13 +57,8 @@ const GISMenu = () => {
       backgroundColor: "linear-gradient(to bottom right, #DA5569 , #E73A80)",
     },
     {
-      name: (
-        <p>
-          Summary <br />
-          Dashboard
-        </p>
-      ),
-      link: "/dashboardThree",
+      name: "Summary Dashboard",
+      link: "/dashboardSummary",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
     },
@@ -56,6 +67,12 @@ const GISMenu = () => {
       link: "/dashboardTO",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #a82897 , #2871a8)",
+    },
+    {
+      name: "DashboardST",
+      link: "/dashboardST",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #7f28a8 , #a82828)",
     },
     {
       name: "Sectors",
@@ -123,17 +140,33 @@ const GISMenu = () => {
       icon: visits,
       backgroundColor: "linear-gradient(to bottom right, #28A897 , yellow)",
     },
-    {
-      name: "SMDP Sync",
-      link: "/smdpSync",
-      icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #28A897 , #E73A80)",
-    },
+    // {
+    //   name: "SMDP Sync",
+    //   link: "/smdpSync",
+    //   icon: dashboard,
+    //   backgroundColor: "linear-gradient(to bottom right, #28A897 , #E73A80)",
+    // },
   ];
+
+  const getFilterdData = (role: string, data: Data[]) => {
+    switch (role) {
+      case "Transport Officier":
+        return data.filter((d) =>
+          ["Vehicle", "Driver", "DashboardTO"].includes(d.name)
+        );
+      // case "Admin":
+      //   return data.filter((d) =>
+      //     ["Vehicle", "Dashboard", "Settings"].includes(d.name)
+      //   );
+
+      default:
+        return data;
+    }
+  };
 
   return (
     <>
-      <button
+      <Button
         type="button"
         className="nav-link btn btn-sm text-white badge rounded-pill bg-color-light-blue shadow-sm fs-6"
         style={{
@@ -144,7 +177,7 @@ const GISMenu = () => {
       >
         GIS Base Monitering &nbsp;
         <Image src={downArrow} alt="down arrow" />
-      </button>
+      </Button>
 
       <div
         className="modal fade"
@@ -166,25 +199,25 @@ const GISMenu = () => {
                 }}
               >
                 <div className="col">
-                  <button
+                  <Button
                     className="btn p-0"
                     data-bs-dismiss="modal"
                     aria-label="Close"
                   >
                     <Image src={cross} alt="cross" width={30} />
-                  </button>
+                  </Button>
                 </div>
                 <div className="row d-flex justify-content-center p-4">
-                  {data.map((d) => (
+                  {getFilterdData(role, data).map((d) => (
                     <div
                       key={d.name.toString()}
                       className="col text-center mb-3"
                     >
-                      <button
+                      <Button
                         className="btn p-0"
                         onClick={() => {
                           router.push(d.link);
-                          handleButtonClick(d.name.toString());
+                          handleButtonClick(d.name);
                         }}
                         data-bs-dismiss="modal"
                         aria-label="Close"
@@ -205,12 +238,19 @@ const GISMenu = () => {
                           />
                         </div>
                         <div
-                          className="col text-center fw-bold mt-1"
+                          className="col text-center fw-bold mt-1 fs18px"
                           style={{ color: "#676767" }}
                         >
-                          {d.name}
+                          {d.name === "Summary Dashboard" ? (
+                            <>
+                              Summary <br />
+                              Dashboard
+                            </>
+                          ) : (
+                            d.name
+                          )}
                         </div>
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </div>

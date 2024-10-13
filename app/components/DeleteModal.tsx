@@ -1,6 +1,7 @@
 import Image from "next/image";
 import trashImage from "../../public/images/trash.png";
 import trashIcon from "../../public/icons/trash.svg";
+import Button from "./Button";
 
 interface Props {
   handleDelete: (id: number) => void;
@@ -12,14 +13,14 @@ const DeleteModal = ({ handleDelete, id }: Props) => {
   console.log("modal delete id", id);
   return (
     <>
-      <button
+      <Button
         type="button"
         className="btn btn-sm rounded-pill"
         data-bs-toggle="modal"
         data-bs-target={`#${modalId}`}
       >
         <Image src={trashIcon} alt="trash" width={20} height={20} />
-      </button>
+      </Button>
 
       <div
         className="modal fade"
@@ -67,7 +68,7 @@ const DeleteModal = ({ handleDelete, id }: Props) => {
                           boxSizing: "border-box",
                         }}
                       >
-                        <button
+                        <Button
                           className="btn shadow btn-outline-light w-50 p-3 fs-5"
                           data-bs-dismiss="modal"
                           aria-label="Close"
@@ -77,10 +78,10 @@ const DeleteModal = ({ handleDelete, id }: Props) => {
                           }}
                         >
                           Cancel
-                        </button>
+                        </Button>
                       </div>
                       <div className="col-lg-6 col-md-6 col-sm-12 text-start">
-                        <button
+                        <Button
                           onClick={() => handleDelete(id)}
                           className="btn shadow border-0 text-white w-50 p-3 fs-5"
                           style={{
@@ -93,7 +94,7 @@ const DeleteModal = ({ handleDelete, id }: Props) => {
                           aria-label="Close"
                         >
                           Delete
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>

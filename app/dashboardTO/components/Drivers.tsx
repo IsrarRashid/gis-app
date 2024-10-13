@@ -13,6 +13,7 @@ import {
   MdOutlineStarHalf,
   MdOutlineStarOutline,
 } from "react-icons/md";
+import Button from "@/app/components/Button";
 
 const Drivers = () => {
   const [activeButton, setActiveButton] = useState<string>("available");
@@ -53,7 +54,7 @@ const Drivers = () => {
             </h4>
           </div>
           <div className="col text-end">
-            <button
+            <Button
               className="btn p-1 mt-1 fs12px"
               style={{
                 padding: "15px 20px 15px 20px",
@@ -62,13 +63,13 @@ const Drivers = () => {
               }}
             >
               See All
-            </button>
+            </Button>
           </div>
         </div>
       </div>
       <div className="row d-flex mb-1">
         <div className="col text-center pe-0">
-          <button
+          <Button
             className="btn mt-2 p-0 w-100 fs14px rounded-0"
             style={{
               borderBottom:
@@ -82,10 +83,10 @@ const Drivers = () => {
             onClick={() => setActiveButton("available")}
           >
             Available
-          </button>
+          </Button>
         </div>
         <div className="col text-center ps-0">
-          <button
+          <Button
             className="btn mt-2 p-0 w-100 fs14px rounded-0"
             style={{
               letterSpacing: "1px",
@@ -99,7 +100,7 @@ const Drivers = () => {
             onClick={() => setActiveButton("inUse")}
           >
             In Use
-          </button>
+          </Button>
         </div>
       </div>
       <div className="row d-flex pt-0 pb-2 m-2">
@@ -139,9 +140,8 @@ const Drivers = () => {
                         <Image
                           src={profilePic6}
                           className="img-fluid mb-2"
+                          style={{ width: "auto", height: "auto" }}
                           alt="profilePic6"
-                          width={64}
-                          height={64}
                         />
                         <div className="text-center">
                           <MdOutlineStar style={{ color: "#FEC003" }} />
@@ -212,13 +212,13 @@ const Drivers = () => {
                     </div>
                   </div>
                   <div className="col-lg-2 col-md-2 col text-end p-0">
-                    <button className="btn p-0">
+                    <Button className="btn p-0">
                       <Image src={moreCircle} alt="moreCircle" />
-                    </button>
+                    </Button>
                     &nbsp;
-                    <button className="btn p-0">
+                    <Button className="btn p-0">
                       <Image src={rightArrowCircle} alt="rightArrowCircle" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

@@ -12,6 +12,7 @@ import { Lexend } from "next/font/google";
 import { useDispatch } from "react-redux";
 import { setContent } from "@/app/features/content/contentSlice";
 import DistributedColumnChart from "./DistributedColumnChart";
+import Button from "@/app/components/Button";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -76,12 +77,15 @@ const Dashboard = () => {
       <div className="row ps-2 pe-2 mt-2">
         <div className="col text-center text-white rounded bg-color-sea-blue">
           <div className="row d-flex">
-            <div className="col"></div>
+            <div className="col d-none d-md-block"></div>
             <div className="col" style={{ marginTop: "10px" }}>
               <p className="m-0 fs12px fw-bold">List of projects</p>
             </div>
             <div className="col text-end mt-1 mb-1">
-              <button className="btn btn-sm btn-light">
+              <Button
+                className="btn btn-sm btn-light"
+                style={{ whiteSpace: "nowrap" }}
+              >
                 Downloads &nbsp;
                 <Image
                   src={downloadLineBlack}
@@ -89,7 +93,7 @@ const Dashboard = () => {
                   width={12}
                   height={15}
                 />
-              </button>
+              </Button>
             </div>
           </div>
         </div>

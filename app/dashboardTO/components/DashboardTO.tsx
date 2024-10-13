@@ -1,5 +1,4 @@
 "use client";
-import Map from "./Map";
 import { useEffect, useState } from "react";
 import { Lexend } from "next/font/google";
 import { useDispatch } from "react-redux";
@@ -7,7 +6,9 @@ import { setContent } from "@/app/features/content/contentSlice";
 import Drivers from "./Drivers";
 import Vehicles from "./Vehicles";
 import Destination from "./Destination";
-import MapCars from "./MapCars";
+import MapCars from "./Map/MapCars";
+import MapCarsRecorded from "./Map/MapCarsRecorded";
+import Button from "@/app/components/Button";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -15,8 +16,7 @@ const lexend = Lexend({
 });
 
 const DashboardTO = () => {
-  const [refresh, setRefresh] = useState(false);
-
+  const [mapStatus, setMapStatus] = useState(false);
   const dispatch = useDispatch();
 
   const handleButtonClick = (content: string) => {
@@ -48,12 +48,25 @@ const DashboardTO = () => {
       }}
     >
       <div className={`row ${lexend.className}`}>
-        <div className="col-lg-9 col-md-12 col">
+        <div className="col-lg-9 col-md-12 col position-relative">
           <div className="row">
-            <div className="col-lg-12 col-md-12 col">
-              {/* <Map /> */}
-              <MapCars />
-
+            <div className="col">
+              <div
+                className="col position-absolute text-end"
+                style={{ zIndex: 1, right: 23, top: 10 }}
+              >
+                <Button
+                  className={`btn ps-2 pe-2 ${
+                    mapStatus ? "btn-danger" : "btn-success"
+                  }`}
+                  onClick={() => setMapStatus(!mapStatus)}
+                >
+                  {mapStatus ? "Live" : "Recording"}
+                </Button>
+              </div>
+              <div className="position-relative" style={{ zIndex: 0 }}>
+                {mapStatus ? <MapCarsRecorded /> : <MapCars />}
+              </div>
               <Destination />
             </div>
           </div>

@@ -7,6 +7,7 @@ import { Option } from "./ProjectsList";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
 import superGroupBlack from "../../../public/icons/superGroupBlack.svg";
+import Button from "@/app/components/Button";
 interface Props {
   id: number;
   options: Option[];
@@ -127,7 +128,7 @@ const GroupingForm = ({ id, options }: Props) => {
   return (
     <>
       <div>
-        <button
+        <Button
           type="button"
           onClick={handleShow}
           className="btn btn-sm"
@@ -142,7 +143,7 @@ const GroupingForm = ({ id, options }: Props) => {
             width={20}
             height={20}
           />
-        </button>
+        </Button>
 
         <Modal
           show={show}
@@ -190,7 +191,7 @@ const GroupingForm = ({ id, options }: Props) => {
                   />
                 </div>
                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <button
+                  <Button
                     className="btn text-white w-100 border-0"
                     style={{
                       backgroundImage:
@@ -200,7 +201,7 @@ const GroupingForm = ({ id, options }: Props) => {
                     type="submit"
                   >
                     Done
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

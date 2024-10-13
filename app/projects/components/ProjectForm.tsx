@@ -8,6 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast, { Toaster } from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import Button from "@/app/components/Button";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -108,7 +109,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
       <div>
         <Toaster />
       </div>
-      <button
+      <Button
         type="button"
         className={`btn shadow ${
           method === "POST"
@@ -125,7 +126,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
         ) : (
           <Image src={more} alt="more" width={20} height={20} />
         )}
-      </button>
+      </Button>
 
       <Modal
         show={show}
@@ -252,7 +253,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                   />
                 </div>
                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <button
+                  <Button
                     className="btn text-white w-100 border-0"
                     style={{
                       backgroundImage:
@@ -262,7 +263,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     type="submit"
                   >
                     Done
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

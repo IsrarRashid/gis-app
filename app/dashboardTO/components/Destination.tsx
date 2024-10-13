@@ -97,9 +97,8 @@ const Destination = () => {
                         <Image
                           src={profilePic6}
                           className="img-fluid mb-2"
+                          style={{ width: "auto", height: "auto" }}
                           alt="profilePic6"
-                          width={64}
-                          height={64}
                         />
                       </div>
                       <div className="col-lg-6 col-md-6 col mt-2 ps-1">

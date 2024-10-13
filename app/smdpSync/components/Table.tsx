@@ -21,6 +21,7 @@ import { DM_Sans, Inter } from "next/font/google";
 import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
 import { motion } from "framer-motion";
 import TableHeading from "@/app/components/TableHeading";
+import Button from "@/app/components/Button";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -406,20 +407,20 @@ const ProjectsList = ({
                         </select>
                       </div>
                       <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                        <button
+                        <Button
                           className="btn bg-color-sea-green shadow me-2"
                           onClick={handlePreviousPage}
                           disabled={currentPage === 1}
                         >
                           <Image src={arrowLeft} alt="arrow left" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           className="btn bg-color-sea-green shadow"
                           onClick={handleNextPage}
                           disabled={currentPage === totalPages}
                         >
                           <Image src={arrowRight} alt="arrow right" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>

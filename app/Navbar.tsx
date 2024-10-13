@@ -18,6 +18,8 @@ import locationPointBlue from "../public/icons/locationPointBlue.svg";
 import dashboardBlue from "../public/icons/dashboardBlue.svg";
 import filter from "../public/icons/filter.svg";
 import FilterMenu from "./dashboard/components/FilterMenu";
+import useRoles from "./hooks/useRoles";
+import Button from "./components/Button";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -26,6 +28,8 @@ const lexend = Lexend({
 
 const Navbar = () => {
   const [userEmail, setUserEmail] = useState("");
+  const [userName, setUserName] = useState("");
+  const [refresh, setRefresh] = useState(false);
   const router = useRouter();
   const currentContent = useSelector(
     (state: RootState) => state.content.currentContent
@@ -33,27 +37,30 @@ const Navbar = () => {
 
   useEffect(() => {
     const email = Cookies.get("email") || "";
+    const userName = Cookies.get("userName") || "";
     setUserEmail(email);
+    setUserName(userName);
   }, [router]);
 
   const handleLogout = () => {
     Cookies.remove("token");
     Cookies.remove("email");
     Cookies.remove("userName");
+    Cookies.remove("role");
   };
 
   return (
     <nav
       className={
         lexend.className +
-        " navbar navbar-expand-lg navbar-light bg-color-blue p-0"
+        " navbar navbar-expand-lg navbar-light bg-color-sea-blue p-0"
       }
     >
       <div className="container-fluid">
         <Link className="navbar-brand" href="/">
           <Image src={logo} alt="logo" />
         </Link>
-        <button
+        <Button
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
@@ -63,7 +70,7 @@ const Navbar = () => {
           aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
-        </button>
+        </Button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item dropdown">
@@ -90,114 +97,118 @@ const Navbar = () => {
               </ul>
             </li>
           </ul>
-
-          {currentContent === "Dashboard" && (
-            <>
-              <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li className="nav-item me-2">
-                  <FilterMenu />
-                </li>
-                <li className="nav-item me-2">
-                  <button
-                    className="nav-link btn btn-sm badge rounded shadow-sm fs-6 bg-white mb-1"
-                    style={{
-                      padding: "5px 15px 5px 8px",
-                    }}
-                    id="navbarDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <div className="row d-flex">
-                      <div className="col p-2 ms-3 me-2">
-                        <div className="row">
-                          <div className="col p-0 ps-2">
-                            <Image
-                              src={locationPointBlue}
-                              alt="locationPointBlue"
-                            />
-                          </div>
-                          <div
-                            className="col p-0 pe-2 "
-                            style={{ marginTop: "2px" }}
-                          >
-                            &nbsp;<span>Map</span>
-                          </div>
+          {(currentContent === "Dashboard" ||
+            currentContent === "DashboardTO") && (
+            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li className="nav-item me-2">
+                <FilterMenu />
+              </li>
+              <li className="nav-item me-2">
+                <Button
+                  className="nav-link btn btn-sm badge rounded shadow-sm fs-6 bg-white mb-1"
+                  style={{
+                    padding: "5px 15px 5px 8px",
+                  }}
+                  id="navbarDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <div className="row d-flex">
+                    <div className="col p-2 ms-3 me-2">
+                      <div className="row">
+                        <div className="col p-0 ps-2">
+                          <Image
+                            src={locationPointBlue}
+                            alt="locationPointBlue"
+                          />
+                        </div>
+                        <div
+                          className="col p-0 pe-2 "
+                          style={{ marginTop: "2px" }}
+                        >
+                          &nbsp;<span>Map</span>
                         </div>
                       </div>
-                      <div
-                        className="col rounded p-2"
-                        style={{
-                          background: "#f5f6f7",
-                          border: "1px solid rgba(12, 140, 233, 0.2)",
-                        }}
-                      >
-                        <Image src={dashboardBlue} alt="dashboardBlue" />
-                        &nbsp;Summary Dashboard
-                      </div>
                     </div>
-                  </button>
-                </li>
-                <li className="nav-item dropdown">
-                  <button
-                    className="nav-link btn btn-sm badge rounded-pill shadow-sm fs-6 "
-                    style={{
-                      padding: "5px 15px 5px 8px",
-                      background: "rgba(255, 255, 255, 0.62)",
-                    }}
-                    id="navbarDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <div className="row d-flex">
-                      <div className="col-4">
-                        <Image
-                          className="img-fluid mt-1"
-                          src={profilePic}
-                          alt="profilePic"
-                          width={38}
-                          height={38}
-                        />
-                      </div>
-                      <div className="col mt-2 p-0 me-2">
-                        <p
-                          className="m-0 text-dark"
-                          style={{ fontSize: ".8rem" }}
-                        >
-                          Adil Khan
-                        </p>
-                        <p
-                          className="m-0 text-dark text-start mt-1"
-                          style={{ fontSize: ".68rem" }}
-                        >
-                          12:15PM
-                        </p>
-                      </div>
-                      <div className="col mt-2">
-                        <Image src={downArrowBold} alt="downArrowBold" />
-                      </div>
+                    <div
+                      className="col rounded p-2"
+                      style={{
+                        background: "#f5f6f7",
+                        border: "1px solid rgba(12, 140, 233, 0.2)",
+                      }}
+                    >
+                      <Image src={dashboardBlue} alt="dashboardBlue" />
+                      &nbsp;Summary Dashboard
                     </div>
-                  </button>
-                  <ul
-                    className="dropdown-menu"
-                    aria-labelledby="navbarDropdown"
-                  >
-                    <li>
-                      <Link
-                        className="dropdown-item"
-                        href="/login"
-                        onClick={handleLogout}
+                  </div>
+                </Button>
+              </li>
+              <li className="nav-item dropdown">
+                <Button
+                  className="nav-link btn btn-sm badge rounded-pill shadow-sm fs-6 "
+                  style={{
+                    padding: "5px 15px 5px 8px",
+                    background: "rgba(255, 255, 255, 0.62)",
+                  }}
+                  id="navbarDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <div className="row d-flex">
+                    <Image
+                      className="img-fluid"
+                      src={profilePic}
+                      alt="profilePic"
+                      style={{ width: "auto", height: "auto" }}
+                    />
+                    <div className="col mt-2 p-0 me-2">
+                      <p
+                        className="m-0 text-dark"
+                        style={{ fontSize: ".8rem" }}
                       >
-                        Logout
-                      </Link>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </>
+                        {userName}
+                      </p>
+                      <p
+                        className="m-0 text-dark text-start mt-1"
+                        style={{ fontSize: ".68rem" }}
+                      >
+                        12:15PM
+                      </p>
+                    </div>
+                    <div className="col mt-2 ps-0">
+                      <Image src={downArrowBold} alt="downArrowBold" />
+                    </div>
+                  </div>
+                </Button>
+                <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li>
+                    <Link
+                      className="dropdown-item"
+                      href="/login"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Link>
+                  </li>
+                </ul>
+              </li>
+            </ul>
           )}
-          {currentContent !== "Dashboard" && (
+          {currentContent === "Sectors" ||
+          currentContent === "Projects" ||
+          currentContent === "Users" ||
+          currentContent === "SuperGroup" ||
+          currentContent === "Attribute Groups" ||
+          currentContent === "Attributes" ||
+          currentContent === "Users" ||
+          currentContent === "Roles" ||
+          currentContent === "Rights" ||
+          currentContent === "Vehicle" ||
+          currentContent === "Driver" ||
+          currentContent === "SMDP Sync" ||
+          currentContent === "Visits" ? (
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <Link className="nav-link active" aria-current="page" href="#">
@@ -245,6 +256,8 @@ const Navbar = () => {
                 </li>
               )}
             </ul>
+          ) : (
+            ""
           )}
         </div>
       </div>

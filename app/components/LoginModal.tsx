@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { FormEvent, useEffect, useState } from "react";
+import Button from "./Button";
 
 const LoginModal = () => {
   const postRoute = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/Authentication/login`;
@@ -24,14 +25,14 @@ const LoginModal = () => {
 
   return (
     <>
-      <button
+      <Button
         type="button"
         className="btn btn-sm text-white"
         data-bs-toggle="modal"
         data-bs-target="#loginModal"
       >
         Login
-      </button>
+      </Button>
 
       <div
         className="modal fade"
@@ -79,9 +80,9 @@ const LoginModal = () => {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
-                  <button type="submit" className="btn btn-primary">
+                  <Button type="submit" className="btn btn-primary">
                     Submit
-                  </button>
+                  </Button>
                 </form>
               </div>
             </div>

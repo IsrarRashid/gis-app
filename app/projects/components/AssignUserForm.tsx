@@ -10,6 +10,7 @@ import apiClient from "@/app/services/api-client";
 import user3Black from "../../../public/icons/user3Black.svg";
 import Image from "next/image";
 import { UserOption } from "./ProjectsList";
+import Button from "@/app/components/Button";
 
 interface Props {
   id: number;
@@ -116,7 +117,7 @@ const AssignUserForm = ({ id, options }: Props) => {
   return (
     <>
       <div>
-        <button
+        <Button
           type="button"
           onClick={handleShow}
           className="btn btn-sm"
@@ -126,7 +127,7 @@ const AssignUserForm = ({ id, options }: Props) => {
           title="Users"
         >
           <Image src={user3Black} alt="user" width={20} height={20} />
-        </button>
+        </Button>
 
         <Modal
           show={show}
@@ -174,7 +175,7 @@ const AssignUserForm = ({ id, options }: Props) => {
                   />
                 </div>
                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <button
+                  <Button
                     className="btn text-white w-100 border-0"
                     style={{
                       backgroundImage:
@@ -184,7 +185,7 @@ const AssignUserForm = ({ id, options }: Props) => {
                     type="submit"
                   >
                     Done
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

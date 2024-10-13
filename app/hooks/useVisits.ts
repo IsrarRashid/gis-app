@@ -1,7 +1,7 @@
 import { visitAPI } from "../APIs";
 import useData from "./useData";
 
-export interface AttributeGroup {
+export interface Visit {
   id: number;
   projectId: number;
   assignedTo: number;
@@ -20,7 +20,7 @@ interface Props {
   refresh: boolean;
 }
 
-const useAttributeGroups = ({ refresh }: Props) =>
-  useData<AttributeGroup>({ refresh, endpoint: visitAPI });
+const useVisits = ({ refresh }: Props) =>
+  useData<Visit>({ refresh, endpoint: visitAPI });
 
-export default useAttributeGroups;
+export default useVisits;

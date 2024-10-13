@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
+    "@react-pdf/renderer": "^4.0.0",
     "@reduxjs/toolkit": "^2.2.7",
     "@types/cookie": "^0.6.0",
     "@types/js-cookie": "^3.0.6",
@@ -21,6 +22,7 @@
     "fast-sort": "^3.4.1",
     "file-loader": "^6.2.0",
     "framer-motion": "^11.5.4",
+    "fs": "^0.0.1-security",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
     "jspdf": "^2.5.1",

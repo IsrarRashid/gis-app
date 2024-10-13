@@ -1,11 +1,12 @@
 "use client";
 import Image from "next/image";
 import filter from "../../../public/icons/filter.svg";
+import Button from "@/app/components/Button";
 
 const FilterMenu = () => {
   return (
     <>
-      <button
+      <Button
         type="button"
         className="nav-link btn btn-sm badge rounded-pill shadow-sm fs-6 bg-white mb-1 mt-1 "
         style={{
@@ -22,7 +23,7 @@ const FilterMenu = () => {
             &nbsp;<span>Filter</span>
           </div>
         </div>
-      </button>
+      </Button>
 
       <div
         className="modal fade"
@@ -206,7 +207,7 @@ const FilterMenu = () => {
                 </div>
                 <div className="row d-flex">
                   <div className="col-lg-6 col-md-6 col-sm-12 text-end">
-                    <button
+                    <Button
                       className="btn w-50 fs-5 text-white"
                       data-bs-dismiss="modal"
                       aria-label="Close"
@@ -217,21 +218,20 @@ const FilterMenu = () => {
                       }}
                     >
                       Filter
-                    </button>
+                    </Button>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 text-start">
-                    <button
-                      className="btn btn-outline- w-50 fs-5"
+                    <Button
+                      className="btn w-50 fs-5"
                       data-bs-dismiss="modal"
                       aria-label="Close"
                       style={{
                         border: "2px solid #0C8CE9",
-                        boxSizing: "border-box",
                         color: "#0C8CE9",
                       }}
                     >
                       Reset
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

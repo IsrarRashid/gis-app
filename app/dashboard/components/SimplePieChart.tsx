@@ -4,6 +4,7 @@ import { ApexOptions } from "apexcharts"; // Import ApexOptions type
 import Image from "next/image";
 import downArrowWhite from "../../../public/icons/downArrowWhite.svg";
 import { useEffect, useState } from "react";
+import Button from "@/app/components/Button";
 
 // Dynamically import the ApexChart component (for SSR)
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -64,10 +65,10 @@ const SimplePieChart = () => {
               <p className="m-0 fw-bold mt-1">Project Brief</p>
             </div>
             <div className="col text-end">
-              <button className="btn btn-sm btn-secondary">
+              <Button className="btn btn-sm btn-secondary">
                 Export&nbsp;
                 <Image src={downArrowWhite} alt="downArrowWhite" />
-              </button>
+              </Button>
             </div>
           </div>
         </div>

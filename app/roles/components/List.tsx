@@ -15,6 +15,7 @@ import { DM_Sans, Inter } from "next/font/google";
 import { getFormattedDate } from "@/app/utils";
 import GroupingForm from "./GroupingForm";
 import useRights from "@/app/hooks/useRights";
+import Button from "@/app/components/Button";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -245,7 +246,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 </select>
               </div>
               <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                <button
+                <Button
                   className="btn bg-color-sea-green shadow me-2"
                   onClick={handlePreviousPage}
                   disabled={currentPage === 1}
@@ -254,8 +255,8 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   }}
                 >
                   <Image src={arrowLeft} alt="arrow left" />
-                </button>
-                <button
+                </Button>
+                <Button
                   className="btn bg-color-sea-green shadow"
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages}
@@ -264,7 +265,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   }}
                 >
                   <Image src={arrowRight} alt="arrow right" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>

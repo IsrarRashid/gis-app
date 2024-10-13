@@ -1,5 +1,6 @@
 import Image from "next/image";
 import dbGrey from "../../../public/icons/dbGrey.svg";
+import Button from "@/app/components/Button";
 
 interface Props {
   handleSubmit: (id: number) => void;
@@ -11,14 +12,14 @@ const SyncModal = ({ handleSubmit, id }: Props) => {
 
   return (
     <>
-      <button
+      <Button
         type="button"
         className="btn btn-sm rounded-pill"
         data-bs-toggle="modal"
         data-bs-target={`#${modalId}`}
       >
         <Image src={dbGrey} alt="trash" width={20} height={20} />
-      </button>
+      </Button>
 
       <div
         className="modal fade"
@@ -55,7 +56,7 @@ const SyncModal = ({ handleSubmit, id }: Props) => {
                           boxSizing: "border-box",
                         }}
                       >
-                        <button
+                        <Button
                           className="btn shadow btn-outline-light w-50 p-3 fs-5"
                           data-bs-dismiss="modal"
                           aria-label="Close"
@@ -65,10 +66,10 @@ const SyncModal = ({ handleSubmit, id }: Props) => {
                           }}
                         >
                           Cancel
-                        </button>
+                        </Button>
                       </div>
                       <div className="col-lg-6 col-md-6 col-sm-12 text-start">
-                        <button
+                        <Button
                           onClick={() => handleSubmit(id)}
                           className="btn shadow border-0 text-white w-50 p-3 fs-5"
                           style={{
@@ -81,7 +82,7 @@ const SyncModal = ({ handleSubmit, id }: Props) => {
                           aria-label="Close"
                         >
                           Sync
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>

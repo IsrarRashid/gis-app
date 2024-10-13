@@ -28,6 +28,7 @@ import heartRate from "../../../public/icons/heartRate.svg";
 import SimplePieChart2 from "./SimplePieChart2";
 import StackedColumnChart from "./StackedColumnChart";
 import SimplePieChart from "./SimplePieChart";
+import Button from "@/app/components/Button";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -39,7 +40,7 @@ const dmSans = DM_Sans({
   weight: "300",
 });
 
-const DashboardThree = () => {
+const DashboardSummary = () => {
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
 
@@ -270,7 +271,7 @@ const DashboardThree = () => {
           </div>
         </div>
         <div className="col-lg-1 col-md-2 col ps-0">
-          <button
+          <Button
             className="btn text-white w-100"
             style={{
               backgroundImage: "linear-gradient(to right, #0C8CE9 , #13629B)",
@@ -279,19 +280,19 @@ const DashboardThree = () => {
             }}
           >
             Search
-          </button>
+          </Button>
         </div>
       </div>
       <div className="col mb-3">
-        <button className="btn bg-color-sea-blue text-white fw-bold fs12px me-2 mb-2">
+        <Button className="btn bg-color-sea-blue text-white fw-bold fs12px me-2 mb-2">
           Sector
-        </button>
-        <button className="btn bg-color-sea-blue text-white fw-bold fs12px me-2 mb-2">
+        </Button>
+        <Button className="btn bg-color-sea-blue text-white fw-bold fs12px me-2 mb-2">
           Sponsoring Agency
-        </button>
-        <button className="btn bg-color-sea-blue text-white fw-bold fs12px me-2 mb-2">
+        </Button>
+        <Button className="btn bg-color-sea-blue text-white fw-bold fs12px me-2 mb-2">
           Executing Agency
-        </button>
+        </Button>
       </div>
       <div className={`row d-flex ms-1 me-1 ${dmSans.className}`}>
         {items.map((d, i) => (
@@ -461,4 +462,4 @@ const DashboardThree = () => {
   );
 };
 
-export default DashboardThree;
+export default DashboardSummary;

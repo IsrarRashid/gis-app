@@ -8,6 +8,7 @@ import useAttributeGroups, {
 } from "@/app/hooks/useAttributeGroups";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import Counter from "@/app/components/Counter";
+import Button from "@/app/components/Button";
 
 interface Props {
   api: string;
@@ -129,21 +130,21 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   return (
     <div>
       {method === "POST" ? (
-        <button
+        <Button
           type="button"
           className="btn btn-sm text-white bg-color-sea-green"
           onClick={handleShow}
         >
           + Attribute Group
-        </button>
+        </Button>
       ) : (
-        <button
+        <Button
           className="btn btn-sm rounded-pill"
           style={{ background: "#fff" }}
           onClick={handleShow}
         >
           <Image src={more} alt="more" />
-        </button>
+        </Button>
       )}
 
       <Modal
@@ -270,7 +271,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   />
                 </div>
                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <button
+                  <Button
                     className="btn text-white w-100 border-0"
                     style={{
                       backgroundImage:
@@ -280,7 +281,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     type="submit"
                   >
                     Done
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

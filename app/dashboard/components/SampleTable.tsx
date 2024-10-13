@@ -20,6 +20,7 @@ import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 import { DM_Sans, Inter } from "next/font/google";
 import ProjectForm from "@/app/projects/components/ProjectForm";
 import { motion } from "framer-motion";
+import Button from "@/app/components/Button";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -601,22 +602,22 @@ const SampleTable = ({ refresh, setRefresh }: ListProps) => {
                 </select>
               </div>
               <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                <button
+                <Button
                   className="btn btn-sm bg-color-sea-blue shadow me-2"
                   style={{ border: "1px solid #1580CF" }}
                   onClick={handlePreviousPage}
                   disabled={currentPage === 1}
                 >
                   <Image src={arrowLeft} alt="arrow left" />
-                </button>
-                <button
+                </Button>
+                <Button
                   className="btn btn-sm bg-color-sea-blue shadow"
                   style={{ border: "1px solid #1580CF" }}
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages}
                 >
                   <Image src={arrowRight} alt="arrow right" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>

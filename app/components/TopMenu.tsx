@@ -80,7 +80,7 @@
 //             </div>
 //             <div className="col-lg-4 col-md-4 col-sm-12 text-end">
 //               <div className="dropdown">
-//                 <button
+//                 <Button
 //                   className="btn btn-sm dropdown-toggle w-100"
 //                   style={{ background: "#fff" }}
 //                   type="button"
@@ -89,7 +89,7 @@
 //                   aria-expanded="false"
 //                 >
 //                   Sort
-//                 </button>
+//                 </Button>
 //                 <ul
 //                   className="dropdown-menu"
 //                   aria-labelledby="dropdownMenuButton1"

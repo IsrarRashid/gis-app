@@ -81,12 +81,12 @@
 //                     <DeleteModal />
 //                   </div>
 //                   <div className="col">
-//                     <button
+//                     <Button
 //                       className="btn btn-sm rounded-pill"
 //                       style={{ background: "#fff" }}
 //                     >
 //                       <Image src={more} alt="more" />
-//                     </button>
+//                     </Button>
 //                   </div>
 //                 </div>
 //               </td>
@@ -102,7 +102,7 @@
 //             <div className="col-lg-5 col-md-7 col-sm-12 d-flex justify-content-end mb-2">
 //               Rows per page:
 //               <div className="dropdown ms-2">
-//                 <button
+//                 <Button
 //                   className="btn btn-sm dropdown-toggle bg-color-sea-green text-white"
 //                   type="button"
 //                   id="dropdownMenuButton1"
@@ -110,7 +110,7 @@
 //                   aria-expanded="false"
 //                 >
 //                   11
-//                 </button>
+//                 </Button>
 //                 <ul
 //                   className="dropdown-menu"
 //                   aria-labelledby="dropdownMenuButton1"
@@ -134,12 +134,12 @@
 //               </div>
 //             </div>
 //             <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-//               <button className="btn btn-sm bg-color-sea-green shadow-sm me-2">
+//               <Button className="btn btn-sm bg-color-sea-green shadow-sm me-2">
 //                 <Image src={arrowLeft} alt="arrow left" />
-//               </button>
-//               <button className="btn btn-sm bg-color-sea-green shadow-sm">
+//               </Button>
+//               <Button className="btn btn-sm bg-color-sea-green shadow-sm">
 //                 <Image src={arrowRight} alt="arrow right" />
-//               </button>
+//               </Button>
 //             </div>
 //           </div>
 //         </div>

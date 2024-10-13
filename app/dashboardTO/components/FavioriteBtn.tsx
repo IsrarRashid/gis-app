@@ -1,10 +1,11 @@
+import Button from "@/app/components/Button";
 import { useState } from "react";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 
 const FavioriteBtn = () => {
   const [favorite, setFavorite] = useState(false);
   return (
-    <button
+    <Button
       className="btn p-0"
       onClick={() => setFavorite(!favorite)}
       style={{
@@ -13,11 +14,17 @@ const FavioriteBtn = () => {
       }}
     >
       {favorite ? (
-        <GoHeartFill style={{ width: "21", height: "18", color: "#0153AF" }} />
+        <GoHeartFill
+          className="color-sea-blue"
+          style={{ width: "21", height: "18" }}
+        />
       ) : (
-        <GoHeart style={{ width: "21", height: "18" }} />
+        <GoHeart
+          className="color-sea-blue"
+          style={{ width: "21", height: "18" }}
+        />
       )}
-    </button>
+    </Button>
   );
 };
 

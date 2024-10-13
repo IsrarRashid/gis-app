@@ -1,6 +1,7 @@
 import Image from "next/image";
 import plus from "../../public/icons/plus.svg";
 import minus from "../../public/icons/minus.svg";
+import Button from "./Button";
 
 interface Props {
   handleIncrement: () => void;
@@ -26,7 +27,7 @@ const Counter = ({
       </label>
       <div className="row bg-light d-flex rounded-pill m-1">
         <div className="col ps-1 pt-1 pb-1">
-          <button
+          <Button
             className="btn bg-color-sea-green rounded rounded-pill p-0"
             type="button"
             onClick={handleDecrement}
@@ -38,7 +39,7 @@ const Counter = ({
               width={25}
               height={20}
             />
-          </button>
+          </Button>
         </div>
         <div className="col p-0 d-flex align-items-center justify-content-center">
           <input
@@ -51,7 +52,7 @@ const Counter = ({
           />
         </div>
         <div className="col text-end pe-1 pt-1 pb-1">
-          <button
+          <Button
             className="btn bg-color-sea-green rounded rounded-pill p-0"
             type="button"
             onClick={handleIncrement}
@@ -63,7 +64,7 @@ const Counter = ({
               width={25}
               height={20}
             />
-          </button>
+          </Button>
         </div>
       </div>
     </>

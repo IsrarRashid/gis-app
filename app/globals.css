@@ -3,12 +3,13 @@
   height: 100vh;
   width: 100%;
 }
-.bg-color-blue {
-  background: #0c8ce9 !important;
-}
 
 .color-dark-blue {
   color: #108fa8 !important;
+}
+
+.color-sea-blue {
+  color: #0c8ce9 !important;
 }
 
 .bg-color-light-blue {
@@ -120,6 +121,10 @@ select {
   font-size: 0.75rem !important;
 }
 
+.fs11px {
+  font-size: 0.688rem !important;
+}
+
 .fs13px {
   font-size: 0.813rem;
 }
@@ -219,4 +224,10 @@ html {
 
 .mapPopup .leaflet-popup-content-wrapper {
   border-radius: 10px !important;
+}
+
+.custom-marker {
+  display: inline-block;
+  transform-origin: center;
+  transition: transform 1s ease-in-out; /* Smooth transition over 1 second */
 }

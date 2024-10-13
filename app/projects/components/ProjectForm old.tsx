@@ -136,21 +136,21 @@
 //   return (
 //     <div>
 //       {method === "POST" ? (
-//         <button
+//         <Button
 //           type="button"
 //           className="btn btn-sm text-white bg-color-sea-green"
 //           onClick={handleShow}
 //         >
 //           + Project
-//         </button>
+//         </Button>
 //       ) : (
-//         <button
+//         <Button
 //           className="btn btn-sm rounded-pill"
 //           style={{ background: "#fff" }}
 //           onClick={handleShow}
 //         >
 //           <Image src={more} alt="more" />
-//         </button>
+//         </Button>
 //       )}
 
 //       <Modal
@@ -300,7 +300,7 @@
 //                   />
 //                 </div>
 //                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-//                   <button
+//                   <Button
 //                     className="btn text-white w-100 border-0"
 //                     style={{
 //                       backgroundImage:
@@ -310,7 +310,7 @@
 //                     type="submit"
 //                   >
 //                     Done
-//                   </button>
+//                   </Button>
 //                 </div>
 //               </form>
 //             </div>

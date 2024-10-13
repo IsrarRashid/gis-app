@@ -5,6 +5,7 @@ import more from "../../../public/icons/more.svg";
 import { ToastContainer, toast } from "react-toastify";
 import useAttributes from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
+import Button from "@/app/components/Button";
 
 interface Form {
   attributeId: 0;
@@ -324,21 +325,21 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   return (
     <>
       {method === "POST" ? (
-        <button
+        <Button
           type="button"
           className="btn btn-sm text-white bg-color-sea-green"
           onClick={handleShow}
         >
           + Attribute
-        </button>
+        </Button>
       ) : (
-        <button
+        <Button
           className="btn btn-sm rounded-pill"
           style={{ background: "#fff" }}
           onClick={handleShow}
         >
           <Image src={more} alt="more" />
-        </button>
+        </Button>
       )}
 
       <Modal
@@ -756,13 +757,13 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         <h5 className="m-0">Attribute Options</h5>
                       </div>
                       <div className="col-lg-2 col-md-6 col-sm-4">
-                        <button
+                        <Button
                           className="btn bg-color-sea-green text-white"
                           type="button"
                           onClick={addNewOption}
                         >
                           Add More +
-                        </button>
+                        </Button>
                       </div>
                     </div>
                     <hr />
@@ -841,13 +842,13 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </div>
                         </div>
                         <div className="col-lg-2 col-md-6 col-sm-4 mx-auto">
-                          <button
+                          <Button
                             className="btn btn-danger text-white w-100"
                             type="button"
                             onClick={() => handleDeleteOption(index)}
                           >
                             Delete
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -856,12 +857,12 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   ""
                 )}
                 <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
-                  <button
+                  <Button
                     className="btn bg-color-sea-green text-white w-100"
                     type="submit"
                   >
                     Done
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

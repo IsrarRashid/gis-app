@@ -7,6 +7,7 @@ import more from "../../../public/icons/more.svg";
 import { ToastContainer, toast } from "react-toastify";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import useSectors, { Sector } from "@/app/hooks/useSectors";
+import Button from "@/app/components/Button";
 
 interface Props {
   api: string;
@@ -133,21 +134,21 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
   return (
     <>
       {method === "POST" ? (
-        <button
+        <Button
           type="button"
           className="btn btn-sm text-white bg-color-sea-green"
           onClick={handleShow}
         >
           + Sector
-        </button>
+        </Button>
       ) : (
-        <button
+        <Button
           className="btn btn-sm rounded-pill"
           style={{ background: "#fff" }}
           onClick={handleShow}
         >
           <Image src={more} alt="more" />
-        </button>
+        </Button>
       )}
 
       <Modal
@@ -238,7 +239,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <div className="row bg-light d-flex rounded-pill">
                         <div className="col ps-1 pt-1 pb-1">
-                          <button
+                          <Button
                             className="btn bg-color-sea-green rounded rounded-pill p-0"
                             type="button"
                             onClick={() => {
@@ -257,7 +258,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                               width={25}
                               height={20}
                             />
-                          </button>
+                          </Button>
                         </div>
                         <div className="col p-0 d-flex align-items-center justify-content-center">
                           <input
@@ -270,7 +271,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                           />
                         </div>
                         <div className="col text-end pe-1 pt-1 pb-1">
-                          <button
+                          <Button
                             className="btn bg-color-sea-green rounded rounded-pill p-0"
                             type="button"
                             onClick={() => {
@@ -287,7 +288,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                               width={25}
                               height={20}
                             />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -311,7 +312,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                   />
                 </div>
                 <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <button
+                  <Button
                     className="btn text-white w-100 border-0"
                     style={{
                       backgroundImage:
@@ -321,7 +322,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     type="submit"
                   >
                     Done
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

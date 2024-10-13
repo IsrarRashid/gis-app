@@ -12,6 +12,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import useProjects from "@/app/hooks/useProjects";
 import useAuthentication from "@/app/hooks/useAuthentication";
+import Button from "@/app/components/Button";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -132,7 +133,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       <div>
         <Toaster />
       </div>
-      <button
+      <Button
         type="button"
         className={`btn shadow ${
           method === "POST"
@@ -149,7 +150,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         ) : (
           <Image src={more} alt="more" width={20} height={20} />
         )}
-      </button>
+      </Button>
 
       <Modal
         size="lg"
@@ -348,7 +349,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   </div>
                 </div>
                 <div className="col-lg-5 col-md-6 col-sm-5 mx-auto">
-                  <button
+                  <Button
                     className="btn text-white w-100 border-0"
                     style={{
                       backgroundImage:
@@ -358,7 +359,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     type="submit"
                   >
                     Schedule
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

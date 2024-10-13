@@ -7,6 +7,7 @@ import useAttributes from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getProjectDetailKeysAPI } from "@/app/APIs";
 import useProjects from "@/app/hooks/useProjects";
+import Button from "@/app/components/Button";
 
 interface Form {
   attributeId: 0;
@@ -437,7 +438,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
   return (
     <>
-      <button
+      <Button
         type="button"
         className={`btn shadow ${
           method === "POST"
@@ -454,7 +455,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         ) : (
           <Image src={more} alt="more" width={25} height={25} />
         )}
-      </button>
+      </Button>
 
       <Modal
         size="xl"
@@ -911,7 +912,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         <h5 className="m-0 text-white">Attribute Options</h5>
                       </div>
                       <div className="col-lg-2 col-md-6 col-sm-4">
-                        <button
+                        <Button
                           className="btn text-white"
                           style={{
                             backgroundImage:
@@ -922,7 +923,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           onClick={addNewOption}
                         >
                           Add More +
-                        </button>
+                        </Button>
                       </div>
                     </div>
                     <hr />
@@ -1001,13 +1002,13 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </div>
                         </div>
                         <div className="col-lg-2 col-md-6 col-sm-4 mx-auto">
-                          <button
+                          <Button
                             className="btn btn-danger text-white w-100"
                             type="button"
                             onClick={() => handleDeleteOption(index)}
                           >
                             Delete
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -1016,7 +1017,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   ""
                 )}
                 <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
-                  <button
+                  <Button
                     className="btn text-white w-100 border-0"
                     style={{
                       backgroundImage:
@@ -1026,7 +1027,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     type="submit"
                   >
                     Done
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
