@@ -10,7 +10,7 @@
 // import Image from "next/image";
 // import downloadLineBlack from "../../../public/icons/downloadLineBlack.svg";
 // import DownloadFile from "./DownloadFile";
-// import MoniteringReportConverted from "./MoniteringReportConverted";
+// import MonitoringReportConverted from "./MonitoringReportConverted";
 
 // // // Create styles for the PDF document
 // // const styles = StyleSheet.create({
@@ -79,7 +79,7 @@
 //   return (
 //     <>
 //       <PDFDownloadLink
-//         document={<MoniteringReportConverted />}
+//         document={<MonitoringReportConverted />}
 //         fileName="sample.pdf"
 //         className="btn text-white rounded-pill shadow ps-3 pe-3 pt-1 pb-1"
 //         style={{ fontSize: ".8rem", background: "rgba(255, 255, 255,.5)" }}

@@ -104,29 +104,29 @@ const DownloadFile = () => {
       progress: [
         {
           field: "Formation of Embankment",
-          value: "4.5%",
+          value: "96%",
         },
         {
           field: "Laying of Subbase",
-          value: "1%",
+          value: "96%",
         },
 
         {
           field: "Laying of WBM",
-          value: "0%",
+          value: "91%",
         },
 
         {
-          field: "Laying of Asphalt Basecourse",
-          value: "0%",
+          field: "Laying ABC (1st Layer] ",
+          value: "89%",
         },
         {
           field: "Laying of Asphalt wearing course",
           value: "0%",
         },
         {
-          field: "Material Stacking",
-          value: "7%",
+          field: "NJB",
+          value: "61%",
         },
       ],
     },
@@ -137,21 +137,26 @@ const DownloadFile = () => {
       progress: [
         {
           field: "Bridges (6)",
-          value: "10%",
+          value: "96%",
         },
         {
           field: "Culverts (14)",
-          value: "04%",
+          value: "100%",
         },
 
         {
           field: "Underpasses (5)",
+          value: "94%",
+        },
+
+        {
+          field: "Side Drains",
           value: "02%",
         },
 
         {
-          field: "Electric Ducts (6)",
-          value: "0%",
+          field: "Toll Plaza Structure (5)",
+          value: "30%",
         },
       ],
     },
@@ -173,7 +178,7 @@ const DownloadFile = () => {
       progress: [
         {
           field: "Soil Investigation",
-          value: "0%",
+          value: "100%",
         },
         {
           field: "EIA Report",
@@ -181,7 +186,7 @@ const DownloadFile = () => {
         },
         {
           field: "SNGPL NOC",
-          value: "0%",
+          value: "100%",
         },
       ],
     },
@@ -202,7 +207,7 @@ const DownloadFile = () => {
       cost: "257.216",
       progress: [
         {
-          field: "Yet to Start.",
+          field: "Ongoing",
           value: "",
         },
       ],

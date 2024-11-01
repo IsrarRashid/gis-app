@@ -168,12 +168,20 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
+                name="user Id"
+                handleSort={() => handleSort("user_Id")}
+              />
+              <TableHeading
                 name="driver name"
                 handleSort={() => handleSort("driverName")}
               />
               <TableHeading
                 name="mobile number"
                 handleSort={() => handleSort("mobileNumber")}
+              />
+              <TableHeading
+                name="driver Image"
+                handleSort={() => handleSort("driverImage")}
               />
               <TableHeading
                 name="created at"
@@ -199,8 +207,10 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 key={d.id}
               >
                 <td>{d.id}</td>
+                <td>{d.user_Id}</td>
                 <td>{d.driverName}</td>
                 <td>{d.mobileNumber}</td>
+                <td>{d.driverImage}</td>
                 <td>
                   {d.createdAt &&
                     getFormattedDate(new Date(d.createdAt), "numeric")}

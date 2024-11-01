@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import Button from "./Button";
+import { Right } from "./Login";
 
 interface Data {
   name: string;
@@ -30,6 +31,7 @@ interface Data {
 
 const GISMenu = () => {
   const dispatch = useDispatch();
+  const [rights, setRights] = useState<Right[]>();
 
   const handleButtonClick = (content: string) => {
     dispatch(setContent(content));
@@ -39,145 +41,157 @@ const GISMenu = () => {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    const role = Cookies.get("role") || "";
-    setRole(role);
+    const rights = JSON.parse(Cookies.get("rights") || "[]");
+    setRights(rights);
   }, [router]);
 
   const data = [
     {
       name: "Dashboard",
+      nameId: "dashboard",
       link: "/dashboard",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
     },
     {
-      name: "DashboardTwo",
-      link: "/dashboardTwo",
-      icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #DA5569 , #E73A80)",
-    },
-    {
       name: "Summary Dashboard",
+      nameId: "dashboardSummary",
       link: "/dashboardSummary",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
     },
     {
       name: "DashboardTO",
+      nameId: "dashboardTO",
       link: "/dashboardTO",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #a82897 , #2871a8)",
     },
     {
       name: "DashboardST",
+      nameId: "dashboardST",
       link: "/dashboardST",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #7f28a8 , #a82828)",
     },
     {
       name: "Sectors",
+      nameId: "sectors",
       link: "/sectors",
       icon: clock2,
       backgroundColor: "linear-gradient(to bottom right, #7b9cc9 , #b4cdf0)",
     },
     {
       name: "Projects",
+      nameId: "projects",
       link: "/projects",
       icon: qr,
       backgroundColor: "linear-gradient(to bottom right, #8B5ABF , #5345DF)",
     },
     {
       name: "Super Group",
+      nameId: "superGroup",
       link: "/superGroup",
       icon: superGroupWhite,
       backgroundColor: "linear-gradient(to bottom right, #28A897 , #E73A80)",
     },
     {
       name: "Attribute Groups",
+      nameId: "attributeGroups",
       link: "/attributeGroups",
       icon: group,
       backgroundColor: "linear-gradient(to bottom right, #22B46A , #096764)",
     },
     {
       name: "Attributes",
+      nameId: "attributes",
       link: "/attributes",
       icon: db,
       backgroundColor: "linear-gradient(to bottom right, #F08630 , #E75161)",
     },
     {
       name: "Users",
+      nameId: "users",
       link: "/users",
       icon: user3White,
       backgroundColor: "linear-gradient(to bottom right, #E8A070 , #DA4A6A)",
     },
     {
       name: "Roles",
+      nameId: "roles",
       link: "/roles",
       icon: rolesWhite,
       backgroundColor: "linear-gradient(to bottom right, #e2e870 , #daaf4a)",
     },
     {
       name: "Rights",
+      nameId: "rights",
       link: "/rights",
       icon: rightsWhite,
       backgroundColor: "linear-gradient(to bottom right, brown , pink)",
     },
     {
-      name: "Vehicle",
+      name: "Vehicles",
+      nameId: "vehicles",
       link: "/vehicle",
       icon: truck,
       backgroundColor: "linear-gradient(to bottom right, #A33CB2 , #E73A80)",
     },
     {
-      name: "Driver",
+      name: "Drivers",
+      nameId: "drivers",
       link: "/driver",
       icon: driver,
       backgroundColor: "linear-gradient(to bottom right, #a2a828 , #b93ae7)",
     },
     {
       name: "Visits",
+      nameId: "visits",
       link: "/visits",
       icon: visits,
       backgroundColor: "linear-gradient(to bottom right, #28A897 , yellow)",
     },
-    // {
-    //   name: "SMDP Sync",
-    //   link: "/smdpSync",
-    //   icon: dashboard,
-    //   backgroundColor: "linear-gradient(to bottom right, #28A897 , #E73A80)",
-    // },
   ];
 
-  const getFilterdData = (role: string, data: Data[]) => {
-    switch (role) {
-      case "Transport Officier":
-        return data.filter((d) =>
-          ["Vehicle", "Driver", "DashboardTO"].includes(d.name)
-        );
-      // case "Admin":
-      //   return data.filter((d) =>
-      //     ["Vehicle", "Dashboard", "Settings"].includes(d.name)
-      //   );
+  const [filteredMenu, setFilteredMenu] = useState(data);
 
-      default:
-        return data;
-    }
-  };
+  useEffect(() => {
+    const rights: Right[] = JSON.parse(Cookies.get("rights") || "[]");
+
+    // Filter data based on rights
+    const filteredData = data.filter((item) =>
+      rights.some((right) => right.rightName === item.nameId)
+    );
+
+    setFilteredMenu(filteredData);
+  }, [router]);
 
   return (
     <>
-      <Button
-        type="button"
-        className="nav-link btn btn-sm text-white badge rounded-pill bg-color-light-blue shadow-sm fs-6"
-        style={{
-          padding: "12px 15px 12px 15px",
-        }}
-        data-bs-toggle="modal"
-        data-bs-target="#gisMenuModal"
-      >
-        GIS Base Monitering &nbsp;
-        <Image src={downArrow} alt="down arrow" />
-      </Button>
+      {rights?.length === 1 ? (
+        <label
+          className="nav-link text-white badge rounded-pill "
+          style={{
+            padding: "12px 15px 12px 15px",
+            fontSize: "22px",
+          }}
+        >
+          GIS Base Monitoring &nbsp;
+        </label>
+      ) : (
+        <Button
+          type="button"
+          className="nav-link btn btn-sm text-white badge rounded-pill bg-color-light-blue shadow-sm fs-6"
+          style={{
+            padding: "12px 15px 12px 15px",
+          }}
+          data-bs-toggle="modal"
+          data-bs-target="#gisMenuModal"
+        >
+          GIS Base Monitoring &nbsp;
+          <Image src={downArrow} alt="down arrow" />
+        </Button>
+      )}
 
       <div
         className="modal fade"
@@ -208,7 +222,7 @@ const GISMenu = () => {
                   </Button>
                 </div>
                 <div className="row d-flex justify-content-center p-4">
-                  {getFilterdData(role, data).map((d) => (
+                  {filteredMenu.map((d) => (
                     <div
                       key={d.name.toString()}
                       className="col text-center mb-3"

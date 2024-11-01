@@ -2,7 +2,7 @@
 import Image from "next/image";
 import arrowLeft from "../../../public/icons/arrow-left.svg";
 import arrowRight from "../../../public/icons/arrow-right.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteModal from "@/app/components/DeleteModal";
 import { sectorAPI } from "@/app/APIs";
 import SectorForm from "./SectorForm";
@@ -14,6 +14,7 @@ import { DM_Sans, Inter } from "next/font/google";
 import { getFormattedDate } from "@/app/utils";
 import TableHeading from "@/app/components/TableHeading";
 import Button from "@/app/components/Button";
+import search2 from "../../../public/icons/search2.svg";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -31,6 +32,39 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   const deleteMessage = "Deleted Successfully!";
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
+  // State for search input
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // State for filtered data
+  const [filteredData, setFilteredData] = useState<Sector[]>([]);
+
+  // Update filteredData when searchTerm or data changes
+  useEffect(() => {
+    if (searchTerm) {
+      // Filter the data based on the search term
+      const lowercasedFilter = searchTerm.toLowerCase();
+      const filtered = data.filter((item) => {
+        // Search across multiple fields (id, name, description, sortId, createdAt, etc.)
+        return (
+          item.id.toString().includes(lowercasedFilter) ||
+          item.name.toString().includes(lowercasedFilter) ||
+          item.description.toString().includes(lowercasedFilter) ||
+          item.sortId.toString().includes(lowercasedFilter)
+          // ||
+          // new Date(item.createdAt)
+          //   .toLocaleDateString()
+          //   .includes(lowercasedFilter) ||
+          // new Date(item.updateAt)
+          //   .toLocaleDateString()
+          //   .includes(lowercasedFilter)
+        );
+      });
+      setFilteredData(filtered);
+    } else {
+      // If search input is empty, reset filteredData to all data
+      setFilteredData(data);
+    }
+  }, [searchTerm, data]);
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -139,11 +173,42 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
           </div>
         </div>
       </div>
-      <div className="row p-3">
-        <div className="col-lg-6 col-md-6 col-sm-12">
+      <div className="row d-flex justify-content-between p-3">
+        <div className="col-lg-6 col-md-5 col-sm-12">
           <p>
-            Showing: <span className="fw-bold">{data?.length} Sectors</span>
+            Showing:{" "}
+            <span className="fw-bold">
+              {searchTerm ? filteredData.length : data?.length} Sectors
+            </span>
           </p>
+        </div>
+        <div className="col-lg-4 col-md-6 col-sm-12">
+          <div className="input-group">
+            <span
+              className="input-group-text pe-0 border-0 rounded-end rounded-pill"
+              id="basic-addon1"
+              style={{ background: "rgba(16, 143, 168, .1)" }}
+            >
+              <Image
+                src={search2}
+                alt="search2"
+                width={20}
+                height={20}
+                style={{
+                  color: "#7e7e7e !important",
+                }}
+              />
+            </span>
+            <input
+              type="text"
+              className="form-control border-0 rounded-start rounded-pill"
+              style={{ background: "rgba(16, 143, 168, .1)" }}
+              id="username"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
       </div>
       <div className="table-responsive">
@@ -185,42 +250,79 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
             </tr>
           </thead>
           <tbody>
-            {currentData?.map((d) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.name}</td>
-                <td>{d.description}</td>
-                <td>{getParentSector(d.parentId, data)}</td>
-                <td>{d.sortId}</td>
-                <td>
-                  {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "numeric")}
-                </td>
-                <td>
-                  {d.updateAt &&
-                    getFormattedDate(new Date(d.updateAt), "numeric")}
-                </td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
-                <td>
-                  <SectorForm
-                    api={sectorAPI}
-                    method="PUT"
-                    id={d.id}
-                    setRefresh={setRefresh}
-                    refresh={refresh}
-                  />
-                </td>
-              </tr>
-            ))}
+            {searchTerm
+              ? filteredData.map((d) => (
+                  <tr
+                    className={dmSans.className}
+                    style={{
+                      border: ".41px solid rgba(81,81,81,0.20) !important",
+                      fontSize: ".85rem",
+                    }}
+                    key={d.id}
+                  >
+                    <td>{d.id}</td>
+                    <td>{d.name}</td>
+                    <td>{d.description}</td>
+                    <td>{getParentSector(d.parentId, data)}</td>
+                    <td>{d.sortId}</td>
+                    <td>
+                      {d.createdAt &&
+                        getFormattedDate(new Date(d.createdAt), "numeric")}
+                    </td>
+                    <td>
+                      {d.updateAt &&
+                        getFormattedDate(new Date(d.updateAt), "numeric")}
+                    </td>
+                    <td>
+                      <DeleteModal handleDelete={handleDelete} id={d.id} />
+                    </td>
+                    <td>
+                      <SectorForm
+                        api={sectorAPI}
+                        method="PUT"
+                        id={d.id}
+                        setRefresh={setRefresh}
+                        refresh={refresh}
+                      />
+                    </td>
+                  </tr>
+                ))
+              : currentData.map((d) => (
+                  <tr
+                    className={dmSans.className}
+                    style={{
+                      border: ".41px solid rgba(81,81,81,0.20) !important",
+                      fontSize: ".85rem",
+                    }}
+                    key={d.id}
+                  >
+                    <td>{d.id}</td>
+                    <td>{d.name}</td>
+                    <td>{d.description}</td>
+                    <td>{getParentSector(d.parentId, data)}</td>
+                    <td>{d.sortId}</td>
+                    <td>
+                      {d.createdAt &&
+                        getFormattedDate(new Date(d.createdAt), "numeric")}
+                    </td>
+                    <td>
+                      {d.updateAt &&
+                        getFormattedDate(new Date(d.updateAt), "numeric")}
+                    </td>
+                    <td>
+                      <DeleteModal handleDelete={handleDelete} id={d.id} />
+                    </td>
+                    <td>
+                      <SectorForm
+                        api={sectorAPI}
+                        method="PUT"
+                        id={d.id}
+                        setRefresh={setRefresh}
+                        refresh={refresh}
+                      />
+                    </td>
+                  </tr>
+                ))}
           </tbody>
         </table>
         <div className="row d-flex mb-3">

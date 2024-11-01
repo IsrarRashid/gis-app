@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useRef, useState } from "react";
 import {
   MapContainer,
@@ -18,8 +18,8 @@ import Image from "next/image";
 import search2 from "../../../../public/icons/search2.svg";
 
 const carIcon = new L.Icon({
-  iconUrl: "/images/locationPointRoad.png",
-  iconSize: [50, 56], // Adjust size
+  iconUrl: "/images/locationPointRoadBig.png",
+  iconSize: [60, 70], // Adjust size
   iconAnchor: [25, 25],
 });
 

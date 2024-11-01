@@ -4,26 +4,25 @@ import locationPoint from "../../../public/icons/locationPoint.svg";
 import files from "../../../public/icons/files.svg";
 import pieChart from "../../../public/images/pieChart.png";
 import topRightArrow from "../../../public/icons/topRightArrow.svg";
+import { MainDashboard } from "./Dashboard";
 
-const ChartMenu = () => {
+interface Props {
+  data: MainDashboard;
+}
+
+const ChartMenu = ({ data }: Props) => {
   return (
     <div
-      className="col p-4 mb-3 shadow-sm"
-      style={{ background: "#C6D9F1", borderRadius: "15px", fontSize: ".9rem" }}
+      className="col mb-3 shadow-sm"
+      style={{
+        background: "#C6D9F1",
+        borderRadius: "15px",
+        fontSize: ".9rem",
+        padding: "20px 35px 15px 35px ",
+      }}
     >
       <div
-        className="row d-flex mb-3 pb-1"
-        style={{ borderBottom: "1px dashed #97ABBD" }}
-      >
-        <div className="col-1 p-0">
-          <Image src={locationPoint} alt="locationPoint" />
-        </div>
-        <div className="col">
-          <p className="fw-bold m-0">Lahore Ring Road - Southern Loop (SL-3)</p>
-        </div>
-      </div>
-      <div
-        className="row d-flex rounded mb-2"
+        className="row d-flex rounded-2 mb-2"
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
         <div className="col-2 p-0">
@@ -33,7 +32,7 @@ const ChartMenu = () => {
           <p className="mt-2 m-0">
             <span className="fw-bold">Approved Cost:</span>{" "}
             <span className="fw-bold" style={{ color: "#727272" }}>
-              17,785.8 M
+              {data?.approvedCost} M
             </span>
           </p>
         </div>
@@ -49,7 +48,7 @@ const ChartMenu = () => {
           <p className="mt-2 m-0">
             <span className="fw-bold">Expenditure:</span>{" "}
             <span className="fw-bold" style={{ color: "#727272" }}>
-              14,797 M
+              {data?.expenditure} M
             </span>
           </p>
         </div>
@@ -59,23 +58,27 @@ const ChartMenu = () => {
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
         <div className="col-2 p-0">
-          <Image src={pieChart} alt="pieChart" />
+          <img
+            src="/images/pieChart.png"
+            alt="pieChart"
+            className="img-fluid"
+          />
         </div>
         <div className="col p-0">
           <div className="row d-flex">
-            <div className="col-lg-7 col-md-7 col">
+            <div className="col">
               <p className="mt-2 m-0">
-                <span className="fw-bold">Progress:</span>{" "}
+                <span className="fw-bold">Financial Progress:</span>{" "}
                 <span className="fw-bold" style={{ color: "#727272" }}>
-                  80%
+                  {Math.round(data?.progress)} %
                 </span>
               </p>
             </div>
-            <div className="col-lg-5 col-md-5 col">
+            {/* <div className="col-lg-5 col-md-5 col">
               <p className="mt-2 m-0 text-success">
                 <Image src={topRightArrow} alt="topRightArrow" /> +39.69%
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

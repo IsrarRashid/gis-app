@@ -7,39 +7,72 @@ import waveUp from "../../../public/icons/waveUp.svg";
 import waveDown from "../../../public/icons/waveDown.svg";
 import tideOne from "../../../public/images/tideOne.png";
 import tideTwo from "../../../public/images/tideTwo.png";
+import tideOneGreen from "../../../public/images/tideOneGreen.png";
+import tideTwoGreen from "../../../public/images/tideTwoGreen.png";
+import tideOneYellow from "../../../public/images/tideOneYellow.png";
+import tideTwoYellow from "../../../public/images/tideTwoYellow.png";
+import tideOneRed from "../../../public/images/tideOneRed.png";
+import tideTwoRed from "../../../public/images/tideTwoRed.png";
 import { motion } from "framer-motion";
+import Button from "@/app/components/Button";
+import { SingleProjectDashboard } from "./DashboardTwo";
 
-const Menu = () => {
-  const items = [
-    {
-      mainIcon: eyeBold,
-      score: 50,
-      waveIcon: waveUp,
-      waveValue: "+12.5%",
-      waveValueColor: "text-white",
-      label: "New Identified Schemes",
-      animation: false,
-      backgroundColor:
-        "linear-gradient(to bottom right, #40DDFF , #14BAE3, #13B1E6,#11AADF,#0B98C5)",
-    },
-  ];
+interface Props {
+  data: SingleProjectDashboard;
+}
+
+const Menu = ({ data }: Props) => {
+  const backgroundColors = {
+    yellow:
+      "linear-gradient(to bottom right, #FFEC40 , #A5E314, #D1E613,#DBDF11,#A3C50B)",
+    green:
+      "linear-gradient(to bottom right, #40FF80 , #14E359, #13E664,#11DF56,#0BC549)",
+    red: "linear-gradient(to bottom right, #FF4040 , #E31414, #E61E13,#DF1111,#C50B1D)",
+  };
+
   return (
     <div className="row d-flex justify-content-start ps-3">
-      <div className="col-lg-3 col-md-6 col-sm-12 ps-0 pe-3">
+      <div className="col ps-0 pe-3">
         <div
           className="col mb-2 p-0"
           style={{
             borderRadius: "10px",
-            backgroundImage:
-              "linear-gradient(to bottom right, #40DDFF , #14BAE3, #13B1E6,#11AADF,#0B98C5)",
+            backgroundImage: backgroundColors.yellow,
+            overflow: "hidden",
+            position: "relative",
           }}
         >
-          <div className="row d-flex m-0 pt-2">
+          {/* <motion.div
+            initial={{ x: -50, y: 130 }} // Start from Y position (dynamic)
+            animate={{ x: 0, y: 80 }} // Move to Y = 0 (top)
+            transition={{ duration: 2, ease: "easeInOut" }} // Control duration and easing
+            style={{ position: "absolute", zIndex: -1, left: -50, right: 0 }}
+          >
+            <Image
+              src={tideOne}
+              alt="tideOne"
+              style={{ width: "150%", height: "130px" }}
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ x: 50, y: 130 }} // Start from Y position (dynamic)
+            animate={{ x: 0, y: 105 }} // Move to Y = 0 (top)
+            transition={{ duration: 2, ease: "easeInOut" }} // Control duration and easing
+            style={{ position: "absolute", zIndex: -2, left: -30, right: 0 }}
+          >
+            <Image
+              src={tideTwo}
+              alt="tideTwo"
+              style={{ width: "150%", height: "100px" }}
+            />
+          </motion.div> */}
+          <div className="row d-flex m-0 ps-3 pt-2">
             <div className="col-lg-4 col-md-6 col mt-4 text-lg-end text-md-center text-center">
               <Image
                 src={eyeBold}
-                className="img-fluid mt-2"
                 alt="eyeBold"
+                className="img-fluid mt-2"
                 width={43}
                 height={43}
               />
@@ -54,32 +87,34 @@ const Menu = () => {
                     className="text-white fw-bold m-0 pt-2"
                     style={{ fontSize: "3rem" }}
                   >
-                    50
+                    {/* {data?.totalProjects} */}
+                    59
                   </p>
                 </div>
-                <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-white mt-2">
-                  <Image src={waveUp} alt="waveUp" width={50} height={20} />
-                  &nbsp;&nbsp;<span className="fs11px">+12.5%</span>
+                <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-danger mt-2">
+                  {/* <Image src={waveDown} alt="waveDown" width={50} height={20} />
+                  &nbsp;&nbsp;<span className="fs11px">-5.23%</span> */}
                 </div>
               </div>
             </div>
           </div>
           <div className="row m-0">
-            <div className="col text-center mt-2">
-              <p className="fs14px" style={{ color: "#89DAF2" }}>
-                New Identified Schemes
+            <div className="col text-center text-white mt-2">
+              <p className="fs14px fw-bold" style={{ letterSpacing: 1 }}>
+                Need Consideration
               </p>
             </div>
           </div>
         </div>
       </div>
-      <div className="col-lg-3 col-md-6 col-sm-12 ps-0 pe-3">
+
+      <div className="col ps-0 pe-3">
         <div
           className="col mb-2 p-0"
           style={{
-            outline: "1px solid #0C8CE9",
+            outline: "1px solid rgba(12, 140, 233, 0.4)",
+            background: "rgba(12, 140, 233, 0.2)",
             borderRadius: "10px",
-            background: "rgba(12, 140, 233,.5)",
             overflow: "hidden",
             position: "relative",
           }}
@@ -90,7 +125,11 @@ const Menu = () => {
             transition={{ duration: 2, ease: "easeInOut" }} // Control duration and easing
             style={{ position: "absolute", zIndex: -1, left: -50, right: 0 }}
           >
-            <Image src={tideOne} alt="tideOne" width={330} height={130} />
+            <Image
+              src={tideOne}
+              alt="tideOne"
+              style={{ width: "150%", height: "130px" }}
+            />
           </motion.div>
 
           <motion.div
@@ -99,7 +138,11 @@ const Menu = () => {
             transition={{ duration: 2, ease: "easeInOut" }} // Control duration and easing
             style={{ position: "absolute", zIndex: -2, left: -30, right: 0 }}
           >
-            <Image src={tideTwo} alt="tideTwo" width={300} height={100} />
+            <Image
+              src={tideTwo}
+              alt="tideTwo"
+              style={{ width: "150%", height: "100px" }}
+            />
           </motion.div>
 
           <div className="row d-flex m-0 ps-3 pt-2">
@@ -122,51 +165,61 @@ const Menu = () => {
                     className="text-white fw-bold m-0 pt-2"
                     style={{ fontSize: "3rem" }}
                   >
-                    10%
+                    {data?.achievedProgress} %
                   </p>
                 </div>
                 <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-danger mt-2">
-                  <Image src={waveDown} alt="waveDown" width={50} height={20} />
-                  &nbsp;&nbsp;<span className="fs11px">-5.23%</span>
+                  {/* <Image src={waveDown} alt="waveDown" width={50} height={20} />
+                  &nbsp;&nbsp;<span className="fs11px">-5.23%</span> */}
                 </div>
               </div>
             </div>
           </div>
           <div className="row m-0">
             <div className="col text-center text-white mt-2">
-              <p className="fs14px">Achieved Progress</p>
+              <p className="fs14px fw-bold" style={{ letterSpacing: 1 }}>
+                Achieved Progress
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="col-lg-3 col-md-6 col-sm-12 ps-0 pe-3">
+      <div className="col ps-0 pe-3">
         <div
           className="col mb-2 p-0"
           style={{
-            outline: "1px solid #0C8CE9",
+            outline: "1px solid rgba(50, 179, 52, 0.4)",
+            background: "rgba(12, 140, 233,.5)",
             borderRadius: "10px",
-            background: "rgba(12, 140, 233, 0.4)",
             overflow: "hidden",
             position: "relative",
           }}
         >
           <motion.div
             initial={{ x: -50, y: 130 }} // Start from Y position (dynamic)
-            animate={{ x: 0, y: 110 }} // Move to Y = 0 (top)
+            animate={{ x: 0, y: 50 }} // Move to Y = 0 (top)
             transition={{ duration: 2, ease: "easeInOut" }} // Control duration and easing
             style={{ position: "absolute", zIndex: -1, left: -50, right: 0 }}
           >
-            <Image src={tideOne} alt="tideOne" width={330} height={130} />
+            <Image
+              src={tideOne}
+              alt="tideOne"
+              style={{ width: "150%", height: "130px" }}
+            />
           </motion.div>
 
           <motion.div
             initial={{ x: 50, y: 130 }} // Start from Y position (dynamic)
-            animate={{ x: 0, y: 115 }} // Move to Y = 0 (top)
+            animate={{ x: 0, y: 65 }} // Move to Y = 0 (top)
             transition={{ duration: 2, ease: "easeInOut" }} // Control duration and easing
             style={{ position: "absolute", zIndex: -2, left: -30, right: 0 }}
           >
-            <Image src={tideTwo} alt="tideTwo" width={300} height={100} />
+            <Image
+              src={tideTwo}
+              alt="tideTwo"
+              style={{ width: "150%", height: "100px" }}
+            />
           </motion.div>
 
           <div className="row d-flex m-0 ps-3 pt-2">
@@ -189,31 +242,33 @@ const Menu = () => {
                     className="text-white fw-bold m-0 pt-2"
                     style={{ fontSize: "3rem" }}
                   >
-                    02%
+                    {Math.round(data?.plannedProgress)} %
                   </p>
                 </div>
                 <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-danger mt-2">
-                  <Image src={waveDown} alt="waveDown" width={50} height={20} />
-                  &nbsp;&nbsp;<span className="fs11px">-5.23%</span>
+                  {/* <Image src={waveDown} alt="waveDown" width={50} height={20} />
+                  &nbsp;&nbsp;<span className="fs11px">-5.23%</span> */}
                 </div>
               </div>
             </div>
           </div>
           <div className="row m-0">
             <div className="col text-center text-white mt-2">
-              <p className="fs14px">Planned Progress</p>
+              <p className="fs14px fw-bold" style={{ letterSpacing: 1 }}>
+                Planned Progress
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="col-lg-3 col-md-6 col-sm-12 ps-0 pe-3">
+      <div className="col ps-0 pe-3">
         <div
           className="col mb-2 p-0"
           style={{
-            outline: "1px solid #0C8CE9",
+            outline: "1px solid rgba(232, 192, 15, 0.4)",
+            background: "rgba(12, 140, 233,.5)",
             borderRadius: "10px",
-            background: "rgba(12, 140, 233,.4)",
             overflow: "hidden",
             position: "relative",
           }}
@@ -224,7 +279,11 @@ const Menu = () => {
             transition={{ duration: 2, ease: "easeInOut" }} // Control duration and easing
             style={{ position: "absolute", zIndex: -1, left: -50, right: 0 }}
           >
-            <Image src={tideOne} alt="tideOne" width={330} height={130} />
+            <Image
+              src={tideOne}
+              alt="tideOne"
+              style={{ width: "150%", height: "130px" }}
+            />
           </motion.div>
 
           <motion.div
@@ -233,7 +292,11 @@ const Menu = () => {
             transition={{ duration: 2, ease: "easeInOut" }} // Control duration and easing
             style={{ position: "absolute", zIndex: -2 }}
           >
-            <Image src={tideTwo} alt="tideTwo" width={300} height={100} />
+            <Image
+              src={tideTwo}
+              alt="tideTwo"
+              style={{ width: "150%", height: "100px" }}
+            />
           </motion.div>
 
           <div className="row d-flex m-0 ps-3 pt-2">
@@ -256,37 +319,25 @@ const Menu = () => {
                     className="text-white fw-bold m-0 pt-2"
                     style={{ fontSize: "3rem" }}
                   >
-                    78%
+                    {Math.round(data?.financalProgress)} %
                   </p>
                 </div>
                 <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-white mt-2">
-                  <Image src={waveUp} alt="waveUp" width={50} height={20} />
-                  &nbsp;&nbsp;<span className="fs11px">-5.23%</span>
+                  {/* <Image src={waveUp} alt="waveUp" width={50} height={20} />
+                  &nbsp;&nbsp;<span className="fs11px">-5.23%</span> */}
                 </div>
               </div>
             </div>
           </div>
           <div className="row m-0">
             <div className="col text-center text-white mt-2">
-              <p className="fs14px">Planned Progress</p>
+              <p className="fs14px fw-bold" style={{ letterSpacing: 1 }}>
+                Financial Progress
+              </p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* <div className="col-lg-1 col-md-1 col p-0">
-        <Button
-          className="btn fw-bold me-2 mb-2"
-          style={{
-            outline: "1px dashed #334155",
-            borderRadius: "10px",
-            background: "rgba(12, 140, 233,0)",
-            height: "125px",
-          }}
-        >
-          Add
-        </Button>
-      </div> */}
     </div>
   );
 };

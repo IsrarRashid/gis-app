@@ -285,7 +285,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         <option value="">Select</option>
                         {vehicles?.map((vehicle) => (
                           <option key={vehicle.id} value={vehicle.id}>
-                            {vehicle.regNumber}
+                            {vehicle.vehicleNumber}
                           </option>
                         ))}
                       </select>

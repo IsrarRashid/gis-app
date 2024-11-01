@@ -25,3 +25,6 @@ export const getAssignedUsersToProjectAPI = `/api/ProjectUserAssigning/UsersMapT
 export const visitAPI = `/api/Visits`;
 export const trackingAPI = `https://webtrack.itecknologi.com/fleet/api/Directorate/reporting.php`;
 export const staffTrackingAPI = `/api/Coordinates`;
+export const districtAPI = `/api/District`;
+export const mainDashboardAPI = `/api/MainDashboard`;
+export const singleProjectDashboardAPI = `/api/SingleProjectDashboard`;

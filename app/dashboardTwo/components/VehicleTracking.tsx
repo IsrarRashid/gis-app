@@ -15,8 +15,16 @@ import redCircle from "../../../public/icons/redCircle.svg";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Button from "@/app/components/Button";
+import { VehicleTrackings } from "./DashboardTwo";
+import useVehicle, { Vehicle } from "@/app/hooks/useVehicle";
+import useDriver, { Driver } from "@/app/hooks/useDriver";
+import Link from "next/link";
 
-const VehicleTracking = () => {
+interface Props {
+  data: VehicleTrackings[];
+}
+
+const VehicleTracking = ({ data }: Props) => {
   const items = [
     {
       driverName: "Jamshed Ali",
@@ -52,6 +60,10 @@ const VehicleTracking = () => {
   const refContainer = useRef<HTMLDivElement>(null);
   const refContent = useRef<HTMLDivElement>(null);
   const [constraints, setConstraints] = useState({});
+  const [refresh, setRefresh] = useState(false);
+
+  const { data: vehicles } = useVehicle({ refresh });
+  const { data: drivers } = useDriver({ refresh });
 
   useEffect(() => {
     // Wait until both container and content are rendered
@@ -63,6 +75,16 @@ const VehicleTracking = () => {
       setConstraints({ right: 0, left: -(contentWidth - containerWidth) });
     }
   }, []); // Recalculate if the items change
+
+  const getVehicleInfo = (vehicleNumber: string, data: Vehicle[]) => {
+    const record = data.find((item) => item.vehicleNumber === vehicleNumber);
+    return record;
+  };
+
+  const getDriverInfo = (driverName: string, data: Driver[]) => {
+    const record = data.find((item) => item.driverName === driverName);
+    return record;
+  };
 
   return (
     <>
@@ -101,7 +123,7 @@ const VehicleTracking = () => {
           ref={refContent}
           whileTap={{ cursor: "grabbing" }}
         >
-          {items.map((d, i) => (
+          {data.map((d, i) => (
             <div
               key={i}
               className="col-lg-4 col-md-8 col-sm-12 bg-white me-3 rounded-3 p-3"
@@ -110,23 +132,32 @@ const VehicleTracking = () => {
                 <div className="col">
                   <div className="row d-flex">
                     <div className="col-lg-3 col-md-3 col">
-                      <Image
-                        className="img-fluid"
-                        src={profilePic2}
-                        alt="profilePic2"
-                        width={47}
-                        height={47}
-                      />
+                      {d.officerPicture ? (
+                        <Image
+                          className="img-fluid rounded-circle"
+                          src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.officerPicture}`}
+                          alt="profilePic2"
+                          width={47}
+                          height={47}
+                        />
+                      ) : (
+                        <Image
+                          className="img-fluid"
+                          src={profilePic2}
+                          alt="profilePic2"
+                          width={47}
+                          height={47}
+                        />
+                      )}
                     </div>
                     <div className="col-lg-9 col-md-4 col ps-lg-0">
-                      <p className="fw-bold m-0">{d.driverName}</p>
-                      <p
+                      <p className="fw-bold m-0 mt-1">{d.officerName}</p>
+                      {/* <p
                         className="text-secondary fs14px"
                         style={{ marginTop: "-5px", marginBottom: "0" }}
                       >
-                        {d.carName}
-                      </p>
-                      <span className=""></span>
+                        {d.vehicalNumber}
+                      </p> */}
                     </div>
                   </div>
                 </div>
@@ -139,7 +170,7 @@ const VehicleTracking = () => {
                       className="col-lg-4 col-md-5 col ps-1"
                       style={{ paddingTop: "1px" }}
                     >
-                      Driving
+                      {d.visitStatus === "scheduled" ? "Driving" : "Completed"}
                     </div>
                   </div>
                 </div>
@@ -167,9 +198,12 @@ const VehicleTracking = () => {
                     right: "-50px", // 20px from the right of the parent
                   }}
                 >
-                  <Button className="btn p-0 rounded rounded-pill">
+                  <Link
+                    href="/dashboardTO"
+                    className="btn p-0 rounded rounded-pill"
+                  >
                     <Image src={blueCirclePointer} alt="blueCirclePointer" />
-                  </Button>
+                  </Link>
                 </div>
               </div>
               <div className="row d-flex">
@@ -181,11 +215,11 @@ const VehicleTracking = () => {
                           <Image src={fromToDirection} alt="fromToDirection" />
                         </div>
                         <div className="col">
-                          <p className="m-0 fw-bold">Ring Road</p>
+                          <p className="m-0 fw-bold">{d.startingDistrict}</p>
                           <p className="m-0" style={{ fontSize: ".75rem" }}>
                             Lahore, Punjab, Pakistan
                           </p>
-                          <p className="m-0 mt-3 fw-bold">Maraka Village</p>
+                          <p className="m-0 mt-3 fw-bold">{d.endDistrict}</p>
                           <p className="m-0" style={{ fontSize: ".75rem" }}>
                             Lahore, Punjab, Pakistan
                           </p>
@@ -195,13 +229,23 @@ const VehicleTracking = () => {
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 text-end pe-4">
-                  <Image
-                    className="img-fluid"
-                    src={d.carIcon}
-                    alt="d.carIcon"
-                    width={145}
-                    height={72}
-                  />
+                  {d.vehicalPicture ? (
+                    <Image
+                      className="img-fluid"
+                      src={d.vehicalPicture}
+                      alt="d.carIcon"
+                      width={145}
+                      height={72}
+                    />
+                  ) : (
+                    <Image
+                      className="img-fluid"
+                      src={car1Right}
+                      alt="d.carIcon"
+                      width={145}
+                      height={72}
+                    />
+                  )}
                   <p className="m-0 mt-2 fs14px text-secondary">
                     <Image src={distance} alt="distance" />
                     &nbsp;12 kms, 1 hrs 24 mins
@@ -228,8 +272,10 @@ const VehicleTracking = () => {
                       />
                     </div>
                     <div className="col-lg-9 col-md-9 col-sm-12 p-0">
-                      <p className="m-0 fw-bold">EV-2017002346</p>
-                      <p className="m-0 fs14px">Toyota Corolla GLi</p>
+                      <p className="m-0 fw-bold">{d.vehicalNumber}</p>
+                      <p className="m-0 fs14px">
+                        {getVehicleInfo(d.vehicalNumber, vehicles)?.name}
+                      </p>
                       <div className="row d-flex">
                         <div className="col-1" style={{ marginTop: "10px" }}>
                           <Image
@@ -239,21 +285,31 @@ const VehicleTracking = () => {
                         </div>
                         <div className="col p-0">
                           <p className="m-0 mt-1 fs14px">
-                            Modal: <span className="text-secondary">2017</span>
+                            Modal:{" "}
+                            <span className="text-secondary">
+                              {getVehicleInfo(d.vehicalNumber, vehicles)?.model}
+                            </span>
                           </p>
                           <p
                             className="fs14px"
                             style={{ marginTop: "1px", marginBottom: "0" }}
                           >
                             No Plate :{" "}
-                            <span className="text-secondary">LEG-7000</span>
+                            <span className="text-secondary">
+                              {d.vehicalNumber}
+                            </span>
                           </p>
                           <p
                             className="fs14px"
                             style={{ marginTop: "3px", marginBottom: "0" }}
                           >
                             Contact No :{" "}
-                            <span className="text-secondary">03218956342</span>
+                            <span className="text-secondary">
+                              {
+                                getDriverInfo(d.driverName, drivers)
+                                  ?.mobileNumber
+                              }
+                            </span>
                           </p>
                         </div>
                       </div>

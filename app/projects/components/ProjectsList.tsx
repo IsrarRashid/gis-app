@@ -30,6 +30,8 @@ import SmdpSyncForm from "./SmdpSyncForm";
 import AssignUserForm from "./AssignUserForm";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import Button from "@/app/components/Button";
+import SmdpAllProjectsSyncForm from "./SmdpAllProjectsSyncForm";
+import search2 from "../../../public/icons/search2.svg";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -74,6 +76,40 @@ const ProjectsList = ({
 
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
+
+  // State for search input
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // State for filtered data
+  const [filteredData, setFilteredData] = useState<Project[]>([]);
+
+  const handleSearch = () => {
+    // Run the search logic only when search is submitted
+    if (searchTerm.trim()) {
+      const lowercasedFilter = searchTerm.toLowerCase();
+      const filtered = data.filter((item) =>
+        [
+          item.id.toString(),
+          item.name,
+          item.smdpProjectID.toString(),
+          item.sectorId.toString(),
+          item.city,
+          item.locationCoordinates,
+          item.status,
+        ]
+          .map((field) => field.toLowerCase())
+          .some((field) => field.includes(lowercasedFilter))
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data); // Reset if search term is empty
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSearch();
+  };
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -230,34 +266,58 @@ const ProjectsList = ({
                   setShowData={setShowData}
                 />
               </div>
+              <div className="col text-end">
+                <SmdpAllProjectsSyncForm
+                  api={smdpSyncApi}
+                  method="POST"
+                  setRefresh={setRefresh}
+                  refresh={refresh}
+                  showData={showData}
+                  setShowData={setShowData}
+                />
+              </div>
             </div>
           </div>
         </div>
-        <div className="row p-3">
-          <div className="col-lg-6 col-md-6 col-sm-12">
+        <div className="row d-flex justify-content-between p-3">
+          <div className="col-lg-6 col-md-5 col-sm-12">
             <p>
-              Showing: <span className="fw-bold">{data?.length} Projects</span>
+              Showing:{" "}
+              <span className="fw-bold">
+                {searchTerm ? filteredData.length : data?.length} Projects
+              </span>
             </p>
           </div>
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            {/* <div className="row d-flex justify-content-end align-items-center">
-              <div className="col-lg-4 col-md-4 col-sm-12 text-center">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  onChange={hideCompleted}
+          <div className="col-lg-4 col-md-6 col-sm-12">
+            <div className="input-group">
+              <span
+                className="input-group-text pe-0 border-0 rounded-end rounded-pill"
+                id="basic-addon1"
+                style={{ background: "rgba(16, 143, 168, .1)" }}
+              >
+                <Image
+                  src={search2}
+                  alt="search2"
+                  width={20}
+                  height={20}
+                  style={{
+                    color: "#7e7e7e !important",
+                  }}
                 />
-                <label htmlFor="">&nbsp;Hide Completed</label>
-              </div>
-              <div className="col-lg-4 col-md-4 col-sm-12 text-center">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  onChange={showCancel}
-                />
-                <label htmlFor="">&nbsp;Show Cancel</label>
-              </div>
-            </div> */}
+              </span>
+              <input
+                type="text"
+                className="form-control border-0 rounded-start rounded-pill"
+                style={{ background: "rgba(16, 143, 168, .1)" }}
+                id="username"
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <button className="btn btn-warning" type="submit">
+                Search
+              </button>
+            </div>
           </div>
         </div>
       </>
@@ -296,13 +356,13 @@ const ProjectsList = ({
               <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th>
               {/* <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th> */}
               <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th>
-              <th colSpan={3}>
+              <th colSpan={2}>
                 <div className="text-center"></div>
               </th>
             </tr>
           </thead>
           <tbody>
-            {currentData?.map((d) => (
+            {(searchTerm ? filteredData : currentData).map((d) => (
               <tr
                 className={dmSans.className}
                 style={{
@@ -379,9 +439,9 @@ const ProjectsList = ({
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
                 </td>
-                <td>
+                {/* <td>
                   <DownloadPDFBtn />
-                </td>
+                </td> */}
                 <td>
                   <ProjectForm
                     api={projectAPI}

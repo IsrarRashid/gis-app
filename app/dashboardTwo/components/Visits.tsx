@@ -1,11 +1,16 @@
 import Image from "next/image";
 import road from "../../../public/icons/road.svg";
 import redCircle from "../../../public/icons/redCircle.svg";
+import { SingleProjectDashboard } from "./DashboardTwo";
 
-const Visits = () => {
+interface Props {
+  data: SingleProjectDashboard;
+}
+
+const Visits = ({ data }: Props) => {
   return (
     <div
-      className="col p-1 shadow-sm pb-5"
+      className="col p-1 shadow-sm"
       style={{ background: "#C6D9F1", borderRadius: "15px" }}
     >
       <div className="row m-0">
@@ -19,12 +24,9 @@ const Visits = () => {
         </div>
         <div className="col">
           <div className="row d-flex">
-            <div className="col-8">
-              <p
-                className="text-secondary m-0 pt-1"
-                style={{ fontSize: ".9rem" }}
-              >
-                Visits of ring road Project{" "}
+            <div className="col-9">
+              <p className="text-secondary m-0" style={{ fontSize: ".9rem" }}>
+                {data?.projectName}{" "}
               </p>
             </div>
             <div className="col pt-2">

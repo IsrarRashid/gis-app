@@ -21,7 +21,7 @@ const SimplePieChart = () => {
         type: "pie", // Correct type as per ApexOptions
       },
       labels: ["Allocated", "Expenditure", "Releases", "Approved Cost"], // Labels for each slice
-      colors: ["#5A3FFF", "#1ED6FF", "#ADE1FF", "#3DFFDC"],
+      colors: ["#1D81A2", "#18A1CD", "#39F3BB", "#15607A"],
       stroke: {
         show: false,
         width: 0,

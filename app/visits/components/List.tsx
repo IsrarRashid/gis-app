@@ -50,7 +50,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const { data: users } = useAuthentication({ refresh });
   const { data: vehicles } = useVehicle({ refresh });
   const { data: drivers } = useDriver({ refresh });
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("pending");
   const deleteMessage = "Deleted Successfully!";
 
   const notifyCreate = (message: string) => toast.success(message);
@@ -225,7 +225,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 handleSort={() => handleSort("longitude")}
               />
               <TableHeading
-                name="vehicle ID"
+                name="vehicle"
                 handleSort={() => handleSort("vehicleID")}
               />
               <TableHeading

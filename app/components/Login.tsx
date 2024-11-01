@@ -2,7 +2,7 @@
 import { FormEvent, useState } from "react";
 import Cookies from "js-cookie";
 import bgVideo from "../../public/video/bg-video.mp4";
-import logoGreen from "../../public/images/logo-green.png";
+import logoNew from "../../public/icons/logoNew.svg";
 import userGrey from "../../public/icons/userGrey.svg";
 import passwordGrey from "../../public/icons/passwordGrey.svg";
 import eye from "../../public/icons/eye.svg";
@@ -20,11 +20,18 @@ export interface UserData {
   email: string;
 }
 
+export interface Right {
+  rightId: number;
+  rightName: string;
+  rightIdentifier: string;
+}
+
 interface Props {
   data: {
     token: string;
     expiration: string;
     role: [string];
+    rights: Right[];
     userData: UserData;
   };
 }
@@ -61,9 +68,15 @@ const Login = () => {
       Cookies.set("email", response.data.data.userData.email, {
         expires: new Date(response.data.data.expiration),
       });
-      console.log("roles", response.data.data.role);
+      console.log("role", response.data.data.role);
       if (response.data.data.role.length > 0) {
         Cookies.set("role", response.data.data.role[0], {
+          expires: new Date(response.data.data.expiration),
+        });
+      }
+      console.log("rights", JSON.stringify(response.data.data.rights));
+      if (response.data.data.rights.length > 0) {
+        Cookies.set("rights", JSON.stringify(response.data.data.rights), {
           expires: new Date(response.data.data.expiration),
         });
       }
@@ -128,7 +141,13 @@ const Login = () => {
           >
             <div className="row">
               <div className="col text-center">
-                <Image src={logoGreen} className="img-fluid" alt="logo" />
+                <Image
+                  src={logoNew}
+                  className="img-fluid"
+                  alt="logo"
+                  width={150}
+                  height={150}
+                />
               </div>
             </div>
             <div className="row">
@@ -225,7 +244,7 @@ const Login = () => {
                   <Link
                     className="text-decoration-none"
                     href="/login"
-                    style={{ color: "#B8FFB1", fontSize: ".75rem" }}
+                    style={{ color: "#B1F6FF", fontSize: ".75rem" }}
                   >
                     Forgot Password?
                   </Link>
@@ -237,8 +256,8 @@ const Login = () => {
                     type="submit"
                     style={{
                       borderRadius: "6px",
-                      backgroundImage:
-                        "linear-gradient(to right, #37b53c , #39953d)",
+                      background:
+                        "linear-gradient(to right, #0C8CE9 , #13629B)",
                       letterSpacing: 1,
                     }}
                     className="btn shadow text-white w-100 mb-3 pt-3 pb-3 fw-bold"

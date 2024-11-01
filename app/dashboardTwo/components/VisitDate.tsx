@@ -3,8 +3,14 @@ import downloadLineBlack from "../../../public/icons/downloadLineBlack.svg";
 import blueClock from "../../../public/icons/blueClock.svg";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { StaffTrackings } from "./DashboardTwo";
+import { getFormattedDate } from "@/app/utils";
 
-const VisitDate = () => {
+interface Props {
+  data: StaffTrackings[];
+}
+
+const VisitDate = ({ data }: Props) => {
   const items = ["a", "a", "a", "a"];
 
   const refContainer1 = useRef<HTMLDivElement>(null);
@@ -55,7 +61,7 @@ const VisitDate = () => {
             dragConstraints={constraints1} // Adjust based on content size
             whileTap={{ cursor: "grabbing" }}
           >
-            {items.map((d, i) => (
+            {data.map((d, i) => (
               <div
                 key={i}
                 className="row d-flex p-2 mb-2 bg-white ms-2 me-2"
@@ -68,7 +74,9 @@ const VisitDate = () => {
                 </div>
                 <div className="col-lg-9 col-md-9 col ps-0">
                   <p className="m-0 mt-1 fs14px">Lahore Ring Road</p>
-                  <p className="m-0 fw-bold fs-5">30/03/2024</p>
+                  <p className="m-0 fw-bold fs-5">
+                    {getFormattedDate(new Date(d.visitDate), "short")}
+                  </p>
                   <p className="m-0 fs12px" style={{ color: "#B1B1B1" }}>
                     2 days ago
                   </p>

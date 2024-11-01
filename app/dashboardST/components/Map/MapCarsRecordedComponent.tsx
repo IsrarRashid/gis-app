@@ -50,7 +50,7 @@ const getRotatedCarIcon = (rotationAngle: number) =>
   L.divIcon({
     className: "custom-marker",
     html: `<div style="transform: rotate(${rotationAngle}deg);">
-    <img src="/images/carTop2.png" width="70" height="56"/>
+    <Image src="/images/carTop2.png" width="70" height="56"/>
     </div>`,
     iconSize: [70, 56],
     iconAnchor: [35, 28], // center the icon
@@ -71,7 +71,7 @@ const MapCarsRecordedComponent = () => {
   const markerRef = useRef<L.Marker>(null);
   const duration = 500; // Duration between each move (in ms)
   const [data, setData] = useState<StaffTracking[]>();
-  const [visitId, setVisitId] = useState(3);
+  const [visitId, setVisitId] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {

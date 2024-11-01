@@ -11,6 +11,8 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { trackingAPI } from "@/app/APIs";
 import CarCard from "./CarCard";
+import Image from "next/image";
+import carTop2 from "../../../../public/images/carTop2.png";
 
 export interface Tracking {
   ["GBB-062"]: {
@@ -26,13 +28,13 @@ export interface Tracking {
       {
         lat: number;
         lon: number;
+        direction: string;
       }
     ];
     Date_time: string;
     Latitude: number;
     Longitude: number;
     Speed: number;
-    Direction: string;
     Ignition: string;
     Address: string;
     ["Last Ignition Off Time"]: string;
@@ -69,7 +71,7 @@ const getRotatedCarIcon = (rotationAngle: number) =>
   L.divIcon({
     className: "custom-marker",
     html: `<div style="transform: rotate(${rotationAngle}deg);">
-    <img src="/images/carTop2.png" width="70" height="56"/>
+    <img src=${carTop2.src} width="70" height="56"/>
     </div>`,
     iconSize: [70, 56],
     iconAnchor: [35, 28], // center the icon
@@ -124,19 +126,6 @@ const MapCarsComponent = () => {
     requestAnimationFrame(step); // Start the animation
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(trackingAPI); // Replace with your API endpoint
-  //       const data: Tracking = await response.json();
-  //       setAPIData(data);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
   useEffect(() => {
     // Function to fetch the latest coordinates from the API
     const fetchCoordinates = async () => {
@@ -152,7 +141,8 @@ const MapCarsComponent = () => {
             coordinatesList[coordinatesList.length - 1].lat, // Get the last coordinate's latitude
             coordinatesList[coordinatesList.length - 1].lon, // Get the last coordinate's longitude
           ];
-
+          const latestDirection: string =
+            coordinatesList[coordinatesList.length - 1].direction;
           // Update the path with the latest coordinates
           if (
             path.length === 0 ||
@@ -163,7 +153,7 @@ const MapCarsComponent = () => {
             )
           ) {
             setPath((prevPath) => [...prevPath, latestCoordinates]);
-            setDirection(data["GBB-062"].Direction);
+            setDirection(latestDirection);
 
             if (!position) {
               setPosition(latestCoordinates);

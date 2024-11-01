@@ -37,7 +37,7 @@ const Button = ({
 }: Props) => {
   return (
     <motion.button
-      whileTap={{ scale: 0.9 }}
+      whileTap={{ scale: 0.9, opacity: 0.9 }}
       type={type}
       style={style}
       className={className}

@@ -786,9 +786,13 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         onChange={handleDatalistSelect}
                       >
                         {data.map((d) => (
-                          <option key={d.label} value={d.label}>
-                            {d.label}
-                          </option>
+                          <>
+                            {d.attributeCode && (
+                              <option key={d.label} value={d.attributeCode}>
+                                {d.label}
+                              </option>
+                            )}
+                          </>
                         ))}
                       </select>
                     </div>

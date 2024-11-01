@@ -51,7 +51,7 @@ const getRotatedCarIcon = (rotationAngle: number) =>
   L.divIcon({
     className: "custom-marker",
     html: `<div style="transform: rotate(${rotationAngle}deg);">
-    <img src="/images/locationPointRoad.png" width="70" height="56"/>
+    <Image src="/images/locationPointRoadBig.png" width="70" height="70"/>
     </div>`,
     iconSize: [70, 56],
     iconAnchor: [35, 28], // center the icon
@@ -106,7 +106,7 @@ const MapCarsComponent = () => {
     requestAnimationFrame(step); // Start the animation
   };
   const [data, setData] = useState<StaffTracking[]>();
-  const [visitId, setVisitId] = useState(3);
+  const [visitId, setVisitId] = useState(1);
 
   useEffect(() => {
     // Function to fetch the latest coordinates from the API

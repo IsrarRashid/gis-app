@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import logo from "../public/images/logo.png";
+import logoNew from "./../public/icons/logoNew.svg";
 import notifications from "../public/icons/notifications.svg";
 import settings from "../public/icons/settings.svg";
 import userIcon from "../public/icons/user.svg";
@@ -13,13 +13,14 @@ import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import downArrowBold from "../public/icons/downArrowBold.svg";
-import profilePic from "../public/images/profilePic.png";
+import profilePic from "../public/icons/profilePic.svg";
 import locationPointBlue from "../public/icons/locationPointBlue.svg";
 import dashboardBlue from "../public/icons/dashboardBlue.svg";
 import filter from "../public/icons/filter.svg";
 import FilterMenu from "./dashboard/components/FilterMenu";
 import useRoles from "./hooks/useRoles";
 import Button from "./components/Button";
+import PriorityMenu from "./dashboard/components/PriorityMenu";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -47,6 +48,7 @@ const Navbar = () => {
     Cookies.remove("email");
     Cookies.remove("userName");
     Cookies.remove("role");
+    Cookies.remove("rights");
   };
 
   return (
@@ -58,7 +60,7 @@ const Navbar = () => {
     >
       <div className="container-fluid">
         <Link className="navbar-brand" href="/">
-          <Image src={logo} alt="logo" />
+          <Image src={logoNew} alt="logoNew" width={64} height={64} />
         </Link>
         <Button
           className="navbar-toggler"
@@ -104,45 +106,7 @@ const Navbar = () => {
                 <FilterMenu />
               </li>
               <li className="nav-item me-2">
-                <Button
-                  className="nav-link btn btn-sm badge rounded shadow-sm fs-6 bg-white mb-1"
-                  style={{
-                    padding: "5px 15px 5px 8px",
-                  }}
-                  id="navbarDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <div className="row d-flex">
-                    <div className="col p-2 ms-3 me-2">
-                      <div className="row">
-                        <div className="col p-0 ps-2">
-                          <Image
-                            src={locationPointBlue}
-                            alt="locationPointBlue"
-                          />
-                        </div>
-                        <div
-                          className="col p-0 pe-2 "
-                          style={{ marginTop: "2px" }}
-                        >
-                          &nbsp;<span>Map</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="col rounded p-2"
-                      style={{
-                        background: "#f5f6f7",
-                        border: "1px solid rgba(12, 140, 233, 0.2)",
-                      }}
-                    >
-                      <Image src={dashboardBlue} alt="dashboardBlue" />
-                      &nbsp;Summary Dashboard
-                    </div>
-                  </div>
-                </Button>
+                <PriorityMenu />
               </li>
               <li className="nav-item dropdown">
                 <Button
@@ -157,12 +121,15 @@ const Navbar = () => {
                   aria-expanded="false"
                 >
                   <div className="row d-flex">
-                    <Image
-                      className="img-fluid"
-                      src={profilePic}
-                      alt="profilePic"
-                      style={{ width: "auto", height: "auto" }}
-                    />
+                    <div className="col">
+                      <Image
+                        className="img-fluid rounded-circle mt-1"
+                        src={profilePic}
+                        alt="profilePic"
+                        width={38}
+                        height={38}
+                      />
+                    </div>
                     <div className="col mt-2 p-0 me-2">
                       <p
                         className="m-0 text-dark"
@@ -177,7 +144,7 @@ const Navbar = () => {
                         12:15PM
                       </p>
                     </div>
-                    <div className="col mt-2 ps-0">
+                    <div className="col mt-2 ps-0 pe-0">
                       <Image src={downArrowBold} alt="downArrowBold" />
                     </div>
                   </div>

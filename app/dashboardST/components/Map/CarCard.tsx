@@ -39,7 +39,7 @@ const CarCard = ({ data }: Props) => {
             style={{ letterSpacing: 1 }}
           >
             <div className="row d-flex mt-2">
-              <div className="col pe-0">{getName(data.userID, users)}</div>
+              <div className="col pe-0">Saad Ahmad</div>
               <div
                 className="col text-end color-sea-blue fs8px ps-0"
                 style={{ marginTop: "2px" }}

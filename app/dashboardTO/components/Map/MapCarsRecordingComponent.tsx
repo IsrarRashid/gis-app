@@ -10,6 +10,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { trackingAPI } from "@/app/APIs";
 import CarCard from "./CarCard";
+import Image from "next/image";
 
 export interface Tracking {
   ["GBB-062"]: {
@@ -25,13 +26,13 @@ export interface Tracking {
       {
         lat: number;
         lon: number;
+        direction: string;
       }
     ];
     Date_time: string;
     Latitude: number;
     Longitude: number;
     Speed: number;
-    Direction: string;
     Ignition: string;
     Address: string;
     ["Last Ignition Off Time"]: string;
@@ -42,7 +43,7 @@ export interface Tracking {
 }
 
 const getRotationAngle = (direction: string): number => {
-  switch (direction.toLocaleLowerCase()) {
+  switch (direction?.toLocaleLowerCase()) {
     case "north":
       return 0;
     case "north east":
@@ -68,7 +69,7 @@ const getRotatedCarIcon = (rotationAngle: number) =>
   L.divIcon({
     className: "custom-marker",
     html: `<div style="transform: rotate(${rotationAngle}deg);">
-    <img src="/images/carTop2.png" width="70" height="56"/>
+    <Image src="/images/carTop2.png" width="70" height="56"/>
     </div>`,
     iconSize: [70, 56],
     iconAnchor: [35, 28],
@@ -127,7 +128,7 @@ const MapCarsRecordingComponent = () => {
           ]);
           setPath(newPath);
           setPosition([coordinatesList[0].lat, coordinatesList[0].lon]); // Set initial position to the first coordinate
-          setDirection(data["GBB-062"].Direction);
+          setDirection(coordinatesList[0].direction);
         }
       } catch (error) {
         console.error("Error fetching coordinates:", error);

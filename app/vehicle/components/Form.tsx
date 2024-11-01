@@ -11,7 +11,18 @@ import Button from "@/app/components/Button";
 
 const schema = z.object({
   id: z.number().optional().default(0),
-  regNumber: z.string().min(1, { message: "Please add Registration Number!" }),
+  name: z.string().min(1, { message: "Please add Name!" }),
+  description: z.string().min(1, { message: "Please add Description!" }),
+  vehicleNumber: z.string().min(1, { message: "Please add Vehicle Number!" }),
+  model: z.string().min(1, { message: "Please add Model!" }),
+  color: z.string().min(1, { message: "Please add Color!" }),
+  trasnmission: z.string().min(1, { message: "Please add Transmission!" }),
+  seatsCapacity: z
+    .number({ invalid_type_error: "Please add Seats Capacity!" })
+    .min(1, { message: "Please add Seats Capacity!" }),
+  fuelType: z.string().min(1, { message: "Please add Fuel Type!" }),
+  vehicleImage: z.string().default("").nullable(),
+  vehicleIcon: z.string().default("").nullable(),
   createdAt: z.string().optional().default(new Date().toISOString()),
   updatedAt: z.string().optional().default(new Date().toISOString()),
 });
@@ -51,7 +62,16 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         const response = await apiClient.get(`${api}/${id}`);
         const itemData = response.data.data;
         setValue("id", itemData.id);
-        setValue("regNumber", itemData.regNumber);
+        setValue("name", itemData.name);
+        setValue("description", itemData.description);
+        setValue("vehicleNumber", itemData.vehicleNumber);
+        setValue("model", itemData.model);
+        setValue("color", itemData.color);
+        setValue("trasnmission", itemData.trasnmission);
+        setValue("seatsCapacity", itemData.seatsCapacity);
+        setValue("fuelType", itemData.fuelType);
+        setValue("vehicleImage", itemData.vehicleImage);
+        setValue("vehicleIcon", itemData.vehicleIcon);
         setValue("createdAt", itemData.createdAt);
         setValue("updatedAt", new Date().toISOString());
       } catch (err) {
@@ -105,6 +125,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       </Button>
 
       <Modal
+        size="lg"
         show={show}
         onHide={handleClose}
         aria-labelledby="contained-modal-title-vcenter"
@@ -135,24 +156,197 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                 </p>
               </div>
               <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
-                <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
-                  <label htmlFor="regNumber" className="form-label text-white">
-                    Registration Number
-                  </label>
-                  <input
-                    {...register("regNumber")}
-                    id="regNumber"
-                    type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
-                    placeholder="Enter Registration Number"
-                  />
-                  {errors.regNumber && (
-                    <p className="text-danger mt-1">
-                      {errors.regNumber.message}
-                    </p>
-                  )}
+                <div className="row d-flex justify-content-between">
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label htmlFor="name" className="form-label text-white">
+                      Name
+                    </label>
+                    <input
+                      {...register("name")}
+                      id="name"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter Name"
+                    />
+                    {errors.name && (
+                      <p className="text-danger mt-1 mb-0">
+                        {errors.name.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="description"
+                      className="form-label text-white"
+                    >
+                      Description
+                    </label>
+                    <input
+                      {...register("description")}
+                      id="description"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter Description"
+                    />
+                    {errors.description && (
+                      <p className="text-danger mt-1 mb-0">
+                        {errors.description.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="vehicleNumber"
+                      className="form-label text-white"
+                    >
+                      Vehicle Number
+                    </label>
+                    <input
+                      {...register("vehicleNumber")}
+                      id="vehicleNumber"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter vehicleNumber"
+                    />
+                    {errors.vehicleNumber && (
+                      <p className="text-danger mt-1 mb-0">
+                        {errors.vehicleNumber.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label htmlFor="model" className="form-label text-white">
+                      Model
+                    </label>
+                    <input
+                      {...register("model")}
+                      id="model"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter Model"
+                    />
+                    {errors.model && (
+                      <p className="text-danger mt-1 mb-0">
+                        {errors.model.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label htmlFor="color" className="form-label text-white">
+                      Color
+                    </label>
+                    <input
+                      {...register("color")}
+                      id="color"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter Color"
+                    />
+                    {errors.color && (
+                      <p className="text-danger mt-1 mb-0">
+                        {errors.color.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="trasnmission"
+                      className="form-label text-white"
+                    >
+                      Trasnmission
+                    </label>
+                    <input
+                      {...register("trasnmission")}
+                      id="trasnmission"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter Trasnmission"
+                    />
+                    {errors.trasnmission && (
+                      <p className="text-danger mt-1 mb-0">
+                        {errors.trasnmission.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="seatsCapacity"
+                      className="form-label text-white"
+                    >
+                      Seats Capacity
+                    </label>
+                    <input
+                      {...register("seatsCapacity", { valueAsNumber: true })}
+                      id="seatsCapacity"
+                      type="number"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter Seats Capacity"
+                    />
+                    {errors.seatsCapacity && (
+                      <p className="text-danger mt-1 mb-0">
+                        {errors.seatsCapacity.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label htmlFor="fuelType" className="form-label text-white">
+                      Fuel Type
+                    </label>
+                    <input
+                      {...register("fuelType")}
+                      id="fuelType"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter fuel Type"
+                    />
+                    {errors.fuelType && (
+                      <p className="text-danger mt-1 mb-0">
+                        {errors.fuelType.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="vehicleImage"
+                      className="form-label text-white"
+                    >
+                      vehicle Image
+                    </label>
+                    <input
+                      {...register("vehicleImage")}
+                      id="vehicleImage"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter Vehicle Image"
+                    />
+                    {errors.vehicleImage && (
+                      <p className="text-danger mt-1 mb-0">
+                        {errors.vehicleImage.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                    <label
+                      htmlFor="vehicleIcon"
+                      className="form-label text-white"
+                    >
+                      Vehicle Icon
+                    </label>
+                    <input
+                      {...register("vehicleIcon")}
+                      id="vehicleIcon"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark bg-silver"
+                      placeholder="Enter Vehicle Icon"
+                    />
+                    {errors.vehicleIcon && (
+                      <p className="text-danger mt-1 mb-0">
+                        {errors.vehicleIcon.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
+                <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
                   <Button
                     className="btn text-white w-100 border-0"
                     style={{

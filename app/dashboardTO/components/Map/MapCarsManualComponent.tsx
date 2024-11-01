@@ -9,29 +9,55 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-// import carIconUrl from "/images/carTop.png"; // Add a car icon to show on the map
 import CarCard from "./CarCard";
 import { Tracking } from "./MapCarsComponent";
 import { trackingAPI } from "@/app/APIs";
+import carTop2 from "../../../../public/images/carTop2.png";
 
-const carIcon = new L.Icon({
-  iconUrl: "/images/carTop2.png",
-  iconSize: [50, 60], // Adjust size
-  iconAnchor: [25, 25],
-});
+const getRotationAngle = (direction: string): number => {
+  switch (direction?.toLocaleLowerCase()) {
+    case "north":
+      return 0;
+    case "north east":
+      return 45;
+    case "east":
+      return 90;
+    case "south east":
+      return 135;
+    case "south":
+      return 180;
+    case "south west":
+      return 225;
+    case "west":
+      return 270;
+    case "north west":
+      return 315;
+    default:
+      return 0;
+  }
+};
+
+const getRotatedCarIcon = (rotationAngle: number) =>
+  L.divIcon({
+    className: "custom-marker",
+    html: `<div style="transform: rotate(${rotationAngle}deg);">
+    <img src=${carTop2.src} width="70" height="56"/>
+    </div>`,
+    iconSize: [70, 56],
+    iconAnchor: [35, 28], // center the icon
+  });
 
 const MapCarsManualComponent = () => {
   const [position, setPosition] = useState<[number, number]>([
     31.4589, 74.2631966,
-  ]); // Starting position (latitude, longitude)
+  ]); // Starting position
   const [apiData, setAPIData] = useState<Tracking>();
-
-  const [arrayIndex, setArrayIndex] = useState(1);
+  const [direction, setDirection] = useState<string[]>([""]); // Empty path initially
+  const [rotationAngle, setRotationAngle] = useState<number>(0); // Track rotation angle
+  const [arrayIndex, setArrayIndex] = useState<number>(0);
   const [path, setPath] = useState<[number, number][]>([]);
 
   const markerRef = useRef<L.Marker>(null);
-  const speed = 0.0001; // Adjust speed of car animation
-  const duration = 500; // Duration between each move (in ms)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,8 +71,13 @@ const MapCarsManualComponent = () => {
             coord.lat,
             coord.lon,
           ]);
+          const directions: string[] = coordinatesList.map(
+            (coord) => coord.direction
+          );
           setPath(newPath);
+          setDirection(directions);
           setPosition([coordinatesList[0].lat, coordinatesList[0].lon]); // Set initial position to the first coordinate
+          setRotationAngle(getRotationAngle(coordinatesList[0].direction)); // Set initial rotation
         }
       } catch (err) {
         console.log(err);
@@ -55,45 +86,22 @@ const MapCarsManualComponent = () => {
     fetchData();
   }, []);
 
-  // Helper function to interpolate between two points
-  const lerp = (start: number, end: number, t: number) => {
-    return start + t * (end - start);
-  };
-
-  const moveCar = (
-    from: [number, number],
-    to: [number, number],
-    duration: number
-  ) => {
-    let start = Date.now();
-    const step = () => {
-      const now = Date.now();
-      const elapsedTime = now - start;
-      const t = Math.min(elapsedTime / duration, 1); // Ensure `t` is between 0 and 1
-
-      const newLat = lerp(from[0], to[0], t);
-      const newLng = lerp(from[1], to[1], t);
-
-      setPosition([newLat, newLng]);
-
-      if (t < 1) {
-        requestAnimationFrame(step); // Continue moving until `t` reaches 1
-      } else {
-        // Move to the next point after reaching the current destination
-        if (arrayIndex < path.length - 1) {
-          setArrayIndex((prev) => prev + 1);
-        }
-      }
-    };
-
-    requestAnimationFrame(step); // Start the animation
-  };
-
+  // Move the car based on the path at a fixed interval
   useEffect(() => {
-    if (arrayIndex < path.length - 1) {
-      moveCar(path[arrayIndex - 1], path[arrayIndex], duration);
+    if (path.length > 0 && arrayIndex < path.length) {
+      const interval = setInterval(() => {
+        setPosition(path[arrayIndex]); // Move car to the next point
+        setRotationAngle(getRotationAngle(direction[arrayIndex])); // Set rotation based on direction
+        setArrayIndex((prevIndex) => prevIndex + 1); // Move to the next point
+
+        if (arrayIndex >= path.length - 1) {
+          clearInterval(interval); // Stop the movement when reaching the last point
+        }
+      }, 1000); // Change position every 1 second (adjust as needed)
+
+      return () => clearInterval(interval); // Cleanup on unmount
     }
-  }, [path, arrayIndex]);
+  }, [path, direction, arrayIndex]);
 
   return (
     <div className="position-relative">
@@ -116,7 +124,11 @@ const MapCarsManualComponent = () => {
         <Polyline positions={path} color="blue" />
 
         {/* Moving Car */}
-        <Marker position={position} icon={carIcon} ref={markerRef}>
+        <Marker
+          position={position}
+          icon={getRotatedCarIcon(rotationAngle)}
+          ref={markerRef}
+        >
           <Popup
             maxWidth={195}
             className="mapPopup"

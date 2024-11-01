@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
-import locationImage from "../../../public/images/locationImage.png";
+// import locationImage from "../../../public/images/locationImage.png";
 import uploadBlack from "../../../public/icons/uploadBlack.svg";
 import { useEffect, useRef, useState } from "react";
 
@@ -45,7 +45,7 @@ const BottomArea = () => {
           {items.map((d, i) => (
             <div
               key={i}
-              className="col-lg-3 col-md-6 col p-3 mb-3 me-4 bg-white"
+              className="col-lg-3 col-md-6 col col-12 p-3 mb-3 me-4 bg-white"
               style={{
                 borderRadius: "10px",
               }}
@@ -82,9 +82,11 @@ const BottomArea = () => {
               ></div>
               <div className="col">
                 <Image
-                  src={locationImage}
+                  src="/images/locationImage.png"
                   alt="locationImage"
-                  style={{ width: "100%", height: "100%" }}
+                  className="img-fluid"
+                  width={330}
+                  height={166}
                 />
               </div>
             </div>

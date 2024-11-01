@@ -4,8 +4,13 @@ import adobeAcrobat from "../../../public/icons/adobeAcrobat.svg";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Button from "@/app/components/Button";
+import { ReportsData } from "./DashboardTwo";
 
-const Reports = () => {
+interface Props {
+  data: ReportsData[];
+}
+
+const Reports = ({ data }: Props) => {
   const items = ["a", "a", "a", "a"];
 
   const refContainer1 = useRef<HTMLDivElement>(null);
@@ -56,7 +61,7 @@ const Reports = () => {
             dragConstraints={constraints1} // Adjust based on content size
             whileTap={{ cursor: "grabbing" }}
           >
-            {items.map((d, i) => (
+            {data.map((d, i) => (
               <div
                 key={i}
                 className="row d-flex p-2 mb-2 ms-2 me-2"
@@ -73,22 +78,29 @@ const Reports = () => {
                     </div>
                     <div className="col-lg-10 col-md-9 col">
                       <p className="m-0 mt-1 fs13px fw-bold">
-                        Project Report 1.pdf
+                        Project Report {i + 1}.pdf
                       </p>
-                      <p className="m-0 fs10px text-secondary">Size: 1.3 MB</p>
+                      {/* <p className="m-0 fs10px text-secondary">Size: 1.3 MB</p> */}
                     </div>
                   </div>
                 </div>
-                <div className="col-lg-2 col-md-2 col text-end mt-2">
-                  <Button className="btn p-0">
-                    <Image
-                      src={downloadLineBlack}
-                      alt="downloadLineBlack"
-                      width={12}
-                      height={16}
-                    />
-                  </Button>
-                </div>
+                {d.reportPath && (
+                  <div className="col-lg-2 col-md-2 col text-end mt-1">
+                    <a
+                      href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.reportPath}`}
+                      className="btn p-0"
+                      download
+                      target="_blank"
+                    >
+                      <Image
+                        src={downloadLineBlack}
+                        alt="downloadLineBlack"
+                        width={12}
+                        height={16}
+                      />
+                    </a>
+                  </div>
+                )}
               </div>
             ))}
           </motion.div>

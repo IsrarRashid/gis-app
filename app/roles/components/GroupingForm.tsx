@@ -92,7 +92,7 @@ const GroupingForm = ({ id, options, name }: Props) => {
   }));
 
   // Prepare selected values for react-select in {value, label} format
-  const selectedValues = selectedOptions.map((group) => ({
+  const selectedValues = selectedOptions?.map((group) => ({
     value: group.rightId,
     label: group.rightName,
   }));

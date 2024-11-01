@@ -115,7 +115,7 @@ const SmdpSyncForm = ({
           onClick={handleShow}
           style={{ whiteSpace: "nowrap" }}
         >
-          + SMDP SYNCHRONIZE
+          + SMDP ONE PROJECT SYNCHRONIZE
         </Button>
       ) : (
         <Button

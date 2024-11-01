@@ -392,7 +392,7 @@ const DashboardSummary = () => {
                       className="m-0 text-center fw-bold"
                       style={{ color: "#2AA0F6", fontWeight: "500" }}
                     >
-                      Defined Limit
+                      Within Defined Limits
                       <br />1
                     </p>
                   </div>

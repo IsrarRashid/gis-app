@@ -5,32 +5,53 @@ import Image from "next/image";
 import downArrowWhite from "../../../public/icons/downArrowWhite.svg";
 import { useEffect, useRef, useState } from "react";
 import Button from "@/app/components/Button";
+import { SingleProjectDashboard } from "./DashboardTwo";
 
 // Dynamically import the ApexChart component (for SSR)
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-const SimplePieChart = () => {
+interface Props {
+  data: SingleProjectDashboard;
+}
+
+const SimplePieChart = ({ data }: Props) => {
   const chartRef = useRef<HTMLDivElement>(null);
+
   // Define chart options and data
   const [chartData] = useState<{
     options: ApexOptions; // Set the type as ApexOptions
     series: number[]; // The series type is an array of numbers
   }>({
-    series: [20, 30, 10, 35], // Data for the pie chart
+    series: [data.allocation, data.releases, data.utilization], // Data for the pie chart
     options: {
       chart: {
         type: "pie", // Correct type as per ApexOptions
       },
-      labels: ["Allocated", "Expenditure", "Releases", "Approved Cost"], // Labels for each slice
-      colors: ["#5A3FFF", "#1ED6FF", "#ADE1FF", "#3DFFDC"],
+      labels: ["Allocation", "Releases", "Utilization"], // Labels for each slice
+      colors: ["#15607A", "#1D81A2", "#18A1CD"],
       stroke: {
         show: false,
         width: 0,
       },
       legend: {
-        show: false, // Keep the legend visible if needed
+        show: true, // Keep the legend visible if needed
+        formatter: function (val, opts) {
+          return `${val}: ${opts.w.globals.series[opts.seriesIndex]}`;
+        },
+        position: "bottom", // Position legend at the bottom
+        onItemHover: {
+          highlightDataSeries: false, // Disable highlighting on hover
+        },
       },
       dataLabels: {
+        enabled: true, // Enable data labels on the chart slices
+        formatter: function (val, opts) {
+          return opts.w.globals.series[opts.seriesIndex].toString();
+        },
+        style: {
+          fontSize: "14px",
+          colors: ["#fff"],
+        },
         dropShadow: {
           opacity: 0.3,
         },

@@ -17,7 +17,7 @@ const DownloadPDFBtn = () => {
     if (input) {
       html2canvas(input).then((canvas) => {
         const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
+        const pdf = new jsPDF();
 
         const imgWidth = 280; // A4 size in mm (width)
         const pageHeight = 280; // A4 size in mm (height)

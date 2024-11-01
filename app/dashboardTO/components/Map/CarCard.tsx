@@ -197,7 +197,7 @@ const CarCard = ({ apiData }: Props) => {
               style={{ letterSpacing: 1 }}
             >
               <div className="row d-flex mt-1">
-                <div className="col pe-0">Arif Ahsan</div>
+                <div className="col pe-0">Saad Bodla</div>
                 <div
                   className="col text-end color-sea-blue fs8px ps-0"
                   style={{ marginTop: "2px" }}
@@ -237,7 +237,7 @@ const CarCard = ({ apiData }: Props) => {
               style={{ letterSpacing: 1 }}
             >
               <div className="row d-flex mt-1">
-                <div className="col pe-0">Rameez Ali</div>
+                <div className="col pe-0">Ali Raza (Junior)</div>
                 <div
                   className="col text-end color-sea-blue fs8px ps-0"
                   style={{ marginTop: "2px" }}

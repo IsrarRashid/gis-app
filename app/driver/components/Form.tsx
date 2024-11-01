@@ -11,8 +11,10 @@ import Button from "@/app/components/Button";
 
 const schema = z.object({
   id: z.number().optional().default(0),
+  user_Id: z.number().optional().default(0),
   driverName: z.string().min(1, { message: "Please add Driver Name!" }),
   mobileNumber: z.string().min(1, { message: "Please add Phone Number!" }),
+  driverImage: z.string().optional().default(""),
   createdAt: z.string().optional().default(new Date().toISOString()),
   updatedAt: z.string().optional().default(new Date().toISOString()),
 });
@@ -52,8 +54,10 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         const response = await apiClient.get(`${api}/${id}`);
         const itemData = response.data.data;
         setValue("id", itemData.id);
+        setValue("user_Id", itemData.user_Id);
         setValue("driverName", itemData.driverName);
         setValue("mobileNumber", itemData.mobileNumber);
+        setValue("driverImage", itemData.driverImage);
         setValue("createdAt", itemData.createdAt);
         setValue("updatedAt", new Date().toISOString());
       } catch (err) {
@@ -107,6 +111,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       </Button>
 
       <Modal
+        size="lg"
         show={show}
         onHide={handleClose}
         aria-labelledby="contained-modal-title-vcenter"
@@ -136,8 +141,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               </p>
             </div>
             <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
-              <div className="row d-flex justify-content-between mb-3">
-                <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
+              <div className="row d-flex justify-content-between">
+                <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
                   <label htmlFor="driverName" className="form-label text-white">
                     Driver Name
                   </label>
@@ -154,7 +159,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </p>
                   )}
                 </div>
-                <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
+                <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
                   <label
                     htmlFor="mobileNumber"
                     className="form-label text-white"
@@ -174,10 +179,48 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </p>
                   )}
                 </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
+                  <label htmlFor="user_Id" className="form-label text-white">
+                    User Id
+                  </label>
+                  <input
+                    {...register("user_Id", { valueAsNumber: true })}
+                    id="user_Id"
+                    type="number"
+                    className="form-control form-control-sm color-light-dark bg-silver"
+                    placeholder="Enter User Id"
+                    disabled
+                    value={0}
+                  />
+                  {errors.user_Id && (
+                    <p className="text-danger mt-1">{errors.user_Id.message}</p>
+                  )}
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
+                  <label
+                    htmlFor="driverImage"
+                    className="form-label text-white"
+                  >
+                    Driver Image
+                  </label>
+                  <input
+                    {...register("driverImage")}
+                    id="driverImage"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark bg-silver"
+                    placeholder="Enter Driver Image"
+                    disabled
+                  />
+                </div>
               </div>
-              <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
+              <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
                 <Button
-                  className="btn bg-color-sea-green text-white w-100"
+                  className="btn text-white w-100 border-0"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
+                    borderRadius: "12px",
+                  }}
                   type="submit"
                 >
                   Done
