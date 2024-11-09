@@ -12,8 +12,8 @@ import projectLocation from "../../../../public/images/projectLocation.png";
 import { MainDashboard, ProjectsList } from "../Dashboard";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SingleProjectDashboard } from "@/app/dashboardTwo/components/DashboardTwo";
 import toast, { Toaster } from "react-hot-toast";
+import { SingleProjectDashboard } from "@/app/projectDetailsDashboard/components/ProjectDetailsDashboard";
 
 const districtIcon = new L.Icon({
   iconUrl: districtLocation.src,
@@ -90,7 +90,7 @@ const MapComponent = ({ data, setData, setProjectsData }: Props) => {
       );
       setSingleProjectData(response.data.data);
       if (response.data.data) {
-        router.push(`/dashboardTwo/${projectId}`);
+        router.push(`/projectDetailsDashboard/${projectId}`);
       } else {
         toast.error("This Project is not yet Monitored");
       }
@@ -115,10 +115,12 @@ const MapComponent = ({ data, setData, setProjectsData }: Props) => {
       markers
         ?.filter((location) => location.latitude && location.longitude)
         .forEach((location) => {
+          console.log("Bounds before adding extending:", bounds);
           bounds.extend([
             parseFloat(location.latitude),
             parseFloat(location.longitude),
           ]);
+          console.log("Bounds after adding extending:", bounds);
         });
 
       // Check if bounds contain valid points before calling fitBounds
@@ -140,7 +142,7 @@ const MapComponent = ({ data, setData, setProjectsData }: Props) => {
           center={position}
           zoom={17}
           style={{
-            height: "550px",
+            height: "840px",
             width: "100%",
             borderRadius: "10px",
           }}

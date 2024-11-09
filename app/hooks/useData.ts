@@ -34,7 +34,7 @@ const useData = <T>({ refresh, endpoint }: Props) => {
       return () => controller.abort();
     };
     loadItems();
-  }, [refresh, error]);
+  }, [refresh]);
 
   return { data, setData, error, setError, isLoading };
 };

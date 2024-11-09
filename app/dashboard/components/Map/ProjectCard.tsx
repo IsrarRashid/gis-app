@@ -37,7 +37,7 @@ const ProjectCard = ({ data }: Props) => {
             style={{ marginBottom: "1.5px" }}
             alt="tickStar"
           />{" "}
-          {data.sectorName}
+          {data.sectorName ? data.sectorName : data.id}
           {/* {getFormattedDate(new Date(data.approvalDate), "short")} */}
         </span>
         <span

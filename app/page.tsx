@@ -41,25 +41,5 @@ export default function Home() {
     }
   }, [router]);
 
-  return (
-    <>
-      {/* <Navbar />
-      <div
-        className={poppins.className + " container p-3 mt-3 mb-4"}
-        style={{
-          background: "rgba(209, 209, 209, 0.4)",
-          border: "2px solid #fff",
-          padding: "10px",
-          borderRadius: "25px",
-        }}
-      >
-        {currentContent === null && <Sectors />}
-        {currentContent === "Sector" && <Sectors />}
-        {currentContent === "Projects" && <Projects />}
-        {currentContent === "Attributes" && <Attributes />}
-        {currentContent === "Attribute Groups" && <AttributeGroups />}
-        {currentContent === "User" && <Users />}
-      </div> */}
-    </>
-  );
+  return <div></div>;
 }

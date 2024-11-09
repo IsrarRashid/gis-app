@@ -9,6 +9,7 @@ import MapCars from "./Map/MapCars";
 import MapCarsRecorded from "./Map/MapCarsRecorded";
 import Button from "@/app/components/Button";
 import StaffMember from "./StaffMember";
+import useAuthorization from "@/app/hooks/useAuthorization";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -18,6 +19,8 @@ const lexend = Lexend({
 const DashboardST = () => {
   const [mapStatus, setMapStatus] = useState(false);
   const dispatch = useDispatch();
+  useAuthorization("dashboardST");
+
   const handleButtonClick = (content: string) => {
     dispatch(setContent(content));
   };
@@ -37,7 +40,7 @@ const DashboardST = () => {
 
   return (
     <div
-      className={`container-fluid p-3 mt-3 mb-4 ${lexend.className}`}
+      className={`container-fluid p-3 mb-4 ${lexend.className}`}
       style={{
         backgroundImage:
           "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6), rgba(255, 255, 255, 0.08))",

@@ -1,10 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { CSSProperties, ReactNode } from "react";
 
 interface Props {
   type?: "button" | "submit" | "reset";
-  style?: {};
+  style?: CSSProperties;
   className: string;
   onClick?: () => void;
   children?: ReactNode;

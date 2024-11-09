@@ -3,17 +3,11 @@ import { useEffect, useState } from "react";
 import List from "./List";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import useAuthorization from "@/app/hooks/useAuthorization";
 
 const Roles = () => {
   const [refresh, setRefresh] = useState(false);
-  const router = useRouter();
-  const token = Cookies.get("token");
-
-  useEffect(() => {
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router]);
+  useAuthorization("rights");
 
   useEffect(() => {
     // Set the background for the body

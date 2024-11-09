@@ -13,13 +13,13 @@ import {
 } from "@react-google-maps/api";
 import { MainDashboard, ProjectsList } from "../Dashboard";
 import { useRouter } from "next/navigation";
-import { SingleProjectDashboard } from "@/app/dashboardTwo/components/DashboardTwo";
 import apiClient from "@/app/services/api-client";
 import { mainDashboardAPI, singleProjectDashboardAPI } from "@/app/APIs";
 import DistrictCard from "./DistrictCard";
 import districtLocation from "../../../../public/images/districtLocation.png";
 import projectLocation from "../../../../public/images/projectLocation.png";
 import ProjectCard from "./ProjectCard";
+import { SingleProjectDashboard } from "@/app/projectDetailsDashboard/components/ProjectDetailsDashboard";
 
 const containerStyle = {
   height: "550px",

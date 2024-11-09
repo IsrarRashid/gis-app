@@ -3,18 +3,12 @@ import { useEffect, useState } from "react";
 import Table from "./Table";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import useAuthorization from "@/app/hooks/useAuthorization";
 
 const SmdpSync = () => {
   const [refresh, setRefresh] = useState(false);
-  const router = useRouter();
   const [showData, setShowData] = useState(false);
-
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router]);
+  useAuthorization("smdpSync");
 
   useEffect(() => {
     // Set the background for the body

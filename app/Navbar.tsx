@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import downArrowBold from "../public/icons/downArrowBold.svg";
-import profilePic from "../public/icons/profilePic.svg";
+import profilePic from "@/public/images/profilePic.png";
 import locationPointBlue from "../public/icons/locationPointBlue.svg";
 import dashboardBlue from "../public/icons/dashboardBlue.svg";
 import filter from "../public/icons/filter.svg";
@@ -51,6 +51,30 @@ const Navbar = () => {
     Cookies.remove("rights");
   };
 
+  const [currentTime, setCurrentTime] = useState("");
+
+  useEffect(() => {
+    // Function to format the time
+    const formatTime = (date: Date) => {
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const isPM = hours >= 12;
+      const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+      const ampm = isPM ? "PM" : "AM";
+      return `${formattedHours}:${formattedMinutes} ${ampm}`;
+    };
+
+    // Update time every second
+    const interval = setInterval(() => {
+      const now = new Date();
+      setCurrentTime(formatTime(now));
+    }, 1000);
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <nav
       className={
@@ -60,7 +84,12 @@ const Navbar = () => {
     >
       <div className="container-fluid">
         <Link className="navbar-brand" href="/">
-          <Image src={logoNew} alt="logoNew" width={64} height={64} />
+          <img
+            src="/icons/logoNew.svg"
+            className="img-fluid"
+            alt="logoNew"
+            style={{ width: "64px", height: "64px" }}
+          />
         </Link>
         <Button
           className="navbar-toggler"
@@ -102,15 +131,15 @@ const Navbar = () => {
           {(currentContent === "Dashboard" ||
             currentContent === "DashboardTO") && (
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li className="nav-item me-2">
+              {/* <li className="nav-item me-2">
                 <FilterMenu />
-              </li>
-              <li className="nav-item me-2">
+              </li> */}
+              {/* <li className="nav-item me-2">
                 <PriorityMenu />
-              </li>
+              </li> */}
               <li className="nav-item dropdown">
                 <Button
-                  className="nav-link btn btn-sm badge rounded-pill shadow-sm fs-6 "
+                  className="nav-link btn btn-sm badge rounded-pill shadow-sm fs-6 p-0"
                   style={{
                     padding: "5px 15px 5px 8px",
                     background: "rgba(255, 255, 255, 0.62)",
@@ -121,16 +150,17 @@ const Navbar = () => {
                   aria-expanded="false"
                 >
                   <div className="row d-flex">
-                    <div className="col">
-                      <Image
-                        className="img-fluid rounded-circle mt-1"
-                        src={profilePic}
+                    <div className="col m-auto ms-1 mt-1 mb-1">
+                      <img
+                        className="img-fluid rounded-circle m-0"
+                        src="/images/profilePic.png"
+                        style={{ objectFit: "cover" }}
                         alt="profilePic"
-                        width={38}
-                        height={38}
+                        width={70}
+                        height={70}
                       />
                     </div>
-                    <div className="col mt-2 p-0 me-2">
+                    <div className="col p-0 m-auto">
                       <p
                         className="m-0 text-dark"
                         style={{ fontSize: ".8rem" }}
@@ -138,13 +168,13 @@ const Navbar = () => {
                         {userName}
                       </p>
                       <p
-                        className="m-0 text-dark text-start mt-1"
-                        style={{ fontSize: ".68rem" }}
+                        className="m-0 text-start mt-1"
+                        style={{ fontSize: ".68rem", color: "#575757" }}
                       >
-                        12:15PM
+                        {currentTime}
                       </p>
                     </div>
-                    <div className="col mt-2 ps-0 pe-0">
+                    <div className="col ps-2 pe-3 m-auto">
                       <Image src={downArrowBold} alt="downArrowBold" />
                     </div>
                   </div>

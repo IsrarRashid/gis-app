@@ -1,7 +1,7 @@
 "use client";
 import { FormEvent, useState } from "react";
 import Cookies from "js-cookie";
-import bgVideo from "../../public/video/bg-video.mp4";
+import bgVideoNew from "../../public/video/bgVideoNew.mp4";
 import logoNew from "../../public/icons/logoNew.svg";
 import userGrey from "../../public/icons/userGrey.svg";
 import passwordGrey from "../../public/icons/passwordGrey.svg";
@@ -20,25 +20,19 @@ export interface UserData {
   email: string;
 }
 
-export interface Right {
-  rightId: number;
-  rightName: string;
-  rightIdentifier: string;
-}
-
 interface Props {
   data: {
     token: string;
     expiration: string;
     role: [string];
-    rights: Right[];
+    rights: { rightName: string }[];
     userData: UserData;
   };
 }
 
 const Login = () => {
-  const [userName, setUserName] = useState("shahid");
-  const [password, setPassword] = useState("Home@5790");
+  const [userName, setUserName] = useState("super_admin");
+  const [password, setPassword] = useState("Superadmin@123");
   const [buttonType, setButtonType] = useState(true);
 
   const dispatch = useDispatch();
@@ -74,11 +68,20 @@ const Login = () => {
           expires: new Date(response.data.data.expiration),
         });
       }
-      console.log("rights", JSON.stringify(response.data.data.rights));
+      console.log(
+        "rights",
+        response.data.data.rights.map((rights) => rights.rightName)
+      );
       if (response.data.data.rights.length > 0) {
-        Cookies.set("rights", JSON.stringify(response.data.data.rights), {
-          expires: new Date(response.data.data.expiration),
-        });
+        Cookies.set(
+          "rights",
+          JSON.stringify(
+            response.data.data.rights.map((rights) => rights.rightName)
+          ),
+          {
+            expires: new Date(response.data.data.expiration),
+          }
+        );
       }
 
       // localStorage.setItem("token", response.data.data.token);
@@ -105,7 +108,7 @@ const Login = () => {
           zIndex: "0",
         }}
       >
-        <source src={bgVideo} type="video/mp4" />
+        <source src={bgVideoNew} type="video/mp4" />
         Your browser does not support HTML5 video.
       </video>
       <div

@@ -252,7 +252,7 @@ const MapCarsComponent = () => {
             ref={markerRef}
           >
             <Popup
-              maxWidth={195}
+              maxWidth={400}
               className="mapPopup"
               closeButton={false}
               offset={L.point(0, -16)}

@@ -1,6 +1,6 @@
 "use client";
 import Visits from "./Visits";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
 import ChartMenu from "./ChartMenu";
 import SimplePieChart from "./SimplePieChart";
@@ -20,6 +20,13 @@ import Menu from "@/app/components/Menu";
 import { useRouter } from "next/navigation";
 // import MapT from "./Map/MapT";
 import Cookies from "js-cookie";
+import useAuthorization from "@/app/hooks/useAuthorization";
+import UpdateMap from "./Map/UpdateMap";
+import MyMap from "./GoogleMap/MyMap";
+import FilterButton from "./FilterButton";
+import TrackingButton from "./TrackingButton";
+import ProjectStatus from "./ProjectStatus";
+import FinancialTab from "./FinancialTab";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -66,24 +73,13 @@ export interface MainDashboard {
 const Dashboard = () => {
   const [data, setData] = useState<MainDashboard>();
   const [projectsData, setProjectsData] = useState<ProjectsList[]>();
+  useAuthorization("dashboard");
 
   const dispatch = useDispatch();
 
   const handleButtonClick = (content: string) => {
     dispatch(setContent(content));
   };
-  const router = useRouter();
-  useEffect(() => {
-    const token = Cookies.get("token");
-    const rights = JSON.parse(Cookies.get("rights") || "[]");
-    if (!token) {
-      router.push("/login");
-    }
-    if (!rights.includes("dashboard")) {
-      // Redirect to an unauthorized page or login page
-      router.push(rights.length > 0 ? `/${rights[0].rightName}` : "/login"); // Change path as needed
-    }
-  }, [router]);
 
   useEffect(() => {
     // Set the background for the body
@@ -120,7 +116,7 @@ const Dashboard = () => {
 
   return (
     <div
-      className="container-fluid p-3 mt-3 mb-4"
+      className="container-fluid p-3 mb-4"
       style={{
         backgroundImage:
           "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6), rgba(255, 255, 255, 0.08))",
@@ -154,7 +150,7 @@ const Dashboard = () => {
               outline="1px solid rgba(50, 179, 52, 0.4)"
               icon="/icons/doubleTick.svg"
               value={data.defineLimitProjects}
-              label="Within Defined Limit"
+              label="On Track"
               showTides={true}
               tideOneImage="/images/tideOneGreen.png"
               tideTwoImage="/images/tideTwoGreen.png"
@@ -164,7 +160,7 @@ const Dashboard = () => {
               outline="1px solid rgba(232, 192, 15, 0.4)"
               icon="/icons/bulb.svg"
               value={data.needConsidrationProjects}
-              label="Need Consideration"
+              label="Off Track"
               showTides={true}
               tideOneImage="/images/tideOneYellow.png"
               tideTwoImage="/images/tideTwoYellow.png"
@@ -180,26 +176,34 @@ const Dashboard = () => {
               tideTwoImage="/images/tideTwoRed.png"
             />
           </div>
-          <div className={`row ${lexend.className}`}>
-            <div className="col-lg-9 col-md-12 col">
-              <div className="row">
-                <div className="col-lg-12 col-md-12 col mt-1">
-                  <Map
-                    data={data}
-                    setData={setData}
-                    setProjectsData={setProjectsData}
-                  />
-                  {/* <NewMap data={data} setData={setData} /> */}
-                  {/* <MapT /> */}
-                </div>
-              </div>
+          <div className={`row  mt-2 ${lexend.className}`}>
+            <div className="col-lg-9 col-md-12 col-sm-12 pe-1">
+              {/* <Map
+                data={data}
+                setData={setData}
+                setProjectsData={setProjectsData}
+              />
+              <UpdateMap
+                data={data}
+                setData={setData}
+                setProjectsData={setProjectsData}
+              /> */}
+              <MyMap
+                data={data}
+                setData={setData}
+                setProjectsData={setProjectsData}
+              />
             </div>
-            <div className="col-lg-3 col-md-12 col">
+            <div className="col-lg-3 col-md-12 col-sm-12">
+              <FilterButton />
+              <TrackingButton />
               <ChartMenu data={data} />
+              <ProjectStatus />
+              <FinancialTab />
               {/* <SimpleBarChart /> */}
               {/* <DistributedColumnChart /> */}
               {/* <VerticalComposedChart /> */}
-              <SimplePieChart />
+              {/* <SimplePieChart /> */}
               {/* <div className="col">
             <Visits />
           </div> */}
@@ -214,7 +218,7 @@ const Dashboard = () => {
                     className="m-0 fs12px fw-bold"
                     style={{ letterSpacing: 1 }}
                   >
-                    List of projects
+                    List of Projects
                   </p>
                 </div>
                 <div className="col text-end mt-1 mb-1">

@@ -10,7 +10,6 @@ interface Props {
 
 const DeleteModal = ({ handleDelete, id }: Props) => {
   const modalId = `deleteModal-${id}`; // Unique modal ID
-  console.log("modal delete id", id);
   return (
     <>
       <Button

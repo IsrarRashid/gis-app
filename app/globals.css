@@ -166,10 +166,10 @@ select {
 }
 
 /* For Firefox */
-html {
-  scrollbar-width: thin; /* Make the scrollbar thin */
-  scrollbar-color: #888 #f1f1f1; /* Handle and track color */
-}
+/* html {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+} */
 
 /* Optional: Add scrollbar to specific element */
 .custom-scrollbar {
@@ -230,4 +230,8 @@ html {
   display: inline-block;
   transform-origin: center;
   transition: transform 1s ease-in-out; /* Smooth transition over 1 second */
+}
+
+.gm-style-iw button.gm-ui-hover-effect {
+  display: none !important;
 }

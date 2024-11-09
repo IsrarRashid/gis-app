@@ -13,12 +13,12 @@ interface Props {
 const ChartMenu = ({ data }: Props) => {
   return (
     <div
-      className="col mb-3 shadow-sm"
+      className="col mb-2 shadow-sm fs14px"
       style={{
         background: "#C6D9F1",
-        borderRadius: "15px",
-        fontSize: ".9rem",
-        padding: "20px 35px 15px 35px ",
+        borderRadius: "10px",
+        padding: "5px 35px 1px 35px ",
+        color: "#334155",
       }}
     >
       <div
@@ -51,35 +51,6 @@ const ChartMenu = ({ data }: Props) => {
               {data?.expenditure} M
             </span>
           </p>
-        </div>
-      </div>
-      <div
-        className="row d-flex rounded mb-2"
-        style={{ background: "rgba(235, 239, 253, 0.33)" }}
-      >
-        <div className="col-2 p-0">
-          <img
-            src="/images/pieChart.png"
-            alt="pieChart"
-            className="img-fluid"
-          />
-        </div>
-        <div className="col p-0">
-          <div className="row d-flex">
-            <div className="col">
-              <p className="mt-2 m-0">
-                <span className="fw-bold">Financial Progress:</span>{" "}
-                <span className="fw-bold" style={{ color: "#727272" }}>
-                  {Math.round(data?.progress)} %
-                </span>
-              </p>
-            </div>
-            {/* <div className="col-lg-5 col-md-5 col">
-              <p className="mt-2 m-0 text-success">
-                <Image src={topRightArrow} alt="topRightArrow" /> +39.69%
-              </p>
-            </div> */}
-          </div>
         </div>
       </div>
     </div>

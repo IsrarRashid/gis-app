@@ -18,8 +18,8 @@ const DistrictCard = ({ data }: Props) => {
     <div
       className="card border-0"
       style={{
-        width: "250px",
         borderRadius: "10px",
+        width: "300px",
       }}
     >
       <div
@@ -33,8 +33,13 @@ const DistrictCard = ({ data }: Props) => {
         className="row d-flex m-1 fw-normal fs-6"
         style={{ letterSpacing: 1 }}
       >
-        <div className="col">{data?.districtName}</div>
-        <div className="col text-end color-sea-blue fs-6">
+        <div className="col" style={{ whiteSpace: "nowrap" }}>
+          {data?.districtName}
+        </div>
+        <div
+          className="col text-end color-sea-blue fs-6"
+          style={{ whiteSpace: "nowrap" }}
+        >
           {data?.divisionName}
         </div>
       </div>

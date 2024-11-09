@@ -2,7 +2,7 @@
 import Image from "next/image";
 import arrowLeft from "../../../public/icons/arrow-left.svg";
 import arrowRight from "../../../public/icons/arrow-right.svg";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DeleteModal from "@/app/components/DeleteModal";
 import { sectorAPI } from "@/app/APIs";
 import SectorForm from "./SectorForm";
@@ -28,8 +28,9 @@ interface SectorsTableProps {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
-  const { data, setData, error, setError, isLoading } = useSectors({ refresh });
+  const { data, setData, setError, isLoading } = useSectors({ refresh });
   const deleteMessage = "Deleted Successfully!";
+
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
   // State for search input
@@ -88,40 +89,31 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   };
 
   // for selecting rows per page
-  const [rows, setRows] = useState(11); // Default to 11 rows per page
+  const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
-
-  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRows(parseInt(e?.target.value, 10));
-    setCurrentPage(1);
-  };
 
   // Determine the data to display for the current page
   const indexOfLastRow = currentPage * rows;
   const indexOfFirstRow = indexOfLastRow - rows;
-  const currentData = data.slice(indexOfFirstRow, indexOfLastRow);
+  const paginatedData = data.slice(indexOfFirstRow, indexOfLastRow);
 
-  // for pagination buttons
-  const totalPages = Math.ceil(data.length / rows);
-  // Handle previous page
+  // Update paginated data when data or pagination state changes
+  useEffect(() => {
+    setCurrentPage(1); // Reset to first page on data change
+  }, [data]);
+
+  // Pagination controls
+  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRows(parseInt(e.target.value, 10));
+    setCurrentPage(1);
+  };
   const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
-
-  // Handle next page
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    const totalPages = Math.ceil(data.length / rows);
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
-
-  // Paginate data to display only the current page's rows
-  const paginatedData = data.slice(
-    (currentPage - 1) * rows,
-    currentPage * rows
-  );
 
   const getParentSector = (parsentSectorId: number, data: Sector[]) => {
     const sector = data.find((sector) => sector.id === parsentSectorId);
@@ -168,6 +160,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                 method="POST"
                 setRefresh={setRefresh}
                 refresh={refresh}
+                setData={setData}
               />
             </div>
           </div>
@@ -250,79 +243,43 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
             </tr>
           </thead>
           <tbody>
-            {searchTerm
-              ? filteredData.map((d) => (
-                  <tr
-                    className={dmSans.className}
-                    style={{
-                      border: ".41px solid rgba(81,81,81,0.20) !important",
-                      fontSize: ".85rem",
-                    }}
-                    key={d.id}
-                  >
-                    <td>{d.id}</td>
-                    <td>{d.name}</td>
-                    <td>{d.description}</td>
-                    <td>{getParentSector(d.parentId, data)}</td>
-                    <td>{d.sortId}</td>
-                    <td>
-                      {d.createdAt &&
-                        getFormattedDate(new Date(d.createdAt), "numeric")}
-                    </td>
-                    <td>
-                      {d.updateAt &&
-                        getFormattedDate(new Date(d.updateAt), "numeric")}
-                    </td>
-                    <td>
-                      <DeleteModal handleDelete={handleDelete} id={d.id} />
-                    </td>
-                    <td>
-                      <SectorForm
-                        api={sectorAPI}
-                        method="PUT"
-                        id={d.id}
-                        setRefresh={setRefresh}
-                        refresh={refresh}
-                      />
-                    </td>
-                  </tr>
-                ))
-              : currentData.map((d) => (
-                  <tr
-                    className={dmSans.className}
-                    style={{
-                      border: ".41px solid rgba(81,81,81,0.20) !important",
-                      fontSize: ".85rem",
-                    }}
-                    key={d.id}
-                  >
-                    <td>{d.id}</td>
-                    <td>{d.name}</td>
-                    <td>{d.description}</td>
-                    <td>{getParentSector(d.parentId, data)}</td>
-                    <td>{d.sortId}</td>
-                    <td>
-                      {d.createdAt &&
-                        getFormattedDate(new Date(d.createdAt), "numeric")}
-                    </td>
-                    <td>
-                      {d.updateAt &&
-                        getFormattedDate(new Date(d.updateAt), "numeric")}
-                    </td>
-                    <td>
-                      <DeleteModal handleDelete={handleDelete} id={d.id} />
-                    </td>
-                    <td>
-                      <SectorForm
-                        api={sectorAPI}
-                        method="PUT"
-                        id={d.id}
-                        setRefresh={setRefresh}
-                        refresh={refresh}
-                      />
-                    </td>
-                  </tr>
-                ))}
+            {(searchTerm ? filteredData : paginatedData).map((d) => (
+              <tr
+                className={dmSans.className}
+                style={{
+                  border: ".41px solid rgba(81,81,81,0.20) !important",
+                  fontSize: ".85rem",
+                }}
+                key={d.id}
+              >
+                <td>{d.id}</td>
+                <td>{d.name}</td>
+                <td>{d.description}</td>
+                <td>{getParentSector(d.parentId, data)}</td>
+                <td>{d.sortId}</td>
+                <td>
+                  {d.createdAt &&
+                    getFormattedDate(new Date(d.createdAt), "numeric")}
+                </td>
+                <td>
+                  {d.updateAt &&
+                    getFormattedDate(new Date(d.updateAt), "numeric")}
+                </td>
+                <td>
+                  <DeleteModal handleDelete={handleDelete} id={d.id} />
+                </td>
+                <td>
+                  <SectorForm
+                    api={sectorAPI}
+                    method="PUT"
+                    id={d.id}
+                    setRefresh={setRefresh}
+                    refresh={refresh}
+                    setData={setData}
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
         <div className="row d-flex mb-3">
@@ -373,7 +330,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                 <Button
                   className="btn bg-color-sea-green shadow"
                   onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage === Math.ceil(data.length / rows)}
                   style={{
                     border: "1px solid #445E84",
                   }}

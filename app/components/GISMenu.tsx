@@ -20,7 +20,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import Button from "./Button";
-import { Right } from "./Login";
 
 interface Data {
   name: string;
@@ -31,7 +30,7 @@ interface Data {
 
 const GISMenu = () => {
   const dispatch = useDispatch();
-  const [rights, setRights] = useState<Right[]>();
+  const [rights, setRights] = useState([]);
 
   const handleButtonClick = (content: string) => {
     dispatch(setContent(content));
@@ -55,8 +54,8 @@ const GISMenu = () => {
     },
     {
       name: "Summary Dashboard",
-      nameId: "dashboardSummary",
-      link: "/dashboardSummary",
+      nameId: "summaryDashboard",
+      link: "/summaryDashboard",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
     },
@@ -156,11 +155,10 @@ const GISMenu = () => {
   const [filteredMenu, setFilteredMenu] = useState(data);
 
   useEffect(() => {
-    const rights: Right[] = JSON.parse(Cookies.get("rights") || "[]");
-
+    const rights = JSON.parse(Cookies.get("rights") || "[]");
     // Filter data based on rights
     const filteredData = data.filter((item) =>
-      rights.some((right) => right.rightName === item.nameId)
+      rights.some((right: any) => right === item.nameId)
     );
 
     setFilteredMenu(filteredData);
@@ -168,12 +166,13 @@ const GISMenu = () => {
 
   return (
     <>
-      {rights?.length === 1 ? (
+      {rights?.length <= 1 ? (
         <label
-          className="nav-link text-white badge rounded-pill "
+          className="nav-link text-white badge rounded-pill fw-bold"
           style={{
             padding: "12px 15px 12px 15px",
             fontSize: "22px",
+            letterSpacing: 1,
           }}
         >
           GIS Base Monitoring &nbsp;
@@ -181,14 +180,16 @@ const GISMenu = () => {
       ) : (
         <Button
           type="button"
-          className="nav-link btn btn-sm text-white badge rounded-pill bg-color-light-blue shadow-sm fs-6"
+          className="nav-link btn btn-sm text-white badge rounded-pill bg-color-light-blue shadow-sm fs-6 fw-bold"
           style={{
             padding: "12px 15px 12px 15px",
+            fontSize: "22px",
+            letterSpacing: 1,
           }}
           data-bs-toggle="modal"
           data-bs-target="#gisMenuModal"
         >
-          GIS Base Monitoring &nbsp;
+          Monitoring Dashboard &nbsp;
           <Image src={downArrow} alt="down arrow" />
         </Button>
       )}

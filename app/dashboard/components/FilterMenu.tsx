@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import filter from "../../../public/icons/filter.svg";
+import filterBlack from "../../../public/icons/filterBlack.svg";
 import Button from "@/app/components/Button";
 
 const FilterMenu = () => {
@@ -8,21 +8,11 @@ const FilterMenu = () => {
     <>
       <Button
         type="button"
-        className="nav-link btn btn-sm badge rounded-pill shadow-sm fs-6 bg-white mb-1 mt-1 "
-        style={{
-          padding: "10px 20px 10px 20px",
-        }}
+        className="btn rounded-pill"
         data-bs-toggle="modal"
         data-bs-target="#filterMenu"
       >
-        <div className="row">
-          <div className="col p-0 ps-2">
-            <Image src={filter} alt="filter" />
-          </div>
-          <div className="col p-0 pe-2 " style={{ marginTop: "2px" }}>
-            &nbsp;<span>Filter</span>
-          </div>
-        </div>
+        <Image src={filterBlack} alt="filterBlack" width={18} height={18} />
       </Button>
 
       <div

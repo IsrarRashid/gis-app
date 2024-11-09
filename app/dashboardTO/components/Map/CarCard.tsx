@@ -1,13 +1,13 @@
 import Image from "next/image";
-import cultus from "../../../../public/images/cultus.png";
-import driver from "../../../../public/images/driver.png";
-import petrol from "../../../../public/images/petrol.png";
-import engineerAhsanArif from "../../../../public/images/engineerAhsanArif.png";
-import phone3 from "../../../../public/icons/phone3.svg";
-import redCircle2 from "../../../../public/icons/redCircle2.svg";
-import greenCircle from "../../../../public/icons/greenCircle.svg";
-import meter2 from "../../../../public/icons/meter2.svg";
-import distanceTraveled from "../../../../public/icons/distanceTraveled.svg";
+import cultus from "@/public/images/cultus.png";
+import driver from "@/public/images/driver.png";
+import petrol from "@/public/images/petrol.png";
+import engineerAhsanArif from "@/public/images/engineerAhsanArif.png";
+import phone3 from "@/public/icons/phone3.svg";
+import redCircle2 from "@/public/icons/redCircle2.svg";
+import greenCircle from "@/public/icons/greenCircle.svg";
+import meter2 from "@/public/icons/meter2.svg";
+import distanceTraveled from "@/public/icons/distanceTraveled.svg";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Tracking } from "./MapCarsComponent";
 
@@ -20,26 +20,26 @@ const CarCard = ({ apiData }: Props) => {
     <div
       className="card border-0"
       style={{
-        width: "240px",
+        width: "400px",
         borderRadius: "10px",
       }}
     >
       <div className="container p-0 position-relative shadow-sm text-center">
         <Image
           src={cultus}
-          className="card-img-top mb-3 mt-2"
+          className="img-fluid card-img-top mt-2 mb-5"
           style={{
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
             objectFit: "contain",
-            width: "auto",
-            height: "auto",
+            width: "250px",
+            height: "150px",
           }}
           alt="cultus"
         />
         {apiData["GBB-062"]["Engine value"] === "stopped" ? (
           <div
-            className="position-absolute text-white fs8px rounded-3 fw-normal bg-danger"
+            className="position-absolute text-white fs-6 rounded-3 fw-normal bg-danger"
             style={{
               top: "10px",
               right: "10px",
@@ -52,7 +52,7 @@ const CarCard = ({ apiData }: Props) => {
           </div>
         ) : (
           <div
-            className="position-absolute text-white fs8px rounded-3 fw-normal"
+            className="position-absolute text-white fs-6 rounded-3 fw-normal"
             style={{
               top: "10px",
               right: "10px",
@@ -67,9 +67,9 @@ const CarCard = ({ apiData }: Props) => {
         )}
 
         <div
-          className="position-absolute fs10px rounded-3 fw-normal"
+          className="position-absolute fs-5 rounded-3 fw-normal"
           style={{
-            bottom: "16px",
+            bottom: "25px",
             left: "0px",
             borderRadius: "5px",
             letterSpacing: 1,
@@ -84,8 +84,8 @@ const CarCard = ({ apiData }: Props) => {
               >
                 <Image
                   src={redCircle2}
-                  width={6}
-                  height={6}
+                  width={10}
+                  height={10}
                   className="mb-1"
                   alt="redCircle2"
                 />
@@ -98,8 +98,8 @@ const CarCard = ({ apiData }: Props) => {
             >
               <Image
                 src={greenCircle}
-                width={8}
-                height={8}
+                width={12}
+                height={12}
                 className="mb-1"
                 alt="greenCircle"
               />
@@ -108,9 +108,9 @@ const CarCard = ({ apiData }: Props) => {
           {apiData["GBB-062"].Vehicle_Make} {apiData["GBB-062"].Vehicle_Model}
         </div>
         <div
-          className="position-absolute fs10px rounded-3 fw-normal"
+          className="position-absolute fs-5 rounded-3 fw-normal"
           style={{
-            bottom: "16px",
+            bottom: "25px",
             right: "0px",
             borderRadius: "5px",
             letterSpacing: 1,
@@ -120,7 +120,7 @@ const CarCard = ({ apiData }: Props) => {
           {apiData["GBB-062"].Vehicle_Device}
         </div>
         <div
-          className="position-absolute fs10px rounded-3 fw-normal"
+          className="position-absolute fs-5 rounded-3 fw-normal"
           style={{
             bottom: "0px",
             left: "0px",
@@ -131,15 +131,15 @@ const CarCard = ({ apiData }: Props) => {
         >
           <Image
             src={meter2}
-            width={10}
-            height={10}
+            width={20}
+            height={20}
             style={{ marginBottom: "2px" }}
             alt="meter2"
           />{" "}
           {apiData["GBB-062"].Speed} km/h
         </div>
         <div
-          className="position-absolute fs10px rounded-3 fw-normal"
+          className="position-absolute fs-5 rounded-3 fw-normal"
           style={{
             bottom: "0px",
             left: "32%",
@@ -150,15 +150,15 @@ const CarCard = ({ apiData }: Props) => {
         >
           <Image
             src={distanceTraveled}
-            width={10}
-            height={10}
+            width={20}
+            height={20}
             style={{ marginBottom: "2px" }}
             alt="distanceTraveled"
           />{" "}
           {apiData["GBB-062"]["Distance traveled"]} km
         </div>
         <div
-          className="position-absolute fs10px rounded-3 fw-normal"
+          className="position-absolute fs-5 rounded-3 fw-normal"
           style={{
             bottom: "0px",
             right: "0px",
@@ -169,8 +169,8 @@ const CarCard = ({ apiData }: Props) => {
         >
           <Image
             src={petrol}
-            width={10}
-            height={10}
+            width={18}
+            height={18}
             style={{ marginBottom: "2px" }}
             alt="petrol"
           />{" "}
@@ -182,7 +182,7 @@ const CarCard = ({ apiData }: Props) => {
           className="row d-flex m-0 mb-2 pb-1"
           style={{ borderBottom: "1px dashed #D5D5D5" }}
         >
-          <div className="col-3 p-0">
+          <div className="col-2 p-0 m-auto">
             <Image
               src={engineerAhsanArif}
               className="mb-1 img-fluid"
@@ -193,13 +193,13 @@ const CarCard = ({ apiData }: Props) => {
           </div>
           <div className="col ps-0 pe-0">
             <p
-              className="mt-1 mb-0 fw-normal fs10px"
+              className="mt-1 mb-0 fw-normal fs-5"
               style={{ letterSpacing: 1 }}
             >
               <div className="row d-flex mt-1">
                 <div className="col pe-0">Saad Bodla</div>
                 <div
-                  className="col text-end color-sea-blue fs8px ps-0"
+                  className="col text-end color-sea-blue fs-6 ps-0"
                   style={{ marginTop: "2px" }}
                 >
                   Engineer
@@ -207,13 +207,13 @@ const CarCard = ({ apiData }: Props) => {
               </div>
             </p>
             <p
-              className="m-0 mt-1 fs10px fw-normal text-secondary"
+              className="m-0 mt-1 fs-5 fw-normal text-secondary"
               style={{ letterSpacing: 1 }}
             >
               <Image
                 src={phone3}
-                width={10}
-                height={10}
+                width={20}
+                height={20}
                 className="mb-1"
                 alt="phone3"
               />
@@ -222,7 +222,7 @@ const CarCard = ({ apiData }: Props) => {
           </div>
         </div>
         <div className="row d-flex m-0">
-          <div className="col-3 p-0">
+          <div className="col-2 p-0 m-auto">
             <Image
               src={driver}
               className="mb-1 img-fluid"
@@ -233,13 +233,13 @@ const CarCard = ({ apiData }: Props) => {
           </div>
           <div className="col ps-0 pe-0">
             <p
-              className="mt-1 mb-0 fw-normal fs10px"
+              className="mt-1 mb-0 fw-normal fs-5"
               style={{ letterSpacing: 1 }}
             >
               <div className="row d-flex mt-1">
                 <div className="col pe-0">Ali Raza (Junior)</div>
                 <div
-                  className="col text-end color-sea-blue fs8px ps-0"
+                  className="col-3 text-end color-sea-blue fs-6 ps-0"
                   style={{ marginTop: "2px" }}
                 >
                   Driver
@@ -247,13 +247,13 @@ const CarCard = ({ apiData }: Props) => {
               </div>
             </p>
             <p
-              className="m-0 mt-1 fs10px fw-normal text-secondary"
+              className="m-0 mt-1 fs-5 fw-normal text-secondary"
               style={{ letterSpacing: 1 }}
             >
               <Image
                 src={phone3}
-                width={10}
-                height={10}
+                width={20}
+                height={20}
                 className="mb-1"
                 alt="phone3"
               />

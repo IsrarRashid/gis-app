@@ -6,18 +6,13 @@ import Cookies from "js-cookie";
 import DownloadFile from "./DownloadFile";
 import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
 import DownloadTextPDFBtn from "@/app/components/DownloadTextPDFBtn";
+import useAuthorization from "@/app/hooks/useAuthorization";
 
 const Projects = () => {
   const [refresh, setRefresh] = useState(false);
   const [showData, setShowData] = useState(false);
-  const router = useRouter();
+  useAuthorization("projects");
 
-  // useEffect(() => {
-  //   const token = Cookies.get("token");
-  //   if (!token) {
-  //     router.push("/login");
-  //   }
-  // }, [router]);
 
   useEffect(() => {
     // Set the background for the body

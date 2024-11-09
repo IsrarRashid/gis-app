@@ -28,9 +28,17 @@ interface Props {
   id?: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   refresh: boolean;
+  setData: React.Dispatch<React.SetStateAction<Sector[]>>;
 }
 
-const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
+const SectorForm = ({
+  api,
+  method,
+  id,
+  setRefresh,
+  refresh,
+  setData,
+}: Props) => {
   const { data } = useSectors({ refresh });
   const {
     register,
@@ -84,7 +92,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
         data: formData,
       });
       console.log("Response:", response);
-      setRefresh((prev) => !prev);
+      setData((prevData) => [...prevData, response.data.data]);
       toast.success(method === "POST" ? createdMessage : updatedMessage);
       handleClose();
     } catch (err) {

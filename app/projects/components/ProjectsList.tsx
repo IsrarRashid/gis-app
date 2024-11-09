@@ -15,7 +15,7 @@ import {
 } from "@/app/APIs";
 import ProjectForm from "./ProjectForm";
 import { sort } from "fast-sort";
-import { getFormattedDate } from "@/app/utils";
+import { getFormattedDate, getName } from "@/app/utils";
 import GroupingForm from "./GroupingForm";
 import useProjects, { Project } from "@/app/hooks/useProjects";
 import apiClient, { AxiosError } from "@/app/services/api-client";
@@ -82,34 +82,37 @@ const ProjectsList = ({
 
   // State for filtered data
   const [filteredData, setFilteredData] = useState<Project[]>([]);
+  const [searchEnable, setsearchEnable] = useState(false);
 
+  // Handle search logic
   const handleSearch = () => {
-    // Run the search logic only when search is submitted
-    if (searchTerm.trim()) {
-      const lowercasedFilter = searchTerm.toLowerCase();
-      const filtered = data.filter((item) =>
-        [
-          item.id.toString(),
-          item.name,
-          item.smdpProjectID.toString(),
-          item.sectorId.toString(),
-          item.city,
-          item.locationCoordinates,
-          item.status,
-        ]
-          .map((field) => field.toLowerCase())
-          .some((field) => field.includes(lowercasedFilter))
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(data); // Reset if search term is empty
+    const lowercasedFilter = searchTerm;
+    const filtered = data.filter((item) =>
+      [item.id.toString(), item.name.toLowerCase(), item.status.toLowerCase()]
+        .filter((field) => field) // Remove undefined fields
+        .map((field) => field.toLowerCase())
+        .some((field) => field.includes(lowercasedFilter))
+    );
+    setFilteredData(filtered);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm !== "") {
+      setsearchEnable(true);
+      handleSearch();
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSearch();
+  // Update searchTerm and clear search if empty
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setsearchEnable(false);
   };
+
+  useEffect(() => {
+    setOriginalData(data);
+  }, [refresh, data]);
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -130,25 +133,6 @@ const ProjectsList = ({
     const sortedData = sort(data)[direction](key);
     setSortConfig({ key, direction });
     setData([...sortedData]);
-  };
-
-  useEffect(() => {
-    setOriginalData(data);
-  }, [refresh, data]);
-
-  const handleSync = async (id: number) => {
-    try {
-      const response = await apiClient.post(
-        `${smdpSyncAttributeValuesApi}?SmdpProjectID=${id}`
-      );
-      console.log(response);
-      notifyCreate(syncMessage);
-      console.log("attribute values synced successfully");
-    } catch (err) {
-      console.error("failed to delete item", err);
-      setError((err as AxiosError).message);
-      notifyError((err as AxiosError).message);
-    }
   };
 
   const handleDelete = async (id: number): Promise<void> => {
@@ -224,11 +208,6 @@ const ProjectsList = ({
     }
   };
 
-  const getName = (id: number, data: Sector[]) => {
-    const sector = data.find((sector) => sector.id === id);
-    return sector?.name;
-  };
-
   return (
     <>
       <>
@@ -250,7 +229,7 @@ const ProjectsList = ({
                 </span>{" "}
                 Today
               </div>
-              <div className="col text-end">
+              <div className="col text-end mb-2">
                 {/* <ProjectForm
                   api={projectAPI}
                   method="POST"
@@ -284,40 +263,36 @@ const ProjectsList = ({
             <p>
               Showing:{" "}
               <span className="fw-bold">
-                {searchTerm ? filteredData.length : data?.length} Projects
+                {searchEnable ? filteredData.length : data?.length} Projects
               </span>
             </p>
           </div>
           <div className="col-lg-4 col-md-6 col-sm-12">
-            <div className="input-group">
-              <span
-                className="input-group-text pe-0 border-0 rounded-end rounded-pill"
-                id="basic-addon1"
-                style={{ background: "rgba(16, 143, 168, .1)" }}
-              >
-                <Image
-                  src={search2}
-                  alt="search2"
-                  width={20}
-                  height={20}
-                  style={{
-                    color: "#7e7e7e !important",
-                  }}
+            <form onSubmit={handleSearchSubmit}>
+              <div className="input-group">
+                <span
+                  className="input-group-text pe-0 border-0 rounded-end rounded-pill"
+                  id="basic-addon1"
+                  style={{ background: "#c6def5" }}
+                >
+                  <Image src={search2} alt="search2" width={20} height={20} />
+                </span>
+                <input
+                  type="text"
+                  className="form-control border-0 rounded-start"
+                  style={{ background: "rgba(16, 143, 168, .1)" }}
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={handleChange}
                 />
-              </span>
-              <input
-                type="text"
-                className="form-control border-0 rounded-start rounded-pill"
-                style={{ background: "rgba(16, 143, 168, .1)" }}
-                id="username"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button className="btn btn-warning" type="submit">
-                Search
-              </button>
-            </div>
+                <button
+                  className="btn rounded-start rounded-pill bg-color-sea-green text-white"
+                  type="submit"
+                >
+                  Search
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </>
@@ -337,17 +312,8 @@ const ProjectsList = ({
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
-                name="smdp Project ID"
-                handleSort={() => handleSort("smdpProjectID")}
-              />
-              <TableHeading
                 name="sector"
                 handleSort={() => handleSort("sectorId")}
-              />
-              <TableHeading name="city" handleSort={() => handleSort("city")} />
-              <TableHeading
-                name="location coordinates"
-                handleSort={() => handleSort("locationCoordinates")}
               />
               <TableHeading
                 name="status"
@@ -362,7 +328,7 @@ const ProjectsList = ({
             </tr>
           </thead>
           <tbody>
-            {(searchTerm ? filteredData : currentData).map((d) => (
+            {(searchEnable ? filteredData : paginatedData).map((d) => (
               <tr
                 className={dmSans.className}
                 style={{
@@ -373,10 +339,7 @@ const ProjectsList = ({
               >
                 <td>{d.id}</td>
                 <td>{d.name}</td>
-                <td>{d.smdpProjectID}</td>
                 <td>{getName(d.sectorId, sectorsData)}</td>
-                <td>{d.city}</td>
-                <td>{d.locationCoordinates}</td>
                 <td style={{ whiteSpace: "nowrap" }}>
                   {d.status === "scheduled" || d.status === "Scheduled" ? (
                     <Image

@@ -79,7 +79,14 @@ const Menu = ({
             </motion.div>
           </>
         )}
-
+        <div style={{ position: "absolute", right: 0 }}>
+          <img
+            src="/icons/linkArrow.svg"
+            className="img-fluid"
+            style={{ width: "30px", height: "30px" }}
+            alt="linkArrow"
+          />
+        </div>
         <div className="row d-flex m-0 ps-3 pt-2">
           <div className="col-lg-6 col-md-6 col mt-4 text-lg-end text-md-center text-center">
             <img
