@@ -1,8 +1,9 @@
 import Image from "next/image";
-import cultus from "@/public/images/cultus.png";
-import driver from "@/public/images/driver.png";
-import petrol from "@/public/images/petrol.png";
-import engineerAhsanArif from "@/public/images/engineerAhsanArif.png";
+import cultus from "@/public/icons/cultus.svg";
+import driver2 from "@/public/icons/driver2.svg";
+import petrol from "@/public/icons/petrol.svg";
+import galon from "@/public/icons/galon.svg";
+import engineerAhsanArif from "@/public/icons/engineerAhsanArif.svg";
 import phone3 from "@/public/icons/phone3.svg";
 import redCircle2 from "@/public/icons/redCircle2.svg";
 import greenCircle from "@/public/icons/greenCircle.svg";
@@ -10,17 +11,21 @@ import meter2 from "@/public/icons/meter2.svg";
 import distanceTraveled from "@/public/icons/distanceTraveled.svg";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Tracking } from "./MapCarsComponent";
+import { useState } from "react";
+import { formatDateTime } from "@/app/utils";
 
 interface Props {
   apiData: Tracking;
 }
 
 const CarCard = ({ apiData }: Props) => {
+  const [truncateText, setTruncateText] = useState(true);
+
   return (
     <div
       className="card border-0"
       style={{
-        width: "400px",
+        width: "420px",
         borderRadius: "10px",
       }}
     >
@@ -39,7 +44,7 @@ const CarCard = ({ apiData }: Props) => {
         />
         {apiData["GBB-062"]["Engine value"] === "stopped" ? (
           <div
-            className="position-absolute text-white fs-6 rounded-3 fw-normal bg-danger"
+            className="position-absolute text-white fs14px rounded-3 fw-normal bg-danger"
             style={{
               top: "10px",
               right: "10px",
@@ -52,7 +57,7 @@ const CarCard = ({ apiData }: Props) => {
           </div>
         ) : (
           <div
-            className="position-absolute text-white fs-6 rounded-3 fw-normal"
+            className="position-absolute text-white fs14px rounded-3 fw-normal"
             style={{
               top: "10px",
               right: "10px",
@@ -67,7 +72,7 @@ const CarCard = ({ apiData }: Props) => {
         )}
 
         <div
-          className="position-absolute fs-5 rounded-3 fw-normal"
+          className="position-absolute  rounded-3 fw-normal"
           style={{
             bottom: "25px",
             left: "0px",
@@ -104,11 +109,17 @@ const CarCard = ({ apiData }: Props) => {
                 alt="greenCircle"
               />
             </OverlayTrigger>
-          )}{" "}
-          {apiData["GBB-062"].Vehicle_Make} {apiData["GBB-062"].Vehicle_Model}
+          )}
+          {apiData["GBB-062"].Vehicle_Make} {apiData["GBB-062"].Vehicle_Model}{" "}
+          <img
+            src="/icons/rightTriangleBlue.svg"
+            alt="rightTriangleBlue"
+            className="img-fluid"
+            style={{ width: "7px", marginBottom: "2px" }}
+          />
         </div>
         <div
-          className="position-absolute fs-5 rounded-3 fw-normal"
+          className="position-absolute  rounded-3 fw-normal"
           style={{
             bottom: "25px",
             right: "0px",
@@ -120,7 +131,7 @@ const CarCard = ({ apiData }: Props) => {
           {apiData["GBB-062"].Vehicle_Device}
         </div>
         <div
-          className="position-absolute fs-5 rounded-3 fw-normal"
+          className="position-absolute  rounded-3 fw-normal"
           style={{
             bottom: "0px",
             left: "0px",
@@ -139,10 +150,10 @@ const CarCard = ({ apiData }: Props) => {
           {apiData["GBB-062"].Speed} km/h
         </div>
         <div
-          className="position-absolute fs-5 rounded-3 fw-normal"
+          className="position-absolute  rounded-3 fw-normal"
           style={{
             bottom: "0px",
-            left: "32%",
+            left: "24%",
             borderRadius: "5px",
             letterSpacing: 1,
             padding: "5px 12px 2px 12px",
@@ -157,11 +168,12 @@ const CarCard = ({ apiData }: Props) => {
           />{" "}
           {apiData["GBB-062"]["Distance traveled"]} km
         </div>
+
         <div
-          className="position-absolute fs-5 rounded-3 fw-normal"
+          className="position-absolute  rounded-3 fw-normal"
           style={{
             bottom: "0px",
-            right: "0px",
+            left: "52%",
             borderRadius: "5px",
             letterSpacing: 1,
             padding: "5px 12px 2px 12px",
@@ -176,6 +188,30 @@ const CarCard = ({ apiData }: Props) => {
           />{" "}
           {apiData["GBB-062"]["Fuel burned"]} Ltr
         </div>
+
+        <div
+          className="position-absolute  rounded-3 fw-normal"
+          style={{
+            bottom: "0px",
+            right: "0px",
+            borderRadius: "5px",
+            letterSpacing: 1,
+            padding: "5px 12px 2px 12px",
+          }}
+        >
+          <Image
+            src={galon}
+            width={20}
+            height={20}
+            style={{ marginBottom: "2px" }}
+            alt="galon"
+          />{" "}
+          {Math.round(
+            Number(apiData["GBB-062"]["Distance traveled"]) /
+              Number(apiData["GBB-062"]["Fuel burned"])
+          )}{" "}
+          KM/L
+        </div>
       </div>
       <div className="card-body pt-2 pb-2">
         <div
@@ -183,31 +219,27 @@ const CarCard = ({ apiData }: Props) => {
           style={{ borderBottom: "1px dashed #D5D5D5" }}
         >
           <div className="col-2 p-0 m-auto">
-            <Image
-              src={engineerAhsanArif}
-              className="mb-1 img-fluid"
-              width={37}
-              height={37}
-              alt="engineerAhsanArif"
+            <img
+              src="/images/sadiqMunawar.jpg"
+              className="mb-1 img-fluid rounded-circle"
+              style={{ width: "37px", height: "37px", objectFit: "cover" }}
+              alt="sadiqMunawar"
             />
           </div>
           <div className="col ps-0 pe-0">
-            <p
-              className="mt-1 mb-0 fw-normal fs-5"
-              style={{ letterSpacing: 1 }}
-            >
+            <p className="mt-1 mb-0 fw-normal " style={{ letterSpacing: 1 }}>
               <div className="row d-flex mt-1">
-                <div className="col pe-0">Saad Bodla</div>
+                <div className="col pe-0">Sadiq Munawar</div>
                 <div
-                  className="col text-end color-sea-blue fs-6 ps-0"
+                  className="col text-end color-sea-blue fs14px ps-0"
                   style={{ marginTop: "2px" }}
                 >
-                  Engineer
+                  Forest Agriculture & Livestock Expert (BS-17)
                 </div>
               </div>
             </p>
             <p
-              className="m-0 mt-1 fs-5 fw-normal text-secondary"
+              className="m-0 mt-1  fw-normal text-secondary"
               style={{ letterSpacing: 1 }}
             >
               <Image
@@ -217,29 +249,25 @@ const CarCard = ({ apiData }: Props) => {
                 className="mb-1"
                 alt="phone3"
               />
-              &nbsp;031823000642
+              &nbsp;+92 333 4976011
             </p>
           </div>
         </div>
         <div className="row d-flex m-0">
           <div className="col-2 p-0 m-auto">
-            <Image
-              src={driver}
-              className="mb-1 img-fluid"
-              width={37}
-              height={37}
-              alt="driver"
+            <img
+              src="/images/aliRaza.jpg"
+              className="mb-1 img-fluid rounded-circle"
+              style={{ width: "37px", height: "37px", objectFit: "cover" }}
+              alt="driver2"
             />
           </div>
           <div className="col ps-0 pe-0">
-            <p
-              className="mt-1 mb-0 fw-normal fs-5"
-              style={{ letterSpacing: 1 }}
-            >
+            <p className="mt-1 mb-0 fw-normal " style={{ letterSpacing: 1 }}>
               <div className="row d-flex mt-1">
-                <div className="col pe-0">Ali Raza (Junior)</div>
+                <div className="col pe-0">Ali Raza (junior)</div>
                 <div
-                  className="col-3 text-end color-sea-blue fs-6 ps-0"
+                  className="col-3 text-end color-sea-blue fs14px ps-0"
                   style={{ marginTop: "2px" }}
                 >
                   Driver
@@ -247,7 +275,7 @@ const CarCard = ({ apiData }: Props) => {
               </div>
             </p>
             <p
-              className="m-0 mt-1 fs-5 fw-normal text-secondary"
+              className="m-0 mt-1  fw-normal text-secondary"
               style={{ letterSpacing: 1 }}
             >
               <Image
@@ -258,6 +286,83 @@ const CarCard = ({ apiData }: Props) => {
                 alt="phone3"
               />
               &nbsp;03182342344
+            </p>
+          </div>
+        </div>
+        <div
+          className="row d-flex mb-2"
+          style={{ marginLeft: "-20px", marginRight: "0px" }}
+        >
+          <div className="col-1 p-0">
+            <img
+              src="/icons/twoCirclesVertical.svg"
+              alt="twoCirclesVertical"
+              className="img-fluid mt-1"
+              style={{ width: "100%", height: "60px" }}
+            />
+          </div>
+          <div
+            className="col p-0"
+            onMouseEnter={() => setTruncateText(false)}
+            onMouseLeave={() => setTruncateText(true)}
+          >
+            <div className="col p-0 mb-1">
+              <p className="m-0 fs14px fw-normal" style={{ color: "#7A889C" }}>
+                Start Location
+              </p>
+              <p className="m-0 fs-6 fw-normal">
+                {truncateText
+                  ? `${apiData["GBB-062"]["First Ignition Location"]?.substring(
+                      0,
+                      45
+                    )}...`
+                  : apiData["GBB-062"]["First Ignition Location"]}
+              </p>
+            </div>
+            <div className="col p-0">
+              <p className="m-0 fs14px fw-normal" style={{ color: "#7A889C" }}>
+                End Location
+              </p>
+              <p className="m-0 fs-6 fw-normal">
+                {truncateText
+                  ? `${apiData["GBB-062"]["Last Ignition Location"]?.substring(
+                      0,
+                      45
+                    )}...`
+                  : apiData["GBB-062"]["Last Ignition Location"]}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="row d-flex m-0 mb-2">
+          <div className="col">
+            <p className="fs14px m-0 fw-normal" style={{ color: "#7A889C" }}>
+              Visit Start Time
+            </p>
+            <p className="fs-6 m-0 fw-normal">
+              {formatDateTime(
+                apiData["GBB-062"]["First Ignition On Time"],
+                "time"
+              )}
+            </p>
+          </div>
+          <div className="col-1 p-0 img-fluid">
+            <img
+              src="/icons/verticalLine.svg"
+              alt="verticalLine"
+              className="img-fluid"
+              style={{ width: "100%", height: "30px" }}
+            />
+          </div>
+          <div className="col">
+            <p className="fs14px m-0 fw-normal" style={{ color: "#7A889C" }}>
+              Visit Start Date
+            </p>
+            <p className="fs-6 m-0 fw-normal">
+              {formatDateTime(
+                apiData["GBB-062"]["First Ignition On Time"],
+                "date"
+              )}
             </p>
           </div>
         </div>

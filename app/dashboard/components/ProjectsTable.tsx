@@ -1,28 +1,20 @@
 "use client";
 import Image from "next/image";
-import calender from "../../../public/icons/calendar.svg";
-import clock from "../../../public/icons/clock.svg";
-import cancel from "../../../public/icons/cancel.svg";
-import complete from "../../../public/icons/complete.svg";
 import arrowLeft from "../../../public/icons/arrow-left.svg";
 import arrowRight from "../../../public/icons/arrow-right.svg";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import DeleteModal from "@/app/components/DeleteModal";
-import { projectAPI } from "@/app/APIs";
 import { sort } from "fast-sort";
 import TableHeading from "@/app/components/TableHeading";
-import { getFormattedDate } from "@/app/utils";
-import useProjects, { Project } from "@/app/hooks/useProjects";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import { ToastContainer, toast } from "react-toastify";
-import useSectors, { Sector } from "@/app/hooks/useSectors";
-import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 import { DM_Sans, Inter } from "next/font/google";
-import ProjectForm from "@/app/projects/components/ProjectForm";
-import { motion } from "framer-motion";
 import Button from "@/app/components/Button";
 import { ProjectsList } from "./Dashboard";
 import ProgressBar from "@/app/components/ProgressBar";
+import downloadLineBlack from "../../../public/icons/downloadLineBlack.svg";
+import search2 from "@/public/icons/search2.svg";
+import apiClient from "@/app/services/api-client";
+import { singleProjectDashboardAPI } from "@/app/APIs";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -42,10 +34,44 @@ interface Props {
 }
 
 const ProjectsTable = ({ projectsData, setProjectsData }: Props) => {
-  const deleteMessage = "Deleted Successfully!";
+  // State for search input
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const notifyCreate = (message: string) => toast.success(message);
-  const notifyError = (message: string) => toast.error(message);
+  // State for filtered data
+  const [filteredData, setFilteredData] = useState<ProjectsList[]>([]);
+  const [searchEnable, setsearchEnable] = useState(false);
+
+  // Handle search logic
+  const handleSearch = () => {
+    const lowercasedFilter = searchTerm.toLocaleLowerCase();
+    const filtered = projectsData.filter((item) =>
+      [
+        item.id.toString(),
+        item.projectName,
+        item.sectorName,
+        item.districtName,
+        item.gSno.toString(),
+      ]
+        .filter((field) => field) // Remove undefined fields
+        .map((field) => field.toLowerCase())
+        .some((field) => field.includes(lowercasedFilter))
+    );
+    setFilteredData(filtered);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm !== "") {
+      setsearchEnable(true);
+      handleSearch();
+    }
+  };
+
+  // Update searchTerm and clear search if empty
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setsearchEnable(false);
+  };
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -104,41 +130,90 @@ const ProjectsTable = ({ projectsData, setProjectsData }: Props) => {
     currentPage * rows
   );
 
-  // const columns =
-  //   projectsData.length > 0
-  //     ? Object.keys(projectsData[0]).filter(
-  //         (column) => column !== "latitude" && column !== "longitude"
-  //       )
-  //     : [];
+  const router = useRouter();
+
+  const handleProjectSubmit = async (projectId: number) => {
+    try {
+      const response = await apiClient.get(
+        `${singleProjectDashboardAPI}?projectid=${projectId}`
+      );
+      if (response.data.data && response.data.data !== null) {
+        router.push(`/projectDetailsDashboard/${projectId}`);
+      } else {
+        toast.error("This Project is not yet Monitored.");
+      }
+    } catch (err) {
+      console.error("Submission error:", err);
+      toast.error("This Project is not yet Monitored.");
+    }
+  };
 
   return (
     <>
+      <div>
+        <Toaster />
+      </div>
       <>
-        <div className="row p-2">
-          {/* {isLoading && (
-            <div className="col text-center">
-              <div className="spinner-border text-primary"></div>
+        <div className="col text-center text-white rounded bg-color-sea-blue">
+          <div className="row d-flex">
+            <div className="col d-none d-md-block"></div>
+            <div className="col" style={{ marginTop: "10px" }}>
+              <p className="m-0 fs12px fw-bold" style={{ letterSpacing: 1 }}>
+                List of Projects
+              </p>
             </div>
-          )} */}
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            {/* <div className="row d-flex justify-content-end align-items-center">
-              <div className="col-lg-4 col-md-4 col-sm-12 text-center">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  onChange={hideCompleted}
+            <div className="col text-end mt-1 mb-1">
+              <Button
+                className="btn btn-sm btn-light"
+                style={{ whiteSpace: "nowrap" }}
+              >
+                Downloads &nbsp;
+                <Image
+                  src={downloadLineBlack}
+                  alt="download"
+                  width={12}
+                  height={15}
                 />
-                <label htmlFor="">&nbsp;Hide Completed</label>
-              </div>
-              <div className="col-lg-4 col-md-4 col-sm-12 text-center">
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className="row d-flex justify-content-between p-3">
+          <div className="col-lg-6 col-md-5 col-sm-12">
+            <p>
+              Showing:{" "}
+              <span className="fw-bold">
+                {searchEnable ? filteredData.length : projectsData?.length}{" "}
+                Projects
+              </span>
+            </p>
+          </div>
+          <div className="col-lg-4 col-md-6 col-sm-12">
+            <form onSubmit={handleSearchSubmit}>
+              <div className="input-group">
+                <span
+                  className="input-group-text pe-0 border-0 rounded-end rounded-pill"
+                  id="basic-addon1"
+                  style={{ background: "#c6def5" }}
+                >
+                  <Image src={search2} alt="search2" width={20} height={20} />
+                </span>
                 <input
-                  type="checkbox"
-                  className="form-check-input"
-                  onChange={showCancel}
+                  type="text"
+                  className="form-control border-0 rounded-start"
+                  style={{ background: "rgba(16, 143, 168, .1)" }}
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={handleChange}
                 />
-                <label htmlFor="">&nbsp;Show Cancel</label>
+                <button
+                  className="btn rounded-start rounded-pill bg-color-sea-green text-white"
+                  type="submit"
+                >
+                  Search
+                </button>
               </div>
-            </div> */}
+            </form>
           </div>
         </div>
       </>
@@ -199,7 +274,7 @@ const ProjectsTable = ({ projectsData, setProjectsData }: Props) => {
             </tr>
           </thead>
           <tbody>
-            {currentData.map((d) => (
+            {(searchEnable ? filteredData : currentData).map((d) => (
               <tr
                 key={d.id}
                 className={dmSans.className}
@@ -210,7 +285,12 @@ const ProjectsTable = ({ projectsData, setProjectsData }: Props) => {
               >
                 <td>{d.id}</td>
                 <td>{d.gSno}</td>
-                <td>{d.projectName}</td>
+                <td
+                  className="cursor-pointer"
+                  onClick={() => handleProjectSubmit(d.id)}
+                >
+                  {d.projectName}
+                </td>
                 <td>{d.sectorName}</td>
                 <td>{d.districtName}</td>
                 <td>{d.districtId}</td>
@@ -243,7 +323,7 @@ const ProjectsTable = ({ projectsData, setProjectsData }: Props) => {
                 <p>
                   Showing:{" "}
                   <span className="fw-bold">
-                    {projectsData?.length} Projects
+                    {projectsData && projectsData.length} Projects
                   </span>
                 </p>
               </div>
@@ -298,7 +378,6 @@ const ProjectsTable = ({ projectsData, setProjectsData }: Props) => {
             </div>
           </div>
         </div>
-        <ToastContainer />
       </div>
     </>
   );

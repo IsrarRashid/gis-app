@@ -17,41 +17,45 @@ const ChartMenu = ({ data }: Props) => {
       style={{
         background: "#C6D9F1",
         borderRadius: "10px",
-        padding: "5px 35px 1px 35px ",
+        padding: "25px",
         color: "#334155",
       }}
     >
       <div
-        className="row d-flex rounded-2 mb-2"
+        className="col p-0 rounded-2 mb-2"
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
-        <div className="col-2 p-0">
-          <Image src={coin} alt="coin" />
-        </div>
-        <div className="col p-0">
-          <p className="mt-2 m-0">
-            <span className="fw-bold">Approved Cost:</span>{" "}
-            <span className="fw-bold" style={{ color: "#727272" }}>
-              {data?.approvedCost} M
-            </span>
-          </p>
-        </div>
+        <Image
+          src={coin}
+          alt="coin"
+          width={42}
+          height={42}
+          className="img-fluid me-2"
+        />
+        <span className="mt-2 m-0">
+          <span className="fw-bold">Approved Cost:</span>{" "}
+          <span className="fw-bold" style={{ color: "#727272" }}>
+            {data?.approvedCost} M
+          </span>
+        </span>
       </div>
       <div
-        className="row d-flex rounded mb-2"
+        className="col p-0 rounded-2 mb-2"
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
-        <div className="col-2 p-0">
-          <Image src={files} alt="files" />
-        </div>
-        <div className="col p-0">
-          <p className="mt-2 m-0">
-            <span className="fw-bold">Expenditure:</span>{" "}
-            <span className="fw-bold" style={{ color: "#727272" }}>
-              {data?.expenditure} M
-            </span>
-          </p>
-        </div>
+        <Image
+          src={files}
+          alt="files"
+          width={42}
+          height={42}
+          className="img-fluid me-2"
+        />
+        <span className="mt-2 m-0">
+          <span className="fw-bold">Expenditure:</span>{" "}
+          <span className="fw-bold" style={{ color: "#727272" }}>
+            {data?.expenditure} M
+          </span>
+        </span>
       </div>
     </div>
   );

@@ -123,7 +123,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
         )}
         <div className="row d-flex p-3">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <h4 className="fw-bold">Driver</h4>
+            <h4 className="fw-bold">Drivers</h4>
           </div>
           <div className="col-lg-6 col-md-6 col-sm-12">
             <div className="row d-flex ">

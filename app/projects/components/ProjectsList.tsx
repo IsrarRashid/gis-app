@@ -86,9 +86,9 @@ const ProjectsList = ({
 
   // Handle search logic
   const handleSearch = () => {
-    const lowercasedFilter = searchTerm;
+    const lowercasedFilter = searchTerm.toLowerCase();
     const filtered = data.filter((item) =>
-      [item.id.toString(), item.name.toLowerCase(), item.status.toLowerCase()]
+      [item.id.toString(), item.name, item.status]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
         .some((field) => field.includes(lowercasedFilter))

@@ -33,6 +33,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
 
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
+
   // State for search input
   const [searchTerm, setSearchTerm] = useState("");
 

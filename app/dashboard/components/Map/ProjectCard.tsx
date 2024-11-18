@@ -29,7 +29,7 @@ const ProjectCard = ({ data }: Props) => {
       </p>
       <p className="col m-2 mb-3 fw-normal fs-6">
         <span
-          className="col p-1 rounded me-1"
+          className="col p-1 rounded me-1 text-white"
           style={{ background: "#B5FFB2" }}
         >
           <Image

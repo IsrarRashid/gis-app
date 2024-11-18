@@ -46,6 +46,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const { data, setData, setError, error, isLoading } = useVisits({
     refresh,
   });
+  const [filteredData, setFilteredData] = useState<Visit[]>();
   const { data: projects } = useProjects({ refresh });
   const { data: users } = useAuthentication({ refresh });
   const { data: vehicles } = useVehicle({ refresh });
@@ -128,8 +129,12 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   );
 
   const handleFilterData = (data: Visit[], status: string) => {
-    return data?.filter((d: any) => d.status === status);
+    setFilteredData(data?.filter((d: any) => d.status === status));
   };
+
+  useEffect(() => {
+    handleFilterData(data, status);
+  }, [data]);
 
   return (
     <>
@@ -159,7 +164,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           <Button
             className="btn btn-warning w-100 text-white fw-bold"
             style={{ letterSpacing: 1 }}
-            onClick={() => setStatus("pending")}
+            onClick={() => handleFilterData(data, "pending")}
           >
             Pending
           </Button>
@@ -168,7 +173,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           <Button
             style={{ letterSpacing: 1 }}
             className="btn btn-info w-100 text-white fw-bold"
-            onClick={() => setStatus("scheduled")}
+            onClick={() => handleFilterData(data, "scheduled")}
           >
             Scheduled
           </Button>
@@ -177,7 +182,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           <Button
             style={{ letterSpacing: 1 }}
             className="btn btn-success w-100 text-white fw-bold"
-            onClick={() => setStatus("completed")}
+            onClick={() => handleFilterData(data, "completed")}
           >
             Completed
           </Button>
@@ -248,103 +253,136 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 name="updated at"
                 handleSort={() => handleSort("updatedAt")}
               />
+              <TableHeading
+                name="complete at"
+                handleSort={() => handleSort("complete_at")}
+              />
+              <TableHeading
+                name="submitted at"
+                handleSort={() => handleSort("submitted_at")}
+              />
+              <TableHeading
+                name="issued at"
+                handleSort={() => handleSort("issued_at")}
+              />
+              <TableHeading
+                name="report Path"
+                handleSort={() => handleSort("reportPath")}
+              />
               <th colSpan={2}>
                 <div className="text-center"></div>
               </th>
             </tr>
           </thead>
           <tbody>
-            {handleFilterData(currentData, status)?.map((d) => (
-              <tr
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{getName(d.projectId, projects)}</td>
-                <td>{getName(d.assignedTo, users)}</td>
-                <td style={{ whiteSpace: "nowrap" }}>
-                  {d.status === "scheduled" || d.status === "Scheduled" ? (
-                    <Image
-                      src={calender}
-                      style={{ marginBottom: "3px" }}
-                      alt="calender"
+            {filteredData &&
+              filteredData.map((d) => (
+                <tr
+                  style={{
+                    border: ".41px solid rgba(81,81,81,0.20) !important",
+                    fontSize: ".85rem",
+                  }}
+                  key={d.id}
+                >
+                  <td>{d.id}</td>
+                  <td>{getName(d.projectId, projects)}</td>
+                  <td>{getName(d.assignedTo, users)}</td>
+                  <td style={{ whiteSpace: "nowrap" }}>
+                    {d.status === "scheduled" || d.status === "Scheduled" ? (
+                      <Image
+                        src={calender}
+                        style={{ marginBottom: "3px" }}
+                        alt="calender"
+                      />
+                    ) : d.status === "not confirmed" ||
+                      d.status === "Not Confirmed" ||
+                      d.status === "pending" ||
+                      d.status === "Pending" ? (
+                      <Image
+                        src={clock}
+                        style={{ marginBottom: "3px" }}
+                        alt="clock"
+                      />
+                    ) : d.status === "cancel" || d.status === "Cancel" ? (
+                      <Image
+                        src={cancel}
+                        style={{ marginBottom: "3px" }}
+                        alt="cancel"
+                      />
+                    ) : d.status === "completed" || d.status === "Completed" ? (
+                      <Image
+                        src={complete}
+                        style={{ marginBottom: "3px" }}
+                        alt="complete"
+                      />
+                    ) : d.status.startsWith("approved") ||
+                      d.status.startsWith("Approved") ? (
+                      <Image
+                        src={complete}
+                        style={{ marginBottom: "3px" }}
+                        alt="complete"
+                      />
+                    ) : d.status === "active" || d.status === "Active" ? (
+                      <Image
+                        src={calender}
+                        style={{ marginBottom: "3px" }}
+                        alt="calender"
+                      />
+                    ) : d.status === "draft" || d.status === "Draft" ? (
+                      <Image
+                        src={clock}
+                        style={{ marginBottom: "3px" }}
+                        alt="clock"
+                      />
+                    ) : (
+                      ""
+                    )}
+                    &nbsp;{d.status}
+                  </td>
+                  <td>{d.latitude}</td>
+                  <td>{d.longitude}</td>
+                  <td>{d.vehicleID ? getName(d.vehicleID, vehicles) : ""}</td>
+                  <td>{d.driverID ? getName(d.driverID, drivers) : ""}</td>
+                  <td>{getFormattedDate(new Date(d.fromDate), "numeric")}</td>
+                  <td>{getFormattedDate(new Date(d.toDate), "numeric")}</td>
+                  <td>
+                    {d.createdAt &&
+                      getFormattedDate(new Date(d.createdAt), "numeric")}
+                  </td>
+                  <td>
+                    {d.updatedAt &&
+                      getFormattedDate(new Date(d.updatedAt), "numeric")}
+                  </td>
+                  <td>
+                    {d.complete_at &&
+                      getFormattedDate(new Date(d.complete_at), "numeric")}
+                  </td>
+                  <td>
+                    {d.submitted_at &&
+                      getFormattedDate(new Date(d.submitted_at), "numeric")}
+                  </td>
+                  <td>
+                    {d.issued_at &&
+                      getFormattedDate(new Date(d.issued_at), "numeric")}
+                  </td>
+                  <td>
+                    {d.reportPath &&
+                      getFormattedDate(new Date(d.reportPath), "numeric")}
+                  </td>
+                  <td>
+                    <DeleteModal handleDelete={handleDelete} id={d.id} />
+                  </td>
+                  <td>
+                    <Form
+                      api={visitAPI}
+                      method="PUT"
+                      id={d.id}
+                      setRefresh={setRefresh}
+                      refresh={refresh}
                     />
-                  ) : d.status === "not confirmed" ||
-                    d.status === "Not Confirmed" ||
-                    d.status === "pending" ||
-                    d.status === "Pending" ? (
-                    <Image
-                      src={clock}
-                      style={{ marginBottom: "3px" }}
-                      alt="clock"
-                    />
-                  ) : d.status === "cancel" || d.status === "Cancel" ? (
-                    <Image
-                      src={cancel}
-                      style={{ marginBottom: "3px" }}
-                      alt="cancel"
-                    />
-                  ) : d.status === "completed" || d.status === "Completed" ? (
-                    <Image
-                      src={complete}
-                      style={{ marginBottom: "3px" }}
-                      alt="complete"
-                    />
-                  ) : d.status.startsWith("approved") ||
-                    d.status.startsWith("Approved") ? (
-                    <Image
-                      src={complete}
-                      style={{ marginBottom: "3px" }}
-                      alt="complete"
-                    />
-                  ) : d.status === "active" || d.status === "Active" ? (
-                    <Image
-                      src={calender}
-                      style={{ marginBottom: "3px" }}
-                      alt="calender"
-                    />
-                  ) : d.status === "draft" || d.status === "Draft" ? (
-                    <Image
-                      src={clock}
-                      style={{ marginBottom: "3px" }}
-                      alt="clock"
-                    />
-                  ) : (
-                    ""
-                  )}
-                  &nbsp;{d.status}
-                </td>
-                <td>{d.latitude}</td>
-                <td>{d.longitude}</td>
-                <td>{d.vehicleID ? getName(d.vehicleID, vehicles) : ""}</td>
-                <td>{d.driverID ? getName(d.driverID, drivers) : ""}</td>
-                <td>{getFormattedDate(new Date(d.fromDate), "numeric")}</td>
-                <td>{getFormattedDate(new Date(d.toDate), "numeric")}</td>
-                <td>
-                  {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "numeric")}
-                </td>
-                <td>
-                  {d.updatedAt &&
-                    getFormattedDate(new Date(d.updatedAt), "numeric")}
-                </td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
-                <td>
-                  <Form
-                    api={visitAPI}
-                    method="PUT"
-                    id={d.id}
-                    setRefresh={setRefresh}
-                    refresh={refresh}
-                  />
-                </td>
-              </tr>
-            ))}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
         <div className="row d-flex mb-3">

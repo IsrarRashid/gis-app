@@ -4,9 +4,13 @@ import {
   Map,
   AdvancedMarker,
   InfoWindow,
-  useMap,
 } from "@vis.gl/react-google-maps";
-import { DisitrictList, MainDashboard, ProjectsList } from "../Dashboard";
+import {
+  DisitrictList,
+  FilterData,
+  MainDashboard,
+  ProjectsList,
+} from "../Dashboard";
 import apiClient from "@/app/services/api-client";
 import { mainDashboardAPI, singleProjectDashboardAPI } from "@/app/APIs";
 import DistrictCard from "../Map/DistrictCard";
@@ -18,9 +22,21 @@ interface Props {
   data: MainDashboard;
   setData: Dispatch<SetStateAction<MainDashboard | undefined>>;
   setProjectsData: Dispatch<SetStateAction<ProjectsList[] | undefined>>;
+  setDistrictId: Dispatch<SetStateAction<number | undefined>>;
+  handleDistrictClick: (filterData: FilterData[]) => Promise<void>;
+  activeProjects: ProjectsList[];
+  setActiveProjects: Dispatch<SetStateAction<ProjectsList[] | []>>;
 }
 
-const MyMap = ({ data, setData, setProjectsData }: Props) => {
+const MyMap = ({
+  data,
+  setData,
+  setProjectsData,
+  setDistrictId,
+  handleDistrictClick,
+  activeProjects,
+  setActiveProjects,
+}: Props) => {
   const InitialCenterPosition = {
     lat: 31.1704,
     lng: 72.7097,
@@ -37,24 +53,25 @@ const MyMap = ({ data, setData, setProjectsData }: Props) => {
     null
   );
   const [selectedProjectIndex, setSelectedProjectIndex] = useState(0);
-  const [activeProjects, setActiveProjects] = useState<ProjectsList[]>([]);
   const [showButton, setShowButton] = useState(false);
   const router = useRouter();
 
-  const handleDistrictClick = async (districtId: number) => {
-    console.log(districtId);
-    try {
-      const response = await apiClient.get(
-        `${mainDashboardAPI}?districtId=${districtId}`
-      );
-      setData(response.data.data);
-      setProjectsData(response.data.data.projectslist);
-      setActiveProjects(response.data.data.projectslist);
-      console.log("Active projects:", response.data.data.projectslist); // Check project data here
-    } catch (err) {
-      console.error("Submission error:", err);
-    }
-  };
+  // const handleDistrictClick = async (
+  //   districtId: number,
+  //   filterData: FilterData[]
+  // ) => {
+  //   setDistrictId(districtId);
+  //   console.log(districtId);
+  //   try {
+  //     const response = await apiClient.post(mainDashboardAPI, filterData);
+  //     setData(response.data.data);
+  //     setProjectsData(response.data.data.projectslist);
+  //     setActiveProjects(response.data.data.projectslist);
+  //     console.log("Active projects:", response.data.data.projectslist); // Check project data here
+  //   } catch (err) {
+  //     console.error("Submission error:", err);
+  //   }
+  // };
 
   const handleProjectSubmit = async (projectId: number) => {
     try {
@@ -68,17 +85,20 @@ const MyMap = ({ data, setData, setProjectsData }: Props) => {
       }
     } catch (err) {
       console.error("Submission error:", err);
+      toast.error("This Project is not yet Monitored");
     }
   };
 
   const handleBackButtonClick = async () => {
+    setDistrictId(0);
     setShowButton(false);
     setActiveDistrict(null); // Reset to show all districts
     try {
-      const response = await apiClient.get(
-        `${mainDashboardAPI}?districtId=${0}`
-      );
+      const response = await apiClient.post(mainDashboardAPI, [
+        { filterIdentifier: "", filterValues: "" },
+      ]);
       setData(response.data.data);
+      setProjectsData(response.data.data.projectslist);
       setActiveProjects([]);
     } catch (err) {
       console.error("Submission error:", err);
@@ -88,18 +108,21 @@ const MyMap = ({ data, setData, setProjectsData }: Props) => {
   return (
     <>
       {showButton && (
-        <button
-          className="btn btn-warning mb-3"
-          onClick={handleBackButtonClick}
-        >
-          Back
-        </button>
+        <div className="position-relative">
+          <button
+            className="position-absolute btn bg-color-sea-green text-white fw-bold mb-3"
+            onClick={handleBackButtonClick}
+            style={{ zIndex: 1, right: 60, top: 10 }}
+          >
+            Back
+          </button>
+        </div>
       )}
       <div>
         <Toaster />
       </div>
       <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
-        <div style={{ width: "100%", height: "840px" }}>
+        <div style={{ width: "100%", height: "920px" }}>
           <Map
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
             defaultZoom={7}
@@ -118,7 +141,12 @@ const MyMap = ({ data, setData, setProjectsData }: Props) => {
                       transition: "transform 0.1s ease-in-out",
                     }}
                     onClick={() => {
-                      handleDistrictClick(district.id);
+                      handleDistrictClick([
+                        {
+                          filterIdentifier: "District",
+                          filterValues: district.districtName,
+                        },
+                      ]);
                       setActiveDistrict(district);
                       setShowButton(true);
                     }}

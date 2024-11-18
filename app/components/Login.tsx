@@ -89,7 +89,7 @@ const Login = () => {
       notifyCreate(createdMessage);
     } catch (err) {
       console.log((err as AxiosError).message);
-      // notifyError(errorMessage);
+      notifyError((err as AxiosError).message);
     }
   };
 

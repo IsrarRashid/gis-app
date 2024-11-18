@@ -18,18 +18,18 @@ const TrackingButton = () => {
 
   return (
     <div
-      className={`col mb-3 shadow-sm fs14px ${lexend.className}`}
+      className={`col mb-2 shadow-sm fs14px ${lexend.className}`}
       style={{
         background: "#C6D9F1",
         borderRadius: "10px",
-        padding: "20px 40px 15px 40px ",
+        padding: "20px 35px ",
       }}
     >
       <p className="col fw-bold mb-2">Tracking</p>
       <div className="row d-flex">
         <Link
           href="/dashboardTO"
-          className="btn w-100 text-white fw-normal"
+          className="btn w-100 text-white fw-normal whiteSpaceNoWrap"
           style={{
             borderRadius: "8px",
             background: "#1E6BDD",

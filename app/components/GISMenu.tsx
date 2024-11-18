@@ -88,6 +88,13 @@ const GISMenu = () => {
       backgroundColor: "linear-gradient(to bottom right, #8B5ABF , #5345DF)",
     },
     {
+      name: "User Projects",
+      nameId: "userProjects",
+      link: "/userProjects",
+      icon: qr,
+      backgroundColor: "linear-gradient(to bottom right, #542487 , #41c4c2)",
+    },
+    {
       name: "Super Group",
       nameId: "superGroup",
       link: "/superGroup",
@@ -132,14 +139,14 @@ const GISMenu = () => {
     {
       name: "Vehicles",
       nameId: "vehicles",
-      link: "/vehicle",
+      link: "/vehicles",
       icon: truck,
       backgroundColor: "linear-gradient(to bottom right, #A33CB2 , #E73A80)",
     },
     {
       name: "Drivers",
       nameId: "drivers",
-      link: "/driver",
+      link: "/drivers",
       icon: driver,
       backgroundColor: "linear-gradient(to bottom right, #a2a828 , #b93ae7)",
     },
@@ -175,7 +182,7 @@ const GISMenu = () => {
             letterSpacing: 1,
           }}
         >
-          GIS Base Monitoring &nbsp;
+          Monitoring Dashboard
         </label>
       ) : (
         <Button

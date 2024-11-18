@@ -19,6 +19,7 @@ import Map from "./Map/Map";
 import Menu from "@/app/components/Menu";
 import useAuthorization from "@/app/hooks/useAuthorization";
 import UpdateMap from "./Map/UpdateMap";
+import MyMap from "./GoogleMap/MyMap";
 
 export interface VehicleTrackings {
   visitId: number;
@@ -143,7 +144,7 @@ const ProjectDetailsDashboard = ({ id }: Props) => {
                 <Menu
                   background="linear-gradient(to bottom right, #FFEC40 , #A5E314, #D1E613,#DBDF11,#A3C50B)"
                   icon="/icons/eyeBold.svg"
-                  value={59}
+                  value={0}
                   label="Need Consideration"
                   showTides={false}
                 />
@@ -185,7 +186,8 @@ const ProjectDetailsDashboard = ({ id }: Props) => {
           <div className="row">
             <div className="col ps-4 pe-4 mb-3">
               {/* <Map data={data} /> */}
-              <UpdateMap data={data} />
+              {/* <UpdateMap data={data} /> */}
+              <MyMap data={data} />
             </div>
           </div>
           <VehicleTracking data={data.vehicalTrackings} />

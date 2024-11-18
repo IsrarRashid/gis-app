@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Button from "@/app/components/Button";
 import { ReportsData } from "./ProjectDetailsDashboard";
+import ReportsModal from "./ReportsModal";
 
 interface Props {
   data: ReportsData[];
@@ -41,6 +42,9 @@ const Reports = ({ data }: Props) => {
           <div className="col">
             <h4 className="fw-bold mt-2">Reports</h4>
           </div>
+        </div>
+        <div className="col text-end pe-0">
+          <ReportsModal />
         </div>
       </div>
       <div className="row pb-2">

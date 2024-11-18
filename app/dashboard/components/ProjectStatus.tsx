@@ -5,7 +5,7 @@ const ProjectStatus = () => {
       style={{
         background: "#C6D9F1",
         borderRadius: "10px",
-        padding: "15px 35px 5px 35px ",
+        padding: "25px 25px 25px 35px",
         color: "#334155",
       }}
     >
@@ -16,114 +16,100 @@ const ProjectStatus = () => {
         Project Status
       </p>
       <div
-        className="row d-flex flex-wrap rounded mb-2"
+        className="col p-0 rounded mb-2"
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
-        <div className="col-2 p-0">
+        <div className="row d-flex">
           <img
             src="/images/pieChart.png"
-            style={{ width: "42px", height: "42px" }}
+            style={{ width: "42px", height: "42px", objectFit: "contain" }}
             alt="pieChart"
-            className="img-fluid"
+            className="img-fluid p-0"
           />
-        </div>
-        <div className="col p-0">
-          <div className="row d-flex">
-            <div className="col">
-              <p className="mt-2 m-0 fw-bold">Approved:</p>
-            </div>
-            <div className="col">
-              <p
-                className="mt-2 m-0 fw-bold text-end pe-3"
-                style={{ color: "#019B2D" }}
-              >
-                1232
-              </p>
-            </div>
+          <div className="col">
+            <p className="mt-2 m-0 fw-bold">Approved:</p>
+          </div>
+          <div className="col">
+            <p
+              className="mt-2 m-0 fw-bold text-end pe-3"
+              style={{ color: "#019B2D" }}
+            >
+              7000
+            </p>
           </div>
         </div>
       </div>
       <div
-        className="row d-flex rounded mb-2"
+        className="col p-0 rounded mb-2"
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
-        <div className="col-2 p-0">
+        <div className="row d-flex">
           <img
             src="/images/unApproved.png"
-            style={{ width: "42px", height: "42px" }}
+            style={{ width: "42px", height: "42px", objectFit: "contain" }}
             alt="unApproved"
-            className="img-fluid"
+            className="img-fluid p-0"
           />
-        </div>
-        <div className="col p-0">
-          <div className="row d-flex">
-            <div className="col">
-              <p className="mt-2 m-0 fw-bold">Unapproved:</p>
-            </div>
-            <div className="col">
-              <p
-                className="mt-2 m-0 fw-bold text-end pe-3"
-                style={{ color: "#9F3434" }}
-              >
-                1232
-              </p>
-            </div>
+          <div className="col">
+            <p className="mt-2 m-0 fw-bold">Unapproved:</p>
+          </div>
+          <div className="col">
+            <p
+              className="mt-2 m-0 fw-bold text-end pe-3"
+              style={{ color: "#9F3434" }}
+            >
+              1232
+            </p>
           </div>
         </div>
       </div>
       <div
-        className="row d-flex rounded mb-2"
+        className="col p-0 rounded mb-2"
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
-        <div className="col-2 p-0">
+        <div className="row d-flex">
           <img
             src="/images/clock.png"
+            style={{ width: "42px", height: "42px", objectFit: "contain" }}
             alt="clock"
-            style={{ width: "42px", height: "42px" }}
-            className="img-fluid"
+            className="img-fluid p-0"
           />
-        </div>
-        <div className="col p-0">
-          <div className="row d-flex">
-            <div className="col">
-              <p className="mt-2 m-0 fw-bold">Dropped:</p>
-            </div>
-            <div className="col">
-              <p
-                className="mt-2 m-0 fw-bold text-end pe-3"
-                style={{ color: "#727272" }}
-              >
-                1232
-              </p>
-            </div>
+          <div className="col">
+            <p className="mt-2 m-0 fw-bold">Dropped:</p>
+          </div>
+          <div className="col">
+            <p
+              className="mt-2 m-0 fw-bold text-end pe-3"
+              style={{ color: "#727272" }}
+            >
+              1232
+            </p>
           </div>
         </div>
       </div>
       <div
-        className="row d-flex rounded mb-2"
+        className="col p-0 rounded mb-2"
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
-        <div className="col-2 p-0">
+        <div className="row d-flex">
           <img
             src="/images/umbrella.png"
+            style={{ width: "42px", height: "42px", objectFit: "contain" }}
             alt="umbrella"
-            style={{ width: "42px", height: "42px" }}
-            className="img-fluid"
+            className="img-fluid p-0"
           />
-        </div>
-        <div className="col p-0">
-          <div className="row d-flex">
-            <div className="col">
-              <p className="mt-2 m-0 fw-bold">Umbrella Scheme:</p>
-            </div>
-            <div className="col">
-              <p
-                className="mt-2 m-0 fw-bold text-end pe-3"
-                style={{ color: "#727272" }}
-              >
-                45
-              </p>
-            </div>
+          <div className="col">
+            <p className="mt-2 m-0 fw-bold whiteSpaceNoWrap">
+              Umbrella Scheme:
+            </p>
+          </div>
+          <div className="col">
+            <p
+              className="mt-2 m-0 fw-bold text-end pe-3"
+              style={{ color: "#727272" }}
+            >
+              1232
+            </p>
           </div>
         </div>
       </div>

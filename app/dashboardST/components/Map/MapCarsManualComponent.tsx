@@ -10,9 +10,9 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 // import carIconUrl from "/images/carTop.png"; // Add a car icon to show on the map
-import CarCard from "./CarCard";
+import CarCard from "./StaffCard";
 import { StaffTracking } from "./MapCarsComponent";
-import { staffTrackingAPI, trackingAPI } from "@/app/APIs";
+import { coordinatesAPI, trackingAPI } from "@/app/APIs";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
 import search2 from "../../../../public/icons/search2.svg";
@@ -40,7 +40,7 @@ const MapCarsManualComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiClient.get(`${staffTrackingAPI}/${visitId}`);
+        const response = await apiClient.get(`${coordinatesAPI}/${visitId}`);
         setData(response.data.data);
         console.log("staff", response.data.data);
       } catch (err) {
@@ -172,7 +172,7 @@ const MapCarsManualComponent = () => {
               closeButton={false}
               offset={L.point(0, -16)}
             >
-              {data && <CarCard data={data[0]} />}
+              {/* {data && <CarCard data={data[0]} />} */}
             </Popup>
           </Marker>
         </MapContainer>

@@ -9,11 +9,11 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { staffTrackingAPI, trackingAPI } from "@/app/APIs";
-import CarCard from "./CarCard";
+import { coordinatesAPI, trackingAPI } from "@/app/APIs";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
 import search2 from "../../../../public/icons/search2.svg";
+import VisitCard from "./StaffCard";
 
 export interface StaffTracking {
   id: number;
@@ -112,7 +112,7 @@ const MapCarsComponent = () => {
     // Function to fetch the latest coordinates from the API
     const fetchCoordinates = async () => {
       try {
-        const response = await apiClient.get(`${staffTrackingAPI}/${visitId}`);
+        const response = await apiClient.get(`${coordinatesAPI}/${visitId}`);
         setData(response.data.data);
         // Get the coordinates from the response
         const coordinatesList = response.data.data;
@@ -274,7 +274,7 @@ const MapCarsComponent = () => {
               closeButton={false}
               offset={L.point(0, -16)}
             >
-              {data && <CarCard data={data[0]} />}
+              {/* {data && <VisitCard data={data[0]} />} */}
             </Popup>
           </Marker>
         </MapContainer>

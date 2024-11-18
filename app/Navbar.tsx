@@ -13,14 +13,8 @@ import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import downArrowBold from "../public/icons/downArrowBold.svg";
-import profilePic from "@/public/images/profilePic.png";
-import locationPointBlue from "../public/icons/locationPointBlue.svg";
-import dashboardBlue from "../public/icons/dashboardBlue.svg";
-import filter from "../public/icons/filter.svg";
-import FilterMenu from "./dashboard/components/FilterMenu";
-import useRoles from "./hooks/useRoles";
 import Button from "./components/Button";
-import PriorityMenu from "./dashboard/components/PriorityMenu";
+import UserDropDown from "./components/UserDropDown/UserDropDown";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -30,7 +24,6 @@ const lexend = Lexend({
 const Navbar = () => {
   const [userEmail, setUserEmail] = useState("");
   const [userName, setUserName] = useState("");
-  const [refresh, setRefresh] = useState(false);
   const router = useRouter();
   const currentContent = useSelector(
     (state: RootState) => state.content.currentContent
@@ -128,68 +121,11 @@ const Navbar = () => {
               </ul>
             </li>
           </ul>
-          {(currentContent === "Dashboard" ||
-            currentContent === "DashboardTO") && (
+          {((currentContent && currentContent.startsWith("Dashboard")) ||
+            currentContent === "SummaryDashboard") && (
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-              {/* <li className="nav-item me-2">
-                <FilterMenu />
-              </li> */}
-              {/* <li className="nav-item me-2">
-                <PriorityMenu />
-              </li> */}
-              <li className="nav-item dropdown">
-                <Button
-                  className="nav-link btn btn-sm badge rounded-pill shadow-sm fs-6 p-0"
-                  style={{
-                    padding: "5px 15px 5px 8px",
-                    background: "rgba(255, 255, 255, 0.62)",
-                  }}
-                  id="navbarDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <div className="row d-flex">
-                    <div className="col m-auto ms-1 mt-1 mb-1">
-                      <img
-                        className="img-fluid rounded-circle m-0"
-                        src="/images/profilePic.png"
-                        style={{ objectFit: "cover" }}
-                        alt="profilePic"
-                        width={70}
-                        height={70}
-                      />
-                    </div>
-                    <div className="col p-0 m-auto">
-                      <p
-                        className="m-0 text-dark"
-                        style={{ fontSize: ".8rem" }}
-                      >
-                        {userName}
-                      </p>
-                      <p
-                        className="m-0 text-start mt-1"
-                        style={{ fontSize: ".68rem", color: "#575757" }}
-                      >
-                        {currentTime}
-                      </p>
-                    </div>
-                    <div className="col ps-2 pe-3 m-auto">
-                      <Image src={downArrowBold} alt="downArrowBold" />
-                    </div>
-                  </div>
-                </Button>
-                <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li>
-                    <Link
-                      className="dropdown-item"
-                      href="/login"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </Link>
-                  </li>
-                </ul>
+              <li className="nav-item dropdown me-3">
+                <UserDropDown />
               </li>
             </ul>
           )}

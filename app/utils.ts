@@ -42,3 +42,26 @@ export const getName = (id: number, data: any) => {
   if (record?.regNumber) return record?.regNumber;
   if (record?.driverName) return record?.driverName;
 };
+
+export function formatDateTime(dateTimeString: string, formatType: string) {
+  const date = new Date(dateTimeString);
+
+  if (formatType === "time") {
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  } else if (formatType === "date") {
+    return date
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "2-digit",
+      })
+      .toUpperCase()
+      .replace(/\//g, "-");
+  } else {
+    throw new Error("Invalid format type. Use 'time' or 'date'.");
+  }
+}

@@ -11,9 +11,9 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import carIconUrl from "/images/carTop.png"; // Add a car icon to show on the map
-import CarCard from "./CarCard";
+import CarCard from "./StaffCard";
 import apiClient from "@/app/services/api-client";
-import { staffTrackingAPI } from "@/app/APIs";
+import { coordinatesAPI } from "@/app/APIs";
 import Image from "next/image";
 import search2 from "../../../../public/icons/search2.svg";
 
@@ -41,7 +41,7 @@ const MapCarsComponent = () => {
   useEffect(() => {
     const loadItems = async () => {
       try {
-        const response = await apiClient.get(`${staffTrackingAPI}/${visitId}`);
+        const response = await apiClient.get(`${coordinatesAPI}/${visitId}`);
         setData(response.data.data);
       } catch (err) {
         setError("Failed to fetch data.");
@@ -234,7 +234,7 @@ const MapCarsComponent = () => {
               ref={markerRef2}
             >
               <Popup closeButton={false} offset={L.point(-10, -20)}>
-                <CarCard data={d} />
+                {/* <CarCard data={d} /> */}
               </Popup>
             </Marker>
           ))}

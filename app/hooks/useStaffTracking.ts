@@ -1,4 +1,4 @@
-import { staffTrackingAPI } from "../APIs";
+import { coordinatesAPI } from "../APIs";
 import useData from "./useData";
 
 export interface StaffTracking {
@@ -15,6 +15,6 @@ interface Props {
 }
 
 const useStaffTrackings = ({ refresh }: Props) =>
-  useData<StaffTracking>({ refresh, endpoint: staffTrackingAPI });
+  useData<StaffTracking>({ refresh, endpoint: coordinatesAPI });
 
 export default useStaffTrackings;

@@ -5,7 +5,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const contentSlice = createSlice({
   name: "content",
   initialState: {
-    currentContent: null,
+    currentContent: "",
   },
   reducers: {
     setContent: (state, action) => {

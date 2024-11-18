@@ -1,21 +1,5 @@
-import Image from "next/image";
-import eyeBold from "../../../public/icons/eyeBold.svg";
-import archery from "../../../public/icons/archery.svg";
-import meter from "../../../public/icons/meter.svg";
-import levelUp from "../../../public/icons/levelUp.svg";
-import waveUp from "../../../public/icons/waveUp.svg";
-import waveDown from "../../../public/icons/waveDown.svg";
-import tideOne from "../../../public/images/tideOne.png";
-import tideTwo from "../../../public/images/tideTwo.png";
-import tideOneGreen from "../../../public/images/tideOneGreen.png";
-import tideTwoGreen from "../../../public/images/tideTwoGreen.png";
-import tideOneYellow from "../../../public/images/tideOneYellow.png";
-import tideTwoYellow from "../../../public/images/tideTwoYellow.png";
-import tideOneRed from "../../../public/images/tideOneRed.png";
-import tideTwoRed from "../../../public/images/tideTwoRed.png";
 import { motion } from "framer-motion";
-import Button from "@/app/components/Button";
-import { CSSProperties } from "react";
+import AnimatedCounter from "./AnimatedCounter";
 
 interface Props {
   tideOneImage?: string;
@@ -79,16 +63,18 @@ const Menu = ({
             </motion.div>
           </>
         )}
-        <div style={{ position: "absolute", right: 0 }}>
-          <img
-            src="/icons/linkArrow.svg"
-            className="img-fluid"
-            style={{ width: "30px", height: "30px" }}
-            alt="linkArrow"
-          />
-        </div>
-        <div className="row d-flex m-0 ps-3 pt-2">
-          <div className="col-lg-6 col-md-6 col mt-4 text-lg-end text-md-center text-center">
+        {showTides && (
+          <div style={{ position: "absolute", right: 0 }}>
+            <img
+              src="/icons/linkArrow.svg"
+              className="img-fluid"
+              style={{ width: "30px", height: "30px" }}
+              alt="linkArrow"
+            />
+          </div>
+        )}
+        <div className="row d-flex flex-wrap m-0 pt-2">
+          <div className="col-lg-5 col-md-5 col mt-4 text-lg-end text-md-center text-center pe-0">
             <img
               src={icon}
               alt="archery"
@@ -96,18 +82,13 @@ const Menu = ({
               style={{ width: "76px", height: "76px" }}
             />
           </div>
-          <div className="col-lg-6 col-md-6 col mt-4">
-            <div className="row">
+          <div className="col-lg-7  col-md-7 col mt-4 ps-0">
+            <div className="row m-0">
               <div
-                className="col-lg-12 col-md-12 col-sm-12"
-                style={{ height: "60px" }}
+                className="col text-white fw-bold m-0 pt-2 text-wrap ps-0"
+                style={{ fontSize: "3rem" }}
               >
-                <p
-                  className="text-white fw-bold m-0 pt-2"
-                  style={{ fontSize: "3rem" }}
-                >
-                  {value}
-                </p>
+                <AnimatedCounter from={0} to={value} />
               </div>
               <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-danger mt-2">
                 {/* <img src={waveDown} alt="waveDown" width={50} height={20} />

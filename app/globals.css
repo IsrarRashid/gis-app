@@ -1,4 +1,5 @@
 @import "leaflet/dist/leaflet.css";
+
 #map {
   height: 100vh;
   width: 100%;
@@ -117,12 +118,12 @@ select {
   font-size: 0.875rem !important;
 }
 
-.fs12px {
-  font-size: 0.75rem !important;
-}
-
 .fs11px {
   font-size: 0.688rem !important;
+}
+
+.fs12px {
+  font-size: 0.75rem !important;
 }
 
 .fs13px {
@@ -139,6 +140,18 @@ select {
 
 .fs8px {
   font-size: 0.5rem;
+}
+
+.fs7px {
+  font-size: 0.438rem;
+}
+
+.whiteSpaceNoWrap {
+  white-space: nowrap;
+}
+
+.letterSpacing1px {
+  letter-spacing: 1px;
 }
 
 /* dashboardThree search input */

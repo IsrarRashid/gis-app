@@ -30,6 +30,7 @@ import StackedColumnChart from "./StackedColumnChart";
 import SimplePieChart from "./SimplePieChart";
 import Button from "@/app/components/Button";
 import useAuthorization from "@/app/hooks/useAuthorization";
+import ProjectModal from "./ProjectModal";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -297,7 +298,7 @@ const SummaryDashboard = () => {
         </Button>
       </div>
       <div className={`row d-flex ms-1 me-1 ${dmSans.className}`}>
-        {items.map((d, i) => (
+        {/* {items.map((d, i) => (
           <div key={i} className="col-lg-6 col-md-12 col ps-3 pe-3 pb-1">
             <div
               className="col shadow-sm mb-3 p-3"
@@ -458,7 +459,10 @@ const SummaryDashboard = () => {
               </div>
             </div>
           </div>
-        ))}
+        ))} */}
+        <div className="col-lg-6 col-md-12 col ps-3 pe-3 pb-1">
+          <ProjectModal />
+        </div>
       </div>
     </div>
   );

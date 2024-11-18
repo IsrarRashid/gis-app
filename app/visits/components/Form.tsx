@@ -39,6 +39,10 @@ const schema = z.object({
     .refine((date) => !isNaN(Date.parse(date)), "Invalid date format"),
   createdAt: z.string().optional().default(new Date().toISOString()),
   updatedAt: z.string().optional().default(new Date().toISOString()),
+  complete_at: z.string().optional().nullable().default(null),
+  submitted_at: z.string().optional().nullable().default(null),
+  issued_at: z.string().optional().nullable().default(null),
+  reportPath: z.string().optional().default(""),
 });
 
 type AttributeGroup = z.infer<typeof schema>;
@@ -96,6 +100,10 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         setValue("toDate", formatToDate);
         setValue("createdAt", itemData[0].createdAt);
         setValue("updatedAt", new Date().toISOString());
+        setValue("complete_at", itemData[0].complete_at);
+        setValue("submitted_at", itemData[0].submitted_at);
+        setValue("issued_at", itemData[0].issued_at);
+        setValue("reportPath", itemData[0].reportPath);
       } catch (err) {
         console.log((err as AxiosError).message);
         setError((err as AxiosError).message);

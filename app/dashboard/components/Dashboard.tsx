@@ -1,32 +1,21 @@
 "use client";
-import Visits from "./Visits";
-import { SetStateAction, useEffect, useState } from "react";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import ChartMenu from "./ChartMenu";
-import SimplePieChart from "./SimplePieChart";
-import downloadLineBlack from "../../../public/icons/downloadLineBlack.svg";
-import SampleTable from "./SampleTable";
 import { Lexend } from "next/font/google";
 import { useDispatch } from "react-redux";
 import { setContent } from "@/app/features/content/contentSlice";
-import DistributedColumnChart from "./DistributedColumnChart";
-import Button from "@/app/components/Button";
-import Map from "./Map/Map";
 import { mainDashboardAPI } from "@/app/APIs";
 import apiClient from "@/app/services/api-client";
 import ProjectsTable from "./ProjectsTable";
-import NewMap from "./Map/NewMap";
 import Menu from "@/app/components/Menu";
-import { useRouter } from "next/navigation";
-// import MapT from "./Map/MapT";
-import Cookies from "js-cookie";
 import useAuthorization from "@/app/hooks/useAuthorization";
-import UpdateMap from "./Map/UpdateMap";
 import MyMap from "./GoogleMap/MyMap";
 import FilterButton from "./FilterButton";
 import TrackingButton from "./TrackingButton";
 import ProjectStatus from "./ProjectStatus";
 import FinancialTab from "./FinancialTab";
+import MenuModal from "./MenuModal";
+import ProjectReportOverviewModal from "./projectReportOverview/ProjectReportOverviewModal";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -70,9 +59,46 @@ export interface MainDashboard {
   disitrictlist: DisitrictList[];
 }
 
+export interface FilterData {
+  filterIdentifier: string;
+  filterValues: string;
+}
+
 const Dashboard = () => {
   const [data, setData] = useState<MainDashboard>();
   const [projectsData, setProjectsData] = useState<ProjectsList[]>();
+  const [districtId, setDistrictId] = useState<number>();
+  const [districtList, setDistrictList] = useState<DisitrictList[]>([]);
+
+  const [filterFixedOption, setFilterFixedOption] = useState<FilterData>({
+    filterIdentifier: "switch",
+    filterValues: "CMInitiative",
+  });
+  const [filterData, setFilterData] = useState<FilterData[]>([
+    {
+      filterIdentifier: "switch",
+      filterValues: "CMInitiative",
+    },
+  ]);
+
+  const addFilter = (identifier: string, value: string) => {
+    setFilterData((prevFilters) => [
+      ...prevFilters,
+      { filterIdentifier: identifier, filterValues: value },
+    ]);
+  };
+
+  // Method to add a single filter object to filterData
+  const addSingleFilter = (newFilter: FilterData) => {
+    setFilterData((prevFilters) => [...prevFilters, newFilter]);
+  };
+
+  // Usage example
+  const handleAddFilter = () => {
+    const singleObject = { filterIdentifier: "example", filterValues: "value" };
+    addSingleFilter(singleObject);
+  };
+
   useAuthorization("dashboard");
 
   const dispatch = useDispatch();
@@ -94,25 +120,45 @@ const Dashboard = () => {
     };
   }, []);
 
-  const handleSubmit = async (districtId: number) => {
+  const handleSubmit = async (filterData: FilterData[]) => {
     try {
-      const response = await apiClient.get(
-        `${mainDashboardAPI}?districtId=${districtId}`
-      );
+      const response = await apiClient.post(mainDashboardAPI, filterData);
       setData(response.data.data);
       setProjectsData(response.data.data.projectslist.reverse());
+      const districtFilter = filterData.find(
+        (filter) => filter.filterIdentifier === "District"
+      );
+      if (districtFilter) {
+        setActiveProjects(response.data.data.projectslist);
+      }
     } catch (err) {
       console.error("Submission error:", err);
     }
   };
 
   useEffect(() => {
-    handleSubmit(0);
+    handleSubmit(filterData);
   }, []);
 
   useEffect(() => {
     console.log("dashboard api", data);
   }, [data]);
+
+  const [activeProjects, setActiveProjects] = useState<ProjectsList[]>([]);
+
+  const handleDistrictClick = async (filterData: FilterData[]) => {
+    // setDistrictId(districtId);
+    // console.log(districtId);
+    try {
+      const response = await apiClient.post(mainDashboardAPI, filterData);
+      setData(response.data.data);
+      setProjectsData(response.data.data.projectslist);
+      setActiveProjects(response.data.data.projectslist);
+      console.log("Active projects:", response.data.data.projectslist); // Check project data here
+    } catch (err) {
+      console.error("Submission error:", err);
+    }
+  };
 
   return (
     <div
@@ -137,15 +183,18 @@ const Dashboard = () => {
               label="Total Projects"
               showTides={false}
             />
-            <Menu
+            <MenuModal
               background="rgba(12, 140, 233, 0.2)"
               outline="1px solid rgba(12, 140, 233, 0.4)"
               icon="/icons/archery.svg"
               value={data.monitoredProjects}
               label="Being Monitored"
               showTides={true}
+              districtId={districtId && districtId}
+              api={`${mainDashboardAPI}/BeingMonitored`}
+              modalId="menuModal0"
             />
-            <Menu
+            <MenuModal
               background="rgba(45, 199, 84, 0.35)"
               outline="1px solid rgba(50, 179, 52, 0.4)"
               icon="/icons/doubleTick.svg"
@@ -154,8 +203,11 @@ const Dashboard = () => {
               showTides={true}
               tideOneImage="/images/tideOneGreen.png"
               tideTwoImage="/images/tideTwoGreen.png"
+              districtId={districtId && districtId}
+              api={`${mainDashboardAPI}/OnTrack`}
+              modalId="menuModal1"
             />
-            <Menu
+            <MenuModal
               background="rgba(224, 255, 22, 0.4)"
               outline="1px solid rgba(232, 192, 15, 0.4)"
               icon="/icons/bulb.svg"
@@ -164,8 +216,11 @@ const Dashboard = () => {
               showTides={true}
               tideOneImage="/images/tideOneYellow.png"
               tideTwoImage="/images/tideTwoYellow.png"
+              districtId={districtId && districtId}
+              api={`${mainDashboardAPI}/OffTrack`}
+              modalId="menuModal2"
             />
-            <Menu
+            <MenuModal
               background="rgba(233, 12, 16, 0.26)"
               outline="1px solid rgba(233, 12, 16, 0.4)"
               icon="/icons/critical.svg"
@@ -174,6 +229,9 @@ const Dashboard = () => {
               showTides={true}
               tideOneImage="/images/tideOneRed.png"
               tideTwoImage="/images/tideTwoRed.png"
+              districtId={districtId && districtId}
+              api={`${mainDashboardAPI}/Critical`}
+              modalId="menuModal3"
             />
           </div>
           <div className={`row  mt-2 ${lexend.className}`}>
@@ -192,10 +250,19 @@ const Dashboard = () => {
                 data={data}
                 setData={setData}
                 setProjectsData={setProjectsData}
+                setDistrictId={setDistrictId}
+                handleDistrictClick={handleDistrictClick}
+                activeProjects={activeProjects}
+                setActiveProjects={setActiveProjects}
               />
             </div>
             <div className="col-lg-3 col-md-12 col-sm-12">
-              <FilterButton />
+              <FilterButton
+                handleDistrictClick={handleDistrictClick}
+                handleSubmit={handleSubmit}
+                setFilterFixedOption={setFilterFixedOption}
+                filterFixedOption={filterFixedOption}
+              />
               <TrackingButton />
               <ChartMenu data={data} />
               <ProjectStatus />
@@ -210,33 +277,6 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="row ps-2 pe-2 mt-2">
-            <div className="col text-center text-white rounded bg-color-sea-blue">
-              <div className="row d-flex">
-                <div className="col d-none d-md-block"></div>
-                <div className="col" style={{ marginTop: "10px" }}>
-                  <p
-                    className="m-0 fs12px fw-bold"
-                    style={{ letterSpacing: 1 }}
-                  >
-                    List of Projects
-                  </p>
-                </div>
-                <div className="col text-end mt-1 mb-1">
-                  <Button
-                    className="btn btn-sm btn-light"
-                    style={{ whiteSpace: "nowrap" }}
-                  >
-                    Downloads &nbsp;
-                    <Image
-                      src={downloadLineBlack}
-                      alt="download"
-                      width={12}
-                      height={15}
-                    />
-                  </Button>
-                </div>
-              </div>
-            </div>
             <ProjectsTable
               projectsData={projectsData}
               setProjectsData={setProjectsData}

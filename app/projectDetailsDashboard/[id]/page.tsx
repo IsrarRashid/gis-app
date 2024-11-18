@@ -17,22 +17,26 @@ export default SingleProjectDashboard;
 
 // uncomment below code for export build
 export async function generateStaticParams() {
-  // Replace with actual data fetching
-  const ids = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "13",
-  ]; // List of IDs to statically generate pages for
-
+  let ids: String[] = [];
+  for (let i = 0; i <= 7300; i++) {
+    ids.push(String(i));
+  }
   return ids.map((id) => ({ id })); // Keep id as a string
 }
+
+// Replace with actual data fetching
+// const ids = [
+//   "1",
+//   "2",
+//   "3",
+//   "4",
+//   "5",
+//   "6",
+//   "7",
+//   "8",
+//   "9",
+//   "10",
+//   "11",
+//   "12",
+//   "13",
+// ]; // List of IDs to statically generate pages for

@@ -21,7 +21,7 @@ const FinancialTab = () => {
     >
       <p className="col fw-bold mb-2">Financial</p>
       <div
-        className="row d-flex flex-wrap mb-2"
+        className="row d-flex flex-wrap mb-2 whiteSpaceNoWrap"
         style={{ background: "rgba(235, 239, 253, 0.33)", borderRadius: "6px" }}
       >
         <div
@@ -59,7 +59,7 @@ const FinancialTab = () => {
         <div className="p-0 col-2 text-center m-auto">200</div>
       </div>
       <div
-        className="row d-flex flex-wrap"
+        className="row d-flex flex-wrap whiteSpaceNoWrap"
         style={{ background: "rgba(235, 239, 253, 0.33)", borderRadius: "6px" }}
       >
         <div

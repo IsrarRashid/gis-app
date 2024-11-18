@@ -8,8 +8,8 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { staffTrackingAPI, trackingAPI } from "@/app/APIs";
-import CarCard from "./CarCard";
+import { coordinatesAPI, trackingAPI } from "@/app/APIs";
+import CarCard from "./StaffCard";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
 import search2 from "../../../../public/icons/search2.svg";
@@ -76,7 +76,7 @@ const MapCarsRecordedComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiClient.get(`${staffTrackingAPI}/${visitId}`);
+        const response = await apiClient.get(`${coordinatesAPI}/${visitId}`);
         setData(response.data.data);
         if (data) {
           const newPath: [number, number][] = data.map((coord) => [

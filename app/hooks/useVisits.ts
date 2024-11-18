@@ -14,6 +14,10 @@ export interface Visit {
   toDate: string;
   createdAt: string;
   updatedAt: string;
+  complete_at: string;
+  submitted_at: string;
+  issued_at: string;
+  reportPath: string;
 }
 
 interface Props {

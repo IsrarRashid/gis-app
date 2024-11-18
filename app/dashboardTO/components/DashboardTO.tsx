@@ -10,6 +10,8 @@ import MapCars from "./Map/MapCars";
 import MapCarsRecorded from "./Map/MapCarsRecorded";
 import Button from "@/app/components/Button";
 import useAuthorization from "@/app/hooks/useAuthorization";
+import LiveCarTrackingMap from "./GoogleMap/LiveCarTrackingMap";
+import RecordingCarTrackingMap from "./GoogleMap/RecordingCarTrackingMap";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -67,17 +69,22 @@ const DashboardTO = () => {
                 </Button>
               </div>
               <div className="position-relative" style={{ zIndex: 0 }}>
-                {mapStatus ? <MapCarsRecorded /> : <MapCars />}
+                {/* {mapStatus ? <MapCarsRecorded /> : <MapCars />} */}
+                {mapStatus ? (
+                  <RecordingCarTrackingMap />
+                ) : (
+                  <LiveCarTrackingMap />
+                )}
               </div>
-              <Destination />
+              {/* <Destination /> */}
             </div>
           </div>
         </div>
         <div className="col-lg-3 col-md-12 col">
           <div className="row d-flex flex-lg-column">
-            <div className="col">
+            {/* <div className="col">
               <Drivers />
-            </div>
+            </div> */}
             <div className="col">
               <Vehicles />
             </div>

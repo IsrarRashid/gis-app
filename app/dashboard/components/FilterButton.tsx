@@ -1,25 +1,36 @@
-import Image from "next/image";
-import { useState } from "react";
-import filterBlack from "@/public/icons/filterBlack.svg";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Lexend } from "next/font/google";
 import Button from "@/app/components/Button";
 import FilterMenu from "./FilterMenu";
+import { FilterData } from "./Dashboard";
 
 const lexend = Lexend({
   subsets: ["latin"],
   weight: "400",
 });
 
-const FilterButton = () => {
+interface Props {
+  handleSubmit: (filterData: FilterData[]) => Promise<void>;
+  handleDistrictClick: (filterData: FilterData[]) => Promise<void>;
+  filterFixedOption: FilterData;
+  setFilterFixedOption: Dispatch<SetStateAction<FilterData>>;
+}
+
+const FilterButton = ({
+  handleDistrictClick,
+  handleSubmit,
+  filterFixedOption,
+  setFilterFixedOption,
+}: Props) => {
   const [selectedButton, setSelectedButton] = useState(1);
 
   return (
     <div
-      className={`col mb-3 shadow-sm fs14px ${lexend.className}`}
+      className={`col mb-2 shadow-sm fs14px ${lexend.className}`}
       style={{
         background: "#C6D9F1",
         borderRadius: "10px",
-        padding: "20px 35px 15px 35px ",
+        padding: "20px ",
       }}
     >
       <div
@@ -33,7 +44,7 @@ const FilterButton = () => {
         >
           <Button
             type="button"
-            className={`btn rounded-pill border-0 shadow-none fw-normal w-100 ${
+            className={`btn rounded-pill border-0 shadow-none fw-normal w-100 whiteSpaceNoWrap ${
               selectedButton === 1 ? "text-white" : ""
             }`}
             style={{
@@ -43,7 +54,19 @@ const FilterButton = () => {
                 selectedButton === 1 ? "radial-gradient(#0C8CE9, #13629B)" : ""
               }`,
             }}
-            onClick={() => setSelectedButton(1)}
+            onClick={() => {
+              setSelectedButton(1);
+              setFilterFixedOption({
+                filterIdentifier: "switch",
+                filterValues: "CMInitiative",
+              });
+              handleSubmit([
+                {
+                  filterIdentifier: "switch",
+                  filterValues: "CMInitiative",
+                },
+              ]);
+            }}
           >
             CM Initiative
           </Button>
@@ -59,13 +82,29 @@ const FilterButton = () => {
                 selectedButton === 2 ? "radial-gradient(#0C8CE9, #13629B)" : ""
               }`,
             }}
-            onClick={() => setSelectedButton(2)}
+            onClick={() => {
+              setSelectedButton(2);
+              setFilterFixedOption({
+                filterIdentifier: "",
+                filterValues: "",
+              });
+              handleSubmit([
+                {
+                  filterIdentifier: "",
+                  filterValues: "",
+                },
+              ]);
+            }}
           >
             ADP
           </Button>
         </div>
         <div className="p-0 col-2 text-center m-auto">
-          <FilterMenu />
+          <FilterMenu
+            handleSubmit={handleSubmit}
+            handleDistrictClick={handleDistrictClick}
+            filterFixedOption={filterFixedOption}
+          />
         </div>
       </div>
     </div>
