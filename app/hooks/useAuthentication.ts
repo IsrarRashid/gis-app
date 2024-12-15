@@ -5,6 +5,10 @@ export interface Authentication {
   id: number;
   userName: string;
   email: string;
+  designation: string;
+  picture: string;
+  phoneNumber: string;
+  roleId: string;
 }
 
 interface Props {

@@ -31,8 +31,10 @@ interface Props {
 }
 
 const Login = () => {
-  const [userName, setUserName] = useState("super_admin");
-  const [password, setPassword] = useState("Superadmin@123");
+  // const [userName, setUserName] = useState("super_admin");
+  // const [password, setPassword] = useState("Dgme@786");
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [buttonType, setButtonType] = useState(true);
 
   const dispatch = useDispatch();

@@ -46,3 +46,18 @@
 .show {
   display: block;
 }
+
+/* for download button */
+/* .dropdownContent button {
+  color: #424242;
+  padding: 6px 16px;
+  height: 35px;
+  text-decoration: none;
+  display: block;
+  transition: transform 0.5s ease, background-color 0.5s ease;
+}
+
+.dropdown button:hover {
+  background-color: rgba(218, 242, 255, 0.65);
+  transform: translateX(-10px);
+} */

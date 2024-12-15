@@ -20,7 +20,7 @@ const DistributedColumnChart = () => {
     series: [
       {
         name: "Sales",
-        data: [21, 22, 10, 28, 16, 21],
+        data: [21, 22, 10, 28],
       },
     ],
     options: {
@@ -33,11 +33,14 @@ const DistributedColumnChart = () => {
       },
       plotOptions: {
         bar: {
-          distributed: true, // Enable distributed columns
-          horizontal: true, // Vertical columns
-          borderRadiusApplication: "end",
+          distributed: true,
+          horizontal: false,
           borderRadius: 10,
-          barHeight: 20,
+          borderRadiusApplication: "end",
+          columnWidth: 20,
+          dataLabels: {
+            position: "top",
+          },
         },
       },
       fill: {
@@ -84,14 +87,7 @@ const DistributedColumnChart = () => {
         show: false,
       },
       xaxis: {
-        categories: [
-          "Bridge",
-          "RCC Side Drain",
-          "Pipe Culvert",
-          "Subway",
-          "Interchange",
-          "Lenght",
-        ],
+        categories: ["PC-I Cost", "Allocation", "Releases", "Utilization"],
         labels: {
           style: {
             fontSize: "12px",

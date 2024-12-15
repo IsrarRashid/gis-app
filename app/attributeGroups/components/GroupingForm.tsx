@@ -19,28 +19,26 @@ const GroupingForm = ({ id, options }: Props) => {
   const [refresh, setRefresh] = useState(false);
   const [show, setShow] = useState(false);
 
+  const fetchSelectedOptions = async () => {
+    try {
+      const response = await apiClient.get(`${attributeGroupMappingAPI}/${id}`);
+      const data = response.data.data; // Assuming this returns an array of group objects
+      setSelectedOptions(data); // Set the selected groups as objects
+    } catch (error) {
+      console.error("Error fetching selected groups:", error);
+    }
+  };
+
   const handleShow = async () => {
     setShow(true);
     setRefresh(!refresh);
+
+    if (id) {
+      fetchSelectedOptions();
+    }
   };
+
   const handleClose = () => setShow(false);
-
-  // Fetch previously selected groups
-  useEffect(() => {
-    const fetchSelectedOptions = async () => {
-      try {
-        const response = await apiClient.get(
-          `${attributeGroupMappingAPI}/${id}`
-        );
-        const data = response.data.data; // Assuming this returns an array of group objects
-        setSelectedOptions(data); // Set the selected groups as objects
-      } catch (error) {
-        console.error("Error fetching selected groups:", error);
-      }
-    };
-
-    fetchSelectedOptions();
-  }, [id, refresh]);
 
   const handleSelectGroup = (
     newValue: MultiValue<{ value: number; label: string }>,

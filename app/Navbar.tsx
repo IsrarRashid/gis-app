@@ -15,10 +15,11 @@ import { RootState } from "./store";
 import downArrowBold from "../public/icons/downArrowBold.svg";
 import Button from "./components/Button";
 import UserDropDown from "./components/UserDropDown/UserDropDown";
+import { FaYoutube } from "react-icons/fa";
 
 const lexend = Lexend({
   subsets: ["latin"],
-  weight: "300",
+  weight: "400",
 });
 
 const Navbar = () => {
@@ -27,6 +28,9 @@ const Navbar = () => {
   const router = useRouter();
   const currentContent = useSelector(
     (state: RootState) => state.content.currentContent
+  );
+  const currentTutorial = useSelector(
+    (state: RootState) => state.tutorial.currentTutorial
   );
 
   useEffect(() => {
@@ -70,10 +74,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={
-        lexend.className +
-        " navbar navbar-expand-lg navbar-light bg-color-sea-blue p-0"
-      }
+      className={`navbar navbar-expand-lg navbar-light bg-color-sea-blue p-0 ${lexend.className}`}
     >
       <div className="container-fluid">
         <Link className="navbar-brand" href="/">
@@ -121,27 +122,42 @@ const Navbar = () => {
               </ul>
             </li>
           </ul>
-          {((currentContent && currentContent.startsWith("Dashboard")) ||
+
+          {((currentContent &&
+            currentContent.toLowerCase().includes("dashboard")) ||
             currentContent === "SummaryDashboard") && (
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li className="nav-item p-1">
+                <Link href={currentTutorial} target="_blank">
+                  <FaYoutube
+                    color="red"
+                    className="rounded-circle"
+                    style={{
+                      background: "white",
+                      padding: "3px",
+                    }}
+                    size={40}
+                  />
+                </Link>
+              </li>
               <li className="nav-item dropdown me-3">
                 <UserDropDown />
               </li>
             </ul>
           )}
-          {currentContent === "Sectors" ||
-          currentContent === "Projects" ||
-          currentContent === "Users" ||
-          currentContent === "SuperGroup" ||
-          currentContent === "Attribute Groups" ||
-          currentContent === "Attributes" ||
-          currentContent === "Users" ||
-          currentContent === "Roles" ||
-          currentContent === "Rights" ||
-          currentContent === "Vehicle" ||
-          currentContent === "Driver" ||
-          currentContent === "SMDP Sync" ||
-          currentContent === "Visits" ? (
+          {currentContent.toLowerCase().includes("sectors") ||
+          currentContent.toLowerCase().includes("projects") ||
+          currentContent.toLowerCase().includes("users") ||
+          currentContent.toLowerCase().includes("supergroup") ||
+          currentContent.toLowerCase().includes("attributegroups") ||
+          currentContent.toLowerCase().includes("attributes") ||
+          currentContent.toLowerCase().includes("users") ||
+          currentContent.toLowerCase().includes("roles") ||
+          currentContent.toLowerCase().includes("rights") ||
+          currentContent.toLowerCase().includes("vehicle") ||
+          currentContent.toLowerCase().includes("driver") ||
+          currentContent.toLowerCase().includes("smdpsync") ||
+          currentContent.toLowerCase().includes("visits") ? (
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <Link className="nav-link active" aria-current="page" href="#">

@@ -1,84 +1,109 @@
-// components/SimplePie.tsx
+"use client";
 import dynamic from "next/dynamic";
+import React, { useEffect, useState } from "react";
 import { ApexOptions } from "apexcharts"; // Import ApexOptions type
-import Image from "next/image";
-import downArrowWhite from "../../../public/icons/downArrowWhite.svg";
-import { useEffect, useState } from "react";
-import Button from "@/app/components/Button";
+import { formatAmountWithCommas } from "@/app/utils";
 
-// Dynamically import the ApexChart component (for SSR)
-const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
+// Dynamically import the react-apexcharts library
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+});
 
-const SimplePieChart = () => {
-  // Define chart options and data
-  const [chartData] = useState<{
-    options: ApexOptions; // Set the type as ApexOptions
-    series: number[]; // The series type is an array of numbers
-  }>({
-    series: [20, 30, 10, 35], // Data for the pie chart
-    options: {
-      chart: {
-        type: "pie", // Correct type as per ApexOptions
+interface Props {
+  data: { totalRevenueCost: number; totalCapitalCost: number };
+  activeFilter: "cmInitiative" | "adp";
+}
+
+const SimplePieChart = ({ data, activeFilter }: Props) => {
+  const [series, setSeries] = useState<number[]>([]);
+
+  useEffect(() => {
+    setSeries([data.totalRevenueCost, data.totalCapitalCost]);
+  }, [data]);
+
+  // Define the chart options with ApexOptions type
+  const chartOptions: ApexOptions = {
+    chart: {
+      type: "pie",
+    },
+    labels: ["Revenue Cost", "Capital Cost"],
+    colors: ["#4A90FB", "#6FE397"],
+    stroke: {
+      show: false,
+      width: 0,
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function (val, opts) {
+        const value = opts.w.globals.series[opts.seriesIndex];
+        const total = opts.w.globals.series.reduce(
+          (acc: any, cur: any) => acc + cur,
+          0
+        );
+        const percentage = ((value / total) * 100).toFixed(2); // Calculate percentage
+        return `${formatAmountWithCommas(value)} M (${Math.round(
+          parseFloat(percentage)
+        )}%)`; // Combine value and percentage
       },
-      labels: ["Allocated", "Expenditure", "Releases", "Approved Cost"], // Labels for each slice
-      colors: ["#1D81A2", "#18A1CD", "#39F3BB", "#15607A"],
-      stroke: {
-        show: false,
-        width: 0,
+      style: {
+        fontSize: "14px",
+        colors: ["#fff"],
       },
-      legend: {
-        show: false, // Keep the legend visible if needed
+    },
+    legend: {
+      position: "bottom",
+      fontSize: "14px",
+      onItemHover: {
+        highlightDataSeries: false, // Disable highlighting on hover
       },
-      dataLabels: {
-        dropShadow: {
-          opacity: 0.3,
-        },
-      },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 200,
-            },
-            legend: {
-              position: "bottom",
-            },
+    },
+    responsive: [
+      {
+        breakpoint: 768,
+        options: {
+          chart: {
+            width: 320,
           },
         },
-      ],
-    },
-  });
+      },
+    ],
+  };
 
   return (
     <div
-      className="col shadow-sm mb-3"
-      style={{ background: "#C6D9F1", borderRadius: "15px", fontSize: ".9rem" }}
+      className="col shadow-sm mb-2"
+      style={{
+        background: "#C6D9F1",
+        borderRadius: "15px",
+        fontSize: ".9rem",
+        height: "100%",
+      }}
     >
-      <div className="row d-flex p-3 m-0">
+      <div className="row d-flex m-0">
         <div
-          className="col pb-2"
+          className="col pb-2 ms-3 me-3"
           style={{ borderBottom: "1px dashed #97ABBD" }}
         >
           <div className="row d-flex">
-            <div className="col">
-              <p className="m-0 fw-bold mt-1">Project Brief</p>
-            </div>
-            <div className="col text-end">
-              <Button className="btn btn-sm btn-secondary">
-                Export&nbsp;
-                <Image src={downArrowWhite} alt="downArrowWhite" />
-              </Button>
+            <div className="col pt-2">
+              <p className="m-0 fw-bold" style={{ fontSize: "1.563rem" }}>
+                PC-I Analysis (
+                {activeFilter === "cmInitiative"
+                  ? "CM Initiatives"
+                  : "ADP Projects"}
+                )
+              </p>
             </div>
           </div>
         </div>
       </div>
-      <div className="d-flex justify-content-center mt-2 pb-2">
+      <div className="d-flex justify-content-center m-0">
         <div className="col">
-          <ApexChart
-            options={chartData.options}
-            series={chartData.series}
+          <ReactApexChart
+            options={chartOptions}
+            series={series}
             type="pie"
+            height={350}
           />
         </div>
       </div>

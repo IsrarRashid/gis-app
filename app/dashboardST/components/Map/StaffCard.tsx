@@ -11,7 +11,9 @@ import { reverseGeoCodingAPI } from "@/app/APIs";
 
 interface Props {
   data: StaffTracking;
-  setSelectedStaffIndex: React.Dispatch<React.SetStateAction<number>>;
+  setSelectedStaffIndex: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
   startLocation: string | undefined;
   endLocation: string | undefined;
 }
@@ -24,7 +26,6 @@ const StaffCard = ({
 }: Props) => {
   const [refresh, setRefresh] = useState(false);
   const { data: users } = useAuthentication({ refresh });
-  const [truncateText, setTruncateText] = useState(true);
   return (
     <div
       className="card border-0 letterSpacing1px"
@@ -64,7 +65,12 @@ const StaffCard = ({
               <img
                 src={`${process.env.NEXT_PUBLIC_BACKEND_API}${data.userPicture}`}
                 className="mb-1 img-fluid rounded-circle shadow"
-                style={{ width: "90px", height: "90px", objectFit: "cover" }}
+                style={{
+                  width: "90px",
+                  height: "90px",
+                  objectFit: "cover",
+                  objectPosition: "center top",
+                }}
                 alt="staffMember"
               />
             ) : (
@@ -172,11 +178,7 @@ const StaffCard = ({
                   style={{ width: "100%", height: "60px" }}
                 />
               </div>
-              <div
-                className="col p-0"
-                onMouseEnter={() => setTruncateText(false)}
-                onMouseLeave={() => setTruncateText(true)}
-              >
+              <div className="col p-0">
                 <div className="col p-0 mb-1">
                   <p
                     className="m-0 fs14px fw-normal"
@@ -184,11 +186,7 @@ const StaffCard = ({
                   >
                     Start Location
                   </p>
-                  <p className="m-0 fs-6 fw-normal">
-                    {truncateText
-                      ? `${startLocation?.substring(0, 30)}...`
-                      : startLocation}
-                  </p>
+                  <p className="m-0 fs-6 fw-normal">{startLocation}</p>
                 </div>
                 <div className="col p-0">
                   <p
@@ -197,11 +195,7 @@ const StaffCard = ({
                   >
                     End Location
                   </p>
-                  <p className="m-0 fs-6 fw-normal">
-                    {truncateText
-                      ? `${endLocation ? endLocation.substring(0, 30) : ""}...`
-                      : endLocation}
-                  </p>
+                  <p className="m-0 fs-6 fw-normal">{endLocation}</p>
                 </div>
               </div>
             </div>

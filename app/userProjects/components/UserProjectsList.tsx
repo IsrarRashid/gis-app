@@ -33,6 +33,9 @@ import useAuthentication from "@/app/hooks/useAuthentication";
 import Button from "@/app/components/Button";
 import SmdpAllProjectsSyncForm from "./SmdpAllProjectsSyncForm";
 import search2 from "../../../public/icons/search2.svg";
+import Loader from "@/app/components/Loader";
+import TableHeader from "@/app/components/Table/TableHeader";
+import Pagination from "@/app/components/Table/Pagination";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -84,32 +87,23 @@ const UserProjectsList = ({
 
   // State for filtered data
   const [filteredData, setFilteredData] = useState<Project[]>([]);
-  const [searchEnable, setsearchEnable] = useState(false);
 
   // Handle search logic
-  const handleSearch = () => {
-    const lowercasedFilter = searchTerm;
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const lowercasedFilter = searchTerm.toLowerCase();
     const filtered = data.filter((item) =>
-      [item.id.toString(), item.name.toLowerCase(), item.status.toLowerCase()]
+      [item.id.toString(), item.gsNo, item.name, item.status]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(lowercasedFilter))
+        .some((field) => field.includes(e.target.value.toLowerCase()))
     );
     setFilteredData(filtered);
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm !== "") {
-      setsearchEnable(true);
-      handleSearch();
-    }
   };
 
   // Update searchTerm and clear search if empty
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setsearchEnable(false);
+    handleSearch(e);
   };
 
   useEffect(() => {
@@ -137,78 +131,15 @@ const UserProjectsList = ({
     setData([...sortedData]);
   };
 
-  const handleDelete = async (id: number): Promise<void> => {
-    try {
-      await apiClient.delete(`${projectAPI}/${id}`);
-      // remove the deleted item from the data array
-      setData((prevData) => prevData.filter((item) => item.id !== id));
-      notifyCreate(deleteMessage);
-      console.log("item deleted successfully");
-    } catch (err) {
-      console.error("failed to delete item", err);
-      setError((err as AxiosError).message);
-      notifyError((err as AxiosError).message);
-    }
-  };
-
   // for selecting rows per page
   const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
-  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRows(parseInt(e?.target.value, 10));
-    setCurrentPage(1);
-  };
-
-  // Determine the data to display for the current page
-  const indexOfLastRow = currentPage * rows;
-  const indexOfFirstRow = indexOfLastRow - rows;
-  const currentData = data.slice(indexOfFirstRow, indexOfLastRow);
-
-  // for pagination buttons
-  const totalPages = Math.ceil(data.length / rows);
-  // Handle previous page
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Handle next page
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
   // Paginate data to display only the current page's rows
-  const paginatedData = data.slice(
+  const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
     currentPage * rows
   );
-  const hideCompleted = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      // Filter the data to hide completed items
-      setData((prevData) =>
-        prevData.filter((item) => item.status !== "Complete")
-      );
-    } else {
-      // Reset to the original data
-      setData([...originalData]);
-    }
-  };
-
-  const showCancel = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      // Filter the data to show only canceled items
-      setData((prevData) =>
-        prevData.filter((item) => item.status === "Cancel")
-      );
-    } else {
-      // Reset to the original data
-      setData([...originalData]);
-    }
-  };
 
   const handleSubmit = async (id: number) => {
     try {
@@ -227,31 +158,16 @@ const UserProjectsList = ({
   return (
     <>
       <>
-        {isLoading && (
-          <div className="col text-center">
-            <div className="spinner-border text-primary"></div>
-          </div>
-        )}
-        <div className="row d-flex p-3">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <h4 className="fw-bold">User Projects</h4>
-          </div>
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <div className="row d-flex ">
-              <div className="col d-none d-lg-block"></div>
-              <div className="col text-end">
-                <span className="fw-bold">
-                  {getFormattedDate(new Date(), "short")}
-                </span>{" "}
-                Today
-              </div>
+        {isLoading && <Loader />}
+        <TableHeader
+          heading="User Projects"
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={data}
+          handleChange={handleChange}
+          form={
+            <>
               <div className="col text-end mb-2">
-                {/* <ProjectForm
-                  api={projectAPI}
-                  method="POST"
-                  setRefresh={setRefresh}
-                  refresh={refresh}
-                /> */}
                 <SmdpSyncForm
                   api={smdpSyncApi}
                   method="POST"
@@ -261,7 +177,7 @@ const UserProjectsList = ({
                   setShowData={setShowData}
                 />
               </div>
-              <div className="col text-end">
+              <div className="col text-end mb-2">
                 <SmdpAllProjectsSyncForm
                   api={smdpSyncApi}
                   method="POST"
@@ -271,27 +187,17 @@ const UserProjectsList = ({
                   setShowData={setShowData}
                 />
               </div>
-            </div>
-          </div>
-        </div>
-        <div className="row d-flex justify-content-between p-3">
-          <div className="m-auto col-lg-6 col-md-5 col-sm-12">
-            <p className="m-0">
-              Showing:{" "}
-              <span className="fw-bold">
-                {searchEnable ? filteredData.length : data?.length} Projects
-              </span>
-            </p>
-          </div>
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <div className="row d-flex justify-content-end">
-              <div className="col-lg-4 col-md-4 col-sm-12">
+              <div className="col-auto">
                 <form>
                   <div className="col text-start">
                     <select
-                      className="form-select form-select-sm color-light-dark bg-color-matte-light-blue"
+                      className="color-light-dark pt-1 pb-2"
                       aria-label="Select User"
                       name="user"
+                      style={{
+                        outline: "none",
+                        background: "rgba(16, 143, 168, .1)",
+                      }}
                       onChange={(e) => handleSubmit(Number(e.target.value))}
                     >
                       <option value="">Select User</option>
@@ -304,41 +210,9 @@ const UserProjectsList = ({
                   </div>
                 </form>
               </div>
-              <div className="col-lg-8 col-md-8 col-sm-12">
-                <form onSubmit={handleSearchSubmit}>
-                  <div className="input-group">
-                    <span
-                      className="input-group-text pe-0 border-0 rounded-end rounded-pill"
-                      id="basic-addon1"
-                      style={{ background: "#c6def5" }}
-                    >
-                      <Image
-                        src={search2}
-                        alt="search2"
-                        width={20}
-                        height={20}
-                      />
-                    </span>
-                    <input
-                      type="text"
-                      className="form-control border-0 rounded-start"
-                      style={{ background: "rgba(16, 143, 168, .1)" }}
-                      placeholder="Search"
-                      value={searchTerm}
-                      onChange={handleChange}
-                    />
-                    <button
-                      className="btn rounded-start rounded-pill bg-color-sea-green text-white"
-                      type="submit"
-                    >
-                      Search
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
+            </>
+          }
+        />
       </>
       <div className="table-responsive">
         <table
@@ -354,6 +228,10 @@ const UserProjectsList = ({
               }}
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
+              <TableHeading
+                name="gs No"
+                handleSort={() => handleSort("gsNo")}
+              />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
                 name="sector"
@@ -366,13 +244,10 @@ const UserProjectsList = ({
               <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th>
               {/* <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th> */}
               <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th>
-              <th colSpan={2}>
-                <div className="text-center"></div>
-              </th>
             </tr>
           </thead>
           <tbody>
-            {(searchEnable ? filteredData : paginatedData).map((d) => (
+            {paginatedData.map((d) => (
               <tr
                 className={dmSans.className}
                 style={{
@@ -382,6 +257,7 @@ const UserProjectsList = ({
                 key={d.id}
               >
                 <td>{d.id}</td>
+                <td>{d.gsNo}</td>
                 <td>{d.name}</td>
                 <td>{getName(d.sectorId, sectorsData)}</td>
                 <td style={{ whiteSpace: "nowrap" }}>
@@ -443,13 +319,13 @@ const UserProjectsList = ({
                 <td className="text-center">
                   <GroupingForm id={d.id} options={superGroups} />
                 </td>
-                <td>
+                {/* <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
+                </td> */}
                 {/* <td>
                   <DownloadPDFBtn />
                 </td> */}
-                <td>
+                {/* <td>
                   <ProjectForm
                     api={projectAPI}
                     method="PUT"
@@ -457,70 +333,20 @@ const UserProjectsList = ({
                     setRefresh={setRefresh}
                     refresh={refresh}
                   />
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="row d-flex mb-3">
-          <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
-            {/* Display the current range and total */}
-            {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
-            {data.length}
-          </div>
-          <div className="col-lg-6 col-md-9 col">
-            <div className="row d-flex justify-content-end">
-              <div className="col-lg-2 col-md-1 col"></div>
-              <div className="col-lg-5 col-md-4 col text-end">
-                <label htmlFor="rowPerPage" className="form-label mt-2">
-                  Rows Per Page:
-                </label>
-              </div>
-              <div className="col-lg-1 col-md-3 col text-start p-0">
-                <select
-                  className="rounded bg-color-sea-green text-white shadow p-2"
-                  style={{
-                    color: "#fff",
-                    border: "1px solid #445E84",
-                    outline: "none",
-                  }}
-                  aria-label="Rows per page"
-                  name="rowPerPage"
-                  value={rows}
-                  onChange={handleRowsPerPage}
-                >
-                  {[10, 20, 30, 40, 50].map((num) => (
-                    <option key={num} value={num}>
-                      &nbsp;{num}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                <Button
-                  className="btn bg-color-sea-green shadow me-2"
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowLeft} alt="arrow left" />
-                </Button>
-                <Button
-                  className="btn bg-color-sea-green shadow"
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowRight} alt="arrow right" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Pagination
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={data}
+          rows={rows}
+          setRows={setRows}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
         <ToastContainer />
       </div>
     </>

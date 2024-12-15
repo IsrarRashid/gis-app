@@ -1,16 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
-  images: { unoptimized: true }, //comment this line if you don't use export command
+  // output: "export",
+  // images: { unoptimized: true }, //comment this line if you don't use export command
 
   images: {
-    remotePatterns: [
-      {
-        protocol: "http",
-        hostname: "110.39.184.210",
-        port: "154",
-      },
-    ],
+    domains: ["110.39.184.210"],
   },
 
   webpack: (config) => {

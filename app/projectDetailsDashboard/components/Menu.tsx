@@ -165,7 +165,7 @@ const Menu = ({ data }: Props) => {
                     className="text-white fw-bold m-0 pt-2"
                     style={{ fontSize: "3rem" }}
                   >
-                    {data?.achievedProgress} %
+                    achievedProgress %
                   </p>
                 </div>
                 <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-danger mt-2">
@@ -242,7 +242,7 @@ const Menu = ({ data }: Props) => {
                     className="text-white fw-bold m-0 pt-2"
                     style={{ fontSize: "3rem" }}
                   >
-                    {Math.round(data?.plannedProgress)} %
+                    plannedProgress %
                   </p>
                 </div>
                 <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-danger mt-2">
@@ -319,7 +319,7 @@ const Menu = ({ data }: Props) => {
                     className="text-white fw-bold m-0 pt-2"
                     style={{ fontSize: "3rem" }}
                   >
-                    {Math.round(data?.financalProgress)} %
+                    financalProgress %
                   </p>
                 </div>
                 <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-white mt-2">

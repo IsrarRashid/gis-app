@@ -14,6 +14,10 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
 import { DM_Sans, Inter } from "next/font/google";
 import Button from "@/app/components/Button";
+import Loader from "@/app/components/Loader";
+import { IoSearch } from "react-icons/io5";
+import TableHeader from "@/app/components/Table/TableHeader";
+import Pagination from "@/app/components/Table/Pagination";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -41,6 +45,38 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
+
+  // State for search input
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // State for filtered data
+  const [filteredData, setFilteredData] = useState<Driver[]>([]);
+
+  // Handle search logic
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const lowercasedFilter = searchTerm.toLowerCase();
+
+    const filtered = data.filter((item) =>
+      [item.id.toString(), item.driverName, item.mobileNumber]
+        .filter((field) => field) // Remove undefined fields
+        .map((field) => field.toLowerCase())
+        .some((field) => field.includes(e.target.value.toLowerCase()))
+    );
+    setFilteredData(filtered);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm !== "") {
+      // handleSearch();
+    }
+  };
+
+  // Update searchTerm and clear search if empty
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    handleSearch(e);
+  };
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -113,45 +149,93 @@ const List = ({ refresh, setRefresh }: ListProps) => {
     currentPage * rows
   );
 
+  const handleFirstPage = () => {
+    setCurrentPage(1);
+  };
+
+  const handleLastPage = () => {
+    setCurrentPage(totalPages);
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPageNumbers = 5; // Maximum visible page numbers
+    const startPage = Math.max(1, currentPage - Math.floor(maxPageNumbers / 2));
+    const endPage = Math.min(totalPages, startPage + maxPageNumbers - 1);
+
+    if (startPage > 1) {
+      pageNumbers.push(
+        <Button
+          key="ellipsis-start"
+          className="btn bg-color-sea-green shadow me-2"
+          disabled
+          style={{ border: "1px solid #445E84" }}
+        >
+          ...
+        </Button>
+      );
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <Button
+          key={i}
+          className={`btn ${
+            i === currentPage
+              ? "bg-color-matte-light-blue text-dark"
+              : "bg-color-sea-green shadow text-white"
+          } me-2`}
+          onClick={() => handlePageChange(i)}
+          style={{
+            border: "1px solid #445E84",
+          }}
+        >
+          {i}
+        </Button>
+      );
+    }
+
+    if (endPage < totalPages) {
+      pageNumbers.push(
+        <Button
+          key="ellipsis-end"
+          className="btn bg-color-sea-green shadow me-2 text-white"
+          disabled
+          style={{ border: "1px solid #445E84" }}
+        >
+          ...
+        </Button>
+      );
+    }
+
+    return pageNumbers;
+  };
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <>
       <>
-        {isLoading && (
-          <div className="col text-center">
-            <div className="spinner-border text-primary"></div>
-          </div>
-        )}
-        <div className="row d-flex p-3">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <h4 className="fw-bold">Drivers</h4>
-          </div>
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <div className="row d-flex ">
-              <div className="col d-none d-lg-block"></div>
-              <div className="col text-end">
-                <span className="fw-bold">
-                  {getFormattedDate(new Date(), "short")}
-                </span>{" "}
-                Today
-              </div>
-              <div className="col text-end">
-                <Form
-                  api={driverApi}
-                  method="POST"
-                  setRefresh={setRefresh}
-                  refresh={refresh}
-                />
-              </div>
+        {isLoading && <Loader />}
+        <TableHeader
+          heading="Drivers"
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={data}
+          handleChange={handleChange}
+          form={
+            <div className="col-auto">
+              <Form
+                api={driverApi}
+                method="POST"
+                setRefresh={setRefresh}
+                refresh={refresh}
+              />
             </div>
-          </div>
-        </div>
-        <div className="row p-3">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <p>
-              Showing: <span className="fw-bold">{data?.length} Drivers</span>
-            </p>
-          </div>
-        </div>
+          }
+        />
       </>
       <div className="table-responsive">
         <table
@@ -168,20 +252,16 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
-                name="user Id"
-                handleSort={() => handleSort("user_Id")}
-              />
-              <TableHeading
                 name="driver name"
                 handleSort={() => handleSort("driverName")}
               />
               <TableHeading
-                name="mobile number"
-                handleSort={() => handleSort("mobileNumber")}
+                name="driver image"
+                handleSort={() => handleSort("driverImage")}
               />
               <TableHeading
-                name="driver Image"
-                handleSort={() => handleSort("driverImage")}
+                name="mobile number"
+                handleSort={() => handleSort("mobileNumber")}
               />
               <TableHeading
                 name="created at"
@@ -197,7 +277,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             </tr>
           </thead>
           <tbody>
-            {currentData?.map((d) => (
+            {paginatedData.map((d) => (
               <tr
                 className={dmSans.className}
                 style={{
@@ -207,17 +287,30 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 key={d.id}
               >
                 <td>{d.id}</td>
-                <td>{d.user_Id}</td>
                 <td>{d.driverName}</td>
+                <td>
+                  {d.driverImage && (
+                    <img
+                      className="img-fluid rounded-circle shadow-sm"
+                      style={{
+                        width: "70px",
+                        height: "70px",
+                        objectFit: "cover",
+                        objectPosition: "center top",
+                      }}
+                      src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.driverImage}`}
+                      alt="driverImage"
+                    />
+                  )}
+                </td>
                 <td>{d.mobileNumber}</td>
-                <td>{d.driverImage}</td>
                 <td>
                   {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "numeric")}
+                    getFormattedDate(new Date(d.createdAt), "short")}
                 </td>
                 <td>
                   {d.updatedAt &&
-                    getFormattedDate(new Date(d.updatedAt), "numeric")}
+                    getFormattedDate(new Date(d.updatedAt), "short")}
                 </td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
@@ -235,65 +328,15 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             ))}
           </tbody>
         </table>
-        <div className="row d-flex mb-3">
-          <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
-            {/* Display the current range and total */}
-            {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
-            {data.length}
-          </div>
-          <div className="col-lg-6 col-md-9 col">
-            <div className="row d-flex justify-content-end">
-              <div className="col-lg-2 col-md-1 col"></div>
-              <div className="col-lg-5 col-md-4 col text-end">
-                <label htmlFor="rowPerPage" className="form-label mt-2">
-                  Rows Per Page:
-                </label>
-              </div>
-              <div className="col-lg-1 col-md-3 col text-start p-0">
-                <select
-                  className="rounded bg-color-sea-green text-white shadow p-2"
-                  style={{
-                    color: "#fff",
-                    border: "1px solid #445E84",
-                    outline: "none",
-                  }}
-                  aria-label="Rows per page"
-                  name="rowPerPage"
-                  value={rows}
-                  onChange={handleRowsPerPage}
-                >
-                  {[10, 20, 30, 40, 50].map((num) => (
-                    <option key={num} value={num}>
-                      &nbsp;{num}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                <Button
-                  className="btn bg-color-sea-green shadow me-2"
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowLeft} alt="arrow left" />
-                </Button>
-                <Button
-                  className="btn bg-color-sea-green shadow"
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowRight} alt="arrow right" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Pagination
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={data}
+          rows={rows}
+          setRows={setRows}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
         <ToastContainer />
       </div>
     </>

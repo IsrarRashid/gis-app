@@ -5,39 +5,100 @@ import {
   Map,
   AdvancedMarker,
   InfoWindow,
+  useMap,
 } from "@vis.gl/react-google-maps";
-import { Fragment, useState } from "react";
-import { SingleProjectDashboard } from "../ProjectDetailsDashboard";
+import { Fragment, useEffect, useState } from "react";
+import { Groups, SingleProjectDashboard } from "../ProjectDetailsDashboard";
 import ProjectCard from "../Map/ProjectCard";
+import projectLocation from "@/public/images/projectLocation.png";
 
 interface Props {
-  data: SingleProjectDashboard;
+  data: Groups;
+}
+
+interface Position {
+  lat: number;
+  lng: number;
 }
 
 const MyMap = ({ data }: Props) => {
   const [open, setOpen] = useState(false);
+  const [initialPosition, setInitialPosition] = useState<Position>();
+  const [zoom, setZoom] = useState<number>(17);
 
-  return (
-    <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
-      {data.projectLat && data.projectlong && (
-        <div style={{ width: "100%", height: "500px" }}>
-          <Map
-            mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_Reduce_ID}
-            mapTypeId="hybrid"
-            defaultZoom={17}
-            defaultCenter={{
-              lat: parseFloat(data.projectLat),
-              lng: parseFloat(data.projectlong),
-            }}
-            gestureHandling={"greedy"}
-          >
+  useEffect(() => {
+    if (data) {
+      const latitude = data.attributes
+        .filter((attribute) => attribute.values[0]?.latitude)
+        .find((attribute) => attribute.values[0]?.latitude)
+        ?.values[0]?.latitude;
+
+      const longitude = data.attributes
+        .filter((attribute) => attribute.values[0]?.longitude)
+        .find((attribute) => attribute.values[0]?.longitude)
+        ?.values[0]?.longitude;
+
+      if (latitude && longitude) {
+        setInitialPosition({
+          lat: parseFloat(latitude),
+          lng: parseFloat(longitude),
+        });
+      }
+      setZoom(17);
+    }
+  }, [data]);
+
+  const [selectedStaffIndex, setSelectedStaffIndex] = useState(0);
+
+  const MapWithMarkers = () => {
+    const map = useMap();
+
+    const markers = data.attributes
+      .filter(
+        (attribute) =>
+          attribute.values[0]?.latitude && attribute.values[0]?.longitude
+      )
+      .map((attribute) => {
+        return {
+          position: {
+            lat: parseFloat(attribute.values[0].latitude),
+            lng: parseFloat(attribute.values[0].longitude),
+          },
+        };
+      });
+
+    useEffect(() => {
+      if (map && markers.length > 0) {
+        const bounds = new window.google.maps.LatLngBounds();
+        markers.forEach((marker) => bounds.extend(marker.position));
+        map.fitBounds(bounds);
+      }
+    }, [map, markers]);
+
+    const handleMarkerClick = (position: { lat: number; lng: number }) => {
+      if (map) {
+        map.setCenter(position); // Set the center to the clicked marker
+        map.setZoom(17); // Adjust zoom level
+      }
+    };
+
+    return (
+      <>
+        {data.attributes
+          .filter(
+            (attribute) =>
+              attribute.values[0]?.latitude && attribute.values[0]?.longitude
+          )
+          .map((attribute) => (
             <AdvancedMarker
+              key={attribute.attributeId}
               position={{
-                lat: parseFloat(data.projectLat),
-                lng: parseFloat(data.projectlong),
+                lat: parseFloat(attribute.values[0].latitude),
+                lng: parseFloat(attribute.values[0].longitude),
               }}
-              onMouseEnter={() => setOpen(true)}
-              onMouseLeave={() => setOpen(false)}
+              onClick={() => {
+                setSelectedStaffIndex(attribute.attributeId);
+              }}
             >
               <span>
                 <img
@@ -47,18 +108,47 @@ const MyMap = ({ data }: Props) => {
                 />
               </span>
             </AdvancedMarker>
-            {open && (
-              <InfoWindow
-                position={{
-                  lat: parseFloat(data.projectLat),
-                  lng: parseFloat(data.projectlong),
-                }}
-                pixelOffset={[0, -60]}
-                onCloseClick={() => setOpen(false)}
-              >
-                <ProjectCard data={data} />
-              </InfoWindow>
-            )}
+          ))}
+
+        {data.attributes
+          .filter(
+            (attribute) =>
+              attribute.values[0]?.latitude && attribute.values[0]?.longitude
+          )
+          .map(
+            (attribute) =>
+              selectedStaffIndex === attribute.attributeId && (
+                <InfoWindow
+                  key={attribute.attributeId}
+                  position={{
+                    lat: parseFloat(attribute.values[0].latitude),
+                    lng: parseFloat(attribute.values[0].longitude),
+                  }}
+                  pixelOffset={[0, -60]}
+                >
+                  <ProjectCard
+                    data={attribute}
+                    setSelectedStaffIndex={setSelectedStaffIndex}
+                  />
+                </InfoWindow>
+              )
+          )}
+      </>
+    );
+  };
+
+  return (
+    <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
+      {initialPosition && (
+        <div style={{ width: "100%", height: "500px" }}>
+          <Map
+            mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_Reduce_ID}
+            mapTypeId="hybrid"
+            defaultZoom={zoom}
+            defaultCenter={initialPosition}
+            gestureHandling={"greedy"}
+          >
+            <MapWithMarkers />
           </Map>
         </div>
       )}

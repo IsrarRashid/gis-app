@@ -4,10 +4,17 @@ import List from "./List";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import useAuthorization from "@/app/hooks/useAuthorization";
+import { useDispatch } from "react-redux";
+import { setContent } from "@/app/features/content/contentSlice";
 
 const Users = () => {
   const [refresh, setRefresh] = useState(false);
+  const dispatch = useDispatch();
   useAuthorization("users");
+
+  const handleButtonClick = (content: string) => {
+    dispatch(setContent(content));
+  };
 
   useEffect(() => {
     // Set the background for the body
@@ -15,6 +22,7 @@ const Users = () => {
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundRepeat = "no-repeat";
 
+    handleButtonClick("users");
     // Cleanup on unmount
     return () => {
       document.body.style.backgroundImage = "";

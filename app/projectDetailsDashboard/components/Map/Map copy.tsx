@@ -77,7 +77,7 @@ function Map({ data }: Props) {
               width: "300px",
             }}
           >
-            <p className="fs-6 fw-normal m-0">{data.projectName}</p>
+            {/* <p className="fs-6 fw-normal m-0">{data.projectName}</p> */}
           </div>
         </InfoWindow>
       )}

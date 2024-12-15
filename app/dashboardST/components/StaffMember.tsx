@@ -25,11 +25,14 @@ import {
 import { formatDateTime } from "@/app/utils";
 
 interface Props {
-  setTrackingRequestBody: Dispatch<SetStateAction<TrackingRequestData>>;
+  setLiveTrackingRequestBody: Dispatch<SetStateAction<TrackingRequestData>>;
   setMapStatus: React.Dispatch<React.SetStateAction<boolean>>;
+  getStaffWithCoordinates: (
+    trackingRequestBody: TrackingRequestData
+  ) => Promise<void>;
 }
 
-const StaffMember = ({ setTrackingRequestBody, setMapStatus }: Props) => {
+const StaffMember = ({ setLiveTrackingRequestBody, setMapStatus }: Props) => {
   const [data, setData] = useState<StaffTracking[]>();
 
   const getStaffWithCoordinates = async (
@@ -84,7 +87,12 @@ const StaffMember = ({ setTrackingRequestBody, setMapStatus }: Props) => {
                   background: "#E0EEFC",
                 }}
                 onClick={() => {
-                  setTrackingRequestBody({
+                  getStaffWithCoordinates({
+                    userId: 0,
+                    visitId: 0,
+                    date: getCurrentDate(), //remember to set current date
+                  });
+                  setLiveTrackingRequestBody({
                     userId: 0,
                     visitId: 0,
                     date: getCurrentDate(), //remember to set current date
@@ -106,7 +114,7 @@ const StaffMember = ({ setTrackingRequestBody, setMapStatus }: Props) => {
             <div
               className="col"
               style={{
-                height: "500px",
+                height: "760px",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 overflowY: "scroll",
@@ -122,7 +130,12 @@ const StaffMember = ({ setTrackingRequestBody, setMapStatus }: Props) => {
                     background: "rgba(255, 255, 255, 0.62)",
                   }}
                   onClick={() => {
-                    setTrackingRequestBody({
+                    getStaffWithCoordinates({
+                      userId: parseInt(d.userId),
+                      visitId: 0,
+                      date: getCurrentDate(), //remember to set current date
+                    });
+                    setLiveTrackingRequestBody({
                       userId: parseInt(d.userId),
                       visitId: 0,
                       date: getCurrentDate(), //remember to set current date
@@ -133,14 +146,15 @@ const StaffMember = ({ setTrackingRequestBody, setMapStatus }: Props) => {
                   <div className="col">
                     <div className="row d-flex">
                       <div className="col-lg-3 col-md-3 col-sm-12 ps-0">
-                        {d.userPicture && d.userPicture.length > 0 ? (
+                        {d.userPicture ? (
                           <img
                             src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.userPicture}`}
                             className="mb-1 img-fluid rounded-circle shadow"
                             style={{
+                              objectFit: "cover",
+                              objectPosition: "center top",
                               width: "70px",
                               height: "70px",
-                              objectFit: "cover",
                             }}
                             alt="staffMember"
                           />
@@ -185,7 +199,7 @@ const StaffMember = ({ setTrackingRequestBody, setMapStatus }: Props) => {
                           />
                         </p>
                         <p className="m-0 fs11px text-wrap text-break">
-                          0132154684 <img src="/icons/phone3.svg" alt="phone" />
+                          {d?.phoneNumber} <img src="/icons/phone3.svg" alt="phone" />
                         </p>
                       </div>
                     </div>

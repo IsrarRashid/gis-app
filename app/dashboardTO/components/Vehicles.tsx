@@ -14,8 +14,6 @@ import useVehicle from "@/app/hooks/useVehicle";
 
 interface AvailableVehicles {
   vehicleId: number;
-  visitId: number;
-  driverId: number;
   name: string;
   description: string;
   vehicleNumber: string;
@@ -26,14 +24,13 @@ interface AvailableVehicles {
   fuelType: string;
   vehicleImage: string;
   vehicleIcon: string;
-  driverName: string;
-  mobileNumber: string;
-  driverImage: string;
+  vehicleSatus: string;
 }
 
 const Vehicles = () => {
-  const [status, setStatus] = useState<string>("available");
+  const [status, setStatus] = useState<string>("all");
   const [data, setData] = useState<AvailableVehicles[]>();
+  const [filteredData, setFilteredData] = useState<AvailableVehicles[]>();
   const [refresh, setRefresh] = useState(false);
   const { data: vehicles } = useVehicle({ refresh });
 
@@ -85,21 +82,22 @@ const Vehicles = () => {
   //   }
   // }, [data, status]); // Recalculate if the items change
 
-  const handleSubmit = async (status: string) => {
-    try {
-      const response = await apiClient.get(
-        `${vehicleApi}/GetVehiclesList?status=${status}`
-      );
-      console.log("Response:", response);
-      setData(response.data.data);
-    } catch (err) {
-      console.error("Submission error:", err);
-    }
-  };
+  useEffect(() => {
+    const handleSubmit = async () => {
+      try {
+        const response = await apiClient.get(`${vehicleApi}/GetVehiclesList`);
+        console.log("Response:", response);
+        setData(response.data.data);
+      } catch (err) {
+        console.error("Submission error:", err);
+      }
+    };
+    handleSubmit();
+  }, []);
 
   useEffect(() => {
-    handleSubmit(status);
-  }, []);
+    setFilteredData(data);
+  }, [data]);
 
   return (
     <div
@@ -119,9 +117,13 @@ const Vehicles = () => {
               Vehicles
             </h4>
           </div>
-          {/* <div className="col text-end">
+          <div className="col text-end">
             <Button
-              className="btn p-1 mt-1 fs12px"
+              className="btn p-1 mt-1 fs12px position-relative"
+              onClick={() => {
+                setStatus("all");
+                setFilteredData(data);
+              }}
               style={{
                 padding: "15px 20px 15px 20px",
                 fontWeight: 600,
@@ -129,14 +131,17 @@ const Vehicles = () => {
               }}
             >
               See All
+              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {data?.length}
+              </span>
             </Button>
-          </div> */}
+          </div>
         </div>
       </div>
-      {/* <div className="row d-flex mb-1">
+      <div className="row d-flex mb-1">
         <div className="col text-center pe-0">
           <Button
-            className="btn mt-2 p-0 w-100 fs14px rounded-0"
+            className="btn mt-2 p-0 w-100 fs14px rounded-0 position-relative"
             style={{
               borderBottom:
                 status === "available"
@@ -148,15 +153,21 @@ const Vehicles = () => {
             }}
             onClick={() => {
               setStatus("available");
-              handleSubmit("available");
+              setFilteredData(
+                data?.filter((d) => d.vehicleSatus === "available")
+              );
+              // handleSubmit("available");
             }}
           >
             Available
+            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {data?.filter((d) => d.vehicleSatus === "available")?.length}
+            </span>
           </Button>
         </div>
         <div className="col text-center ps-0">
           <Button
-            className="btn mt-2 p-0 w-100 fs14px rounded-0"
+            className="btn mt-2 p-0 w-100 fs14px rounded-0 position-relative"
             style={{
               letterSpacing: "1px",
               borderBottom:
@@ -166,19 +177,23 @@ const Vehicles = () => {
             }}
             onClick={() => {
               setStatus("in_use");
-              handleSubmit("in_use");
+              setFilteredData(data?.filter((d) => d.vehicleSatus === "in_use"));
+              // handleSubmit("in_use");
             }}
           >
-            In Use
+            On Visit
+            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {data?.filter((d) => d.vehicleSatus === "in_use")?.length}
+            </span>
           </Button>
         </div>
-      </div> */}
-      {vehicles && (
+      </div>
+      {filteredData && (
         <div className="row d-flex pt-0 pb-2 m-2 ms-0 me-0">
           <div
             className="col-lg-12 col-md-12 col-sm-12 p-2"
             style={{
-              height: "580px",
+              height: "690px",
               whiteSpace: "nowrap",
               overflow: "hidden",
               overflowY: "scroll",
@@ -186,35 +201,31 @@ const Vehicles = () => {
               borderRadius: "12px",
             }}
           >
-            {vehicles?.map((d, i) => (
+            {filteredData?.map((d, i) => (
               <div
                 key={i}
-                className="row d-flex p-2 mb-2 ms-0 me-0"
+                className="row d-flex p-2 mb-2 ms-0 me-0 shadow-sm"
                 style={{
                   background: "#F4F6F9",
                   border: "1px solid #D5DEEF",
                   borderRadius: "12px",
                 }}
               >
-                <div className="row d-flex pe-0 m-0">
+                <div className="row d-flex m-0 mb-2">
                   <div className="col-lg-12 col-md-12 col-sm-12 p-0 m-0 text-center">
-                    {d.vehicleImage && d.vehicleImage.length > 0 ? (
+                    {d.vehicleImage && (
                       <img
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleImage}`}
+                        src={
+                          `${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleImage}` ||
+                          car1Right
+                        }
                         alt="vehicle image from api"
                         style={{
                           width: "100%",
                           objectFit: "cover",
                           borderRadius: "10px",
                         }}
-                        className="img-fluid"
-                      />
-                    ) : (
-                      <Image
-                        src={car1Right}
-                        alt="vehicle image"
-                        style={{ width: "auto", height: "auto" }}
-                        className="img-fluid"
+                        className="img-fluid shadow-sm"
                       />
                     )}
                   </div>

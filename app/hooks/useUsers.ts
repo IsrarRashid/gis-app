@@ -4,12 +4,18 @@ import useData from "./useData";
 export interface User {
   id: number;
   name: string;
-  email: string;
-  phone: string;
-  roleId: number;
-  password: string;
-  createdAt: string;
-  updatedAt: string;
+  designation: string;
+  attendance_id: number;
+  machine_num: number;
+  status: true;
+  created_at: string;
+  updated_at: string;
+  departmentId: number;
+  created_by: string;
+  updated_by: string;
+  user_Id: number;
+  bps: number;
+  userImage: string;
 }
 
 interface Props {

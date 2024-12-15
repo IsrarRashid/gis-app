@@ -19,35 +19,43 @@ const GroupingForm = ({ id, options }: Props) => {
   const [refresh, setRefresh] = useState(false);
   const [show, setShow] = useState(false);
 
+  // Fetch previously selected groups
+  const fetchSelectedOptions = async () => {
+    try {
+      const response = await apiClient.get(
+        `${superGroupApi}/GetSuperGroupByProjectId?ProjectId=${id}`
+      );
+      console.log("supergroup new api", response);
+      const data = response.data.data; // Assuming this returns an array of group objects
+      if (data?.id) {
+        const selectedOptions = {
+          id: data.id,
+          superGroupLabel:
+            options.find((option) => option.id === data.id)?.superGroupLabel ||
+            "",
+        };
+        setSelectedOptions([selectedOptions]);
+      }
+      // setSelectedOptions(data.superGroupID); // Set the selected groups as objects
+    } catch (error) {
+      console.error("Error fetching selected groups:", error);
+    }
+  };
+
   const handleShow = async () => {
     setShow(true);
     setRefresh(!refresh);
+    if (id) {
+      fetchSelectedOptions();
+    }
   };
+
   const handleClose = () => setShow(false);
 
-  // Fetch previously selected groups
-  useEffect(() => {
-    const fetchSelectedOptions = async () => {
-      try {
-        const response = await apiClient.get(`${projectAPI}/${id}`);
-        const data = response.data.data; // Assuming this returns an array of group objects
-        if (data.superGroupID) {
-          const selectedOptions = {
-            id: data.superGroupID,
-            superGroupLabel:
-              options.find((option) => option.id === data.superGroupID)
-                ?.superGroupLabel || "",
-          };
-          setSelectedOptions([selectedOptions]);
-        }
-        // setSelectedOptions(data.superGroupID); // Set the selected groups as objects
-      } catch (error) {
-        console.error("Error fetching selected groups:", error);
-      }
-    };
+  // useEffect(() => {
 
-    fetchSelectedOptions();
-  }, [id, refresh]);
+  //   fetchSelectedOptions();
+  // }, [id, refresh]);
 
   const handleSelectGroup = (
     newValue: SingleValue<{ value: number; label: string }>,
@@ -83,7 +91,7 @@ const GroupingForm = ({ id, options }: Props) => {
         const response = await apiClient.post(
           `${superGroupApi}/AssignSuperGroupToProject?superGroupID=${optionId}&projectID=${id}`
         );
-        console.log(response);
+        console.log("supergroup assigned", response);
       } else {
         const response = await apiClient.post(
           `${superGroupApi}/AssignSuperGroupToProject?projectID=${id}`

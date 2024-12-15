@@ -36,7 +36,7 @@ const useData = <T>({ refresh, endpoint }: Props) => {
     loadItems();
   }, [refresh]);
 
-  return { data, setData, error, setError, isLoading };
+  return { data, setData, error, setError, isLoading, setLoading };
 };
 
 export default useData;

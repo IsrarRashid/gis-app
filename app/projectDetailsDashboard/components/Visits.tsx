@@ -26,7 +26,7 @@ const Visits = ({ data }: Props) => {
           <div className="row d-flex">
             <div className="col-9">
               <p className="text-secondary m-0" style={{ fontSize: ".9rem" }}>
-                {data?.projectName}{" "}
+                {data?.name}{" "}
               </p>
             </div>
             <div className="col pt-2">

@@ -18,6 +18,7 @@ export interface Visit {
   submitted_at: string;
   issued_at: string;
   reportPath: string;
+  tracking_status: boolean;
 }
 
 interface Props {

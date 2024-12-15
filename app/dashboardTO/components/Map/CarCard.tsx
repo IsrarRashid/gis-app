@@ -19,8 +19,6 @@ interface Props {
 }
 
 const CarCard = ({ apiData }: Props) => {
-  const [truncateText, setTruncateText] = useState(true);
-
   return (
     <div
       className="card border-0"
@@ -91,7 +89,7 @@ const CarCard = ({ apiData }: Props) => {
                   src={redCircle2}
                   width={10}
                   height={10}
-                  className="mb-1"
+                  className="mb-1 me-1"
                   alt="redCircle2"
                 />
               </OverlayTrigger>
@@ -213,8 +211,8 @@ const CarCard = ({ apiData }: Props) => {
           KM/L
         </div>
       </div>
-      <div className="card-body pt-2 pb-2">
-        <div
+      <div className="card-body pt-2 pb-2 pe-0">
+        {/* <div
           className="row d-flex m-0 mb-2 pb-1"
           style={{ borderBottom: "1px dashed #D5D5D5" }}
         >
@@ -288,7 +286,7 @@ const CarCard = ({ apiData }: Props) => {
               &nbsp;03182342344
             </p>
           </div>
-        </div>
+        </div> */}
         <div
           className="row d-flex mb-2"
           style={{ marginLeft: "-20px", marginRight: "0px" }}
@@ -301,22 +299,13 @@ const CarCard = ({ apiData }: Props) => {
               style={{ width: "100%", height: "60px" }}
             />
           </div>
-          <div
-            className="col p-0"
-            onMouseEnter={() => setTruncateText(false)}
-            onMouseLeave={() => setTruncateText(true)}
-          >
+          <div className="col p-0">
             <div className="col p-0 mb-1">
               <p className="m-0 fs14px fw-normal" style={{ color: "#7A889C" }}>
                 Start Location
               </p>
               <p className="m-0 fs-6 fw-normal">
-                {truncateText
-                  ? `${apiData["GBB-062"]["First Ignition Location"]?.substring(
-                      0,
-                      45
-                    )}...`
-                  : apiData["GBB-062"]["First Ignition Location"]}
+                {apiData["GBB-062"]["First Ignition Location"]}
               </p>
             </div>
             <div className="col p-0">
@@ -324,22 +313,20 @@ const CarCard = ({ apiData }: Props) => {
                 End Location
               </p>
               <p className="m-0 fs-6 fw-normal">
-                {truncateText
-                  ? `${apiData["GBB-062"]["Last Ignition Location"]?.substring(
-                      0,
-                      45
-                    )}...`
-                  : apiData["GBB-062"]["Last Ignition Location"]}
+                {apiData["GBB-062"]["Last Ignition Location"]}
               </p>
             </div>
           </div>
         </div>
         <div className="row d-flex m-0 mb-2">
           <div className="col">
-            <p className="fs14px m-0 fw-normal" style={{ color: "#7A889C" }}>
+            <p
+              className="fs14px m-0 fw-normal text-center"
+              style={{ color: "#7A889C" }}
+            >
               Visit Start Time
             </p>
-            <p className="fs-6 m-0 fw-normal">
+            <p className="fs-6 m-0 fw-normal text-center">
               {formatDateTime(
                 apiData["GBB-062"]["First Ignition On Time"],
                 "time"
@@ -355,10 +342,13 @@ const CarCard = ({ apiData }: Props) => {
             />
           </div>
           <div className="col">
-            <p className="fs14px m-0 fw-normal" style={{ color: "#7A889C" }}>
+            <p
+              className="fs14px m-0 fw-normal text-center"
+              style={{ color: "#7A889C" }}
+            >
               Visit Start Date
             </p>
-            <p className="fs-6 m-0 fw-normal">
+            <p className="fs-6 m-0 fw-normal text-center">
               {formatDateTime(
                 apiData["GBB-062"]["First Ignition On Time"],
                 "date"

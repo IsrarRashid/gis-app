@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import { SingleProjectDashboard } from "../ProjectDetailsDashboard";
@@ -25,13 +26,18 @@ function UpdateMap({ data }: Props) {
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
+  // const center = {
+  //   lat: parseFloat(
+  //     data.projectLat ? data.projectLat : data.vehicalTrackings[0].startLat
+  //   ),
+  //   lng: parseFloat(
+  //     data.projectlong ? data.projectlong : data.vehicalTrackings[0].startLong
+  //   ),
+  // };
+
   const center = {
-    lat: parseFloat(
-      data.projectLat ? data.projectLat : data.vehicalTrackings[0].startLat
-    ),
-    lng: parseFloat(
-      data.projectlong ? data.projectlong : data.vehicalTrackings[0].startLong
-    ),
+    lat: 0,
+    lng: 0,
   };
 
   useEffect(() => {
@@ -58,7 +64,7 @@ function UpdateMap({ data }: Props) {
           class="p-2 rounded shadow"
         >
           <p class="m-0 fs-6 fw-bold">Project Name</p>
-          <p class="m-0 fs-6 fw-normal">${data.projectName}</p>
+          <p class="m-0 fs-6 fw-normal">projectName</p>
         </div>
       `;
         const infoWindow = new InfoWindow({

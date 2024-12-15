@@ -1,4 +1,13 @@
-const Main = () => {
+import { useEffect, useState } from "react";
+import { Project } from "../ProjectReportOverviewModal";
+import { Groups } from "@/app/projectDetailsDashboard/components/ProjectDetailsDashboard";
+import { getFormattedDate } from "@/app/utils";
+
+interface Props {
+  group: Groups;
+}
+
+const Main = ({ group }: Props) => {
   return (
     <div className="col p-0">
       <div className="row d-flex flex-column mb-2">
@@ -6,22 +15,34 @@ const Main = () => {
           Report Name
         </p>
         <p className="m-0 pe-0 fw-bold">
-          CM Himmat Card Program for Persons with Disabilities (PWDs)
+          {
+            group?.attributes.find(
+              (attribute) => attribute.label.toLowerCase() === "report name"
+            )?.values[0]?.value
+          }
         </p>
       </div>
       <div className="row d-flex mb-2">
-        <div className="col">
-          <p className="m-0 fs14px pe-0" style={{ color: "#414651" }}>
-            Visit Date
-          </p>
-          <p className="m-0 pe-0 fw-bold">10-Nov-2024</p>
-        </div>
-        <div className="col">
-          <p className="m-0 fs14px pe-0" style={{ color: "#414651" }}>
-            Report Date
-          </p>
-          <p className="m-0 pe-0 fw-bold">12-Nov-2024</p>
-        </div>
+        {group?.attributes
+          .filter(
+            (attribute) =>
+              attribute.label.toLowerCase() !== "report picture" &&
+              attribute.label.toLowerCase() !== "report name"
+          )
+          .map((attribute) => (
+            <div className="col" key={attribute.attributeId}>
+              <p className="m-0 fs14px pe-0" style={{ color: "#414651" }}>
+                {attribute?.label}
+              </p>
+              <p className="m-0 pe-0 fw-bold">
+                {attribute?.values[0]?.value &&
+                  getFormattedDate(
+                    new Date(attribute.values[0].value),
+                    "short"
+                  )}
+              </p>
+            </div>
+          ))}
       </div>
       <div
         className="row d-flex flex-column mb-2"
@@ -45,66 +66,25 @@ const Main = () => {
             borderRadius: "8px",
           }}
         >
-          <img
-            src="/icons/reportImage.svg"
-            className="img-fluid rounded-3 me-2"
-            style={{
-              width: "80px",
-              height: "80px",
-              objectFit: "cover",
-            }}
-            alt="reportImage"
-          />
-          <img
-            src="/icons/reportImage.svg"
-            className="img-fluid rounded-3 me-2"
-            style={{
-              width: "80px",
-              height: "80px",
-              objectFit: "cover",
-            }}
-            alt="reportImage"
-          />
-          <img
-            src="/icons/reportImage.svg"
-            className="img-fluid rounded-3 me-2"
-            style={{
-              width: "80px",
-              height: "80px",
-              objectFit: "cover",
-            }}
-            alt="reportImage"
-          />
-          <img
-            src="/icons/reportImage.svg"
-            className="img-fluid rounded-3 me-2"
-            style={{
-              width: "80px",
-              height: "80px",
-              objectFit: "cover",
-            }}
-            alt="reportImage"
-          />
-          <img
-            src="/icons/reportImage.svg"
-            className="img-fluid rounded-3 me-2"
-            style={{
-              width: "80px",
-              height: "80px",
-              objectFit: "cover",
-            }}
-            alt="reportImage"
-          />
-          <img
-            src="/icons/reportImage.svg"
-            className="img-fluid rounded-3 me-2"
-            style={{
-              width: "80px",
-              height: "80px",
-              objectFit: "cover",
-            }}
-            alt="reportImage"
-          />
+          {group?.attributes.find(
+            (attribute) => attribute.label.toLowerCase() === "report picture"
+          )?.values[0]?.verificatioContentPath && (
+            <img
+              src={`${process.env.NEXT_PUBLIC_BACKEND_API}${
+                group?.attributes.find(
+                  (attribute) =>
+                    attribute.label.toLowerCase() === "report picture"
+                )?.values[0]?.verificatioContentPath
+              }`}
+              className="img-fluid rounded-3 me-2"
+              style={{
+                width: "80px",
+                height: "80px",
+                objectFit: "cover",
+              }}
+              alt="reportImage"
+            />
+          )}
         </div>
       </div>
     </div>

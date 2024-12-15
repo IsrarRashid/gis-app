@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./UserDropDown.module.css";
 import Link from "next/link";
 import Button from "../Button";
@@ -16,6 +16,7 @@ const UserDropDown = () => {
   const [userEmail, setUserEmail] = useState("");
   const [userName, setUserName] = useState("");
   const router = useRouter();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const email = Cookies.get("email") || "";
@@ -33,32 +34,46 @@ const UserDropDown = () => {
     setShow(false);
   };
 
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShow(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
-    // Function to format the time
     const formatTime = (date: Date) => {
       const hours = date.getHours();
       const minutes = date.getMinutes();
       const isPM = hours >= 12;
-      const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+      const formattedHours = hours % 12 || 12;
       const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
       const ampm = isPM ? "PM" : "AM";
       return `${formattedHours}:${formattedMinutes} ${ampm}`;
     };
 
-    // Update time every second
     const interval = setInterval(() => {
       const now = new Date();
       setCurrentTime(formatTime(now));
     }, 1000);
 
-    // Clear interval on component unmount
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className={styles.dropdown}>
+    <div className={styles.dropdown} ref={dropdownRef}>
       <Button
         className="btn btn-sm badge rounded-pill shadow-sm p-0"
         onClick={() => setShow(!show)}
@@ -71,7 +86,7 @@ const UserDropDown = () => {
           <div className="col m-auto ms-1 mt-1 mb-1">
             <img
               className="img-fluid rounded-circle m-0"
-              src="/images/profilePic.png"
+              src="/icons/logoNew.svg"
               style={{ objectFit: "cover" }}
               alt="profilePic"
               width={70}

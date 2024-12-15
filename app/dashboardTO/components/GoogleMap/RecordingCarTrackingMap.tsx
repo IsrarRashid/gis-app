@@ -10,6 +10,7 @@ import { Polyline } from "@react-google-maps/api";
 import { Fragment, useEffect, useState } from "react";
 import CarCard from "../Map/CarCard";
 import { trackingAPI } from "@/app/APIs";
+import MapWithMarkers from "./MapWithMarkers";
 
 export interface Tracking {
   ["GBB-062"]: {
@@ -149,7 +150,7 @@ const RecordingCarTrackingMap = () => {
 
       const animate = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
-        const progress = (timestamp - startTime) / 1000; // 1 second per movement
+        const progress = (timestamp - startTime) / 3000; // 1 second per movement
         const start = path[arrayIndex];
         const end = path[arrayIndex + 1];
 
@@ -172,7 +173,7 @@ const RecordingCarTrackingMap = () => {
 
   return (
     <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
-      {position && (
+      {position && apiData && (
         <div
           style={{
             width: "100%",
@@ -185,19 +186,11 @@ const RecordingCarTrackingMap = () => {
           <Map
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
             defaultZoom={17}
-            defaultCenter={position}
+            // defaultCenter={position}
+            center={{ lat: position.lat + 0.0015, lng: position.lng }}
             gestureHandling={"greedy"}
           >
-            {/* Moving Car */}
-            <Polyline
-              path={path}
-              options={{
-                strokeColor: "#FF0000",
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-              }}
-            />
-            <AdvancedMarker position={position} onClick={() => setOpen(!open)}>
+            {/* <AdvancedMarker position={position} onClick={() => setOpen(!open)}>
               <div
                 style={{
                   transform: `rotate(${rotationAngle}deg)`,
@@ -219,7 +212,14 @@ const RecordingCarTrackingMap = () => {
               >
                 {apiData && <CarCard apiData={apiData} />}
               </InfoWindow>
-            )}
+            )} */}
+            <MapWithMarkers
+              position={position}
+              setOpen={setOpen}
+              rotationAngle={rotationAngle}
+              open={open}
+              apiData={apiData}
+            />
           </Map>
         </div>
       )}

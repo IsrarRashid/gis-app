@@ -14,6 +14,10 @@ import visits from "../../public/icons/visits.svg";
 import rolesWhite from "../../public/icons/rolesWhite.svg";
 import rightsWhite from "../../public/icons/rightsWhite.svg";
 import superGroupWhite from "../../public/icons/superGroupWhite.svg";
+import vehicleTrackingIcon from "@/public/icons/vehicleTracking.svg";
+import staffTrackingIcon from "@/public/icons/staffTracking.svg";
+import visitSchedule from "@/public/icons/visitSchedule.svg";
+import userProjects from "@/public/icons/userProjects.svg";
 import { useDispatch } from "react-redux";
 import { setContent } from "../features/content/contentSlice";
 import { useRouter } from "next/navigation";
@@ -52,25 +56,25 @@ const GISMenu = () => {
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
     },
+    // {
+    //   name: "Summary Dashboard",
+    //   nameId: "summaryDashboard",
+    //   link: "/summaryDashboard",
+    //   icon: dashboard,
+    //   backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
+    // },
     {
-      name: "Summary Dashboard",
-      nameId: "summaryDashboard",
-      link: "/summaryDashboard",
-      icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
-    },
-    {
-      name: "DashboardTO",
+      name: "Vehicle Tracking",
       nameId: "dashboardTO",
       link: "/dashboardTO",
-      icon: dashboard,
+      icon: vehicleTrackingIcon,
       backgroundColor: "linear-gradient(to bottom right, #a82897 , #2871a8)",
     },
     {
-      name: "DashboardST",
+      name: "Staff Tracking",
       nameId: "dashboardST",
       link: "/dashboardST",
-      icon: dashboard,
+      icon: staffTrackingIcon,
       backgroundColor: "linear-gradient(to bottom right, #7f28a8 , #a82828)",
     },
     {
@@ -91,7 +95,7 @@ const GISMenu = () => {
       name: "User Projects",
       nameId: "userProjects",
       link: "/userProjects",
-      icon: qr,
+      icon: userProjects,
       backgroundColor: "linear-gradient(to bottom right, #542487 , #41c4c2)",
     },
     {
@@ -150,13 +154,20 @@ const GISMenu = () => {
       icon: driver,
       backgroundColor: "linear-gradient(to bottom right, #a2a828 , #b93ae7)",
     },
-    {
-      name: "Visits",
-      nameId: "visits",
-      link: "/visits",
-      icon: visits,
-      backgroundColor: "linear-gradient(to bottom right, #28A897 , yellow)",
-    },
+    // {
+    //   name: "Visits",
+    //   nameId: "visits",
+    //   link: "/visits",
+    //   icon: visits,
+    //   backgroundColor: "linear-gradient(to bottom right, #28A897 , yellow)",
+    // },
+    // {
+    //   name: "Visits Scheduled",
+    //   nameId: "visitsScheduled",
+    //   link: "/visitsScheduled",
+    //   icon: visitSchedule,
+    //   backgroundColor: "linear-gradient(to bottom right, #28A897 , violet)",
+    // },
   ];
 
   const [filteredMenu, setFilteredMenu] = useState(data);

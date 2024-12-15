@@ -14,6 +14,10 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ToastContainer, toast } from "react-toastify";
 import { DM_Sans, Inter } from "next/font/google";
 import Button from "@/app/components/Button";
+import Loader from "@/app/components/Loader";
+import { IoSearch } from "react-icons/io5";
+import TableHeader from "@/app/components/Table/TableHeader";
+import Pagination from "@/app/components/Table/Pagination";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -41,6 +45,41 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
+
+  // State for search input
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // State for filtered data
+  const [filteredData, setFilteredData] = useState<Vehicle[]>([]);
+
+  // Handle search logic
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const lowercasedFilter = searchTerm.toLowerCase();
+
+    const filtered = data.filter((item) =>
+      [
+        item.id.toString(),
+        item.color,
+        item.fuelType,
+        item.description,
+        item.model,
+        item.name,
+        item.seatsCapacity.toString(),
+        item.trasnmission,
+        item.vehicleNumber,
+      ]
+        .filter((field) => field) // Remove undefined fields
+        .map((field) => field.toLowerCase())
+        .some((field) => field.includes(e.target.value.toLowerCase()))
+    );
+    setFilteredData(filtered);
+  };
+
+  // Update searchTerm and clear search if empty
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    handleSearch(e);
+  };
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -81,34 +120,8 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
-  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRows(parseInt(e?.target.value, 10));
-    setCurrentPage(1);
-  };
-
-  // Determine the data to display for the current page
-  const indexOfLastRow = currentPage * rows;
-  const indexOfFirstRow = indexOfLastRow - rows;
-  const currentData = data.slice(indexOfFirstRow, indexOfLastRow);
-
-  // for pagination buttons
-  const totalPages = Math.ceil(data.length / rows);
-  // Handle previous page
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Handle next page
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
   // Paginate data to display only the current page's rows
-  const paginatedData = data.slice(
+  const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
     currentPage * rows
   );
@@ -116,42 +129,24 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   return (
     <>
       <>
-        {isLoading && (
-          <div className="col text-center">
-            <div className="spinner-border text-primary"></div>
-          </div>
-        )}
-        <div className="row d-flex p-3">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <h4 className="fw-bold">Vehicles</h4>
-          </div>
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <div className="row d-flex ">
-              <div className="col d-none d-lg-block"></div>
-              <div className="col text-end">
-                <span className="fw-bold">
-                  {getFormattedDate(new Date(), "short")}
-                </span>{" "}
-                Today
-              </div>
-              <div className="col text-end">
-                <Form
-                  api={vehicleApi}
-                  method="POST"
-                  setRefresh={setRefresh}
-                  refresh={refresh}
-                />
-              </div>
+        {isLoading && <Loader />}
+        <TableHeader
+          heading="Vehicles"
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={data}
+          handleChange={handleChange}
+          form={
+            <div className="col-auto">
+              <Form
+                api={vehicleApi}
+                method="POST"
+                setRefresh={setRefresh}
+                refresh={refresh}
+              />
             </div>
-          </div>
-        </div>
-        <div className="row p-3">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <p>
-              Showing: <span className="fw-bold">{data?.length} Vehicles</span>
-            </p>
-          </div>
-        </div>
+          }
+        />
       </>
       <div className="table-responsive">
         <table
@@ -167,6 +162,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               }}
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
+
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
                 name="description"
@@ -218,7 +214,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             </tr>
           </thead>
           <tbody>
-            {currentData?.map((d) => (
+            {paginatedData.map((d) => (
               <tr
                 className={dmSans.className}
                 style={{
@@ -236,15 +232,41 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 <td>{d.trasnmission}</td>
                 <td>{d.seatsCapacity}</td>
                 <td>{d.fuelType}</td>
-                <td>{d.vehicleImage}</td>
-                <td>{d.vehicleIcon}</td>
+                <td className="text-center">
+                  {d.vehicleImage && (
+                    <img
+                      className="img-fluid rounded-3"
+                      style={{
+                        width: "70px",
+                        height: "70px",
+                        objectFit: "contain",
+                      }}
+                      src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleImage}`}
+                      alt="vehicleImage"
+                    />
+                  )}
+                </td>
+                <td className="text-center">
+                  {d.vehicleIcon && (
+                    <img
+                      className="img-fluid rounded-circle"
+                      style={{
+                        width: "70px",
+                        height: "70px",
+                        objectFit: "contain",
+                      }}
+                      src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleIcon}`}
+                      alt="vehicleIcon"
+                    />
+                  )}
+                </td>
                 <td>
                   {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "numeric")}
+                    getFormattedDate(new Date(d.createdAt), "short")}
                 </td>
                 <td>
                   {d.updatedAt &&
-                    getFormattedDate(new Date(d.updatedAt), "numeric")}
+                    getFormattedDate(new Date(d.updatedAt), "short")}
                 </td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
@@ -260,74 +282,18 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 </td>
               </tr>
             ))}
-            <tr
-              style={{
-                border: "0px solid transparent",
-              }}
-            >
-              <td colSpan={3}>
-                <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
-                  {/* Display the current range and total */}
-                  {indexOfFirstRow + 1} -{" "}
-                  {Math.min(indexOfLastRow, data.length)} of {data.length}
-                </div>
-              </td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td colSpan={8}>
-                <div className="row d-flex justify-content-end">
-                  <div className="col-lg-5 col-md-4 col text-end">
-                    <label htmlFor="rowPerPage" className="form-label mt-2">
-                      Rows Per Page:
-                    </label>
-                  </div>
-                  <div className="col-lg-1 col-md-3 col text-start p-0">
-                    <select
-                      className="rounded bg-color-sea-green text-white shadow p-2"
-                      style={{
-                        color: "#fff",
-                        border: "1px solid #445E84",
-                        outline: "none",
-                      }}
-                      aria-label="Rows per page"
-                      name="rowPerPage"
-                      value={rows}
-                      onChange={handleRowsPerPage}
-                    >
-                      {[10, 20, 30, 40, 50].map((num) => (
-                        <option key={num} value={num}>
-                          &nbsp;{num}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                    <Button
-                      className="btn bg-color-sea-green shadow me-2"
-                      onClick={handlePreviousPage}
-                      disabled={currentPage === 1}
-                      style={{
-                        border: "1px solid #445E84",
-                      }}
-                    >
-                      <Image src={arrowLeft} alt="arrow left" />
-                    </Button>
-                    <Button
-                      className="btn bg-color-sea-green shadow"
-                      onClick={handleNextPage}
-                      disabled={currentPage === totalPages}
-                      style={{
-                        border: "1px solid #445E84",
-                      }}
-                    >
-                      <Image src={arrowRight} alt="arrow right" />
-                    </Button>
-                  </div>
-                </div>
+
+            <tr style={{ border: "0px solid transparent" }}>
+              <td colSpan={15}>
+                <Pagination
+                  searchTerm={searchTerm}
+                  filteredData={filteredData}
+                  data={data}
+                  rows={rows}
+                  setRows={setRows}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                />
               </td>
             </tr>
           </tbody>

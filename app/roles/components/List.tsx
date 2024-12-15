@@ -16,6 +16,10 @@ import { getFormattedDate } from "@/app/utils";
 import GroupingForm from "./GroupingForm";
 import useRights from "@/app/hooks/useRights";
 import Button from "@/app/components/Button";
+import Loader from "@/app/components/Loader";
+import { IoSearch } from "react-icons/io5";
+import TableHeader from "@/app/components/Table/TableHeader";
+import Pagination from "@/app/components/Table/Pagination";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -41,6 +45,43 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
+
+  // State for search input
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // State for filtered data
+  const [filteredData, setFilteredData] = useState<Role[]>([]);
+
+  // Handle search logic
+  const handleSearch = (value: string) => {
+    // const lowercasedFilter = searchTerm.toLowerCase();
+
+    const filtered = data.filter((item) =>
+      [
+        item.id.toString(),
+        item.name,
+        item.normalizedName,
+        item.concurrencyStamp,
+      ]
+        .filter((field) => field) // Remove undefined fields
+        .map((field) => field.toLowerCase())
+        .some((field) => field.includes(value.toLowerCase()))
+    );
+    setFilteredData(filtered);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm !== "") {
+      // handleSearch();
+    }
+  };
+
+  // Update searchTerm and clear search if empty
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    handleSearch(e.target.value);
+  };
 
   const handleDelete = async (id: number) => {
     try {
@@ -81,76 +122,32 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
-  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRows(parseInt(e?.target.value, 10));
-    setCurrentPage(1);
-  };
-
-  // Determine the data to display for the current page
-  const indexOfLastRow = currentPage * rows;
-  const indexOfFirstRow = indexOfLastRow - rows;
-  const currentData = data.slice(indexOfFirstRow, indexOfLastRow);
-
-  // for pagination buttons
-  const totalPages = Math.ceil(data.length / rows);
-  // Handle previous page
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Handle next page
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
   // Paginate data to display only the current page's rows
-  const paginatedData = data.slice(
+  const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
     currentPage * rows
   );
 
   return (
     <>
-      {isLoading && (
-        <div className="col text-center">
-          <div className="spinner-border text-primary"></div>
-        </div>
-      )}
-      <div className="row d-flex p-3">
-        <div className="col-lg-6 col-md-6 col-sm-12">
-          <h4 className="fw-bold">Roles</h4>
-        </div>
-        <div className="col-lg-6 col-md-6 col-sm-12">
-          <div className="row d-flex ">
-            <div className="col d-none d-lg-block"></div>
-            <div className="col text-end">
-              <span className="fw-bold">
-                {getFormattedDate(new Date(), "short")}
-              </span>{" "}
-              Today
-            </div>
-            <div className="col text-end">
-              <Form
-                api={roleAPI}
-                method="POST"
-                setRefresh={setRefresh}
-                refresh={refresh}
-              />
-            </div>
+      {isLoading && <Loader />}
+      <TableHeader
+        heading="Roles"
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        handleChange={handleChange}
+        form={
+          <div className="col-auto">
+            <Form
+              api={roleAPI}
+              method="POST"
+              setRefresh={setRefresh}
+              refresh={refresh}
+            />
           </div>
-        </div>
-      </div>
-      <div className="row p-3">
-        <div className="col-lg-6 col-md-6 col-sm-12">
-          <p>
-            Showing: <span className="fw-bold">{data?.length} Roles</span>
-          </p>
-        </div>
-      </div>
+        }
+      />
       <div className="table-responsive">
         <table
           className="table mb-5"
@@ -179,7 +176,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             </tr>
           </thead>
           <tbody>
-            {currentData?.map((d) => (
+            {paginatedData.map((d) => (
               <tr
                 className={dmSans.className}
                 style={{
@@ -211,65 +208,15 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             ))}
           </tbody>
         </table>
-        <div className="row d-flex mb-3">
-          <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
-            {/* Display the current range and total */}
-            {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
-            {data.length}
-          </div>
-          <div className="col-lg-6 col-md-9 col">
-            <div className="row d-flex justify-content-end">
-              <div className="col-lg-2 col-md-1 col"></div>
-              <div className="col-lg-5 col-md-4 col text-end">
-                <label htmlFor="rowPerPage" className="form-label mt-2">
-                  Rows Per Page:
-                </label>
-              </div>
-              <div className="col-lg-1 col-md-3 col text-start p-0">
-                <select
-                  className="rounded bg-color-sea-green text-white shadow p-2"
-                  style={{
-                    color: "#fff",
-                    border: "1px solid #445E84",
-                    outline: "none",
-                  }}
-                  aria-label="Rows per page"
-                  name="rowPerPage"
-                  value={rows}
-                  onChange={handleRowsPerPage}
-                >
-                  {[10, 20, 30, 40, 50].map((num) => (
-                    <option key={num} value={num}>
-                      &nbsp;{num}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                <Button
-                  className="btn bg-color-sea-green shadow me-2"
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowLeft} alt="arrow left" />
-                </Button>
-                <Button
-                  className="btn bg-color-sea-green shadow"
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowRight} alt="arrow right" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Pagination
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={data}
+          rows={rows}
+          setRows={setRows}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
         <ToastContainer />
       </div>
     </>

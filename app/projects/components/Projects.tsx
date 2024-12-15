@@ -13,7 +13,6 @@ const Projects = () => {
   const [showData, setShowData] = useState(false);
   useAuthorization("projects");
 
-
   useEffect(() => {
     // Set the background for the body
     document.body.style.backgroundImage = `url('/images/bg2.png')`;

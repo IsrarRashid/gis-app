@@ -1,12 +1,20 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { setContent } from "../features/content/contentSlice";
 
 const useAuthorization = (requiredRight: string) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const handleButtonClick = (content: string) => {
+    dispatch(setContent(content));
+  };
 
   useEffect(() => {
     const token = Cookies.get("token");
+    handleButtonClick(requiredRight);
     if (!token) {
       router.push("/login");
       return;

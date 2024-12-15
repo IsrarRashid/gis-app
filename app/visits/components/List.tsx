@@ -24,6 +24,10 @@ import useVehicle from "@/app/hooks/useVehicle";
 import useDriver from "@/app/hooks/useDriver";
 import Button from "@/app/components/Button";
 import { letterSpacing } from "html2canvas/dist/types/css/property-descriptors/letter-spacing";
+import Loader from "@/app/components/Loader";
+import { IoSearch } from "react-icons/io5";
+import TableHeader from "@/app/components/Table/TableHeader";
+import Pagination from "@/app/components/Table/Pagination";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -46,7 +50,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const { data, setData, setError, error, isLoading } = useVisits({
     refresh,
   });
-  const [filteredData, setFilteredData] = useState<Visit[]>();
   const { data: projects } = useProjects({ refresh });
   const { data: users } = useAuthentication({ refresh });
   const { data: vehicles } = useVehicle({ refresh });
@@ -56,6 +59,38 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
+
+  // State for search input
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // State for filtered data
+  const [filteredData, setFilteredData] = useState<Visit[]>([]);
+
+  // Handle search logic
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const lowercasedFilter = searchTerm.toLowerCase();
+
+    const filtered = data.filter((item) =>
+      [
+        item.id.toString(),
+        item.projectId.toString(),
+        item.status,
+        item.assignedTo.toString(),
+        item.vehicleID.toString(),
+        item.driverID.toString(),
+      ]
+        .filter((field) => field) // Remove undefined fields
+        .map((field) => field.toLowerCase())
+        .some((field) => field.includes(e.target.value.toLowerCase()))
+    );
+    setFilteredData(filtered);
+  };
+
+  // Update searchTerm and clear search if empty
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    handleSearch(e);
+  };
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -96,39 +131,14 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
-  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRows(parseInt(e?.target.value, 10));
-    setCurrentPage(1);
-  };
-
-  // Determine the data to display for the current page
-  const indexOfLastRow = currentPage * rows;
-  const indexOfFirstRow = indexOfLastRow - rows;
-  const currentData: Visit[] = data.slice(indexOfFirstRow, indexOfLastRow);
-
-  // for pagination buttons
-  const totalPages = Math.ceil(data.length / rows);
-  // Handle previous page
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Handle next page
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
   // Paginate data to display only the current page's rows
-  const paginatedData = data.slice(
+  const paginatedData = (searchTerm || status ? filteredData : data).slice(
     (currentPage - 1) * rows,
     currentPage * rows
   );
 
   const handleFilterData = (data: Visit[], status: string) => {
+    setStatus(status);
     setFilteredData(data?.filter((d: any) => d.status === status));
   };
 
@@ -138,63 +148,46 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   return (
     <>
-      {isLoading && (
-        <div className="col text-center">
-          <div className="spinner-border text-primary"></div>
-        </div>
-      )}
-      <div className="row d-flex p-3">
-        <div className="col-lg-6 col-md-6 col">
-          <h4 className="fw-bold">Visits</h4>
-        </div>
-        <div className="col-lg-6 col-md-6 col">
-          <div className="row d-flex ">
-            <div className="col d-none d-lg-block"></div>
-            <div className="col text-end">
-              <span className="fw-bold">
-                {getFormattedDate(new Date(), "short")}
-              </span>{" "}
-              Today
+      {isLoading && <Loader />}
+      <TableHeader
+        heading="Visits"
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        handleChange={handleChange}
+        status={status.toUpperCase()}
+        form={
+          <>
+            <div className="col mb-2">
+              <Button
+                className="btn btn-warning w-100 text-white fw-bold"
+                style={{ letterSpacing: 1 }}
+                onClick={() => handleFilterData(data, "pending")}
+              >
+                Pending
+              </Button>
             </div>
-          </div>
-        </div>
-      </div>
-      <div className="row d-flex">
-        <div className="col-lg-4 col-md-4 col-sm-12 mb-2">
-          <Button
-            className="btn btn-warning w-100 text-white fw-bold"
-            style={{ letterSpacing: 1 }}
-            onClick={() => handleFilterData(data, "pending")}
-          >
-            Pending
-          </Button>
-        </div>
-        <div className="col-lg-4 col-md-4 col-sm-12 mb-2">
-          <Button
-            style={{ letterSpacing: 1 }}
-            className="btn btn-info w-100 text-white fw-bold"
-            onClick={() => handleFilterData(data, "scheduled")}
-          >
-            Scheduled
-          </Button>
-        </div>
-        <div className="col-lg-4 col-md-4 col-sm-12 mb-2">
-          <Button
-            style={{ letterSpacing: 1 }}
-            className="btn btn-success w-100 text-white fw-bold"
-            onClick={() => handleFilterData(data, "completed")}
-          >
-            Completed
-          </Button>
-        </div>
-      </div>
-      <div className="row p-3">
-        <div className="col-lg-6 col-md-6 col-sm-12">
-          <p>
-            Showing: <span className="fw-bold">{data?.length} Visits</span>
-          </p>
-        </div>
-      </div>
+            <div className="col mb-2">
+              <Button
+                style={{ letterSpacing: 1 }}
+                className="btn btn-info w-100 text-white fw-bold"
+                onClick={() => handleFilterData(data, "scheduled")}
+              >
+                Scheduled
+              </Button>
+            </div>
+            <div className="col mb-2">
+              <Button
+                style={{ letterSpacing: 1 }}
+                className="btn btn-success w-100 text-white fw-bold"
+                onClick={() => handleFilterData(data, "completed")}
+              >
+                Completed
+              </Button>
+            </div>
+          </>
+        }
+      />
       <div className="table-responsive">
         <table
           className="table mb-5"
@@ -275,175 +268,130 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             </tr>
           </thead>
           <tbody>
-            {filteredData &&
-              filteredData.map((d) => (
-                <tr
-                  style={{
-                    border: ".41px solid rgba(81,81,81,0.20) !important",
-                    fontSize: ".85rem",
-                  }}
-                  key={d.id}
-                >
-                  <td>{d.id}</td>
-                  <td>{getName(d.projectId, projects)}</td>
-                  <td>{getName(d.assignedTo, users)}</td>
-                  <td style={{ whiteSpace: "nowrap" }}>
-                    {d.status === "scheduled" || d.status === "Scheduled" ? (
-                      <Image
-                        src={calender}
-                        style={{ marginBottom: "3px" }}
-                        alt="calender"
-                      />
-                    ) : d.status === "not confirmed" ||
-                      d.status === "Not Confirmed" ||
-                      d.status === "pending" ||
-                      d.status === "Pending" ? (
-                      <Image
-                        src={clock}
-                        style={{ marginBottom: "3px" }}
-                        alt="clock"
-                      />
-                    ) : d.status === "cancel" || d.status === "Cancel" ? (
-                      <Image
-                        src={cancel}
-                        style={{ marginBottom: "3px" }}
-                        alt="cancel"
-                      />
-                    ) : d.status === "completed" || d.status === "Completed" ? (
-                      <Image
-                        src={complete}
-                        style={{ marginBottom: "3px" }}
-                        alt="complete"
-                      />
-                    ) : d.status.startsWith("approved") ||
-                      d.status.startsWith("Approved") ? (
-                      <Image
-                        src={complete}
-                        style={{ marginBottom: "3px" }}
-                        alt="complete"
-                      />
-                    ) : d.status === "active" || d.status === "Active" ? (
-                      <Image
-                        src={calender}
-                        style={{ marginBottom: "3px" }}
-                        alt="calender"
-                      />
-                    ) : d.status === "draft" || d.status === "Draft" ? (
-                      <Image
-                        src={clock}
-                        style={{ marginBottom: "3px" }}
-                        alt="clock"
-                      />
-                    ) : (
-                      ""
-                    )}
-                    &nbsp;{d.status}
-                  </td>
-                  <td>{d.latitude}</td>
-                  <td>{d.longitude}</td>
-                  <td>{d.vehicleID ? getName(d.vehicleID, vehicles) : ""}</td>
-                  <td>{d.driverID ? getName(d.driverID, drivers) : ""}</td>
-                  <td>{getFormattedDate(new Date(d.fromDate), "numeric")}</td>
-                  <td>{getFormattedDate(new Date(d.toDate), "numeric")}</td>
-                  <td>
-                    {d.createdAt &&
-                      getFormattedDate(new Date(d.createdAt), "numeric")}
-                  </td>
-                  <td>
-                    {d.updatedAt &&
-                      getFormattedDate(new Date(d.updatedAt), "numeric")}
-                  </td>
-                  <td>
-                    {d.complete_at &&
-                      getFormattedDate(new Date(d.complete_at), "numeric")}
-                  </td>
-                  <td>
-                    {d.submitted_at &&
-                      getFormattedDate(new Date(d.submitted_at), "numeric")}
-                  </td>
-                  <td>
-                    {d.issued_at &&
-                      getFormattedDate(new Date(d.issued_at), "numeric")}
-                  </td>
-                  <td>
-                    {d.reportPath &&
-                      getFormattedDate(new Date(d.reportPath), "numeric")}
-                  </td>
-                  <td>
-                    <DeleteModal handleDelete={handleDelete} id={d.id} />
-                  </td>
-                  <td>
-                    <Form
-                      api={visitAPI}
-                      method="PUT"
-                      id={d.id}
-                      setRefresh={setRefresh}
-                      refresh={refresh}
+            {paginatedData.map((d) => (
+              <tr
+                style={{
+                  border: ".41px solid rgba(81,81,81,0.20) !important",
+                  fontSize: ".85rem",
+                }}
+                key={d.id}
+              >
+                <td>{d.id}</td>
+                <td>{getName(d.projectId, projects)}</td>
+                <td>{getName(d.assignedTo, users)}</td>
+                <td style={{ whiteSpace: "nowrap" }}>
+                  {d.status === "scheduled" || d.status === "Scheduled" ? (
+                    <Image
+                      src={calender}
+                      style={{ marginBottom: "3px" }}
+                      alt="calender"
                     />
-                  </td>
-                </tr>
-              ))}
+                  ) : d.status === "not confirmed" ||
+                    d.status === "Not Confirmed" ||
+                    d.status === "pending" ||
+                    d.status === "Pending" ? (
+                    <Image
+                      src={clock}
+                      style={{ marginBottom: "3px" }}
+                      alt="clock"
+                    />
+                  ) : d.status === "cancel" || d.status === "Cancel" ? (
+                    <Image
+                      src={cancel}
+                      style={{ marginBottom: "3px" }}
+                      alt="cancel"
+                    />
+                  ) : d.status === "completed" || d.status === "Completed" ? (
+                    <Image
+                      src={complete}
+                      style={{ marginBottom: "3px" }}
+                      alt="complete"
+                    />
+                  ) : d.status.startsWith("approved") ||
+                    d.status.startsWith("Approved") ? (
+                    <Image
+                      src={complete}
+                      style={{ marginBottom: "3px" }}
+                      alt="complete"
+                    />
+                  ) : d.status === "active" || d.status === "Active" ? (
+                    <Image
+                      src={calender}
+                      style={{ marginBottom: "3px" }}
+                      alt="calender"
+                    />
+                  ) : d.status === "draft" || d.status === "Draft" ? (
+                    <Image
+                      src={clock}
+                      style={{ marginBottom: "3px" }}
+                      alt="clock"
+                    />
+                  ) : (
+                    ""
+                  )}
+                  &nbsp;{d.status}
+                </td>
+                <td>{d.latitude}</td>
+                <td>{d.longitude}</td>
+                <td>{d.vehicleID ? getName(d.vehicleID, vehicles) : ""}</td>
+                <td>{d.driverID ? getName(d.driverID, drivers) : ""}</td>
+                <td>{getFormattedDate(new Date(d.fromDate), "short")}</td>
+                <td>{getFormattedDate(new Date(d.toDate), "short")}</td>
+                <td>
+                  {d.createdAt &&
+                    getFormattedDate(new Date(d.createdAt), "short")}
+                </td>
+                <td>
+                  {d.updatedAt &&
+                    getFormattedDate(new Date(d.updatedAt), "short")}
+                </td>
+                <td>
+                  {d.complete_at &&
+                    getFormattedDate(new Date(d.complete_at), "short")}
+                </td>
+                <td>
+                  {d.submitted_at &&
+                    getFormattedDate(new Date(d.submitted_at), "short")}
+                </td>
+                <td>
+                  {d.issued_at &&
+                    getFormattedDate(new Date(d.issued_at), "short")}
+                </td>
+                <td>
+                  {d.reportPath &&
+                    getFormattedDate(new Date(d.reportPath), "short")}
+                </td>
+                <td>
+                  <DeleteModal handleDelete={handleDelete} id={d.id} />
+                </td>
+                <td>
+                  <Form
+                    api={visitAPI}
+                    method="PUT"
+                    id={d.id}
+                    setRefresh={setRefresh}
+                    refresh={refresh}
+                  />
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <td colSpan={18} className="p-0">
+                <Pagination
+                  searchTerm={searchTerm}
+                  filteredData={filteredData}
+                  data={data}
+                  rows={rows}
+                  setRows={setRows}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                  status={status}
+                />
+              </td>
+            </tr>
           </tbody>
         </table>
-        <div className="row d-flex mb-3">
-          <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
-            {/* Display the current range and total */}
-            {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
-            {data.length}
-          </div>
-          <div className="col-lg-6 col-md-9 col">
-            <div className="row d-flex justify-content-end">
-              <div className="col-lg-2 col-md-1 col"></div>
-              <div className="col-lg-5 col-md-4 col text-end">
-                <label htmlFor="rowPerPage" className="form-label mt-2">
-                  Rows Per Page:
-                </label>
-              </div>
-              <div className="col-lg-1 col-md-3 col text-start p-0">
-                <select
-                  className="rounded bg-color-sea-green text-white shadow p-2"
-                  style={{
-                    color: "#fff",
-                    border: "1px solid #445E84",
-                    outline: "none",
-                  }}
-                  aria-label="Rows per page"
-                  name="rowPerPage"
-                  value={rows}
-                  onChange={handleRowsPerPage}
-                >
-                  {[10, 20, 30, 40, 50].map((num) => (
-                    <option key={num} value={num}>
-                      &nbsp;{num}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                <Button
-                  className="btn bg-color-sea-green shadow me-2"
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowLeft} alt="arrow left" />
-                </Button>
-                <Button
-                  className="btn bg-color-sea-green shadow"
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowRight} alt="arrow right" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+
         <ToastContainer />
       </div>
     </>

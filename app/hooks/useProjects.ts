@@ -3,6 +3,7 @@ import useData from "./useData";
 
 export interface Project {
   id: number;
+  gsNo: string;
   sectorId: number;
   name: string;
   address: string;

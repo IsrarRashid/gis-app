@@ -34,12 +34,12 @@ import ProjectModal from "./ProjectModal";
 
 const lexend = Lexend({
   subsets: ["latin"],
-  weight: "300",
+  weight: "400",
 });
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: "300",
+  weight: "400",
 });
 
 const SummaryDashboard = () => {

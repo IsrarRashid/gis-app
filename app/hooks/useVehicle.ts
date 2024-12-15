@@ -9,7 +9,7 @@ export interface Vehicle {
   model: string;
   color: string;
   trasnmission: string;
-  seatsCapacity: 0;
+  seatsCapacity: number;
   fuelType: string;
   vehicleImage: string;
   vehicleIcon: string;

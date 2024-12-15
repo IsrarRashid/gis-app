@@ -6,25 +6,35 @@ import {
   Map,
   AdvancedMarker,
   InfoWindow,
+  useMap,
 } from "@vis.gl/react-google-maps";
-import { Fragment, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import StaffCard from "../Map/StaffCard";
 import { Position, StaffTracking, TrackingRequestData } from "../DashboardST";
 import { reverseGeoCodingAPI, staffTrackingAPI } from "@/app/APIs";
 import apiClient from "@/app/services/api-client";
+import locationPointRoadBig from "@/public/images/locationPointRoadBig.png";
 
 interface Props {
-  data: StaffTracking[];
+  recordingData: StaffTracking[];
   markerPositions: { [userId: string]: Position };
-  trackingRequestBody: TrackingRequestData;
+  fetchRecordingData: () => Promise<void>;
+  position: Position;
+  setPosition: Dispatch<SetStateAction<Position>>;
+  path: Position[];
 }
 
-const RecordingStaffTrackingMap: any = ({ trackingRequestBody }: Props) => {
-  const [selectedStaffIndex, setSelectedStaffIndex] = useState(0);
+const RecordingStaffTrackingMap: any = ({
+  fetchRecordingData,
+  position,
+  setPosition,
+  path,
+  recordingData,
+}: Props) => {
+  const [selectedStaffIndex, setSelectedStaffIndex] = useState<
+    number | undefined
+  >(0);
   const [open, setOpen] = useState(false);
-  const [position, setPosition] = useState<Position>(); // Starting position (latitude, longitude)
-  const [path, setPath] = useState<Position[]>([]); // Empty path initially
-  const [data, setData] = useState<StaffTracking[]>();
   const [arrayIndex, setArrayIndex] = useState(0);
 
   const [startLocation, setStartLocation] = useState<string>();
@@ -32,11 +42,13 @@ const RecordingStaffTrackingMap: any = ({ trackingRequestBody }: Props) => {
 
   const fetchStartLocationAddress = async (data: StaffTracking) => {
     try {
-      const response = await fetch(
-        `${reverseGeoCodingAPI}${data.startAddressLat},${data.startAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
-      );
-      const resopnseData = await response.json();
-      setStartLocation(resopnseData.results[0].formatted_address);
+      if (data && data.startAddressLat && data.startAddressLong) {
+        const response = await fetch(
+          `${reverseGeoCodingAPI}${data.startAddressLat},${data.startAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
+        );
+        const resopnseData = await response.json();
+        setStartLocation(resopnseData.results[0].formatted_address);
+      }
     } catch (error) {
       console.error("Error fetching coordinates:", error);
     }
@@ -44,11 +56,13 @@ const RecordingStaffTrackingMap: any = ({ trackingRequestBody }: Props) => {
 
   const fetchEndLocationAddress = async (data: StaffTracking) => {
     try {
-      const response = await fetch(
-        `${reverseGeoCodingAPI}${data.endAddressLat},${data.endAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
-      );
-      const resopnseData = await response.json();
-      setEndLocation(resopnseData.results[0].formatted_address);
+      if (data && data.endAddressLat && data.endAddressLong) {
+        const response = await fetch(
+          `${reverseGeoCodingAPI}${data.endAddressLat},${data.endAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
+        );
+        const resopnseData = await response.json();
+        setEndLocation(resopnseData.results[0].formatted_address);
+      }
     } catch (error) {
       console.error("Error fetching coordinates:", error);
     }
@@ -60,36 +74,11 @@ const RecordingStaffTrackingMap: any = ({ trackingRequestBody }: Props) => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await apiClient.post(
-          staffTrackingAPI,
-          trackingRequestBody
-        );
-        const responseData: StaffTracking[] = await response.data.data;
-        setData(response.data.data);
-        const coordinatesList = responseData[0]?.coordinates;
-        if (coordinatesList.length > 0) {
-          const newPath: Position[] = coordinatesList.map((coord) => ({
-            lat: parseFloat(coord.latitude),
-            lng: parseFloat(coord.longitude),
-          }));
-
-          setPath(newPath);
-          setPosition({
-            lat: parseFloat(coordinatesList[0].latitude),
-            lng: parseFloat(coordinatesList[0].longitude),
-          }); // Set initial position to the first coordinate
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchData();
+    fetchRecordingData();
   }, []);
 
   useEffect(() => {
-    if (path.length > 0 && arrayIndex < path.length - 1) {
+    if (path && path.length > 0 && arrayIndex < path.length - 1) {
       let startTime: number | null = null;
 
       const animate = (timestamp: number) => {
@@ -114,58 +103,141 @@ const RecordingStaffTrackingMap: any = ({ trackingRequestBody }: Props) => {
     }
   }, [arrayIndex, path]);
 
+  const MapWithMarkers = () => {
+    const map = useMap();
+
+    const markers = recordingData.map((d) => {
+      return {
+        position: { position },
+      };
+    });
+
+    useEffect(() => {
+      if (map && markers.length > 0) {
+        const bounds = new window.google.maps.LatLngBounds();
+        markers.forEach((marker) => bounds.extend(position));
+        map.fitBounds(bounds);
+      }
+    }, [map, markers]);
+
+    const handleMarkerClick = (position: { lat: number; lng: number }) => {
+      if (map) {
+        map.setCenter(position); // Set the center to the clicked marker
+        map.setZoom(17); // Adjust zoom level
+      }
+    };
+
+    return (
+      <>
+        {recordingData.map((d) => (
+          <AdvancedMarker
+            key={d.userId}
+            position={position}
+            onClick={() => {
+              setSelectedStaffIndex(parseInt(d.userId));
+            }}
+          >
+            <span>
+              <img
+                src="/images/projectLocation.png"
+                alt="projectLocation"
+                style={{ width: "60px", height: "70px" }}
+              />
+            </span>
+          </AdvancedMarker>
+        ))}
+
+        {recordingData.map(
+          (d) =>
+            selectedStaffIndex === parseInt(d.userId) && (
+              <InfoWindow
+                key={d.userId}
+                position={position}
+                pixelOffset={[0, -60]}
+              >
+                <StaffCard
+                  data={d}
+                  setSelectedStaffIndex={setSelectedStaffIndex}
+                  startLocation={startLocation}
+                  endLocation={endLocation}
+                />
+              </InfoWindow>
+            )
+        )}
+      </>
+    );
+  };
+
   return (
     <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
       <div style={{ width: "100%", height: "840px" }}>
-        <label htmlFor="">recording map</label>
-        {data && data.length > 0 && (
+        {recordingData && recordingData.length > 0 && (
           <Map
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
             defaultZoom={6}
-            defaultCenter={position}
+            center={{ lat: position.lat + 0.85, lng: position.lng }}
             gestureHandling={"greedy"}
           >
-            {data.map((d) => (
+            {recordingData.map((d) => (
               <Fragment key={d.userId}>
                 <AdvancedMarker
                   position={position}
                   onClick={() => {
-                    setSelectedStaffIndex(parseInt(d.userId));
+                    selectedStaffIndex === parseInt(d.userId)
+                      ? setSelectedStaffIndex(-1)
+                      : setSelectedStaffIndex(parseInt(d.userId));
                     fetchStartLocationAddress(d);
                     fetchEndLocationAddress(d);
                   }}
                 >
                   <span>
-                    <img
-                      src="/images/locationPointRoadBig.png"
-                      alt="locationPointRoadBig"
-                      style={{ width: "60px", height: "70px" }}
-                    />
+                    <div className="position-relative">
+                      <div className="position-absolute">
+                        <img
+                          src="/images/locationPointRoadBig.png"
+                          alt="locationPointRoadBig"
+                          style={{
+                            width: "60px",
+                            height: "70px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </div>
+                      <div className="position-absolute">
+                        <img
+                          className="img-fluid rounded-circle"
+                          src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.userPicture}`}
+                          alt="staffMember"
+                          style={{
+                            marginLeft: "10px",
+                            marginTop: "2px",
+                            width: "42px",
+                            height: "42px",
+                            objectFit: "cover",
+                            objectPosition: "center top",
+                          }}
+                        />
+                      </div>
+                    </div>
                   </span>
+                  {selectedStaffIndex === parseInt(d.userId) && (
+                    <InfoWindow
+                      position={position}
+                      pixelOffset={[30, 0]}
+                      onCloseClick={() => setOpen(false)}
+                    >
+                      <StaffCard
+                        data={d}
+                        setSelectedStaffIndex={setSelectedStaffIndex}
+                        startLocation={startLocation}
+                        endLocation={endLocation}
+                      />
+                    </InfoWindow>
+                  )}
                 </AdvancedMarker>
-                {selectedStaffIndex === parseInt(d.userId) && (
-                  <InfoWindow
-                    position={{
-                      lat: parseFloat(
-                        d.coordinates[d.coordinates.length - 1].latitude
-                      ),
-                      lng: parseFloat(
-                        d.coordinates[d.coordinates.length - 1].longitude
-                      ),
-                    }}
-                    pixelOffset={[0, -60]}
-                    onCloseClick={() => setOpen(false)}
-                  >
-                    <StaffCard
-                      data={d}
-                      setSelectedStaffIndex={setSelectedStaffIndex}
-                      startLocation={startLocation}
-                      endLocation={endLocation}
-                    />
-                  </InfoWindow>
-                )}
               </Fragment>
             ))}
+            {/* <MapWithMarkers /> */}
           </Map>
         )}
       </div>

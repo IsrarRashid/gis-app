@@ -32,6 +32,10 @@ import useAuthentication from "@/app/hooks/useAuthentication";
 import Button from "@/app/components/Button";
 import SmdpAllProjectsSyncForm from "./SmdpAllProjectsSyncForm";
 import search2 from "../../../public/icons/search2.svg";
+import Loader from "@/app/components/Loader";
+import { IoSearch } from "react-icons/io5";
+import TableHeader from "@/app/components/Table/TableHeader";
+import Pagination from "@/app/components/Table/Pagination";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -63,9 +67,11 @@ const ProjectsList = ({
   showData,
   setShowData,
 }: ListProps) => {
-  const { data, setData, error, setError, isLoading } = useProjects({
-    refresh,
-  });
+  const { data, setData, error, setError, isLoading, setLoading } = useProjects(
+    {
+      refresh,
+    }
+  );
   const { data: sectorsData } = useSectors({ refresh });
   const { data: superGroups } = useSuperGroups({ refresh });
   const { data: users } = useAuthentication({ refresh });
@@ -82,32 +88,23 @@ const ProjectsList = ({
 
   // State for filtered data
   const [filteredData, setFilteredData] = useState<Project[]>([]);
-  const [searchEnable, setsearchEnable] = useState(false);
 
   // Handle search logic
-  const handleSearch = () => {
-    const lowercasedFilter = searchTerm.toLowerCase();
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const lowercasedFilter = searchTerm.toLowerCase();
     const filtered = data.filter((item) =>
-      [item.id.toString(), item.name, item.status]
+      [item.id.toString(), item.gsNo, item.name, item.status]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(lowercasedFilter))
+        .some((field) => field.includes(e.target.value.toLowerCase()))
     );
     setFilteredData(filtered);
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm !== "") {
-      setsearchEnable(true);
-      handleSearch();
-    }
   };
 
   // Update searchTerm and clear search if empty
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setsearchEnable(false);
+    handleSearch(e);
   };
 
   useEffect(() => {
@@ -153,37 +150,17 @@ const ProjectsList = ({
   const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
-  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRows(parseInt(e?.target.value, 10));
-    setCurrentPage(1);
-  };
-
   // Determine the data to display for the current page
   const indexOfLastRow = currentPage * rows;
   const indexOfFirstRow = indexOfLastRow - rows;
   const currentData = data.slice(indexOfFirstRow, indexOfLastRow);
 
-  // for pagination buttons
-  const totalPages = Math.ceil(data.length / rows);
-  // Handle previous page
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Handle next page
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
   // Paginate data to display only the current page's rows
-  const paginatedData = data.slice(
+  const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
     currentPage * rows
   );
+
   const hideCompleted = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       // Filter the data to hide completed items
@@ -211,31 +188,22 @@ const ProjectsList = ({
   return (
     <>
       <>
-        {isLoading && (
-          <div className="col text-center">
-            <div className="spinner-border text-primary"></div>
-          </div>
-        )}
-        <div className="row d-flex p-3">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <h4 className="fw-bold">Projects</h4>
-          </div>
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <div className="row d-flex ">
-              <div className="col d-none d-lg-block"></div>
-              <div className="col text-end">
-                <span className="fw-bold">
-                  {getFormattedDate(new Date(), "short")}
-                </span>{" "}
-                Today
-              </div>
+        {isLoading && <Loader />}
+        <TableHeader
+          heading="Projects"
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={data}
+          handleChange={handleChange}
+          form={
+            <>
               <div className="col text-end mb-2">
                 {/* <ProjectForm
-                  api={projectAPI}
-                  method="POST"
-                  setRefresh={setRefresh}
-                  refresh={refresh}
-                /> */}
+              api={projectAPI}
+              method="POST"
+              setRefresh={setRefresh}
+              refresh={refresh}
+            /> */}
                 <SmdpSyncForm
                   api={smdpSyncApi}
                   method="POST"
@@ -255,46 +223,9 @@ const ProjectsList = ({
                   setShowData={setShowData}
                 />
               </div>
-            </div>
-          </div>
-        </div>
-        <div className="row d-flex justify-content-between p-3">
-          <div className="col-lg-6 col-md-5 col-sm-12">
-            <p>
-              Showing:{" "}
-              <span className="fw-bold">
-                {searchEnable ? filteredData.length : data?.length} Projects
-              </span>
-            </p>
-          </div>
-          <div className="col-lg-4 col-md-6 col-sm-12">
-            <form onSubmit={handleSearchSubmit}>
-              <div className="input-group">
-                <span
-                  className="input-group-text pe-0 border-0 rounded-end rounded-pill"
-                  id="basic-addon1"
-                  style={{ background: "#c6def5" }}
-                >
-                  <Image src={search2} alt="search2" width={20} height={20} />
-                </span>
-                <input
-                  type="text"
-                  className="form-control border-0 rounded-start"
-                  style={{ background: "rgba(16, 143, 168, .1)" }}
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={handleChange}
-                />
-                <button
-                  className="btn rounded-start rounded-pill bg-color-sea-green text-white"
-                  type="submit"
-                >
-                  Search
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+            </>
+          }
+        />
       </>
       <div className="table-responsive">
         <table
@@ -310,6 +241,10 @@ const ProjectsList = ({
               }}
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
+              <TableHeading
+                name="gs No"
+                handleSort={() => handleSort("gsNo")}
+              />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
                 name="sector"
@@ -322,13 +257,13 @@ const ProjectsList = ({
               <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th>
               {/* <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th> */}
               <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th>
-              <th colSpan={2}>
+              {/* <th colSpan={1}>
                 <div className="text-center"></div>
-              </th>
+              </th> */}
             </tr>
           </thead>
           <tbody>
-            {(searchEnable ? filteredData : paginatedData).map((d) => (
+            {paginatedData.map((d) => (
               <tr
                 className={dmSans.className}
                 style={{
@@ -338,48 +273,47 @@ const ProjectsList = ({
                 key={d.id}
               >
                 <td>{d.id}</td>
+                <td>{d.gsNo}</td>
                 <td>{d.name}</td>
                 <td>{getName(d.sectorId, sectorsData)}</td>
                 <td style={{ whiteSpace: "nowrap" }}>
-                  {d.status === "scheduled" || d.status === "Scheduled" ? (
+                  {d.status.toLowerCase() === "scheduled" ? (
                     <Image
                       src={calender}
                       style={{ marginBottom: "3px" }}
                       alt="calender"
                     />
-                  ) : d.status === "not confirmed" ||
-                    d.status === "Not Confirmed" ? (
+                  ) : d.status.toLowerCase() === "not confirmed" ? (
                     <Image
                       src={clock}
                       style={{ marginBottom: "3px" }}
                       alt="clock"
                     />
-                  ) : d.status === "cancel" || d.status === "Cancel" ? (
+                  ) : d.status.toLowerCase() === "un-approved" ? (
                     <Image
                       src={cancel}
                       style={{ marginBottom: "3px" }}
                       alt="cancel"
                     />
-                  ) : d.status === "completed" || d.status === "Completed" ? (
+                  ) : d.status.toLowerCase() === "completed" ? (
                     <Image
                       src={complete}
                       style={{ marginBottom: "3px" }}
                       alt="complete"
                     />
-                  ) : d.status.startsWith("approved") ||
-                    d.status.startsWith("Approved") ? (
+                  ) : d.status.toLowerCase().startsWith("approved") ? (
                     <Image
                       src={complete}
                       style={{ marginBottom: "3px" }}
                       alt="complete"
                     />
-                  ) : d.status === "active" || d.status === "Active" ? (
+                  ) : d.status.toLowerCase() === "active" ? (
                     <Image
                       src={calender}
                       style={{ marginBottom: "3px" }}
                       alt="calender"
                     />
-                  ) : d.status === "draft" || d.status === "Draft" ? (
+                  ) : d.status.toLowerCase() === "draft" ? (
                     <Image
                       src={clock}
                       style={{ marginBottom: "3px" }}
@@ -399,13 +333,13 @@ const ProjectsList = ({
                 <td className="text-center">
                   <GroupingForm id={d.id} options={superGroups} />
                 </td>
-                <td>
+                {/* <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
+                </td> */}
                 {/* <td>
                   <DownloadPDFBtn />
                 </td> */}
-                <td>
+                {/* <td>
                   <ProjectForm
                     api={projectAPI}
                     method="PUT"
@@ -413,70 +347,20 @@ const ProjectsList = ({
                     setRefresh={setRefresh}
                     refresh={refresh}
                   />
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="row d-flex mb-3">
-          <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
-            {/* Display the current range and total */}
-            {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
-            {data.length}
-          </div>
-          <div className="col-lg-6 col-md-9 col">
-            <div className="row d-flex justify-content-end">
-              <div className="col-lg-2 col-md-1 col"></div>
-              <div className="col-lg-5 col-md-4 col text-end">
-                <label htmlFor="rowPerPage" className="form-label mt-2">
-                  Rows Per Page:
-                </label>
-              </div>
-              <div className="col-lg-1 col-md-3 col text-start p-0">
-                <select
-                  className="rounded bg-color-sea-green text-white shadow p-2"
-                  style={{
-                    color: "#fff",
-                    border: "1px solid #445E84",
-                    outline: "none",
-                  }}
-                  aria-label="Rows per page"
-                  name="rowPerPage"
-                  value={rows}
-                  onChange={handleRowsPerPage}
-                >
-                  {[10, 20, 30, 40, 50].map((num) => (
-                    <option key={num} value={num}>
-                      &nbsp;{num}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                <Button
-                  className="btn bg-color-sea-green shadow me-2"
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowLeft} alt="arrow left" />
-                </Button>
-                <Button
-                  className="btn bg-color-sea-green shadow"
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowRight} alt="arrow right" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Pagination
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={data}
+          rows={rows}
+          setRows={setRows}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
         <ToastContainer />
       </div>
     </>

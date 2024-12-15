@@ -34,7 +34,7 @@ const AnimatedCounter = ({ from, to, animationOptions }: Props) => {
       ease: "easeOut",
       ...animationOptions,
       onUpdate(value) {
-        element.textContent = value.toFixed(0);
+        element.textContent = value ? value?.toFixed(0) : "0";
       },
     });
     return () => {

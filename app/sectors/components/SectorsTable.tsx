@@ -1,8 +1,5 @@
 "use client";
-import Image from "next/image";
-import arrowLeft from "../../../public/icons/arrow-left.svg";
-import arrowRight from "../../../public/icons/arrow-right.svg";
-import { useCallback, useEffect, useState } from "react";
+import { SetStateAction, useState } from "react";
 import DeleteModal from "@/app/components/DeleteModal";
 import { sectorAPI } from "@/app/APIs";
 import SectorForm from "./SectorForm";
@@ -13,8 +10,9 @@ import useSectors, { Sector } from "@/app/hooks/useSectors";
 import { DM_Sans, Inter } from "next/font/google";
 import { getFormattedDate } from "@/app/utils";
 import TableHeading from "@/app/components/TableHeading";
-import Button from "@/app/components/Button";
-import search2 from "../../../public/icons/search2.svg";
+import Loader from "@/app/components/Loader";
+import TableHeader from "@/app/components/Table/TableHeader";
+import Pagination from "@/app/components/Table/Pagination";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -40,33 +38,23 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   // State for filtered data
   const [filteredData, setFilteredData] = useState<Sector[]>([]);
 
-  // Update filteredData when searchTerm or data changes
-  useEffect(() => {
-    if (searchTerm) {
-      // Filter the data based on the search term
-      const lowercasedFilter = searchTerm.toLowerCase();
-      const filtered = data.filter((item) => {
-        // Search across multiple fields (id, name, description, sortId, createdAt, etc.)
-        return (
-          item.id.toString().includes(lowercasedFilter) ||
-          item.name.toString().includes(lowercasedFilter) ||
-          item.description.toString().includes(lowercasedFilter) ||
-          item.sortId.toString().includes(lowercasedFilter)
-          // ||
-          // new Date(item.createdAt)
-          //   .toLocaleDateString()
-          //   .includes(lowercasedFilter) ||
-          // new Date(item.updateAt)
-          //   .toLocaleDateString()
-          //   .includes(lowercasedFilter)
-        );
-      });
-      setFilteredData(filtered);
-    } else {
-      // If search input is empty, reset filteredData to all data
-      setFilteredData(data);
-    }
-  }, [searchTerm, data]);
+  // Handle search logic
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const lowercasedFilter = searchTerm.toLowerCase();
+    const filtered = data.filter((item) =>
+      [item.id.toString(), item.name, item.description, item.sortId.toString()]
+        .filter((field) => field) // Remove undefined fields
+        .map((field) => field.toLowerCase())
+        .some((field) => field.includes(e.target.value.toLowerCase()))
+    );
+    setFilteredData(filtered);
+  };
+
+  // Update searchTerm and clear search if empty
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    handleSearch(e);
+  };
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -93,28 +81,11 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
-  // Determine the data to display for the current page
-  const indexOfLastRow = currentPage * rows;
-  const indexOfFirstRow = indexOfLastRow - rows;
-  const paginatedData = data.slice(indexOfFirstRow, indexOfLastRow);
-
-  // Update paginated data when data or pagination state changes
-  useEffect(() => {
-    setCurrentPage(1); // Reset to first page on data change
-  }, [data]);
-
-  // Pagination controls
-  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRows(parseInt(e.target.value, 10));
-    setCurrentPage(1);
-  };
-  const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-  const handleNextPage = () => {
-    const totalPages = Math.ceil(data.length / rows);
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+  // Paginate data to display only the current page's rows
+  const paginatedData = (searchTerm ? filteredData : data).slice(
+    (currentPage - 1) * rows,
+    currentPage * rows
+  );
 
   const getParentSector = (parsentSectorId: number, data: Sector[]) => {
     const sector = data.find((sector) => sector.id === parsentSectorId);
@@ -137,74 +108,25 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
 
   return (
     <>
-      {isLoading && (
-        <div className="col text-center">
-          <div className="spinner-border text-primary"></div>
-        </div>
-      )}
-      <div className="row d-flex p-3">
-        <div className="col-lg-6 col-md-6 col-sm-12">
-          <h4 className="fw-bold">Sectors</h4>
-        </div>
-        <div className="col-lg-6 col-md-6 col-sm-12">
-          <div className="row d-flex ">
-            <div className="col d-none d-lg-block"></div>
-            <div className="col text-end mt-2">
-              <span className="fw-bold">
-                {getFormattedDate(new Date(), "short")}
-              </span>
-              &nbsp;Today
-            </div>
-            <div className="col text-end">
-              <SectorForm
-                api={sectorAPI}
-                method="POST"
-                setRefresh={setRefresh}
-                refresh={refresh}
-                setData={setData}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="row d-flex justify-content-between p-3">
-        <div className="col-lg-6 col-md-5 col-sm-12">
-          <p>
-            Showing:{" "}
-            <span className="fw-bold">
-              {searchTerm ? filteredData.length : data?.length} Sectors
-            </span>
-          </p>
-        </div>
-        <div className="col-lg-4 col-md-6 col-sm-12">
-          <div className="input-group">
-            <span
-              className="input-group-text pe-0 border-0 rounded-end rounded-pill"
-              id="basic-addon1"
-              style={{ background: "rgba(16, 143, 168, .1)" }}
-            >
-              <Image
-                src={search2}
-                alt="search2"
-                width={20}
-                height={20}
-                style={{
-                  color: "#7e7e7e !important",
-                }}
-              />
-            </span>
-            <input
-              type="text"
-              className="form-control border-0 rounded-start rounded-pill"
-              style={{ background: "rgba(16, 143, 168, .1)" }}
-              id="username"
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+      {isLoading && <Loader />}
+      <TableHeader
+        heading="Sectors"
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        handleChange={handleChange}
+        form={
+          <div className="col-auto">
+            <SectorForm
+              api={sectorAPI}
+              method="POST"
+              setRefresh={setRefresh}
+              refresh={refresh}
+              setData={setData}
             />
           </div>
-        </div>
-      </div>
+        }
+      />
       <div className="table-responsive">
         <table
           className="table mb-5"
@@ -244,7 +166,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
             </tr>
           </thead>
           <tbody>
-            {(searchTerm ? filteredData : paginatedData).map((d) => (
+            {paginatedData.map((d) => (
               <tr
                 className={dmSans.className}
                 style={{
@@ -260,11 +182,11 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                 <td>{d.sortId}</td>
                 <td>
                   {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "numeric")}
+                    getFormattedDate(new Date(d.createdAt), "short")}
                 </td>
                 <td>
                   {d.updateAt &&
-                    getFormattedDate(new Date(d.updateAt), "numeric")}
+                    getFormattedDate(new Date(d.updateAt), "short")}
                 </td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
@@ -283,65 +205,15 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
             ))}
           </tbody>
         </table>
-        <div className="row d-flex mb-3">
-          <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
-            {/* Display the current range and total */}
-            {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
-            {data.length}
-          </div>
-          <div className="col-lg-6 col-md-9 col">
-            <div className="row d-flex justify-content-end">
-              <div className="col-lg-2 col-md-1 col"></div>
-              <div className="col-lg-5 col-md-4 col text-end">
-                <label htmlFor="rowPerPage" className="form-label mt-2">
-                  Rows Per Page:
-                </label>
-              </div>
-              <div className="col-lg-1 col-md-3 col text-start p-0">
-                <select
-                  className="rounded bg-color-sea-green text-white shadow p-2"
-                  style={{
-                    color: "#fff",
-                    border: "1px solid #445E84",
-                    outline: "none",
-                  }}
-                  aria-label="Rows per page"
-                  name="rowPerPage"
-                  value={rows}
-                  onChange={handleRowsPerPage}
-                >
-                  {[10, 20, 30, 40, 50].map((num) => (
-                    <option key={num} value={num}>
-                      &nbsp;{num}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-lg-3 col-md-4 col-sm-12 text-end">
-                <Button
-                  className="btn bg-color-sea-green shadow me-2"
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowLeft} alt="arrow left" />
-                </Button>
-                <Button
-                  className="btn bg-color-sea-green shadow"
-                  onClick={handleNextPage}
-                  disabled={currentPage === Math.ceil(data.length / rows)}
-                  style={{
-                    border: "1px solid #445E84",
-                  }}
-                >
-                  <Image src={arrowRight} alt="arrow right" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Pagination
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={data}
+          rows={rows}
+          setRows={setRows}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
         <ToastContainer />
       </div>
     </>

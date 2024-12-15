@@ -110,8 +110,28 @@ select {
   border-radius: 5px;
 }
 
+.fs26px {
+  font-size: 1.625rem !important;
+}
+
+.fs24px {
+  font-size: 1.5rem !important;
+}
+
+.fs22px {
+  font-size: 1.375rem !important;
+}
+
+.fs20px {
+  font-size: 1.25rem !important;
+}
+
 .fs18px {
   font-size: 1.125rem !important;
+}
+
+.fs17px {
+  font-size: 1.063rem !important;
 }
 
 .fs14px {
@@ -160,73 +180,6 @@ select {
   font-weight: 500 !important;
 }
 
-/* custom scroll bar */
-::-webkit-scrollbar {
-  width: 6px; /* Width of the scrollbar */
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Color of the scrollbar track */
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888; /* Color of the scrollbar handle */
-  border-radius: 10px; /* Rounded edges of the scrollbar */
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Darker color on hover */
-}
-
-/* For Firefox */
-/* html {
-  scrollbar-width: thin;
-  scrollbar-color: #888 #f1f1f1;
-} */
-
-/* Optional: Add scrollbar to specific element */
-.custom-scrollbar {
-  overflow-y: auto;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #888;
-  border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
-}
-
-/* Style the horizontal scrollbar inside the table container */
-/* For WebKit-based browsers (Chrome, Safari, Edge) */
-.table-responsive::-webkit-scrollbar {
-  height: 6px; /* Height of the horizontal scrollbar */
-}
-
-.table-responsive::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Color of the scrollbar track */
-}
-
-.table-responsive::-webkit-scrollbar-thumb {
-  background: #888; /* Color of the scrollbar handle */
-  border-radius: 10px; /* Rounded edges of the scrollbar */
-}
-
-.table-responsive::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Darker color on hover */
-}
-
-/* For Firefox */
-.table-responsive {
-  scrollbar-width: thin; /* Make the scrollbar thin */
-  scrollbar-color: #888 #f1f1f1; /* Handle and track color */
-}
-
 .leaflet-popup-content {
   margin: 0 !important;
 }
@@ -247,4 +200,36 @@ select {
 
 .gm-style-iw button.gm-ui-hover-effect {
   display: none !important;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #22a3bd;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #108fa8;
+}
+
+#dateFilterSideNavAccordian .accordion-button {
+  background-color: rgba(180, 222, 240, 0.9) !important;
+  box-shadow: none;
+  padding: 10px;
+  font-size: 12.8px;
+}
+
+#dateFilterSideNavAccordian .accordion-button:not(.collapsed) {
+  background-color: red;
+  box-shadow: none;
 }

@@ -1,15 +1,17 @@
-import React from "react";
-import { SingleProjectDashboard } from "../ProjectDetailsDashboard";
+import React, { useEffect } from "react";
+import { Attributes, SingleProjectDashboard } from "../ProjectDetailsDashboard";
+import Image from "next/image";
+import RenderRichText from "../RenderRichText";
 
 interface Props {
-  data: SingleProjectDashboard;
+  data: Attributes;
+  setSelectedStaffIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ProjectCard = ({ data }: Props) => {
+const ProjectCard = ({ data, setSelectedStaffIndex }: Props) => {
   return (
     <div
       style={{
-        width: "300px",
         padding: "10px",
         borderRadius: "8px",
         backgroundColor: "white",
@@ -17,8 +19,30 @@ const ProjectCard = ({ data }: Props) => {
       }}
       className="p-2 rounded shadow"
     >
-      <p className="m-0 fs-6 fw-bold">{data.projectName.substring(0, 10)}...</p>
-      <p className="m-0 fs-6 fw-normal">{data.projectName}</p>
+      <div className="row d-flex m-0">
+        <div className="col mb-2 fs-6 fw-bold">{data.label}</div>
+        <div className="col text-end p-0">
+          <button
+            className="p-0 btn shadow-none"
+            onClick={() => setSelectedStaffIndex(9999 + Math.random())}
+          >
+            <img src="/icons/cross.svg" alt="cross" />
+          </button>
+        </div>
+      </div>
+      {data.values[0].verificatioContentPath && (
+        <img
+          src={`${process.env.NEXT_PUBLIC_BACKEND_API}${data.values[0].verificatioContentPath}`}
+          alt="obervation image"
+          style={{ width: "100%", height: "200px", objectFit: "cover" }}
+          className="img-fluid"
+        />
+      )}
+      <p className="m-0 fs-6 fw-normal">
+        {data.values[0].remarks && (
+          <RenderRichText data={data.values[0].remarks} />
+        )}
+      </p>
     </div>
   );
 };

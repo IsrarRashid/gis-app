@@ -8,7 +8,7 @@ const SingleProjectDashboard = ({ params }: Props) => {
   const { id } = params; // Use the id as a string here, if necessary convert it later
   return (
     <div className="p-3">
-      <ProjectDetailsDashboard id={id} />
+      <ProjectDetailsDashboard id={id} visitId={0} />
     </div>
   );
 };
@@ -16,13 +16,13 @@ const SingleProjectDashboard = ({ params }: Props) => {
 export default SingleProjectDashboard;
 
 // uncomment below code for export build
-export async function generateStaticParams() {
-  let ids: String[] = [];
-  for (let i = 0; i <= 7300; i++) {
-    ids.push(String(i));
-  }
-  return ids.map((id) => ({ id })); // Keep id as a string
-}
+// export async function generateStaticParams() {
+//   let ids: String[] = [];
+//   for (let i = 0; i <= 7300; i++) {
+//     ids.push(String(i));
+//   }
+//   return ids.map((id) => ({ id })); // Keep id as a string
+// }
 
 // Replace with actual data fetching
 // const ids = [

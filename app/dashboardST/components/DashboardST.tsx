@@ -12,14 +12,21 @@ import StaffMember from "./StaffMember";
 import useAuthorization from "@/app/hooks/useAuthorization";
 import LiveStaffTrackingMap from "./GoogleMap/LiveStaffTrackingMap";
 import apiClient from "@/app/services/api-client";
-import { staffTrackingAPI, visitAPI } from "@/app/APIs";
+import { getUserProjectsAPI, staffTrackingAPI, visitAPI } from "@/app/APIs";
 import useVisits from "@/app/hooks/useVisits";
-import MapRecordingModal from "./MapRecordingModal";
 import RecordingStaffTrackingMap from "./GoogleMap/RecordingStaffTrackingMap";
+import { devMap } from "@/app/utils";
+import Image from "next/image";
+import redCircle from "@/public/icons/redCircle.svg";
+import CustomModal from "@/app/components/CustomModal";
+import { motion } from "framer-motion";
+import { Project } from "@/app/hooks/useProjects";
+import useAuthentication from "@/app/hooks/useAuthentication";
+import { setTutorial } from "@/app/features/tutorial/tutorialSlice";
 
 const lexend = Lexend({
   subsets: ["latin"],
-  weight: "300",
+  weight: "400",
 });
 
 interface VisitByUserId {
@@ -62,6 +69,7 @@ export interface StaffTracking {
   userId: string;
   userName: string;
   designation: string;
+  phoneNumber: string;
   mobile: string;
   projectName: string;
   districtName: string;
@@ -115,6 +123,18 @@ export const getCurrentDate = () => {
   return `${year}-${month}-${day}`;
 };
 
+const getFormattedDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+interface ProjectVisit {
+  visitId: number;
+  visitName: string;
+}
+
 const DashboardST = () => {
   const [mapStatus, setMapStatus] = useState(false);
   const dispatch = useDispatch();
@@ -125,7 +145,13 @@ const DashboardST = () => {
   const [refresh, setRefresh] = useState(false);
 
   const [data, setData] = useState<StaffTracking[]>();
-  const [trackingRequestBody, setTrackingRequestBody] =
+  const [recordingTrackingRequestBody, setRecordingTrackingRequestBody] =
+    useState<TrackingRequestData>({
+      userId: 0,
+      visitId: 0,
+      date: getCurrentDate(), //remember to set current date
+    });
+  const [liveTrackingRequestBody, setLiveTrackingRequestBody] =
     useState<TrackingRequestData>({
       userId: 0,
       visitId: 0,
@@ -196,19 +222,13 @@ const DashboardST = () => {
   };
 
   useEffect(() => {
-    if (!mapStatus) {
-      const interval = setInterval(() => {
-        getStaffWithCoordinates(trackingRequestBody);
-        console.log("coordinates updated");
-        console.log("request body", trackingRequestBody);
-      }, 5000); // Call every 5 seconds
+    console.log("liveTrackingRequestBody:", liveTrackingRequestBody);
+    getStaffWithCoordinates(liveTrackingRequestBody);
+  }, []);
 
-      return () => clearInterval(interval); // Cleanup on unmount
-    }
-  }, [trackingRequestBody, markerPositions]);
-
-  const handleButtonClick = (content: string) => {
+  const handleButtonClick = (content: string, tutorialLink: string) => {
     dispatch(setContent(content));
+    dispatch(setTutorial(tutorialLink));
   };
 
   useEffect(() => {
@@ -217,12 +237,81 @@ const DashboardST = () => {
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundRepeat = "no-repeat";
 
-    handleButtonClick("Dashboard");
+    handleButtonClick(
+      "DashboardST",
+      "https://www.youtube.com/watch?v=Sdi4aiucJ-8&ab_channel=DirectorateGeneralMonitoringandEvaluation"
+    );
     // Cleanup on unmount
     return () => {
       document.body.style.backgroundImage = "";
     };
   }, []);
+
+  const [position, setPosition] = useState<Position>(); // Starting position (latitude, longitude)
+  const [path, setPath] = useState<Position[]>([]); // Empty path initially
+  const [recordingData, setRecordingData] = useState<StaffTracking[]>();
+
+  const fetchRecordingData = async () => {
+    console.log("recordingTrackingRequestBody", recordingTrackingRequestBody);
+    try {
+      const response = await apiClient.post(
+        staffTrackingAPI,
+        recordingTrackingRequestBody
+      );
+      console.log("recording data Israr:", response.data.data);
+      const responseData: StaffTracking[] = await response.data.data;
+      setRecordingData(response.data.data);
+      const coordinatesList = responseData[0]?.coordinates;
+      if (coordinatesList && coordinatesList.length > 0) {
+        const newPath: Position[] = coordinatesList.map((coord) => ({
+          lat: parseFloat(coord.latitude),
+          lng: parseFloat(coord.longitude),
+        }));
+
+        setPath(newPath);
+        setPosition({
+          lat: parseFloat(coordinatesList[0].latitude),
+          lng: parseFloat(coordinatesList[0].longitude),
+        }); // Set initial position to the first coordinate
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const [selectedButton, setSelectedButton] = useState(1);
+
+  const [userProjects, setUserProjects] = useState<Project[]>([]); // Store the original data
+  const [userVisits, setUserVisits] = useState<ProjectVisit[]>([]); // Store the original data
+  const [userDate, setUserDate] = useState<Date | null>(); // Store the original data
+  const [isVisitSelected, setVisitSelected] = useState<boolean>(false); // Store the original data
+  const [isDateSelected, setDateSelected] = useState<boolean>(false); // Store the original data
+
+  const handleUserSubmit = async (id: number) => {
+    try {
+      const response = await apiClient.get(
+        `${getUserProjectsAPI}?userId=${id}`
+      );
+      console.log("Response:", response);
+      setUserProjects(response.data.data);
+    } catch (err) {
+      console.error("Submission error:", err);
+    }
+  };
+
+  const handleProjectSubmit = async (id: number) => {
+    try {
+      const response = await apiClient.get(
+        `${visitAPI}/GetVisitsByProjectId?ProjectId=${id}`
+      );
+      console.log("Response:", response);
+      setUserVisits(response.data.data);
+    } catch (err) {
+      console.error("Submission error:", err);
+    }
+  };
+
+  const { data: users } = useAuthentication({ refresh });
 
   return (
     <div
@@ -241,27 +330,319 @@ const DashboardST = () => {
             <div className="col">
               <div
                 className="col position-absolute text-end"
-                style={{ zIndex: 1, right: 80, top: 12 }}
+                style={{ zIndex: 1, left: 200, top: 10 }}
               >
-                <MapRecordingModal
-                  setMapStatus={setMapStatus}
-                  setTrackingRequestBody={setTrackingRequestBody}
-                  trackingRequestBody={trackingRequestBody}
-                />
+                <div
+                  className={`row d-flex flex-wrap rounded-pill m-0 ${lexend.className}`}
+                  style={{ background: "rgba(235, 239, 253, 0.33)" }}
+                >
+                  <div
+                    className="p-0 col btn-group rounded-pill"
+                    style={{ background: "#EBEFFD" }}
+                    role="group"
+                  >
+                    <CustomModal
+                      modalId="staffRecording"
+                      button={
+                        <Button
+                          type="button"
+                          className={`btn rounded-pill border-0 shadow-none fw-bold whiteSpaceNoWrap px-4 ${
+                            selectedButton === 2 ? "text-white" : ""
+                          }`}
+                          style={{
+                            paddingTop: "12px",
+                            paddingBottom: "12px",
+                            background: `${
+                              selectedButton === 2
+                                ? "radial-gradient(#0C8CE9, #13629B)"
+                                : ""
+                            }`,
+                          }}
+                          onClick={() => {
+                            setSelectedButton(2);
+                          }}
+                        >
+                          RECORDING
+                        </Button>
+                      }
+                      body={
+                        <div
+                          className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
+                          style={{
+                            borderRadius: "20px",
+                            background: "#fff",
+                          }}
+                        >
+                          <h3 className="fw-bold text-center">Recordings</h3>
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              if (recordingTrackingRequestBody) {
+                                getStaffWithCoordinates(
+                                  recordingTrackingRequestBody
+                                );
+                              }
+                              setMapStatus(true);
+
+                              // Programmatically trigger the Escape key press
+                              const escapeEvent = new KeyboardEvent("keydown", {
+                                key: "Escape",
+                                keyCode: 27,
+                                code: "Escape",
+                                bubbles: true,
+                                cancelable: true,
+                              });
+                              document.dispatchEvent(escapeEvent);
+                            }}
+                          >
+                            <div className="col mb-3 text-start">
+                              <label htmlFor="users" className="form-label">
+                                Users
+                              </label>
+                              <select
+                                className="form-select form-select-sm"
+                                aria-label="users"
+                                name="users"
+                                onChange={(e) => {
+                                  const selectedValue = e.target.value;
+                                  if (selectedValue === "") {
+                                    setUserProjects([]); // Set null if "Select" option is chosen
+                                    setRecordingTrackingRequestBody((prev) => ({
+                                      ...prev,
+                                      userId: 0,
+                                    }));
+                                  } else {
+                                    const selectedId = parseInt(
+                                      selectedValue,
+                                      10
+                                    );
+                                    handleUserSubmit(selectedId); // Call handleUserSubmit with the selected userId
+                                    setRecordingTrackingRequestBody((prev) => ({
+                                      ...prev,
+                                      userId: selectedId,
+                                    }));
+                                  }
+                                }}
+                              >
+                                <option value="">Select</option>
+                                {users.map((d) => (
+                                  <option key={d.id} value={d.id}>
+                                    {d.userName}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div className="col mb-3 text-start">
+                              <label htmlFor="date" className="form-label">
+                                Date
+                              </label>
+                              <input
+                                type="date"
+                                className="form-control"
+                                id="date"
+                                placeholder="Select Date"
+                                disabled={isVisitSelected}
+                                onChange={(e) => {
+                                  const selectedValue = e.target.value;
+                                  if (selectedValue === "") {
+                                    setUserDate(null); // Set null if "Select" option is chosen
+                                    setRecordingTrackingRequestBody((prev) => ({
+                                      ...prev,
+                                      date: null,
+                                    }));
+                                    setDateSelected(false);
+                                  } else {
+                                    const newDate = new Date(selectedValue);
+                                    setRecordingTrackingRequestBody((prev) => ({
+                                      ...prev,
+                                      date: getFormattedDate(newDate),
+                                      visitId: 0,
+                                    }));
+                                    setDateSelected(true);
+                                  }
+                                }}
+                              />
+                            </div>
+
+                            <div className="col mb-3 text-start">
+                              <label htmlFor="projects" className="form-label">
+                                Projects
+                              </label>
+                              <select
+                                className="form-select form-select-sm"
+                                aria-label="projects"
+                                name="projects"
+                                disabled={isDateSelected}
+                                onChange={(e) => {
+                                  const selectedValue = e.target.value;
+                                  if (selectedValue === "") {
+                                    setUserVisits([]); // Set null if "Select" option is chosen
+                                  } else {
+                                    const selectedId = parseInt(
+                                      selectedValue,
+                                      10
+                                    );
+                                    handleProjectSubmit(selectedId); // Call handleUserSubmit with the selected userId
+                                  }
+                                }}
+                              >
+                                <option value="">Select</option>
+                                {userProjects.length > 0 &&
+                                  userProjects.map((d) => (
+                                    <option key={d.id} value={d.id}>
+                                      {d.name}
+                                    </option>
+                                  ))}
+                              </select>
+                            </div>
+
+                            <div className="col mb-3 text-start">
+                              <label htmlFor="visits" className="form-label">
+                                Visits
+                              </label>
+                              <select
+                                className="form-select form-select-sm"
+                                aria-label="visits"
+                                name="visits"
+                                disabled={isDateSelected}
+                                onChange={(e) => {
+                                  const selectedValue = e.target.value;
+                                  if (selectedValue === "") {
+                                    setRecordingTrackingRequestBody((prev) => ({
+                                      ...prev,
+                                      visitId: 0,
+                                      date: null,
+                                    }));
+                                    setVisitSelected(false);
+                                  } else {
+                                    setRecordingTrackingRequestBody((prev) => ({
+                                      ...prev,
+                                      visitId: parseInt(selectedValue),
+                                      date: null,
+                                    }));
+                                    setVisitSelected(true);
+                                  }
+                                }}
+                              >
+                                <option value="">Select</option>
+                                {userVisits.length > 0 &&
+                                  userVisits.map((d) => (
+                                    <option key={d.visitId} value={d.visitId}>
+                                      {d.visitName}
+                                    </option>
+                                  ))}
+                              </select>
+                            </div>
+
+                            <div className="row d-flex">
+                              <div className="col-lg-6 col-md-6 col-sm-12 text-end">
+                                <Button
+                                  className="btn w-50 fs-5 text-white"
+                                  type="submit"
+                                  data-bs-dismiss="modal"
+                                  aria-label="Close"
+                                  style={{
+                                    backgroundImage:
+                                      "linear-gradient(to right, #0C8CE9 , #13629B)",
+                                    border: "0px",
+                                  }}
+                                  onClick={() => {
+                                    setMapStatus(true);
+                                    fetchRecordingData();
+                                  }}
+                                >
+                                  Filter
+                                </Button>
+                              </div>
+                              <div className="col-lg-6 col-md-6 col-sm-12 text-start">
+                                <Button
+                                  className="btn w-50 fs-5"
+                                  data-bs-dismiss="modal"
+                                  aria-label="Close"
+                                  style={{
+                                    border: "2px solid #0C8CE9",
+                                    color: "#0C8CE9",
+                                  }}
+                                >
+                                  Reset
+                                </Button>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      }
+                    />
+                    <Button
+                      type="button"
+                      className={`btn rounded-pill border-0 shadow-none fw-bold px-4 ${
+                        selectedButton === 1 ? "text-white" : ""
+                      }`}
+                      style={{
+                        paddingTop: "12px",
+                        paddingBottom: "12px",
+                        background: `${
+                          selectedButton === 1
+                            ? "radial-gradient(#0C8CE9, #13629B)"
+                            : ""
+                        }`,
+                      }}
+                      onClick={() => setSelectedButton(1)}
+                    >
+                      &nbsp;&nbsp;
+                      {selectedButton === 1 ? (
+                        <motion.span
+                          animate={{ opacity: [0, 1, 0] }} // Keyframes: fade in and out
+                          transition={{
+                            duration: 2, // Time for one complete cycle
+                            repeat: Infinity, // Loop animation infinitely
+                            ease: "easeInOut", // Smoother transition
+                          }}
+                        >
+                          <Image
+                            src={redCircle}
+                            alt="redCircle"
+                            width={20}
+                            height={20}
+                          />
+                        </motion.span>
+                      ) : (
+                        <Image
+                          src={redCircle}
+                          alt="redCircle"
+                          width={20}
+                          height={20}
+                        />
+                      )}
+                      &nbsp;LIVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <div className="position-relative" style={{ zIndex: 0 }}>
-                {/* {mapStatus ? <MapCarsRecorded /> : <MapCars />} */}
-                {mapStatus ? (
-                  <RecordingStaffTrackingMap
-                    trackingRequestBody={trackingRequestBody}
-                  />
-                ) : (
-                  <LiveStaffTrackingMap
-                    data={data}
-                    markerPositions={markerPositions}
-                  />
-                )}
-              </div>
+              {devMap && data && (
+                <div className="position-relative" style={{ zIndex: 0 }}>
+                  {/* {mapStatus ? <MapCarsRecorded /> : <MapCars />} */}
+                  {mapStatus ? (
+                    <RecordingStaffTrackingMap
+                      trackingRequestBody={liveTrackingRequestBody}
+                      fetchRecordingData={fetchRecordingData}
+                      position={position}
+                      setPosition={setPosition}
+                      path={path}
+                      recordingData={recordingData}
+                    />
+                  ) : (
+                    <>
+                      <LiveStaffTrackingMap
+                        data={data}
+                        markerPositions={markerPositions}
+                        getStaffWithCoordinates={getStaffWithCoordinates}
+                        liveTrackingRequestBody={liveTrackingRequestBody}
+                      />
+                    </>
+                  )}
+                </div>
+              )}
               {/* <Visits /> */}
             </div>
           </div>
@@ -269,8 +650,9 @@ const DashboardST = () => {
         <div className="col-lg-4 col-md-12 col-sm-12">
           {data && (
             <StaffMember
-              setTrackingRequestBody={setTrackingRequestBody}
+              setLiveTrackingRequestBody={setLiveTrackingRequestBody}
               setMapStatus={setMapStatus}
+              getStaffWithCoordinates={getStaffWithCoordinates}
             />
           )}
           {/* <ScheduleVisit /> */}

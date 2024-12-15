@@ -1,55 +1,75 @@
+"use client";
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import {
   APIProvider,
   Map,
   AdvancedMarker,
   InfoWindow,
+  useMap,
 } from "@vis.gl/react-google-maps";
-import {
-  DisitrictList,
-  FilterData,
-  MainDashboard,
-  ProjectsList,
-} from "../Dashboard";
+
 import apiClient from "@/app/services/api-client";
-import { mainDashboardAPI, singleProjectDashboardAPI } from "@/app/APIs";
-import DistrictCard from "../Map/DistrictCard";
+import {
+  districtAPI,
+  mainDashboardAPI,
+  singleProjectDashboardAPI,
+} from "@/app/APIs";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import ProjectCard from "../Map/ProjectCard";
+import { DistrictList, FilterData, MainDashboard } from "../Dashboard";
+import DistrictCard from "./DistrictCard";
+import ProjectCard from "./ProjectCard";
+import useDistrict from "@/app/hooks/useDistrict";
+
+export interface DistrictProjects {
+  id: number;
+  superGroupID: number;
+  smdpProjectID: number;
+  name: string;
+  sectorId: number;
+  address: string;
+  city: string;
+  division: string;
+  districtId: number;
+  latitude: string;
+  longitude: string;
+  locationCoordinates: string;
+  status: string;
+  approvalDate: string;
+}
 
 interface Props {
   data: MainDashboard;
-  setData: Dispatch<SetStateAction<MainDashboard | undefined>>;
-  setProjectsData: Dispatch<SetStateAction<ProjectsList[] | undefined>>;
-  setDistrictId: Dispatch<SetStateAction<number | undefined>>;
-  handleDistrictClick: (filterData: FilterData[]) => Promise<void>;
-  activeProjects: ProjectsList[];
-  setActiveProjects: Dispatch<SetStateAction<ProjectsList[] | []>>;
+  handleSubmit: (filterData: FilterData[]) => Promise<void>;
+  activeFilter: string;
+  cmInitiativeFilters: FilterData[];
+  adpFilters: FilterData[];
+  otherFilters: FilterData[];
+  setOtherFilters: Dispatch<SetStateAction<FilterData[]>>;
 }
 
 const MyMap = ({
   data,
-  setData,
-  setProjectsData,
-  setDistrictId,
-  handleDistrictClick,
-  activeProjects,
-  setActiveProjects,
+  handleSubmit,
+  activeFilter,
+  cmInitiativeFilters,
+  adpFilters,
+  otherFilters,
+  setOtherFilters,
 }: Props) => {
   const InitialCenterPosition = {
     lat: 31.1704,
     lng: 72.7097,
   };
   const [open, setOpen] = useState(false);
-  const [districtList, setDistrictList] = useState<DisitrictList[]>([]);
+  const [districtList, setDistrictList] = useState<DistrictList[]>([]);
 
   useEffect(() => {
     setDistrictList(data.disitrictlist);
   }, [data]);
 
   const [selectedDistrictIndex, setSelectedDistrictIndex] = useState(0);
-  const [activeDistrict, setActiveDistrict] = useState<DisitrictList | null>(
+  const [activeDistrict, setActiveDistrict] = useState<DistrictList | null>(
     null
   );
   const [selectedProjectIndex, setSelectedProjectIndex] = useState(0);
@@ -73,6 +93,83 @@ const MyMap = ({
   //   }
   // };
 
+  const [activeDistrictId, setActiveDistrictId] = useState<number | null>(null);
+  const [activeProjects, setActiveProjects] = useState<DistrictProjects[]>([]);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const { data: districts } = useDistrict({ refresh });
+
+  const handleDistrictClick = async (
+    districtId: number,
+    showProjects: boolean
+  ) => {
+    if (showProjects) {
+      try {
+        const response = await apiClient.get(
+          `${districtAPI}/GetProjectByDistrict?districtId=${districtId}`
+        );
+        setActiveProjects(response.data.data);
+        setActiveDistrictId(districtId);
+      } catch (err) {
+        console.error("Submission error:", err);
+      }
+    } else {
+      setActiveProjects([]);
+      setActiveDistrictId(null);
+    }
+  };
+
+  const handleMarkerClick = (districtId: number) => {
+    const isActive = activeDistrictId === districtId;
+    const districtName = districts.find(
+      (district) => district.id === districtId
+    )?.districtName;
+
+    // Update otherFilters
+    setOtherFilters((prevFilters) => {
+      const updatedFilters = [...prevFilters];
+      const districtFilterIndex = updatedFilters.findIndex(
+        (filter) => filter.filterIdentifier === "District"
+      );
+
+      if (districtFilterIndex !== -1) {
+        // If "District" filter exists, update it
+        updatedFilters[districtFilterIndex].filterValues = districtName!;
+      } else {
+        // Otherwise, add a new filter
+        updatedFilters.push({
+          filterIdentifier: "District",
+          filterValues: districtName!,
+        });
+      }
+      return updatedFilters; // Return updated filters
+    });
+    handleDistrictClick(districtId, !isActive); // Toggle project markers
+    if (
+      activeFilter === "cmInitiative"
+      // && districts.find((district) => district.id === districtId)?.districtName
+    ) {
+      handleSubmit([
+        ...cmInitiativeFilters,
+        ...[
+          {
+            filterIdentifier: "District",
+            filterValues: districtName!,
+          },
+        ],
+      ]);
+    } else {
+      handleSubmit([
+        ...adpFilters,
+        ...[
+          {
+            filterIdentifier: "District",
+            filterValues: districtName!,
+          },
+        ],
+      ]);
+    }
+  };
+
   const handleProjectSubmit = async (projectId: number) => {
     try {
       const response = await apiClient.get(
@@ -89,20 +186,152 @@ const MyMap = ({
     }
   };
 
+  // const handleBackButtonClick = async () => {
+  //   setShowButton(false);
+  //   setActiveDistrict(null); // Reset to show all districts
+  //   try {
+  //     const response = await apiClient.post(mainDashboardAPI, [
+  //       { filterIdentifier: "", filterValues: "" },
+  //     ]);
+  //     setData(response.data.data);
+  //     setProjectsData(response.data.data.projectslist);
+  //     setActiveProjects([]);
+  //   } catch (err) {
+  //     console.error("Submission error:", err);
+  //   }
+  // };
+
   const handleBackButtonClick = async () => {
-    setDistrictId(0);
     setShowButton(false);
     setActiveDistrict(null); // Reset to show all districts
+    // Update otherFilters
+    setOtherFilters((prevFilters) => {
+      const updatedFilters = [...prevFilters];
+      const districtFilterIndex = updatedFilters.findIndex(
+        (filter) => filter.filterIdentifier === "District"
+      );
+
+      if (districtFilterIndex !== -1) {
+        // If "District" filter exists, remove it
+        return prevFilters.filter(
+          (filter) =>
+            filter.filterIdentifier !==
+            updatedFilters[districtFilterIndex].filterIdentifier
+        );
+      }
+      return updatedFilters; // Return updated filters
+    });
+    if (
+      activeFilter === "cmInitiative"
+      // && districts.find((district) => district.id === districtId)?.districtName
+    ) {
+      handleSubmit([
+        ...cmInitiativeFilters,
+        ...otherFilters.filter(
+          (filter) => filter.filterIdentifier !== "District"
+        ),
+      ]);
+    } else {
+      handleSubmit([
+        ...adpFilters,
+        ...otherFilters.filter(
+          (filter) => filter.filterIdentifier !== "District"
+        ),
+      ]);
+    }
     try {
       const response = await apiClient.post(mainDashboardAPI, [
         { filterIdentifier: "", filterValues: "" },
       ]);
-      setData(response.data.data);
-      setProjectsData(response.data.data.projectslist);
       setActiveProjects([]);
+      setActiveDistrictId(null);
     } catch (err) {
       console.error("Submission error:", err);
     }
+  };
+
+  const MapWithMarkers = () => {
+    const map = useMap();
+
+    const markers = (activeDistrict ? [activeDistrict] : districtList)
+      .filter((district) => district.latitude && district.longitude)
+      .map((district) => {
+        return {
+          position: {
+            lat: parseFloat(district.latitude),
+            lng: parseFloat(district.longitude),
+          },
+        };
+      });
+
+    useEffect(() => {
+      if (map && markers.length > 0) {
+        const bounds = new window.google.maps.LatLngBounds();
+        markers.forEach((marker: any) => bounds.extend(marker.position));
+        map.fitBounds(bounds);
+      }
+    }, [map, markers]);
+
+    const handleMarkerClick = (position: { lat: number; lng: number }) => {
+      if (map) {
+        map.setCenter(position); // Set the center to the clicked marker
+        map.setZoom(10); // Adjust zoom level
+      }
+    };
+
+    return (
+      <>
+        {(activeDistrict ? [activeDistrict] : districtList)
+          .filter((district) => district.latitude && district.longitude)
+          .map((district) => (
+            <Fragment key={district.id}>
+              <AdvancedMarker
+                style={{
+                  transform: `scale(${
+                    [selectedDistrictIndex].includes(district.id) ? 1.3 : 1
+                  })`,
+                  transition: "transform 0.1s ease-in-out",
+                }}
+                onClick={() => {
+                  // handleDistrictClick([
+                  //   {
+                  //     filterIdentifier: "District",
+                  //     filterValues: district.districtName,
+                  //   },
+                  // ]);
+                  setActiveDistrict(district);
+                  setShowButton(true);
+                }}
+                position={{
+                  lat: parseFloat(district.latitude),
+                  lng: parseFloat(district.longitude),
+                }}
+                onMouseEnter={() => setSelectedDistrictIndex(district.id)}
+                onMouseLeave={() => setSelectedDistrictIndex(9 + parseInt("a"))}
+              >
+                <span>
+                  <img
+                    src="/images/districtLocation.png"
+                    alt="districtLocation"
+                  />
+                </span>
+              </AdvancedMarker>
+              {selectedDistrictIndex === district.id && (
+                <InfoWindow
+                  position={{
+                    lat: parseFloat(district.latitude),
+                    lng: parseFloat(district.longitude),
+                  }}
+                  pixelOffset={[0, -60]}
+                  onCloseClick={() => setOpen(false)}
+                >
+                  <DistrictCard data={district} />
+                </InfoWindow>
+              )}
+            </Fragment>
+          ))}
+      </>
+    );
   };
 
   return (
@@ -122,12 +351,13 @@ const MyMap = ({
         <Toaster />
       </div>
       <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
-        <div style={{ width: "100%", height: "920px" }}>
+        <div style={{ width: "100%", height: "1050px" }}>
           <Map
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
             defaultZoom={7}
             defaultCenter={InitialCenterPosition}
             gestureHandling={"greedy"}
+            style={{ borderRadius: "10px" }}
           >
             {(activeDistrict ? [activeDistrict] : districtList)
               .filter((district) => district.latitude && district.longitude)
@@ -141,12 +371,7 @@ const MyMap = ({
                       transition: "transform 0.1s ease-in-out",
                     }}
                     onClick={() => {
-                      handleDistrictClick([
-                        {
-                          filterIdentifier: "District",
-                          filterValues: district.districtName,
-                        },
-                      ]);
+                      handleMarkerClick(district.id);
                       setActiveDistrict(district);
                       setShowButton(true);
                     }}
@@ -163,6 +388,7 @@ const MyMap = ({
                       <img
                         src="/images/districtLocation.png"
                         alt="districtLocation"
+                        style={{ width: "50px", height: "50px" }}
                       />
                     </span>
                   </AdvancedMarker>
@@ -208,6 +434,8 @@ const MyMap = ({
                         <img
                           src="/images/projectLocation.png"
                           alt="projectLocation"
+                          className="img-fluid"
+                          style={{ width: "40px", height: "50px" }}
                         />
                       </span>
                     </AdvancedMarker>

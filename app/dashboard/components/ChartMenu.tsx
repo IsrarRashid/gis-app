@@ -5,6 +5,7 @@ import files from "../../../public/icons/files.svg";
 import pieChart from "../../../public/images/pieChart.png";
 import topRightArrow from "../../../public/icons/topRightArrow.svg";
 import { MainDashboard } from "./Dashboard";
+import CustomModal from "@/app/components/CustomModal";
 
 interface Props {
   data: MainDashboard;
@@ -17,45 +18,37 @@ const ChartMenu = ({ data }: Props) => {
       style={{
         background: "#C6D9F1",
         borderRadius: "10px",
-        padding: "25px",
+        padding: "20px",
         color: "#334155",
       }}
     >
       <div
-        className="col p-0 rounded-2 mb-2"
+        className="col p-2 rounded-2 mb-2"
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
-        <Image
-          src={coin}
-          alt="coin"
-          width={42}
-          height={42}
-          className="img-fluid me-2"
-        />
-        <span className="mt-2 m-0">
-          <span className="fw-bold">Approved Cost:</span>{" "}
-          <span className="fw-bold" style={{ color: "#727272" }}>
+        <div className="row d-flex m-0">
+          <div className="col fw-bold text-start">Approved Cost:</div>{" "}
+          <div
+            className="col fw-bold text-end pe-3"
+            style={{ color: "#727272" }}
+          >
             {data?.approvedCost} M
-          </span>
-        </span>
+          </div>
+        </div>
       </div>
       <div
-        className="col p-0 rounded-2 mb-2"
+        className="col p-2 rounded-2 mb-2"
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
-        <Image
-          src={files}
-          alt="files"
-          width={42}
-          height={42}
-          className="img-fluid me-2"
-        />
-        <span className="mt-2 m-0">
-          <span className="fw-bold">Expenditure:</span>{" "}
-          <span className="fw-bold" style={{ color: "#727272" }}>
+        <div className="row d-flex m-0">
+          <div className="col fw-bold text-start">Expenditure:</div>{" "}
+          <div
+            className="col fw-bold text-end pe-3"
+            style={{ color: "#727272" }}
+          >
             {data?.expenditure} M
-          </span>
-        </span>
+          </div>
+        </div>
       </div>
     </div>
   );

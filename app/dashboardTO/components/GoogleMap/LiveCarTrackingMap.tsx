@@ -5,9 +5,10 @@ import {
   Map,
   AdvancedMarker,
   InfoWindow,
+  useMap,
 } from "@vis.gl/react-google-maps";
 import { Polyline } from "@react-google-maps/api";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import CarCard from "../Map/CarCard";
 import { trackingAPI } from "@/app/APIs";
 
@@ -212,6 +213,63 @@ const LiveCarTrackingMap = () => {
     }
   }, [direction, rotationAngle]);
 
+  const map = useMap();
+
+  const handleMarkerClick = (position: { lat: number; lng: number }) => {
+    if (map) {
+      map.setCenter(position); // Set the center to the clicked marker
+      map.setZoom(12); // Adjust zoom level
+    }
+  };
+
+  const MapWithMarkers = () => {
+    const map = useMap();
+
+    const handleMarkerClick = (position: { lat: number; lng: number }) => {
+      if (map) {
+        map.setCenter(position); // Set the center to the clicked marker
+        map.setZoom(12); // Adjust zoom level
+      }
+    };
+
+    return (
+      <>
+        {position && (
+          <AdvancedMarker
+            key={0}
+            position={position}
+            onClick={() => {
+              setOpen(!open);
+              handleMarkerClick(position);
+            }}
+          >
+            <div
+              style={{
+                transform: `rotate(${rotationAngle}deg)`,
+                transition: "transform 2s",
+              }}
+            >
+              <img
+                src="/images/carTop2.png"
+                alt="carTop2"
+                style={{ width: "56px", height: "70px" }}
+              />
+            </div>
+          </AdvancedMarker>
+        )}
+        {open && (
+          <InfoWindow
+            position={position}
+            pixelOffset={[0, -70]}
+            onCloseClick={() => setOpen(false)}
+          >
+            {apiData && <CarCard apiData={apiData} />}
+          </InfoWindow>
+        )}
+      </>
+    );
+  };
+
   return (
     <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
       {position && (
@@ -227,19 +285,17 @@ const LiveCarTrackingMap = () => {
           <Map
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
             defaultZoom={17}
-            defaultCenter={position}
+            center={{ lat: position.lat + 0.0015, lng: position.lng }}
             gestureHandling={"greedy"}
           >
-            {/* Moving Car */}
-            <Polyline
-              path={path}
-              options={{
-                strokeColor: "#FF0000",
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
+            <AdvancedMarker
+              position={position}
+              onClick={() => {
+                setOpen(!open);
+                handleMarkerClick(position);
               }}
-            />
-            <AdvancedMarker position={position} onClick={() => setOpen(!open)}>
+              clickable={true}
+            >
               <div
                 style={{
                   transform: `rotate(${rotationAngle}deg)`,
@@ -262,6 +318,13 @@ const LiveCarTrackingMap = () => {
                 {apiData && <CarCard apiData={apiData} />}
               </InfoWindow>
             )}
+            {/* <MapWithMarkers
+              position={position}
+              setOpen={setOpen}
+              rotationAngle={rotationAngle}
+              open={open}
+              apiData={apiData}
+            /> */}
           </Map>
         </div>
       )}
