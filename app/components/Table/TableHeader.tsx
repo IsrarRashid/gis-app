@@ -1,4 +1,4 @@
-import { getFormattedDate } from "@/app/utils";
+import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
 import { ReactNode } from "react";
 import { IoSearch } from "react-icons/io5";
 
@@ -29,7 +29,7 @@ const TableHeader = ({
         </div>
         <div className="col text-end mt-1">
           <span className="fw-bold">
-            {getFormattedDate(new Date(), "short")}
+            {addDayToFormattedDate(getFormattedDate(new Date(), "short")!)}
           </span>
           &nbsp;Today
         </div>

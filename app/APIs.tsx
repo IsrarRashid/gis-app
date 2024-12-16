@@ -32,3 +32,5 @@ export const singleProjectDashboardAPI = `/api/SingleProjectDashboard`;
 export const staffTrackingAPI = `/api/StaffTracking`;
 export const reverseGeoCodingAPI = `https://maps.googleapis.com/maps/api/geocode/json?latlng=`;
 export const filterSettingAPI = `/api/FilterSetting`;
+export const tourPlanAPI = `/api/TourPlan`;
+export const visitNewAPI = `/api/ProjectUserAssigning/GetNewAssignedProjects`;

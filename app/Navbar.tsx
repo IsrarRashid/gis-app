@@ -19,7 +19,7 @@ import { FaYoutube } from "react-icons/fa";
 
 const lexend = Lexend({
   subsets: ["latin"],
-  weight: "400",
+  weight: "300",
 });
 
 const Navbar = () => {

@@ -154,6 +154,20 @@ const GISMenu = () => {
       icon: driver,
       backgroundColor: "linear-gradient(to bottom right, #a2a828 , #b93ae7)",
     },
+    {
+      name: "Visit Plans",
+      nameId: "visit-plans",
+      link: "/visit-plans",
+      icon: visitSchedule,
+      backgroundColor: "linear-gradient(to bottom right, #259799, #1b4d9e )",
+    },
+    {
+      name: "Visits New",
+      nameId: "visits-new",
+      link: "/visits-new",
+      icon: visits,
+      backgroundColor: "linear-gradient(to bottom right, #28A811 , yellow)",
+    },
     // {
     //   name: "Visits",
     //   nameId: "visits",
