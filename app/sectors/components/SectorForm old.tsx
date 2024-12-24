@@ -1,13 +1,13 @@
-import Modal from "react-bootstrap/Modal";
-import plus from "../../../public/icons/plus.svg";
-import minus from "../../../public/icons/minus.svg";
+import Button from "@/app/components/Button";
+import useSectors, { Sector } from "@/app/hooks/useSectors";
+import apiClient, { AxiosError } from "@/app/services/api-client";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
-import more from "../../../public/icons/more.svg";
+import Modal from "react-bootstrap/Modal";
 import { ToastContainer, toast } from "react-toastify";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import useSectors, { Sector } from "@/app/hooks/useSectors";
-import Button from "@/app/components/Button";
+import minus from "../../../public/icons/minus.svg";
+import more from "../../../public/icons/more.svg";
+import plus from "../../../public/icons/plus.svg";
 
 interface Props {
   api: string;

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import AnimatedCounter from "./AnimatedCounter";
+import { useEffect, useState } from "react";
 
 interface Props {
   tideOneImage?: string;
@@ -14,12 +15,16 @@ interface Props {
   showArrow?: boolean;
   textWrap?: boolean;
   isGrouped?: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 const Menu = ({
   background,
   tideOneImage = "/images/tideOne.png",
   tideTwoImage = "/images/tideTwo.png",
+  onMouseEnter = () => {},
+  onMouseLeave = () => {},
   icon,
   value,
   label,
@@ -30,9 +35,19 @@ const Menu = ({
   textWrap = true,
   isGrouped = false,
 }: Props) => {
+  const [randomValue1, setRandomValue1] = useState(0);
+  const [randomValue2, setRandomValue2] = useState(0);
+
+  useEffect(() => {
+    setRandomValue1(Math.random() * 100);
+    setRandomValue2(Math.random() * 100);
+  }, []);
+
   return (
     <div className="col">
       <div
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         className="col mb-2 shadow-sm"
         style={{
           outline: outline,
@@ -40,13 +55,14 @@ const Menu = ({
           borderRadius: "10px",
           overflow: "hidden",
           position: "relative",
+          transition: "background .4s, outline .4s",
         }}
       >
         {showTides && (
           <>
             <motion.div
               initial={{ x: -200, y: 200 }} // Start from Y position (dynamic)
-              animate={{ x: 0, y: Math.random() * 100 }} // Move to Y = 0 (top)
+              animate={{ x: 0, y: randomValue1 }} // Move to Y = 0 (top)
               transition={{ duration: 3, ease: "easeInOut" }} // Control duration and easing
               style={{ position: "absolute", zIndex: -1, left: -50, right: 0 }}
             >
@@ -59,7 +75,7 @@ const Menu = ({
 
             <motion.div
               initial={{ x: 200, y: 200 }} // Start from Y position (dynamic)
-              animate={{ x: -200, y: Math.random() * 100 }} // Move to Y = 0 (top)
+              animate={{ x: -200, y: randomValue2 }} // Move to Y = 0 (top)
               transition={{ duration: 2, ease: "easeInOut" }} // Control duration and easing
               style={{ position: "absolute", zIndex: -2, left: -30, right: 0 }}
             >
@@ -85,15 +101,15 @@ const Menu = ({
           </div>
         )}
         <div className="row d-flex flex-wrap m-0">
-          <div className="col-lg-5 col-md-5 col text-lg-end text-md-center text-center pe-0">
+          <div className="col-lg-5 col-md-5 col text-lg-end text-md-center text-center pe-0 m-auto">
             {icon && (
               <img
                 src={icon}
                 alt={icon}
-                className="img-fluid mt-2"
+                className="img-fluid"
                 style={{
-                  width: `${isGrouped ? "36px" : "76px"}`,
-                  height: `${isGrouped ? "36px" : "76px"}`,
+                  width: `${isGrouped ? "36px" : "50px"}`,
+                  height: `${isGrouped ? "36px" : "50px"}`,
                 }}
               />
             )}
@@ -102,16 +118,16 @@ const Menu = ({
             <div className="col-lg-7 col-md-7 col ps-0">
               <div className="row m-0">
                 <div
-                  className="col text-white fw-bold m-0 pt-2 text-wrap text-break px-0"
-                  style={{ fontSize: `${isGrouped ? "1.7rem" : "3rem"}` }}
+                  className="col text-white fw-normal text-wrap text-break px-0"
+                  style={{ fontSize: `${isGrouped ? "1.6rem" : "3rem"}` }}
                 >
                   <AnimatedCounter from={0} to={value} />
                   {showPercentageSign && "%"}
                 </div>
-                <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-danger">
-                  {/* <img src={waveDown} alt="waveDown" width={50} height={20} />
-              &nbsp;&nbsp;<span className="fs11px">-5.23%</span> */}
-                </div>
+                {/* <div className="col-lg-12 col-md-12 col-sm-12 fs11px text-danger">
+                  <img src={waveDown} alt="waveDown" width={50} height={20} />
+              &nbsp;&nbsp;<span className="fs11px">-5.23%</span>
+                </div> */}
               </div>
             </div>
           ) : (
@@ -135,12 +151,17 @@ const Menu = ({
         <div className="row m-0">
           <div className="col text-center text-white">
             {textWrap ? (
-              <p className="fs18px fw-bold mb-2" style={{ letterSpacing: 1 }}>
+              <p
+                className={`${isGrouped ? "fs16px" : "fs17px"} fw-normal mb-2`}
+                style={{ letterSpacing: 1 }}
+              >
                 {label}
               </p>
             ) : (
               <p
-                className="fs18px fw-bold mb-2 text-nowrap"
+                className={`${
+                  isGrouped ? "fs14px" : "fs17px"
+                } fw-normal mb-2 text-nowrap`}
                 style={{ letterSpacing: 1 }}
               >
                 {label}

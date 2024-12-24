@@ -1,23 +1,19 @@
 "use client";
-import Image from "next/image";
-import arrowLeft from "../../../public/icons/arrow-left.svg";
-import arrowRight from "../../../public/icons/arrow-right.svg";
-import { useState } from "react";
-import DeleteModal from "@/app/components/DeleteModal";
 import { driverApi } from "@/app/APIs";
-import Form from "./Form";
-import { sort } from "fast-sort";
+import Button from "@/app/components/Button";
+import DeleteModal from "@/app/components/DeleteModal";
+import Loader from "@/app/components/Loader";
+import Pagination from "@/app/components/Table/Pagination";
+import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/TableHeading";
-import { getFormattedDate } from "@/app/utils";
 import useDriver, { Driver } from "@/app/hooks/useDriver";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import { ToastContainer, toast } from "react-toastify";
+import { getFormattedDate } from "@/app/utils";
+import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
-import Button from "@/app/components/Button";
-import Loader from "@/app/components/Loader";
-import { IoSearch } from "react-icons/io5";
-import TableHeader from "@/app/components/Table/TableHeader";
-import Pagination from "@/app/components/Table/Pagination";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import Form from "./Form";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -144,7 +140,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   };
 
   // Paginate data to display only the current page's rows
-  const paginatedData = data.slice(
+  const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
     currentPage * rows
   );

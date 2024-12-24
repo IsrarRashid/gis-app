@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import EarthLoading from "@/app/earthLoading.json";
-import Lottie from "lottie-react";
 import { motion } from "framer-motion";
+import Lottie from "lottie-react";
+import { useEffect, useState } from "react";
 
 const Loader = () => {
   const colors = [

@@ -1,0 +1,63 @@
+import Menu from "@/app/components/Menu";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import apiClient from "@/app/services/api-client";
+import { reportsHistoryAPI } from "@/app/APIs";
+import { ReportHistory } from "@/app/report-history/components/List";
+
+const ReportReview = () => {
+  const [data, setData] = useState<ReportHistory[]>();
+  const [role, setRole] = useState<string>();
+  const [userId, setUserId] = useState<number>();
+  const [refresh, setRefresh] = useState<boolean>();
+
+  useEffect(() => {
+    const userId = Cookies.get("userId");
+    const role = Cookies.get("role");
+    if (role) setRole(role);
+    if (userId) setUserId(parseInt(userId));
+  }, []);
+
+  useEffect(() => {
+    const handleSubmit = async (userId: number) => {
+      try {
+        const response = await apiClient.get(
+          `${reportsHistoryAPI}/GetSubmittedReports?submittedTo=${userId}`
+        );
+        setData(response.data.data);
+      } catch (err) {
+        console.error("Submission error:", err);
+      }
+    };
+    if (userId) handleSubmit(userId);
+  }, [userId, refresh]);
+
+  return (
+    <>
+      {role && role.toLowerCase().includes("director") && (
+        <Link
+          href="/report-history"
+          target="_blank"
+          className="col btn p-0 pe-1 shadow-none w-100 position-relative"
+        >
+          <Menu
+            background="rgba(12, 140, 233, 0.2)"
+            outline="1px solid rgba(12, 140, 233, 0.4)"
+            icon="/icons/reportReview.svg"
+            value={data ? data?.filter((d) => d.status === 0).length : 0}
+            label="Report Review"
+            showTides={true}
+            showArrow={true}
+            textWrap={false}
+          />
+          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {data ? data?.filter((d) => d.status === 0).length : 0}
+          </span>
+        </Link>
+      )}
+    </>
+  );
+};
+
+export default ReportReview;

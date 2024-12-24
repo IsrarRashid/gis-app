@@ -1,5 +1,4 @@
-import { motion, useAnimation } from "framer-motion";
-import { useState } from "react";
+import { motion } from "framer-motion";
 
 interface Props {
   value: number;

@@ -1,18 +1,18 @@
 "use client";
-import { SetStateAction, useState } from "react";
-import DeleteModal from "@/app/components/DeleteModal";
 import { sectorAPI } from "@/app/APIs";
-import SectorForm from "./SectorForm";
-import { sort } from "fast-sort";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import { ToastContainer, toast } from "react-toastify";
-import useSectors, { Sector } from "@/app/hooks/useSectors";
-import { DM_Sans, Inter } from "next/font/google";
-import { getFormattedDate } from "@/app/utils";
-import TableHeading from "@/app/components/TableHeading";
+import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
-import TableHeader from "@/app/components/Table/TableHeader";
 import Pagination from "@/app/components/Table/Pagination";
+import TableHeader from "@/app/components/Table/TableHeader";
+import TableHeading from "@/app/components/TableHeading";
+import useSectors, { Sector } from "@/app/hooks/useSectors";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { getFormattedDate } from "@/app/utils";
+import { sort } from "fast-sort";
+import { DM_Sans, Inter } from "next/font/google";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import SectorForm from "./SectorForm";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],

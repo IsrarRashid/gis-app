@@ -139,6 +139,10 @@ select {
   font-size: 1.063rem !important;
 }
 
+.fs15px {
+  font-size: 0.938rem !important;
+}
+
 .fs14px {
   font-size: 0.875rem !important;
 }
@@ -169,6 +173,10 @@ select {
 
 .fs7px {
   font-size: 0.438rem;
+}
+
+.fw-5 {
+  font-weight: 500;
 }
 
 .whiteSpaceNoWrap {

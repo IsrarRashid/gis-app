@@ -243,6 +243,27 @@ export const getTimeLeft = (deadline: string): string => {
   }
 };
 
+// Utility function to calculate "x days ago"
+export const getDaysAgo = (targetDate: string) => {
+  const today = new Date();
+  const givenDate = new Date(targetDate);
+
+  // Calculate the difference in milliseconds
+  const differenceInTime = today.getTime() - givenDate.getTime();
+
+  // Convert milliseconds to days
+  const differenceInDays = Math.floor(differenceInTime / (1000 * 60 * 60 * 24));
+
+  // Return a formatted string
+  if (differenceInDays === 0) {
+    return "Today";
+  } else if (differenceInDays === 1) {
+    return "Yesterday";
+  } else {
+    return `${differenceInDays} Days ago`;
+  }
+};
+
 /**
  * Formats a number by placing commas as thousands separators.
  *
@@ -277,3 +298,17 @@ export const renderTinyMCEData = (info: any) => {
   }
   return null;
 };
+
+export interface SingleProjectLessData {
+  id: number;
+  superGroupID: number;
+  smdpProjectID: number;
+  name: string;
+  gsNo: number;
+  sectorId: number;
+  address: string;
+  city: string;
+  locationCoordinates: string;
+  status: string;
+  sectorName: string;
+}

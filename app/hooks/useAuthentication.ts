@@ -4,6 +4,7 @@ import useData from "./useData";
 export interface Authentication {
   id: number;
   userName: string;
+  fullName: string;
   email: string;
   designation: string;
   picture: string;

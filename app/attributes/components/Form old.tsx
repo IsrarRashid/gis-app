@@ -1,11 +1,11 @@
-import Modal from "react-bootstrap/Modal";
-import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
-import more from "../../../public/icons/more.svg";
-import { ToastContainer, toast } from "react-toastify";
+import Button from "@/app/components/Button";
 import useAttributes from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import Button from "@/app/components/Button";
+import Image from "next/image";
+import { FormEvent, useEffect, useState } from "react";
+import Modal from "react-bootstrap/Modal";
+import { ToastContainer, toast } from "react-toastify";
+import more from "../../../public/icons/more.svg";
 
 interface Form {
   attributeId: 0;

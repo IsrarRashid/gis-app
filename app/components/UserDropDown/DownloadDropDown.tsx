@@ -1,13 +1,12 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import styles from "./UserDropDown.module.css";
-import Link from "next/link";
-import Button from "../Button";
-import Image from "next/image";
-import downArrowBold from "@/public/icons/downArrowBold.svg";
 import downloadBlack2 from "@/public/icons/downloadBlack2.svg";
-import pdf from "@/public/icons/pdf.svg";
 import excel from "@/public/icons/excel.svg";
+import pdf from "@/public/icons/pdf.svg";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import Button from "../Button";
+import styles from "./UserDropDown.module.css";
 
 interface Props {
   onClickPdf: () => void;

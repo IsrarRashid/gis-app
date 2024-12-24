@@ -1,4 +1,4 @@
-import axios, { CanceledError, AxiosError } from "axios";
+import axios, { AxiosError, CanceledError } from "axios";
 import Cookies from "js-cookie";
 
 const token = Cookies.get("token");
@@ -10,4 +10,4 @@ export default axios.create({
   },
 });
 
-export { CanceledError, AxiosError };
+export { AxiosError, CanceledError };

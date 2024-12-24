@@ -1,15 +1,13 @@
 "use client";
-import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { sort } from "fast-sort";
-import TableHeading from "@/app/components/TableHeading";
-import { DM_Sans, Inter } from "next/font/google";
-import Button from "@/app/components/Button";
-import downloadLineBlack from "@/public/icons/downloadLineBlack.svg";
-import apiClient from "@/app/services/api-client";
 import { singleProjectDashboardAPI } from "@/app/APIs";
-import { useRouter } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
+import Button from "@/app/components/Button";
+import TableHeading from "@/app/components/TableHeading";
+import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
+import ProjectReportOverviewModal from "@/app/dashboard/components/projectReportOverview/ProjectReportOverviewModal";
+import useDistrict from "@/app/hooks/useDistrict";
+import useSectors from "@/app/hooks/useSectors";
+import useUsers from "@/app/hooks/useUsers";
+import apiClient from "@/app/services/api-client";
 import {
   addDayToFormattedDate,
   exportToPDF,
@@ -17,28 +15,27 @@ import {
   getFormattedDate,
   getTimeLeft,
 } from "@/app/utils";
-import ProjectReportOverviewModal from "@/app/dashboard/components/projectReportOverview/ProjectReportOverviewModal";
-import { IoSearch } from "react-icons/io5";
-import { Accordion, Dropdown } from "react-bootstrap";
-import useDistrict from "@/app/hooks/useDistrict";
-import useSectors from "@/app/hooks/useSectors";
-import { MdFirstPage, MdOutlineDateRange } from "react-icons/md";
-import { MdLastPage } from "react-icons/md";
-import { MdNavigateNext } from "react-icons/md";
-import { MdNavigateBefore } from "react-icons/md";
-import { DateRange, RangeKeyDict } from "react-date-range";
+import { exportDataToExcel } from "@/app/utils/exportToExcel";
 import { format } from "date-fns";
+import { sort } from "fast-sort";
+import { DM_Sans, Inter } from "next/font/google";
+import Image from "next/image";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Accordion } from "react-bootstrap";
+import { DateRange, RangeKeyDict } from "react-date-range";
 import "react-date-range/dist/styles.css"; // Main style file
 import "react-date-range/dist/theme/default.css"; // Theme CSS
-import SideNav from "../SideNav/SideNav";
-import styles from "./ProjectsTable.module.css";
-import useUsers from "@/app/hooks/useUsers";
-import pdf from "@/public/icons/pdf.svg";
-import excel from "@/public/icons/excel.svg";
-import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
-import { exportDataToExcel } from "@/app/utils/exportToExcel";
+import toast, { Toaster } from "react-hot-toast";
 import { FaRegClock, FaSearch, FaUser } from "react-icons/fa";
-import { ImCross } from "react-icons/im";
+import { IoSearch } from "react-icons/io5";
+import {
+  MdFirstPage,
+  MdLastPage,
+  MdNavigateBefore,
+  MdNavigateNext,
+  MdOutlineDateRange,
+} from "react-icons/md";
+import styles from "./ProjectsTable.module.css";
 
 // Define the type of the range state
 interface RangeType {
@@ -230,13 +227,14 @@ const ProjectsTable = ({
         `${singleProjectDashboardAPI}?projectid=${projectId}&visit=${visitId}`
       );
       if (
-        (response.data.data &&
-          response.data.data !== null &&
-          response.data.data.groups.length > 0) ||
+        (response.data.data && response.data.data !== null) ||
+        response.data.data.groups ||
+        response.data.data.attributes ||
+        response.data.data.groups.length > 0 ||
         response.data.data.attributes.length > 0
       ) {
         window.open(
-          `/projectDetailsDashboard/${projectId}/${visitId}`,
+          `/project-details-dashboard/${projectId}/${visitId}`,
           "_blank"
         );
         // router.push(`/projectDetailsDashboard/${projectId}/${visitId}`);

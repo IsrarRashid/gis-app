@@ -1,13 +1,13 @@
-import React, { useState, useEffect, FormEvent } from "react";
+import { attributeGroupMappingAPI } from "@/app/APIs";
+import Button from "@/app/components/Button";
+import apiClient from "@/app/services/api-client";
+import Image from "next/image";
+import { FormEvent, useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import Select, { ActionMeta, MultiValue } from "react-select";
-import { attributeGroupMappingAPI } from "@/app/APIs";
 import { ToastContainer, toast } from "react-toastify";
-import { Option } from "./List";
-import apiClient from "@/app/services/api-client";
 import dbGrey from "../../../public/icons/dbGrey.svg";
-import Image from "next/image";
-import Button from "@/app/components/Button";
+import { Option } from "./List";
 
 interface Props {
   id: number;

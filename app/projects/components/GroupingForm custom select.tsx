@@ -1,11 +1,10 @@
 import { attributeGroupsToProjectMappingAPI } from "@/app/APIs";
-import axios from "axios";
-import React, { useState, FormEvent, useEffect } from "react";
-import { Modal } from "react-bootstrap";
-import Cookies from "js-cookie";
-import { ToastContainer, toast } from "react-toastify";
-import Select from "react-select";
 import Button from "@/app/components/Button";
+import axios from "axios";
+import Cookies from "js-cookie";
+import React, { FormEvent, useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
 
 export interface GroupOption {
   id: number;

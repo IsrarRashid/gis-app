@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // output: "export",
-  // images: { unoptimized: true }, //comment this line if you don't use export command
 
   images: {
+    // unoptimized: true
     domains: ["110.39.184.210"],
   },
 

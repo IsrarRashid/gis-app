@@ -1,11 +1,11 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import Button from "../Button";
+import { Dispatch, SetStateAction } from "react";
 import {
   MdFirstPage,
   MdLastPage,
   MdNavigateBefore,
   MdNavigateNext,
 } from "react-icons/md";
+import Button from "../Button";
 
 interface Props {
   searchTerm: string;
@@ -132,13 +132,13 @@ const Pagination = ({
         </div>
         <div className="col-lg-6 col-md-9 col-sm-12">
           <div className="row d-flex justify-content-end align-items-center">
-            <div className="col-lg-2 col-md-1 col"></div>
-            <div className="col-lg-5 col-md-4 col text-end">
+            {/* <div className="col-lg-2 col-md-1 col"></div> */}
+            <div className="col text-end">
               <label htmlFor="rowPerPage" className="form-label mt-2">
                 Rows Per Page:
               </label>
             </div>
-            <div className="col-lg-1 col-md-3 col text-start p-0">
+            <div className="col-auto text-start">
               <select
                 className="rounded bg-color-sea-green text-white shadow p-2"
                 style={{

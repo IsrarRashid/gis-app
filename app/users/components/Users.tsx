@@ -1,11 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
-import List from "./List";
-import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import useAuthorization from "@/app/hooks/useAuthorization";
-import { useDispatch } from "react-redux";
 import { setContent } from "@/app/features/content/contentSlice";
+import useAuthorization from "@/app/hooks/useAuthorization";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import List from "./List";
 
 const Users = () => {
   const [refresh, setRefresh] = useState(false);

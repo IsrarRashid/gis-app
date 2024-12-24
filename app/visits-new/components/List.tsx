@@ -1,29 +1,26 @@
 "use client";
-import Image from "next/image";
-import calender from "../../../public/icons/calendar.svg";
-import clock from "../../../public/icons/clock.svg";
-import cancel from "../../../public/icons/cancel.svg";
-import complete from "../../../public/icons/complete.svg";
+import { visitAPI, visitNewAPI } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
-import { visitNewAPI } from "@/app/APIs";
-import Form from "./Form";
-import { sort } from "fast-sort";
-import useVisits, { Visit } from "@/app/hooks/useVisits";
-import useProjects from "@/app/hooks/useProjects";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import { ToastContainer, toast } from "react-toastify";
-import { useEffect, useState } from "react";
-import { DM_Sans, Inter } from "next/font/google";
-import { getFormattedDate, getName } from "@/app/utils";
+import Loader from "@/app/components/Loader";
+import Pagination from "@/app/components/Table/Pagination";
+import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
-import useVehicle from "@/app/hooks/useVehicle";
 import useDriver from "@/app/hooks/useDriver";
-import Button from "@/app/components/Button";
-import Loader from "@/app/components/Loader";
-import TableHeader from "@/app/components/Table/TableHeader";
-import Pagination from "@/app/components/Table/Pagination";
+import useProjects from "@/app/hooks/useProjects";
+import useVehicle from "@/app/hooks/useVehicle";
 import useVisitsNew, { VisitNew } from "@/app/hooks/useVisitsNew";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { sort } from "fast-sort";
+import { Inter } from "next/font/google";
+import Image from "next/image";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import calender from "../../../public/icons/calendar.svg";
+import cancel from "../../../public/icons/cancel.svg";
+import clock from "../../../public/icons/clock.svg";
+import complete from "../../../public/icons/complete.svg";
+import Form from "./Form";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,26 +37,10 @@ export interface Option {
 const List = ({ refresh, setRefresh }: ListProps) => {
   const { data, isLoading, setLoading, setData } = useVisitsNew({ refresh });
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const response = await apiClient.get(
-        `${visitNewAPI}/GetAllVisitSchedule`
-      );
-      setData(response.data.data);
-      console.log("visits plan data", response.data.data);
-      setLoading(false);
-    } catch (err) {
-      console.error("Submission error:", err);
-      setLoading(false);
-    }
-  };
-
   const { data: projects } = useProjects({ refresh });
   const { data: users } = useAuthentication({ refresh });
   const { data: vehicles } = useVehicle({ refresh });
   const { data: drivers } = useDriver({ refresh });
-  // const [status, setStatus] = useState("pending");
   const deleteMessage = "Deleted Successfully!";
 
   const notifyCreate = (message: string) => toast.success(message);
@@ -141,7 +122,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
   // Paginate data to display only the current page's rows
-  const paginatedData = (searchTerm || status ? filteredData : data).slice(
+  const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
     currentPage * rows
   );
@@ -311,8 +292,8 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 </td>
                 <td>
                   <Form
-                    api={visitNewAPI}
-                    method="PUT"
+                    api={visitAPI}
+                    method="POST"
                     id={d.id}
                     setRefresh={setRefresh}
                     refresh={refresh}
@@ -321,7 +302,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               </tr>
             ))}
             <tr>
-              <td colSpan={18} className="p-0">
+              <td colSpan={9}>
                 <Pagination
                   searchTerm={searchTerm}
                   filteredData={filteredData}
@@ -330,7 +311,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   setRows={setRows}
                   currentPage={currentPage}
                   setCurrentPage={setCurrentPage}
-                  status={status}
                 />
               </td>
             </tr>

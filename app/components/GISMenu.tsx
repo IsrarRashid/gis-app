@@ -1,28 +1,28 @@
 "use client";
-import downArrow from "../../public/icons/down-arrow.svg";
-import Image from "next/image";
-import cross from "../../public/icons/cross-2.svg";
-import clock2 from "../../public/icons/clock-2.svg";
-import db from "../../public/icons/db.svg";
-import qr from "../../public/icons/qr.svg";
-import dashboard from "../../public/icons/dashboard.svg";
-import user3White from "../../public/icons/user3White.svg";
-import group from "../../public/icons/group.svg";
-import driver from "../../public/icons/driver.svg";
-import truck from "../../public/icons/truck.svg";
-import visits from "../../public/icons/visits.svg";
-import rolesWhite from "../../public/icons/rolesWhite.svg";
-import rightsWhite from "../../public/icons/rightsWhite.svg";
-import superGroupWhite from "../../public/icons/superGroupWhite.svg";
-import vehicleTrackingIcon from "@/public/icons/vehicleTracking.svg";
 import staffTrackingIcon from "@/public/icons/staffTracking.svg";
-import visitSchedule from "@/public/icons/visitSchedule.svg";
 import userProjects from "@/public/icons/userProjects.svg";
-import { useDispatch } from "react-redux";
-import { setContent } from "../features/content/contentSlice";
+import vehicleTrackingIcon from "@/public/icons/vehicleTracking.svg";
+import visitSchedule from "@/public/icons/visitSchedule.svg";
+import Cookies from "js-cookie";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import clock2 from "../../public/icons/clock-2.svg";
+import cross from "../../public/icons/cross-2.svg";
+import dashboard from "../../public/icons/dashboard.svg";
+import db from "../../public/icons/db.svg";
+import downArrow from "../../public/icons/down-arrow.svg";
+import driver from "../../public/icons/driver.svg";
+import group from "../../public/icons/group.svg";
+import qr from "../../public/icons/qr.svg";
+import rightsWhite from "../../public/icons/rightsWhite.svg";
+import rolesWhite from "../../public/icons/rolesWhite.svg";
+import superGroupWhite from "../../public/icons/superGroupWhite.svg";
+import truck from "../../public/icons/truck.svg";
+import user3White from "../../public/icons/user3White.svg";
+import visits from "../../public/icons/visits.svg";
+import { setContent } from "../features/content/contentSlice";
 import Button from "./Button";
 
 interface Data {
@@ -50,12 +50,41 @@ const GISMenu = () => {
 
   const data = [
     {
-      name: "Dashboard",
+      name: "DG Dashboard",
       nameId: "dashboard",
       link: "/dashboard",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
     },
+    {
+      name: "Director Dashboard",
+      nameId: "dashboard-director",
+      link: "/dashboard-director",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+    },
+    {
+      name: "Deputy Director Dashboard",
+      nameId: "dashboard-deputy-director",
+      link: "/dashboard-deputy-director",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+    },
+    {
+      name: "Officier Dashboard",
+      nameId: "dashboard-officier",
+      link: "/dashboard-officier",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+    },
+    {
+      name: "IT Dashboard",
+      nameId: "dashboard-it",
+      link: "/dashboard-it",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+    },
+
     // {
     //   name: "Summary Dashboard",
     //   nameId: "summaryDashboard",
@@ -65,15 +94,15 @@ const GISMenu = () => {
     // },
     {
       name: "Vehicle Tracking",
-      nameId: "dashboardTO",
-      link: "/dashboardTO",
+      nameId: "vehicle-tracking",
+      link: "/vehicle-tracking",
       icon: vehicleTrackingIcon,
       backgroundColor: "linear-gradient(to bottom right, #a82897 , #2871a8)",
     },
     {
       name: "Staff Tracking",
-      nameId: "dashboardST",
-      link: "/dashboardST",
+      nameId: "staff-tracking",
+      link: "/staff-tracking",
       icon: staffTrackingIcon,
       backgroundColor: "linear-gradient(to bottom right, #7f28a8 , #a82828)",
     },
@@ -93,22 +122,22 @@ const GISMenu = () => {
     },
     {
       name: "User Projects",
-      nameId: "userProjects",
-      link: "/userProjects",
+      nameId: "user-projects",
+      link: "/user-projects",
       icon: userProjects,
       backgroundColor: "linear-gradient(to bottom right, #542487 , #41c4c2)",
     },
     {
       name: "Super Group",
-      nameId: "superGroup",
-      link: "/superGroup",
+      nameId: "super-group",
+      link: "/super-group",
       icon: superGroupWhite,
       backgroundColor: "linear-gradient(to bottom right, #28A897 , #E73A80)",
     },
     {
       name: "Attribute Groups",
-      nameId: "attributeGroups",
-      link: "/attributeGroups",
+      nameId: "attribute-groups",
+      link: "/attribute-groups",
       icon: group,
       backgroundColor: "linear-gradient(to bottom right, #22B46A , #096764)",
     },
@@ -190,9 +219,11 @@ const GISMenu = () => {
     const rights = JSON.parse(Cookies.get("rights") || "[]");
     // Filter data based on rights
     const filteredData = data.filter((item) =>
-      rights.some((right: any) => right === item.nameId)
+      rights.some(
+        (right: string) => right.toLowerCase() === item.nameId.toLowerCase()
+      )
     );
-
+    console.log("rights filtered", filteredData);
     setFilteredMenu(filteredData);
   }, [router]);
 

@@ -1,44 +1,47 @@
 "use client";
+import { mainDashboardAPI } from "@/app/APIs";
+import AnimatedCounter from "@/app/components/AnimatedCounter";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
-import Menu from "@/app/components/Menu";
 import Loader from "@/app/components/Loader";
+import Menu from "@/app/components/Menu";
 import { setContent } from "@/app/features/content/contentSlice";
-import { Lexend, Montserrat } from "next/font/google";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
-import { mainDashboardAPI } from "@/app/APIs";
-import apiClient from "@/app/services/api-client";
-import FilterButtons from "./FilterButtons";
-import MyMap from "./GoogleMap/MyMap";
-import { devMap, formatAmountWithCommas } from "@/app/utils";
-import FinancialSlab from "./FinancialSlab";
-import useAuthorization from "@/app/hooks/useAuthorization";
 import { setTutorial } from "@/app/features/tutorial/tutorialSlice";
-import AnimatedCounter from "@/app/components/AnimatedCounter";
-import cubes from "@/public/icons/cubes.svg";
-import Image from "next/image";
-import DistributedColumnChart from "./DistributedColumnChart";
-import SimplePieChart from "./SimplePieChart";
+import useAuthorization from "@/app/hooks/useAuthorization";
+import apiClient from "@/app/services/api-client";
+import { devMap, formatAmountWithCommas } from "@/app/utils";
+import carOutline from "@/public/icons/carOutline.svg";
+import controllingReleaseCircle from "@/public/icons/controllingReleaseCircle.svg";
 import divideCircle from "@/public/icons/divideCircle.svg";
 import originalAllocationCircle from "@/public/icons/originalAllocationCircle.svg";
-import revisedAllocationCircle from "@/public/icons/revisedAllocationCircle.svg";
 import pndReleaseCircle from "@/public/icons/pndReleaseCircle.svg";
-import controllingReleaseCircle from "@/public/icons/controllingReleaseCircle.svg";
+import reportAnalysis from "@/public/icons/reportAnalysis.svg";
+import revisedAllocationCircle from "@/public/icons/revisedAllocationCircle.svg";
+import settingCircleArrow from "@/public/icons/settingCircleArrow.svg";
 import spendingReleaseCircle from "@/public/icons/spendingReleaseCircle.svg";
+import staffTracking2 from "@/public/icons/staffTracking2.svg";
 import utilizationCircle from "@/public/icons/utilizationCircle.svg";
+import { AnimatePresence, motion } from "framer-motion";
+import { Lexend, Montserrat } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import DistributedColumnChart from "./DistributedColumnChart";
+import FilterButtons from "./FilterButtons";
+import FinancialSlab from "./FinancialSlab";
+import MyMap from "./GoogleMap/MyMap";
+import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
+import ReportReview from "./ReportReview";
+import SimplePieChart from "./SimplePieChart";
 import VisitsPlan from "./VisitsPlan";
 
 const lexend = Lexend({
   subsets: ["latin"],
-  weight: "400",
 });
 
 const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: "400",
 });
 
 export interface DistrictList {
@@ -213,7 +216,7 @@ const Dashboard = () => {
   // Filter and map keys
   const filteredCMADPKeys =
     projectsData &&
-    Object.keys(projectsData[0])
+    Object?.keys(projectsData[0])
       .filter((key) =>
         [
           "id",
@@ -264,9 +267,14 @@ const Dashboard = () => {
           "completedDate",
           "deadline",
           "fileGenrated",
+          "utilization",
         ].includes(key)
       )
       .map((key) => key as keyof ProjectsList);
+
+  const [isHover1, setHover1] = useState(false);
+  const [isHover2, setHover2] = useState(false);
+  const [hoveredButton, setHoveredButton] = useState(-1);
 
   return (
     <div
@@ -338,11 +346,13 @@ const Dashboard = () => {
               }
             />
             <div
-              className="col px-1 py-0 pe-0 me-1 text-center w-100 h-100"
+              className="col px-1 py-0 pe-0 me-1 text-center"
               style={{
-                background:
-                  "linear-gradient(to bottom, rgba(7, 79, 131,.5) , rgba(12, 140, 233,.2))",
+                width: "100%",
+                height: "100%",
+                background: "rgba(12, 140, 233,.2)",
                 borderRadius: "10px",
+                border: "1px solid rgba(12, 140, 233,.4)",
               }}
             >
               <p className="mb-1 text-white">Projects Being Monitored</p>
@@ -353,12 +363,30 @@ const Dashboard = () => {
                   modalId={"noOfProjects"}
                   button={
                     <Button
-                      className="btn p-0 pe-1 shadow-none w-100"
+                      className="position-relative btn p-0 pe-1 shadow-none w-100"
                       onClick={() => getProjectsList("NoOfProject")}
                     >
+                      <div
+                        className="position-absolute"
+                        style={{
+                          background:
+                            "linear-gradient( rgba(163, 12, 233, 0), rgba(163, 12, 233, 0.2),rgba(163, 12, 233, 0.2))",
+                          transition: "background .4s, opacity .4s",
+                          opacity: !isHover1 ? 1 : 0,
+                          borderRadius: "10px",
+                          width: "98%",
+                          height: "92%",
+                        }}
+                      ></div>
                       <Menu
-                        background="rgba(163, 12, 233, 0.2)"
-                        outline="1px solid rgba(163, 12, 233, 0.4)"
+                        onMouseEnter={() => setHover1(true)}
+                        onMouseLeave={() => setHover1(false)}
+                        background={`rgba(163, 12, 233, ${
+                          isHover1 ? "0.2" : "0"
+                        })`}
+                        outline={`1px solid rgba(163, 12, 233, ${
+                          isHover1 ? "0.4" : "0"
+                        })`}
                         icon="/icons/cubes.svg"
                         value={data ? data.noofProject : 0}
                         label="No. of Projects"
@@ -397,12 +425,30 @@ const Dashboard = () => {
                   modalId={"noOfVisits"}
                   button={
                     <Button
-                      className="btn p-0 pe-1 shadow-none w-100"
+                      className="position-relative btn p-0 pe-1 shadow-none w-100"
                       onClick={() => getProjectsList("BeingMonitored")}
                     >
+                      <div
+                        className="position-absolute"
+                        style={{
+                          background:
+                            "linear-gradient( rgba(12, 140, 233, 0), rgba(12, 140, 233, 0.2),rgba(12, 140, 233, 0.2))",
+                          transition: "background .4s, opacity .4s",
+                          opacity: !isHover2 ? 1 : 0,
+                          borderRadius: "10px",
+                          width: "98%",
+                          height: "92%",
+                        }}
+                      ></div>
                       <Menu
-                        background="rgba(12, 140, 233, 0.2)"
-                        outline="1px solid rgba(12, 140, 233, 0.4)"
+                        onMouseEnter={() => setHover2(true)}
+                        onMouseLeave={() => setHover2(false)}
+                        background={`rgba(12, 140, 233, ${
+                          isHover2 ? "0.2" : "0"
+                        })`}
+                        outline={`1px solid rgba(12, 140, 233, ${
+                          isHover2 ? "0.4" : "0"
+                        })`}
                         icon="/icons/archery.svg"
                         value={data ? data.monitoredProjects : 0}
                         label="No. of Visits"
@@ -624,6 +670,8 @@ const Dashboard = () => {
                 </>
               }
             />
+
+            <ReportReview />
           </>
         </div>
         <div className={`row m-0 mt-2 ${lexend.className}`}>
@@ -664,10 +712,11 @@ const Dashboard = () => {
                 modalId="pieBarChart"
                 button={
                   <Button
-                    className="btn fs18px fw-bold text-white w-100"
+                    className="btn fs18px fw-normal text-white w-100"
                     style={{
                       background: "rgba(12, 140, 233, 0.2)",
                       borderRadius: "10px",
+                      border: "1px solid rgba(12, 140, 233, 0.4)",
                     }}
                     onClick={() => getProjectsList("BarPie")}
                   >
@@ -708,6 +757,227 @@ const Dashboard = () => {
               />
             </div>
             <div
+              className={`col mb-2 shadow-sm fs14px p-0 ${lexend.className}`}
+              style={{
+                background:
+                  "linear-gradient(to right, #C6D9F1,#C6D9F1 , #E3F1C6,#E3F1C6)",
+                borderRadius: "10px",
+              }}
+            >
+              {/* <div className="row d-flex m-0">
+                {hoveredButton === -1 || hoveredButton === 0 ? (
+                  <div
+                    className="col p-0"
+                    onMouseEnter={() => setHoveredButton(0)}
+                    onMouseLeave={() => setHoveredButton(-1)}
+                    style={{
+                      width: `${
+                        hoveredButton === -1 || hoveredButton === 0
+                          ? "100%"
+                          : "0%"
+                      }`,
+                      opacity:
+                        hoveredButton === -1 || hoveredButton === 0 ? 1 : 0,
+                      transition: "width 1s opacity 1s",
+                    }}
+                  >
+                    <Link
+                      href="/dashboardTO"
+                      className="row d-flex m-0 justify-content-center btn w-100 fw-normal fs14px"
+                      style={{
+                        borderRadius: "8px",
+                        background: "#C6D9F1",
+                      }}
+                    >
+                      <div className="col-auto p-0 pe-1 my-auto">
+                        <Image
+                          src={carOutline}
+                          alt="carOutline"
+                          width={24}
+                          height={24}
+                        />
+                      </div>
+                      <div className="col-auto p-0">
+                        Vehicle
+                        <br />
+                        Tracking
+                      </div>
+                    </Link>
+                  </div>
+                ) : (
+                  ""
+                )}
+                {hoveredButton === -1 || hoveredButton === 1 ? (
+                  <div
+                    className="col p-0"
+                    onMouseEnter={() => setHoveredButton(1)}
+                    onMouseLeave={() => setHoveredButton(-1)}
+                  >
+                    <Link
+                      href="/dashboardST"
+                      className="row d-flex m-0 justify-content-center btn w-100 fw-normal fs14px"
+                      style={{
+                        borderRadius: "8px",
+                        background: "#E3F1C6",
+                      }}
+                    >
+                      <div className="col-auto pe-1 my-auto">
+                        <Image
+                          src={staffTracking2}
+                          alt="staffTracking2"
+                          width={24}
+                          height={24}
+                        />
+                      </div>
+                      <div className="col-auto p-0">
+                        Staff
+                        <br />
+                        Tacking
+                      </div>
+                    </Link>
+                  </div>
+                ) : (
+                  ""
+                )}
+                {hoveredButton === -1 || hoveredButton === 2 ? (
+                  <div
+                    className="col p-0"
+                    style={{ zIndex: 2 }}
+                    onMouseEnter={() => setHoveredButton(2)}
+                    onMouseLeave={() => setHoveredButton(-1)}
+                  >
+                    <VisitsPlan
+                      getProjectsList={getProjectsList}
+                      projectsData={projectsData ? projectsData : []}
+                      setProjectsData={setProjectsData}
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div> */}
+
+              <div className="row d-flex m-0">
+                {/* First Item */}
+                <AnimatePresence>
+                  {(hoveredButton === -1 || hoveredButton === 0) && (
+                    <motion.div
+                      className="p-0"
+                      onMouseEnter={() => setHoveredButton(0)}
+                      onMouseLeave={() => setHoveredButton(-1)}
+                      initial={{ flex: 1, opacity: 0 }}
+                      animate={{
+                        flex: hoveredButton === 0 ? 3 : 1,
+                        opacity: 1,
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        ease: "easeInOut",
+                      }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <Link
+                        href="/dashboardTO"
+                        className="row d-flex flex-nowrap m-0 justify-content-center btn w-100 fw-normal fs14px"
+                        style={{
+                          borderRadius: "8px",
+                          background: "#C6D9F1",
+                        }}
+                      >
+                        <div className="col-auto p-0 pe-1 my-auto">
+                          <Image
+                            src={carOutline}
+                            alt="carOutline"
+                            width={24}
+                            height={24}
+                          />
+                        </div>
+                        <div className="col-auto p-0">
+                          Vehicle
+                          <br />
+                          Tracking
+                        </div>
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Second Item */}
+                <AnimatePresence>
+                  {(hoveredButton === -1 || hoveredButton === 1) && (
+                    <motion.div
+                      className="p-0"
+                      onMouseEnter={() => setHoveredButton(1)}
+                      onMouseLeave={() => setHoveredButton(-1)}
+                      initial={{ flex: 1, opacity: 0 }}
+                      animate={{
+                        flex: hoveredButton === 1 ? 3 : 1,
+                        opacity: 1,
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        ease: "easeInOut",
+                      }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <Link
+                        href="/dashboardST"
+                        className="row d-flex flex-nowrap m-0 justify-content-center btn w-100 fw-normal fs14px"
+                        style={{
+                          borderRadius: "8px",
+                          background: "#E3F1C6",
+                        }}
+                      >
+                        <div className="col-auto p-0 pe-1 my-auto">
+                          <Image
+                            src={staffTracking2}
+                            alt="staffTracking2"
+                            width={24}
+                            height={24}
+                          />
+                        </div>
+                        <div className="col-auto p-0">
+                          Staff
+                          <br />
+                          Tracking
+                        </div>
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Third Item */}
+                <AnimatePresence>
+                  {(hoveredButton === -1 || hoveredButton === 2) && (
+                    <motion.div
+                      className="p-0"
+                      style={{ zIndex: 2 }}
+                      onMouseEnter={() => setHoveredButton(2)}
+                      onMouseLeave={() => setHoveredButton(-1)}
+                      initial={{ flex: 1, opacity: 0 }}
+                      animate={{
+                        flex: hoveredButton === 2 ? 3 : 1,
+                        opacity: 1,
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <VisitsPlan
+                        getProjectsList={getProjectsList}
+                        projectsData={projectsData ? projectsData : []}
+                        setProjectsData={setProjectsData}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+            <div
               className={`col mb-2 shadow-sm fs14px ${lexend.className}`}
               style={{
                 background: "#C6D9F1",
@@ -715,42 +985,105 @@ const Dashboard = () => {
                 padding: "10px",
               }}
             >
-              <p className="col fw-bold mb-0 text-center">Quick Navigation</p>
               <div className="row d-flex m-0">
                 <div className="col p-1">
-                  <Link
-                    href="/dashboardTO"
-                    className="btn w-100 text-white fw-normal fs14px"
-                    style={{
-                      borderRadius: "8px",
-                      background: "#1E6BDD",
-                    }}
-                  >
-                    Vehicle
-                    <br />
-                    Tracking
-                  </Link>
+                  <CustomModal
+                    isFullscreen={true}
+                    modalId="utilization"
+                    button={
+                      <Button
+                        onClick={() => getProjectsList("TotalProject")}
+                        className="row d-flex m-0 justify-content-center btn w-100 text-white text-nowrap fw-normal fs12px py-3"
+                        style={{
+                          borderRadius: "8px",
+                          background: "#1E6BDD",
+                        }}
+                      >
+                        <div className="col-auto pe-0">
+                          <Image
+                            src={settingCircleArrow}
+                            alt="settingCircleArrow"
+                            width={32}
+                            height={32}
+                          />
+                        </div>
+                        <div className="col ps-0">
+                          <p className="mb-0">Utilization</p>
+                          <p className="mb-0">
+                            <span className="text-nowrap">(20% - 80%)</span>
+                            &nbsp;
+                            <span>
+                              {data ? (
+                                <AnimatedCounter
+                                  from={0}
+                                  to={data.totalProjects}
+                                />
+                              ) : (
+                                0
+                              )}
+                            </span>
+                          </p>
+                        </div>
+                        {/* <div className="col-lg-4 col-md-2 col text-end">
+                            {data ? (
+                              <AnimatedCounter
+                                from={0}
+                                to={data.totalProjects}
+                              />
+                            ) : (
+                              0
+                            )}
+                          </div> */}
+                      </Button>
+                    }
+                    body={
+                      <>
+                        <div
+                          className="container-fluid border-0 p-1"
+                          style={{
+                            height: "100%",
+                            overflow: "scroll",
+                          }}
+                        >
+                          {projectsData ? (
+                            <ProjectsTable
+                              keys={filteredCMADPKeys!}
+                              label="Utilization(20% - 80%)"
+                              projectsData={projectsData}
+                              setProjectsData={setProjectsData}
+                              allowLink={false}
+                            />
+                          ) : (
+                            <Loader />
+                          )}
+                        </div>
+                      </>
+                    }
+                  />
                 </div>
-                <div className="col p-1">
+                <div className="col-auto p-1">
                   <Link
                     href="/dashboardST"
-                    className="btn w-100 text-white fw-normal fs14px"
+                    className="row d-flex flex-nowrap justify-content-center m-0 btn w-100 text-white fw-normal fs12px py-3"
                     style={{
                       borderRadius: "8px",
                       background: "#1E6BDD",
                     }}
                   >
-                    Staff
-                    <br />
-                    Tacking
+                    <div className="col-auto pe-1">
+                      <Image
+                        src={reportAnalysis}
+                        alt="reportAnalysis"
+                        width={32}
+                        height={32}
+                      />
+                    </div>
+                    <div className="col-auto">
+                      Report
+                      <br />
+                      Analysis
+                    </div>
                   </Link>
-                </div>
-                <div className="col p-1">
-                <VisitsPlan
-                      getProjectsList={getProjectsList}
-                      projectsData={projectsData ? projectsData :[]}
-                      setProjectsData={setProjectsData}
-                    />
                 </div>
               </div>
             </div>
@@ -771,10 +1104,8 @@ const Dashboard = () => {
                     style={{ background: "rgba(235, 239, 253, 1)" }}
                   >
                     <div className="row d-flex m-0">
-                      <div className="col fw-bold text-start ">
-                        Approved Cost
-                      </div>{" "}
-                      <div className="col fw-bold text-end pe-3">
+                      <div className="col text-start fw-5">Approved Cost</div>{" "}
+                      <div className="col fw-normal text-end pe-3">
                         {data ? formatAmountWithCommas(data?.approvedCost) : 0}{" "}
                         M
                       </div>
@@ -1003,60 +1334,12 @@ const Dashboard = () => {
                 style={{ background: "rgba(235, 239, 253, 1)" }}
               >
                 <div className="row d-flex m-0">
-                  <div className="col fw-bold text-start">Expenditure</div>
-                  <div className="col fw-bold text-end pe-3">
+                  <div className="col fw-5 text-start">Expenditure</div>
+                  <div className="col fw-normal text-end pe-3">
                     {data ? formatAmountWithCommas(data?.expenditure) : 0} M
                   </div>
                 </div>
               </div>
-              <CustomModal
-                isFullscreen={true}
-                size="xl"
-                modalId="Utilization"
-                button={
-                  <Button
-                    onClick={() => getProjectsList("TotalProject")}
-                    className="btn w-100 col p-2 rounded-2 fs14px"
-                    style={{ background: "rgba(235, 239, 253, 1)" }}
-                  >
-                    <div className="row d-flex m-0">
-                      <div className="col fw-bold text-start text-nowrap">
-                        Utilization(20% - 80%)
-                      </div>
-                      <div className="col fw-bold text-end pe-3">
-                        {data ? (
-                          <AnimatedCounter from={0} to={data.totalProjects} />
-                        ) : (
-                          0
-                        )}
-                      </div>
-                    </div>
-                  </Button>
-                }
-                body={
-                  <>
-                    <div
-                      className="container-fluid border-0 p-1"
-                      style={{
-                        height: "100%",
-                        overflow: "scroll",
-                      }}
-                    >
-                      {projectsData ? (
-                        <ProjectsTable
-                          keys={filteredCMADPKeys!}
-                          label="Utilization(20% - 80%)"
-                          projectsData={projectsData}
-                          setProjectsData={setProjectsData}
-                          allowLink={false}
-                        />
-                      ) : (
-                        <Loader />
-                      )}
-                    </div>
-                  </>
-                }
-              />
             </div>
 
             <div
@@ -1068,7 +1351,7 @@ const Dashboard = () => {
               }}
             >
               <p
-                className="mb-2 fw-bold pb-1"
+                className="mb-2 fw-5 pb-1"
                 style={{ borderBottom: "1px dashed #97ABBD" }}
               >
                 Project Status
@@ -1084,8 +1367,8 @@ const Dashboard = () => {
                     style={{ background: "rgba(235, 239, 253, 1)" }}
                   >
                     <div className="row d-flex m-0">
-                      <div className="col fw-bold text-start">Approved</div>{" "}
-                      <div className="col fw-bold text-end pe-3 text-success">
+                      <div className="col fw-5 text-start">Approved</div>{" "}
+                      <div className="col fw-normal text-end pe-3 text-success">
                         {data ? (
                           <AnimatedCounter from={0} to={data.approved} />
                         ) : (
@@ -1130,8 +1413,8 @@ const Dashboard = () => {
                     style={{ background: "rgba(235, 239, 253, 1)" }}
                   >
                     <div className="row d-flex m-0">
-                      <div className="col fw-bold text-start">Unapproved</div>{" "}
-                      <div className="col fw-bold text-end pe-3 text-danger">
+                      <div className="col fw-5 text-start">Unapproved</div>{" "}
+                      <div className="col fw-normal text-end pe-3 text-danger">
                         {data ? (
                           <AnimatedCounter from={0} to={data.unapproved} />
                         ) : (
@@ -1176,8 +1459,8 @@ const Dashboard = () => {
                     style={{ background: "rgba(235, 239, 253, 1)" }}
                   >
                     <div className="row d-flex m-0">
-                      <div className="col fw-bold text-start">Dropped</div>{" "}
-                      <div className="col fw-bold text-end pe-3 text-secondary">
+                      <div className="col fw-5 text-start">Dropped</div>{" "}
+                      <div className="col fw-normal text-end pe-3 text-secondary">
                         {data ? (
                           <AnimatedCounter from={0} to={data.dropped} />
                         ) : (
@@ -1222,7 +1505,7 @@ const Dashboard = () => {
                 color: "#334155",
               }}
             >
-              <p className="col fw-bold mb-2">Project Cost Slab</p>
+              <p className="col fw-5 mb-2">Project Cost Slab</p>
               <CustomModal
                 isFullscreen={true}
                 size="xl"

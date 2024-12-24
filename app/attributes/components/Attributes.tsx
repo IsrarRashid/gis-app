@@ -1,9 +1,7 @@
 "use client";
+import useAuthorization from "@/app/hooks/useAuthorization";
 import { useEffect, useState } from "react";
 import List from "./List";
-import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import useAuthorization from "@/app/hooks/useAuthorization";
 
 const Attributes = () => {
   const [refresh, setRefresh] = useState(false);

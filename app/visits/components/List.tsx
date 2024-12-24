@@ -1,33 +1,28 @@
 "use client";
-import Image from "next/image";
-import calender from "../../../public/icons/calendar.svg";
-import clock from "../../../public/icons/clock.svg";
-import cancel from "../../../public/icons/cancel.svg";
-import complete from "../../../public/icons/complete.svg";
-import arrowLeft from "../../../public/icons/arrow-left.svg";
-import arrowRight from "../../../public/icons/arrow-right.svg";
-import DeleteModal from "@/app/components/DeleteModal";
 import { visitAPI } from "@/app/APIs";
-import Form from "./Form";
-import { sort } from "fast-sort";
-import GroupingForm from "./GroupingForm";
-import useVisits, { Visit } from "@/app/hooks/useVisits";
-import useProjects from "@/app/hooks/useProjects";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import { ToastContainer, toast } from "react-toastify";
-import { useEffect, useState } from "react";
-import { DM_Sans, Inter } from "next/font/google";
-import { getFormattedDate, getName } from "@/app/utils";
+import Button from "@/app/components/Button";
+import DeleteModal from "@/app/components/DeleteModal";
+import Loader from "@/app/components/Loader";
+import Pagination from "@/app/components/Table/Pagination";
+import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
-import useVehicle from "@/app/hooks/useVehicle";
 import useDriver from "@/app/hooks/useDriver";
-import Button from "@/app/components/Button";
-import { letterSpacing } from "html2canvas/dist/types/css/property-descriptors/letter-spacing";
-import Loader from "@/app/components/Loader";
-import { IoSearch } from "react-icons/io5";
-import TableHeader from "@/app/components/Table/TableHeader";
-import Pagination from "@/app/components/Table/Pagination";
+import useProjects from "@/app/hooks/useProjects";
+import useVehicle from "@/app/hooks/useVehicle";
+import useVisits, { Visit } from "@/app/hooks/useVisits";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { getFormattedDate, getName } from "@/app/utils";
+import { sort } from "fast-sort";
+import { DM_Sans, Inter } from "next/font/google";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import calender from "../../../public/icons/calendar.svg";
+import cancel from "../../../public/icons/cancel.svg";
+import clock from "../../../public/icons/clock.svg";
+import complete from "../../../public/icons/complete.svg";
+import Form from "./Form";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -376,7 +371,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               </tr>
             ))}
             <tr>
-              <td colSpan={18} className="p-0">
+              <td colSpan={18}>
                 <Pagination
                   searchTerm={searchTerm}
                   filteredData={filteredData}

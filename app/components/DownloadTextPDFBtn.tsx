@@ -1,8 +1,8 @@
-import { useRef } from "react";
 import jsPDF from "jspdf";
-import DownloadFile from "../projects/components/DownloadFile";
-import downloadLineBlack from "../../public/icons/downloadLineBlack.svg";
 import Image from "next/image";
+import { useRef } from "react";
+import downloadLineBlack from "../../public/icons/downloadLineBlack.svg";
+import DownloadFile from "../projects/components/DownloadFile";
 import Button from "./Button";
 
 const DownloadTextPDFBtn = () => {

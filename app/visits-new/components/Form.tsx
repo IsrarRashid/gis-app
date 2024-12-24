@@ -1,21 +1,20 @@
-import Modal from "react-bootstrap/Modal";
+import Button from "@/app/components/Button";
+import useAuthentication from "@/app/hooks/useAuthentication";
+import useDistrict from "@/app/hooks/useDistrict";
+import useDriver from "@/app/hooks/useDriver";
+import useProjects from "@/app/hooks/useProjects";
+import useTourPlans from "@/app/hooks/useTourPlans";
+import useVehicle from "@/app/hooks/useVehicle";
+import useVisitsNew, { VisitNew } from "@/app/hooks/useVisitsNew";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useState } from "react";
-import more from "../../../public/icons/more.svg";
-import useDriver from "@/app/hooks/useDriver";
-import useVehicle from "@/app/hooks/useVehicle";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import toast, { Toaster } from "react-hot-toast";
+import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
-import useProjects from "@/app/hooks/useProjects";
-import useAuthentication from "@/app/hooks/useAuthentication";
-import Button from "@/app/components/Button";
-import { visitNewAPI } from "@/app/APIs";
-import useTourPlans from "@/app/hooks/useTourPlans";
-import useDistrict from "@/app/hooks/useDistrict";
-import useVisitsNew, { VisitNew } from "@/app/hooks/useVisitsNew";
+import toast, { Toaster } from "react-hot-toast";
+import { z } from "zod";
+import more from "../../../public/icons/more.svg";
 
 const schema = z.object({
   visitPlanGroup: z.number().optional().default(0),
@@ -46,9 +45,9 @@ const schema = z.object({
   complete_at: z.string().optional().nullable().default(null),
   submitted_at: z.string().optional().nullable().default(null),
   issued_at: z.string().optional().nullable().default(null),
-  reportPath: z.string().optional().nullable().default(null),
+  reportPath: z.string().optional().default(""),
   tracking_status: z.boolean().optional().default(false),
-  visitPlanPath: z.string().optional().nullable().default(null),
+  visitPlanPath: z.string().optional().default(""),
 });
 
 type Visit = z.infer<typeof schema>;
@@ -90,46 +89,45 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
   const handleShow = async () => {
     setShow(true);
+    const itemData: VisitNew | undefined = visitsNew.find(
+      (itemData: any) => itemData.id === id
+    );
 
-    if (method === "PUT") {
-      const itemData = visitsNew.find((itemData: any) => itemData.id === id);
-
-      if (itemData) {
-        const district = districts.find(
-          (district) => district.id === itemData.districtId
-        );
-        if (district) {
-          setValue("latitude", district.latitude);
-          setValue("longitude", district.longitude);
-        }
-        setValue("id", itemData.id);
-        setValue("projectId", itemData.id);
-        setValue("status", itemData.status);
-        setValue("updatedAt", new Date().toISOString());
+    if (itemData) {
+      const district = districts.find(
+        (district) => district.id === itemData.districtId
+      );
+      if (district) {
+        setValue("latitude", district.latitude);
+        setValue("longitude", district.longitude);
       }
-      try {
-        const response = await apiClient.get(
-          `${api}/GetVisitByVisitId?VisitID=${id}`
-        );
-        const itemData = response.data.data;
-        // const formatFromDate = itemData[0].fromDate.split("T")[0];
-        // const formatToDate = itemData[0].toDate.split("T")[0];
-        setValue("visitPlanGroup", itemData[0].visitPlanGroup);
-        setValue("assignedTo", itemData[0].assignedTo);
-        setValue("vehicleID", itemData[0].vehicleID);
-        setValue("driverID", itemData[0].driverID);
-        setValue("createdAt", itemData[0].createdAt);
-        setValue("complete_at", itemData[0].complete_at);
-        setValue("submitted_at", itemData[0].submitted_at);
-        setValue("issued_at", itemData[0].issued_at);
-        setValue("reportPath", itemData[0].reportPath);
-        setValue("tracking_status", itemData[0].tracking_status);
-        setValue("visitPlanPath", itemData[0].visitPlanPath);
-      } catch (err) {
-        console.log((err as AxiosError).message);
-        setError((err as AxiosError).message);
-      }
+      setValue("assignedTo", itemData.userId);
+      setValue("projectId", itemData.id);
+      setValue("status", itemData.status);
+      setValue("updatedAt", new Date().toISOString());
     }
+    // try {
+    //   const response = await apiClient.get(
+    //     `${api}/GetVisitByVisitId?VisitID=${id}`
+    //   );
+    //   const itemData = response.data.data;
+    //   // const formatFromDate = itemData[0].fromDate.split("T")[0];
+    //   // const formatToDate = itemData[0].toDate.split("T")[0];
+    //   // setValue("visitPlanGroup", itemData[0].visitPlanGroup);
+    //   // setValue("assignedTo", itemData[0].assignedTo);
+    //   // setValue("vehicleID", itemData[0].vehicleID);
+    //   // setValue("driverID", itemData[0].driverID);
+    //   setValue("createdAt", itemData[0].createdAt);
+    //   setValue("complete_at", itemData[0].complete_at);
+    //   setValue("submitted_at", itemData[0].submitted_at);
+    //   setValue("issued_at", itemData[0].issued_at);
+    //   setValue("reportPath", itemData[0].reportPath);
+    //   setValue("tracking_status", itemData[0].tracking_status);
+    //   setValue("visitPlanPath", itemData[0].visitPlanPath);
+    // } catch (err) {
+    //   console.log((err as AxiosError).message);
+    //   setError((err as AxiosError).message);
+    // }
   };
 
   const onSubmit = async (formData: Visit) => {
@@ -140,6 +138,12 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         fromDate: formData.fromDate,
         toDate: formData.toDate,
         status: (formData.status = "scheduled"),
+        complete_at: null,
+        submitted_at: null,
+        issued_at: null,
+        reportPath: "",
+        tracking_status: false,
+        visitPlanPath: "",
       };
 
       const response = await apiClient({
@@ -165,16 +169,16 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       <Button
         type="button"
         className={`btn shadow ${
-          method === "POST"
+          method === "PUT"
             ? "text-white bg-color-sea-green"
             : "rounded-pill ps-3 pe-3 pt-1 pb-1"
         }`}
         onClick={handleShow}
         style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
+          background: method === "PUT" ? "" : "rgba(255, 255, 255,.5)",
         }}
       >
-        {method === "POST" ? (
+        {method === "PUT" ? (
           "+ Visit"
         ) : (
           <Image src={more} alt="more" width={20} height={20} />

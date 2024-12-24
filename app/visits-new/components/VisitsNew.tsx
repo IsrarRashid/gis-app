@@ -1,11 +1,11 @@
 "use client";
+import useAuthorization from "@/app/hooks/useAuthorization";
 import { useEffect, useState } from "react";
 import List from "./List";
-import useAuthorization from "@/app/hooks/useAuthorization";
 
 const VisitsNew = () => {
   const [refresh, setRefresh] = useState(false);
-  useAuthorization("visits");
+  useAuthorization("visits-new");
 
   useEffect(() => {
     // Set the background for the body

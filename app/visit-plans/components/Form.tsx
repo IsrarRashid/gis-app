@@ -1,16 +1,16 @@
 "use client";
-import Modal from "react-bootstrap/Modal";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import { useForm } from "react-hook-form";
-import more from "../../../public/icons/more.svg";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import toast, { Toaster } from "react-hot-toast";
 import Button from "@/app/components/Button";
-import Cookies from "js-cookie";
 import useAuthentication from "@/app/hooks/useAuthentication";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Cookies from "js-cookie";
+import Image from "next/image";
+import { useState } from "react";
+import Modal from "react-bootstrap/Modal";
+import { useForm } from "react-hook-form";
+import toast, { Toaster } from "react-hot-toast";
+import { z } from "zod";
+import more from "../../../public/icons/more.svg";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -132,7 +132,7 @@ const Form = ({ api, method, id, setRefresh, refresh, setData }: Props) => {
         }}
       >
         {method === "POST" ? (
-          "+ TourPlan"
+          "+ VisitPlan"
         ) : (
           <Image src={more} alt="more" width={20} height={20} />
         )}
@@ -165,7 +165,7 @@ const Form = ({ api, method, id, setRefresh, refresh, setData }: Props) => {
                   className="text-center text-white mt-4"
                   style={{ fontSize: "1.5rem", fontWeight: "800" }}
                 >
-                  {method === "POST" ? "ADD Tour Plan" : "UPDATE Tour Plan"}
+                  {method === "POST" ? "ADD Visit Plan" : "UPDATE Visit Plan"}
                 </p>
               </div>
               <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>

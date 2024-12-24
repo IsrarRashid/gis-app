@@ -23,7 +23,7 @@ const TableHeader = ({
 }: Props) => {
   return (
     <>
-      <div className="row d-flex p-3">
+      <div className="row d-flex m-0 p-3">
         <div className="col">
           <h4 className="fw-bold">{heading}</h4>
         </div>

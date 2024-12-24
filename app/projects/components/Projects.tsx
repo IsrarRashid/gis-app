@@ -1,12 +1,7 @@
 "use client";
+import useAuthorization from "@/app/hooks/useAuthorization";
 import { useEffect, useState } from "react";
 import ProjectsList from "./ProjectsList";
-import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import DownloadFile from "./DownloadFile";
-import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
-import DownloadTextPDFBtn from "@/app/components/DownloadTextPDFBtn";
-import useAuthorization from "@/app/hooks/useAuthorization";
 
 const Projects = () => {
   const [refresh, setRefresh] = useState(false);

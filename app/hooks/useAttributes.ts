@@ -27,6 +27,7 @@ export interface Attribute {
   parentId: number;
   readOnly: number;
   evaluationFormulaWeightage: number;
+  removeable: number;
   options?: [
     {
       value: string;

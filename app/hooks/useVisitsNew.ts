@@ -6,7 +6,7 @@ export interface VisitNew {
   gsNo: string;
   name: string;
   userName: string;
-  userId: string;
+  userId: number;
   designation: string;
   sectorId: number;
   sectorName: string;

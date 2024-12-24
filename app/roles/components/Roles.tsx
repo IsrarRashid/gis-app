@@ -1,7 +1,7 @@
 "use client";
+import useAuthorization from "@/app/hooks/useAuthorization";
 import { useEffect, useState } from "react";
 import List from "./List";
-import useAuthorization from "@/app/hooks/useAuthorization";
 
 const Roles = () => {
   const [refresh, setRefresh] = useState(false);

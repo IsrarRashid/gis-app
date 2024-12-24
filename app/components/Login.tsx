@@ -1,21 +1,22 @@
 "use client";
-import { FormEvent, useState } from "react";
 import Cookies from "js-cookie";
-import bgVideoNew from "../../public/video/bgVideoNew.mp4";
-import logoNew from "../../public/icons/logoNew.svg";
-import userGrey from "../../public/icons/userGrey.svg";
-import passwordGrey from "../../public/icons/passwordGrey.svg";
-import eye from "../../public/icons/eye.svg";
-import verticalLineGrey from "../../public/icons/verticalLineGrey.svg";
 import Image from "next/image";
-import { useDispatch } from "react-redux";
-import apiClient, { AxiosError } from "../services/api-client";
-import { loginAPI } from "../APIs";
-import { ToastContainer, toast } from "react-toastify";
 import Link from "next/link";
+import { FormEvent, useState } from "react";
+import { useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import eye from "../../public/icons/eye.svg";
+import logoNew from "../../public/icons/logoNew.svg";
+import passwordGrey from "../../public/icons/passwordGrey.svg";
+import userGrey from "../../public/icons/userGrey.svg";
+import verticalLineGrey from "../../public/icons/verticalLineGrey.svg";
+import bgVideoNew from "../../public/video/bgVideoNew.mp4";
+import { loginAPI } from "../APIs";
+import apiClient, { AxiosError } from "../services/api-client";
 import Button from "./Button";
 
 export interface UserData {
+  id: number;
   userName: string;
   email: string;
 }
@@ -59,6 +60,9 @@ const Login = () => {
         expires: new Date(response.data.data.expiration),
       });
       Cookies.set("userName", response.data.data.userData.userName, {
+        expires: new Date(response.data.data.expiration),
+      });
+      Cookies.set("userId", response.data.data.userData.id.toString(), {
         expires: new Date(response.data.data.expiration),
       });
       Cookies.set("email", response.data.data.userData.email, {

@@ -1,13 +1,13 @@
-import Modal from "react-bootstrap/Modal";
+import { getProjectDetailKeysAPI } from "@/app/APIs";
+import Button from "@/app/components/Button";
+import useAttributes from "@/app/hooks/useAttributes";
+import useProjects from "@/app/hooks/useProjects";
+import apiClient, { AxiosError } from "@/app/services/api-client";
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
-import more from "../../../public/icons/more.svg";
+import Modal from "react-bootstrap/Modal";
 import { ToastContainer, toast } from "react-toastify";
-import useAttributes from "@/app/hooks/useAttributes";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import { getProjectDetailKeysAPI } from "@/app/APIs";
-import useProjects from "@/app/hooks/useProjects";
-import Button from "@/app/components/Button";
+import more from "../../../public/icons/more.svg";
 
 interface Form {
   attributeId: 0;
@@ -36,6 +36,7 @@ interface Form {
   readOnly: number;
   smdpIdentifier: string;
   evaluationFormulaWeightage: number;
+  removeable: number;
 }
 
 interface Option {
@@ -64,6 +65,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   const [isStatus, setStatus] = useState(false);
   const [isHidden, setHidden] = useState(false);
   const [isReadOnly, setReadOnly] = useState(false);
+  const [isRemoveable, setRemoveable] = useState(false);
   const [activeStates, setActiveStates] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -121,6 +123,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     readOnly: 0,
     smdpIdentifier: "",
     evaluationFormulaWeightage: 0,
+    removeable: 0,
   });
 
   const [optionsData, setOptionsData] = useState<Option[]>([
@@ -183,6 +186,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           readOnly: itemData.readOnly,
           smdpIdentifier: itemData.smdpIdentifier,
           evaluationFormulaWeightage: itemData.evaluationFormulaWeightage,
+          removeable: itemData.removeable,
         });
         setOptionsData(
           itemData.options || [
@@ -209,6 +213,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         setStatus(itemData.status === 1 ? true : false);
         setHidden(itemData.hidden === 1 ? true : false);
         setReadOnly(itemData.readOnly === 1 ? true : false);
+        setRemoveable(itemData.removeable === 1 ? true : false);
       } catch (error) {
         console.log(error);
       }
@@ -279,6 +284,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       status: isStatus ? 1 : 0,
       hidden: isHidden ? 1 : 0,
       readOnly: isReadOnly ? 1 : 0,
+      removeable: isRemoveable ? 1 : 0,
     });
   }, [
     isRequired,
@@ -286,6 +292,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     isStatus,
     isHidden,
     isReadOnly,
+    isRemoveable,
     formData.attributeType,
   ]);
 
@@ -319,6 +326,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             status: isStatus ? 1 : 0,
             hidden: isHidden ? 1 : 0,
             readOnly: isReadOnly ? 1 : 0,
+            removeable: isRemoveable ? 1 : 0,
             attributeCode:
               formData.attributeCode === "" ? null : formData.attributeCode, // Change 0 to null
             validationRegx:
@@ -388,6 +396,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               readOnly: 0,
               smdpIdentifier: "",
               evaluationFormulaWeightage: 0,
+              removeable: 0,
             });
             setOptionsData([
               {
@@ -406,6 +415,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             setStatus(false);
             setHidden(false);
             setReadOnly(false);
+            setRemoveable(false);
             console.log("Submit Response:", response.data);
             setRefresh((prev) => !prev);
           } else {
@@ -903,6 +913,24 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         name="readoOnly"
                         checked={isReadOnly}
                         onChange={() => setReadOnly(!isReadOnly)}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-lg-2 col-md-4 col-sm-12 text-start">
+                    <div className="form-check form-switch">
+                      <label
+                        className="form-check-label text-white"
+                        htmlFor="removeable"
+                      >
+                        Is Removeable
+                      </label>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="removeable"
+                        name="removeable"
+                        checked={isRemoveable}
+                        onChange={() => setRemoveable(!isRemoveable)}
                       />
                     </div>
                   </div>

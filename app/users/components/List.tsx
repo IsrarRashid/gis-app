@@ -1,25 +1,22 @@
 "use client";
 import { deleteUserAPI, registerUserAPI } from "@/app/APIs";
-import Form from "./Form";
+import DeleteModal2 from "@/app/components/DeleteModal2";
+import TableHeading from "@/app/components/TableHeading";
 import useAuthentication, {
   Authentication,
 } from "@/app/hooks/useAuthentication";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import { ToastContainer, toast } from "react-toastify";
-import { useState } from "react";
 import { sort } from "fast-sort";
-import TableHeading from "@/app/components/TableHeading";
 import { DM_Sans, Inter } from "next/font/google";
-import { getFormattedDate } from "@/app/utils";
-import DeleteModal2 from "@/app/components/DeleteModal2";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import Form from "./Form";
 // import GroupingForm from "./GroupingForm";
+import Loader from "@/app/components/Loader";
+import Pagination from "@/app/components/Table/Pagination";
+import TableHeader from "@/app/components/Table/TableHeader";
 import useRoles from "@/app/hooks/useRoles";
 import GroupingForm from "./GroupingForm";
-import Button from "@/app/components/Button";
-import Loader from "@/app/components/Loader";
-import { IoSearch } from "react-icons/io5";
-import TableHeader from "@/app/components/Table/TableHeader";
-import Pagination from "@/app/components/Table/Pagination";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],

@@ -1,9 +1,7 @@
 "use client";
+import useAuthorization from "@/app/hooks/useAuthorization";
 import { useEffect, useState } from "react";
 import SectorsTable from "./SectorsTable";
-import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import useAuthorization from "@/app/hooks/useAuthorization";
 
 const Sectors = () => {
   const [refresh, setRefresh] = useState(false);

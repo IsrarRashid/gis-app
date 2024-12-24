@@ -1,16 +1,16 @@
-import React, { useState, useEffect, FormEvent } from "react";
-import { Modal } from "react-bootstrap";
-import Select, { ActionMeta, MultiValue } from "react-select";
 import {
   assignUserToProjectAPI,
   getAssignedUsersToProjectAPI,
 } from "@/app/APIs";
-import { ToastContainer, toast } from "react-toastify";
-import apiClient from "@/app/services/api-client";
-import user3Black from "../../../public/icons/user3Black.svg";
-import Image from "next/image";
-import { UserOption } from "./ProjectsList";
 import Button from "@/app/components/Button";
+import apiClient from "@/app/services/api-client";
+import Image from "next/image";
+import { FormEvent, useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
+import Select, { ActionMeta, MultiValue } from "react-select";
+import { ToastContainer, toast } from "react-toastify";
+import user3Black from "../../../public/icons/user3Black.svg";
+import { UserOption } from "./ProjectsList";
 
 interface Props {
   id: number;

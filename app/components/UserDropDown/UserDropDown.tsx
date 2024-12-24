@@ -1,34 +1,46 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import styles from "./UserDropDown.module.css";
-import Link from "next/link";
-import Button from "../Button";
-import Image from "next/image";
 import downArrowBold from "@/public/icons/downArrowBold.svg";
 import filterBlack2 from "@/public/icons/filterBlack2.svg";
-import signOut from "@/public/icons/signOut.svg";
+import feedback from "@/public/icons/feedback.svg";
 import settingBlack from "@/public/icons/settingBlack.svg";
+import signOut from "@/public/icons/signOut.svg";
 import Cookies from "js-cookie";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import Button from "../Button";
+import styles from "./UserDropDown.module.css";
+import { useDispatch } from "react-redux";
+import apiClient from "@/app/services/api-client";
+import { feedbackAPI } from "@/app/APIs";
+import { Feedback } from "@/app/feedback/components/Feedback";
 
 const UserDropDown = () => {
   const [show, setShow] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userName, setUserName] = useState("");
+  const [userId, setUserId] = useState<number>();
+  const [role, setRole] = useState<string>();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const email = Cookies.get("email") || "";
     const userName = Cookies.get("userName") || "";
+    const userId = Cookies.get("userId") || "";
+    const role = Cookies.get("role") || "";
     setUserEmail(email);
     setUserName(userName);
+    setUserId(parseInt(userId));
+    setRole(role.toLowerCase());
   }, [router]);
 
   const handleLogout = () => {
     Cookies.remove("token");
     Cookies.remove("email");
     Cookies.remove("userName");
+    Cookies.remove("userId");
     Cookies.remove("role");
     Cookies.remove("rights");
     setShow(false);
@@ -72,10 +84,25 @@ const UserDropDown = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const [data, setData] = useState<Feedback[]>();
+  useEffect(() => {
+    const handleSubmit = async (userId: number) => {
+      try {
+        const response = await apiClient.get(
+          `${feedbackAPI}/GetFeedBackByReportingTo?reportingTo=${userId}`
+        );
+        setData(response.data.data);
+      } catch (err) {
+        console.error("Submission error:", err);
+      }
+    };
+    if (userId) handleSubmit(userId);
+  }, [userId]);
+
   return (
     <div className={styles.dropdown} ref={dropdownRef}>
       <Button
-        className="btn btn-sm badge rounded-pill shadow-sm p-0"
+        className="btn btn-sm badge rounded-pill shadow-sm p-0 position-relative"
         onClick={() => setShow(!show)}
         style={{
           padding: "5px 15px 5px 8px",
@@ -106,19 +133,27 @@ const UserDropDown = () => {
             <Image src={downArrowBold} alt="downArrowBold" />
           </div>
         </div>
+        {role?.includes("director") && (
+          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {data && data.length > 0
+              ? data.filter((d) => d.status === 0).length
+              : ""}
+          </span>
+        )}
       </Button>
       <div
         className={`fs12px ${styles.dropdownContent} ${show && styles.show}`}
+        style={{ zIndex: 3 }}
       >
         <div className="row d-flex m-0 pt-1">
           <div className="col-lg-3 col-md-3 col-sm-12 m-auto ms-1 mt-1 mb-1 p-0">
             <img
               className="img-fluid rounded-circle m-0"
-              src="/images/profilePic.png"
+              src="/icons/logoNew.svg"
               style={{ objectFit: "cover" }}
               alt="profilePic"
-              width={41}
-              height={41}
+              width={70}
+              height={70}
             />
           </div>
           <div className="col p-0 m-auto ms-1 p-1">
@@ -133,16 +168,25 @@ const UserDropDown = () => {
             </p>
           </div>
         </div>
-        <Link href="" className="fw-normal">
-          <Image
-            src={filterBlack2}
-            alt="filterBlack2"
-            width={20}
-            height={20}
-            className="me-2 mb-1"
-          />
-          Filter Settings
-        </Link>
+        {role?.includes("director") && (
+          <Link href="/feedback" className="fw-normal">
+            <div className="position-relative">
+              <Image
+                src={feedback}
+                alt="feedback"
+                width={20}
+                height={20}
+                className="me-2 mb-1"
+              />
+              FeedBack
+              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {data && data.length > 0
+                  ? data.filter((d) => d.status === 0).length
+                  : ""}
+              </span>
+            </div>
+          </Link>
+        )}
         <Link href="" className="fw-normal">
           <Image
             src={settingBlack}

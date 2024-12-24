@@ -1,6 +1,6 @@
 import Image from "next/image";
-import trashImage from "../../public/images/trash.png";
 import trashIcon from "../../public/icons/trash.svg";
+import trashImage from "../../public/images/trash.png";
 import Button from "./Button";
 
 interface Props {

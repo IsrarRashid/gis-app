@@ -1,13 +1,13 @@
-import React, { useState, useEffect, FormEvent } from "react";
-import { Modal } from "react-bootstrap";
-import Select, { ActionMeta, MultiValue, SingleValue } from "react-select";
-import { projectAPI, superGroupApi } from "@/app/APIs";
-import { ToastContainer, toast } from "react-toastify";
-import { Option } from "./ProjectsList";
+import { superGroupApi } from "@/app/APIs";
+import Button from "@/app/components/Button";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
+import { FormEvent, useState } from "react";
+import { Modal } from "react-bootstrap";
+import Select, { ActionMeta, SingleValue } from "react-select";
+import { ToastContainer, toast } from "react-toastify";
 import superGroupBlack from "../../../public/icons/superGroupBlack.svg";
-import Button from "@/app/components/Button";
+import { Option } from "./ProjectsList";
 interface Props {
   id: number;
   options: Option[];

@@ -1,15 +1,15 @@
 "use client";
-import Modal from "react-bootstrap/Modal";
+import Button from "@/app/components/Button";
+import useSectors from "@/app/hooks/useSectors";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useState } from "react";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import useSectors from "@/app/hooks/useSectors";
+import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
-import more from "../../../public/icons/more.svg";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import toast, { Toaster } from "react-hot-toast";
-import Button from "@/app/components/Button";
+import { z } from "zod";
+import more from "../../../public/icons/more.svg";
 
 const schema = z.object({
   id: z.number().optional().default(0),

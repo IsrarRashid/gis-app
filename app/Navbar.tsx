@@ -1,21 +1,15 @@
 "use client";
-import Image from "next/image";
-import logoNew from "./../public/icons/logoNew.svg";
-import notifications from "../public/icons/notifications.svg";
-import settings from "../public/icons/settings.svg";
-import userIcon from "../public/icons/user.svg";
-import GISMenu from "./components/GISMenu";
-import { Lexend } from "next/font/google";
-import { useEffect, useState } from "react";
-import Link from "next/link";
 import Cookies from "js-cookie";
+import { Lexend } from "next/font/google";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FaPlay, FaYoutube } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { RootState } from "./store";
-import downArrowBold from "../public/icons/downArrowBold.svg";
 import Button from "./components/Button";
+import GISMenu from "./components/GISMenu";
 import UserDropDown from "./components/UserDropDown/UserDropDown";
-import { FaYoutube } from "react-icons/fa";
+import { RootState } from "./store";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -49,6 +43,7 @@ const Navbar = () => {
   };
 
   const [currentTime, setCurrentTime] = useState("");
+  const [isEnter, setEnter] = useState(false);
 
   useEffect(() => {
     // Function to format the time
@@ -123,91 +118,62 @@ const Navbar = () => {
             </li>
           </ul>
 
-          {((currentContent &&
-            currentContent.toLowerCase().includes("dashboard")) ||
-            currentContent === "SummaryDashboard") && (
-            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li className="nav-item p-1">
-                <Link href={currentTutorial} target="_blank">
-                  <FaYoutube
-                    color="red"
-                    className="rounded-circle"
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li className="nav-item p-1 me-2 m-auto">
+              <Link href={currentTutorial} target="_blank">
+                <div
+                  style={{
+                    position: "relative",
+                    display: "inline-block",
+                    width: "fit-content",
+                    height: "fit-content",
+                  }}
+                  onMouseEnter={() => setEnter(true)}
+                  onMouseLeave={() => setEnter(false)}
+                >
+                  {/* Background div */}
+                  <FaPlay
+                    size={16}
+                    color={`${isEnter ? "white" : "rgba(255,255,255,0)"}`}
                     style={{
-                      background: "white",
-                      padding: "3px",
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      width: "10px",
+                      height: "10px",
+                      transform: "translate(-50%, -50%)",
+                      zIndex: 0, // Make sure it's behind the icon
+                      transition: "color .3s",
                     }}
-                    size={40}
                   />
-                </Link>
-              </li>
-              <li className="nav-item dropdown me-3">
-                <UserDropDown />
-              </li>
-            </ul>
-          )}
-          {currentContent.toLowerCase().includes("sectors") ||
-          currentContent.toLowerCase().includes("projects") ||
-          currentContent.toLowerCase().includes("users") ||
-          currentContent.toLowerCase().includes("supergroup") ||
-          currentContent.toLowerCase().includes("attributegroups") ||
-          currentContent.toLowerCase().includes("attributes") ||
-          currentContent.toLowerCase().includes("users") ||
-          currentContent.toLowerCase().includes("roles") ||
-          currentContent.toLowerCase().includes("rights") ||
-          currentContent.toLowerCase().includes("vehicle") ||
-          currentContent.toLowerCase().includes("driver") ||
-          currentContent.toLowerCase().includes("smdpsync") ||
-          currentContent.toLowerCase().includes("visits") ? (
-            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link className="nav-link active" aria-current="page" href="#">
-                  <Image src={notifications} alt="notifications" />
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" href="#">
-                  <Image src={settings} alt="settings" />
-                </Link>
-              </li>
-              {userEmail ? (
-                <li className="nav-item dropdown">
-                  <Link
-                    className="nav-link dropdown-toggle text-white "
-                    href="#"
-                    id="navbarDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <Image src={userIcon} alt="userIcon" />
-                    <span className="ms-2">{userEmail}</span>
-                  </Link>
-                  <ul
-                    className="dropdown-menu dropdown-menu-end"
-                    aria-labelledby="navbarDropdown"
-                  >
-                    <li>
-                      <Link
-                        className="dropdown-item"
-                        href="/login"
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </Link>
-                    </li>
-                  </ul>
-                </li>
-              ) : (
-                <li className="nav-item">
-                  <Link href="/login" className="nav-link text-white">
-                    Login
-                  </Link>
-                </li>
-              )}
-            </ul>
-          ) : (
-            ""
-          )}
+                  {/* YouTube Icon */}
+                  <FaYoutube
+                    color={`${isEnter ? "red" : "white"}`}
+                    size={40}
+                    style={{ transition: "color .3s" }}
+                  />
+                </div>
+              </Link>
+            </li>
+            <li className="nav-item p-1 me-2">
+              <Link href="https://smdp.punjab.gov.pk/" target="_blank">
+                <Button
+                  className="btn rounded-pill fw-bold m-auto"
+                  style={{
+                    background: "rgba(255, 255, 255, 0.62)",
+                    color: "#424242",
+                    fontSize: "0.813rem",
+                    padding: "10px 15px",
+                  }}
+                >
+                  SMDP
+                </Button>
+              </Link>
+            </li>
+            <li className="nav-item dropdown me-3">
+              <UserDropDown />
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
