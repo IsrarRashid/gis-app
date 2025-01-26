@@ -65,7 +65,7 @@ const StaffTracking = ({ data }: Props) => {
             <h4 className="fw-bold mt-2">Staff Tracking</h4>
           </div>
           <div className="col text-end">
-            <Link href="/dashboardST" className="btn p-0">
+            <Link href="/staff-tracking" className="btn p-0">
               <img
                 src="/icons/linkArrowBlack.svg"
                 className="img-fluid"
@@ -95,7 +95,7 @@ const StaffTracking = ({ data }: Props) => {
           >
             <div className="col">
               <div className="row d-flex">
-                <div className="col-lg-2 col-md-2 col px-0">
+                <div className="col-auto">
                   {d.userPicture && d.userPicture.length > 0 ? (
                     <img
                       src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.userPicture}`}

@@ -5,7 +5,7 @@ import List from "./List";
 
 const AttributeGroups = () => {
   const [refresh, setRefresh] = useState(false);
-  useAuthorization("super-group");
+  // useAuthorization("super-group");
 
   useEffect(() => {
     // Set the background for the body

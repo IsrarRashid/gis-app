@@ -14,10 +14,10 @@ export interface TourPlan {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useTourPlans = ({ refresh }: Props) =>
+const useTourPlans = ({ refresh = false }: Props = {}) =>
   useData<TourPlan>({ refresh, endpoint: tourPlanAPI });
 
 export default useTourPlans;

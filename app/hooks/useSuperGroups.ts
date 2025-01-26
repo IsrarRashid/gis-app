@@ -18,10 +18,10 @@ export interface SuperGroup {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useSuperGroups = ({ refresh }: Props) =>
+const useSuperGroups = ({ refresh = false }: Props = {}) =>
   useData<SuperGroup>({ refresh, endpoint: superGroupApi });
 
 export default useSuperGroups;

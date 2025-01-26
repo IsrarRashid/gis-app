@@ -654,7 +654,7 @@ const DownloadFile = () => {
                     1. Project Profile
                   </h4>
                   <h5 className="text-center pt-2 fw-bold">Table 1</h5>
-                  <table className="table table-bordered border-light">
+                  <table className="table table-hover table-bordered border-light">
                     <thead className="table-primary"></thead>
                     <tbody className="">
                       <tr>
@@ -700,7 +700,7 @@ const DownloadFile = () => {
                       2. Design & Scope
                     </h4>
                     <h5 className="text-center fw-bold">Table 2</h5>
-                    <table className="table table-bordered border-light">
+                    <table className="table table-hover table-bordered border-light">
                       <tbody>
                         <tr>
                           <th
@@ -780,7 +780,7 @@ const DownloadFile = () => {
                       3. Major Deliverables{" "}
                     </h4>
                     <h5 className="text-center pt-3 fw-bold">Table 2</h5>
-                    <table className="table table-bordered border-light">
+                    <table className="table table-hover table-bordered border-light">
                       <thead className="table-primary"></thead>
                       <tbody className="">
                         <tr>
@@ -899,7 +899,7 @@ const DownloadFile = () => {
                     >
                       4. Ongoing Activities{" "}
                     </h4>
-                    <table className="table table-bordered border-light">
+                    <table className="table table-hover table-bordered border-light">
                       <tbody>
                         <tr>
                           <th
@@ -946,7 +946,7 @@ const DownloadFile = () => {
                     </table>
 
                     <table
-                      className="table table-bordered border-light"
+                      className="table table-hover table-bordered border-light"
                       style={{ backgroundColor: "yellow" }}
                     >
                       <tbody>
@@ -979,7 +979,7 @@ const DownloadFile = () => {
                       5. Earned Value Analysis
                     </h4>
                     <h5 className="text-center fw-bold">Table 5</h5>
-                    <table className="table table-bordered border-light">
+                    <table className="table table-hover table-bordered border-light">
                       <tbody className="">
                         <tr>
                           <th
@@ -1030,7 +1030,7 @@ const DownloadFile = () => {
                     </table>
 
                     <table
-                      className="table table-bordered border-dark"
+                      className="table table-hover table-bordered border-dark"
                       style={{ background: "#FF0000" }}
                     >
                       <tbody>
@@ -1055,7 +1055,7 @@ const DownloadFile = () => {
                       6. Financial Analysis
                     </h4>
                     <h5 className="text-center fw-bold">Table 6</h5>
-                    <table className="table table-bordered border-light">
+                    <table className="table table-hover table-bordered border-light">
                       <tbody className="">
                         <tr>
                           <th
@@ -1224,7 +1224,7 @@ const DownloadFile = () => {
                   >
                     7. Observations & Recommendations
                   </h4>
-                  <table className="table table-bordered border-light">
+                  <table className="table table-hover table-bordered border-light">
                     <tbody>
                       <tr>
                         <th

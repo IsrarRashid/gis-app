@@ -8,7 +8,7 @@ import List from "./List";
 const Users = () => {
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
-  useAuthorization("users");
+  // useAuthorization("users");
 
   const handleButtonClick = (content: string) => {
     dispatch(setContent(content));

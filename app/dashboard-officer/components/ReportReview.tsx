@@ -42,17 +42,17 @@ const ReportReview = () => {
           className="col btn p-0 pe-1 shadow-none w-100 position-relative"
         >
           <Menu
-            background="rgba(12, 140, 233, 0.2)"
-            outline="1px solid rgba(12, 140, 233, 0.4)"
+            background="rgba(12, 233, 167, 0.2)"
+            outline="1px solid rgba(12, 233, 174, 0.4)"
             icon="/icons/reportReview.svg"
-            value={data ? data?.filter((d) => d.status === 0).length : 0}
+            value={data ? data?.length : 0}
             label="Report Review"
             showTides={true}
             showArrow={true}
             textWrap={false}
           />
           <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {data ? data?.filter((d) => d.status === 0).length : 0}
+            {data ? data?.length : 0}
           </span>
         </Link>
       )}

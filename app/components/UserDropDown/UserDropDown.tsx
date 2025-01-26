@@ -169,7 +169,7 @@ const UserDropDown = () => {
           </div>
         </div>
         {role?.includes("director") && (
-          <Link href="/feedback" className="fw-normal">
+          <Link href="/feedback" target="_blank" className="fw-normal">
             <div className="position-relative">
               <Image
                 src={feedback}

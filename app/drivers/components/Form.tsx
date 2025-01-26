@@ -150,7 +150,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("driverName")}
                     id="driverName"
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Driver Name"
                   />
                   {errors.driverName && (
@@ -170,7 +170,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("mobileNumber")}
                     id="mobileNumber"
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Mobile Number"
                   />
                   {errors.mobileNumber && (
@@ -187,7 +187,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("user_Id", { valueAsNumber: true })}
                     id="user_Id"
                     type="number"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter User Id"
                     disabled
                     value={0}
@@ -207,7 +207,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("driverImage")}
                     id="driverImage"
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Driver Image"
                     disabled
                   />

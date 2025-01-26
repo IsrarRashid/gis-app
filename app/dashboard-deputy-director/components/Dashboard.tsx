@@ -21,6 +21,7 @@ import settingCircleArrow from "@/public/icons/settingCircleArrow.svg";
 import spendingReleaseCircle from "@/public/icons/spendingReleaseCircle.svg";
 import staffTracking2 from "@/public/icons/staffTracking2.svg";
 import utilizationCircle from "@/public/icons/utilizationCircle.svg";
+import { AnimatePresence, motion } from "framer-motion";
 import { Lexend, Montserrat } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,10 +32,10 @@ import FilterButtons from "./FilterButtons";
 import FinancialSlab from "./FinancialSlab";
 import MyMap from "./GoogleMap/MyMap";
 import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
+import ReportReview from "./ReportReview";
 import SimplePieChart from "./SimplePieChart";
 import VisitsPlan from "./VisitsPlan";
-import { motion, AnimatePresence } from "framer-motion";
-import ReportReview from "./ReportReview";
+import ReportAnalysis from "./ReportAnalysis";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -91,7 +92,21 @@ const Dashboard = () => {
   const [data, setData] = useState<MainDashboard>();
   const [pageLoaded, setPageLoaded] = useState<boolean>(false);
   const dispatch = useDispatch();
-  useAuthorization("dashboard-deputy-director");
+  // useAuthorization("dashboard");
+
+  const [isInRange, setIsInRange] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsInRange(width >= 992 && width <= 1264);
+    };
+
+    handleResize(); // Check on initial render
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     setPageLoaded(true);
@@ -110,13 +125,14 @@ const Dashboard = () => {
 
     handleButtonClick(
       "dashboard",
-      "https://www.youtube.com/watch?v=4VeLWNExWZU&ab_channel=DirectorateGeneralMonitoringandEvaluation"
+      "https://www.youtube.com/watch?v=1wgAwCufsko&ab_channel=DirectorateGeneralMonitoringandEvaluation"
     );
     // Cleanup on unmount
     return () => {
       document.body.style.backgroundImage = "";
     };
   }, []);
+
   const [isLoading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<"cmInitiative" | "adp">(
     "cmInitiative"
@@ -216,10 +232,11 @@ const Dashboard = () => {
   // Filter and map keys
   const filteredCMADPKeys =
     projectsData &&
-    Object.keys(projectsData[0])
+    projectsData.length > 0 &&
+    Object?.keys(projectsData[0])
       .filter((key) =>
         [
-          "id",
+          "gSno",
           "projectName",
           "sectorName",
           "districtName",
@@ -227,16 +244,18 @@ const Dashboard = () => {
           "revisedAllocation",
           "pnDReleases",
           "utilization",
+          "utilPercent",
         ].includes(key)
       )
       .map((key) => key as keyof ProjectsList);
 
   const filteredNoOfProjectsKeys =
     projectsData &&
+    projectsData.length > 0 &&
     Object.keys(projectsData[0])
       .filter((key) =>
         [
-          "id",
+          "gSno",
           "projectName",
           "sectorName",
           "districtName",
@@ -254,10 +273,11 @@ const Dashboard = () => {
   // Filter and map keys
   const filteredKeys =
     projectsData &&
+    projectsData.length > 0 &&
     Object.keys(projectsData[0])
       .filter((key) =>
         [
-          "id",
+          "gSno",
           "projectName",
           "sectorName",
           "districtName",
@@ -266,8 +286,8 @@ const Dashboard = () => {
           "visitStartDate",
           "completedDate",
           "deadline",
-          "fileGenrated",
-          "utilization",
+          "reportSubmitted",
+          "onePagerSubmitted",
         ].includes(key)
       )
       .map((key) => key as keyof ProjectsList);
@@ -275,6 +295,23 @@ const Dashboard = () => {
   const [isHover1, setHover1] = useState(false);
   const [isHover2, setHover2] = useState(false);
   const [hoveredButton, setHoveredButton] = useState(-1);
+
+  const [utilizationData, setUtilizationData] = useState<ProjectsList[]>([]);
+
+  useEffect(() => {
+    getProjectsList("TotalProject");
+  }, []);
+
+  useEffect(() => {
+    if (projectsData) {
+      const filteredProjects = projectsData?.filter((project) => {
+        const utilizationPercentage =
+          ((project.expUpToJune + project.utilization) / project.cost) * 100;
+        return utilizationPercentage >= 20 && utilizationPercentage <= 80;
+      });
+      setUtilizationData(filteredProjects);
+    }
+  }, [projectsData]);
 
   return (
     <div
@@ -319,16 +356,10 @@ const Dashboard = () => {
               }
               body={
                 <>
-                  <div
-                    className="container-fluid border-0 p-1"
-                    style={{
-                      height: "100%",
-                      overflow: "scroll",
-                    }}
-                  >
-                    {projectsData ? (
+                  <div className="container-fluid border-0 p-1">
+                    {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
-                        keys={filteredCMADPKeys!}
+                        keys={filteredCMADPKeys}
                         label={
                           activeFilter === "cmInitiative"
                             ? "CM Initiatives"
@@ -346,7 +377,7 @@ const Dashboard = () => {
               }
             />
             <div
-              className="col px-1 py-0 pe-0 me-1 text-center"
+              className="col px-1 py-0 pe-0 me-1 text-center mb-2"
               style={{
                 width: "100%",
                 height: "100%",
@@ -355,7 +386,7 @@ const Dashboard = () => {
                 border: "1px solid rgba(12, 140, 233,.4)",
               }}
             >
-              <p className="mb-1 text-white">Projects Being Monitored</p>
+              <p className="mb-0 text-white">Projects Being Monitored</p>
               <div className="row m-0 d-flex flex-nowrap">
                 <CustomModal
                   isFullscreen={true}
@@ -399,15 +430,10 @@ const Dashboard = () => {
                   }
                   body={
                     <>
-                      <div
-                        className="container-fluid border-0 p-1"
-                        style={{
-                          height: "100%",
-                        }}
-                      >
-                        {projectsData ? (
+                      <div className="container-fluid border-0 p-1">
+                        {projectsData && filteredNoOfProjectsKeys ? (
                           <ProjectsTable
-                            keys={filteredNoOfProjectsKeys!}
+                            keys={filteredNoOfProjectsKeys}
                             label="Projects"
                             projectsData={projectsData}
                             setProjectsData={setProjectsData}
@@ -461,16 +487,10 @@ const Dashboard = () => {
                   }
                   body={
                     <>
-                      <div
-                        className="container-fluid border-0 p-1"
-                        style={{
-                          height: "100%",
-                          overflow: "scroll",
-                        }}
-                      >
-                        {projectsData ? (
+                      <div className="container-fluid border-0 p-1">
+                        {projectsData && filteredKeys ? (
                           <ProjectsTable
-                            keys={filteredKeys!}
+                            keys={filteredKeys}
                             label="Visits"
                             projectsData={projectsData}
                             setProjectsData={setProjectsData}
@@ -489,10 +509,12 @@ const Dashboard = () => {
               isFullscreen={true}
               size="xl"
               modalId={"Good"}
+              allowOpen={data && data.defineLimitProjects === 0 ? false : true}
               button={
                 <Button
                   className="btn p-0 pe-1 shadow-none w-100"
                   onClick={() => getProjectsList("OnTrack")}
+                  disabled={data && data.defineLimitProjects === 0}
                 >
                   <Menu
                     background="rgba(45, 199, 84, 0.35)"
@@ -510,16 +532,10 @@ const Dashboard = () => {
               }
               body={
                 <>
-                  <div
-                    className="container-fluid border-0 p-1"
-                    style={{
-                      height: "100%",
-                      overflow: "scroll",
-                    }}
-                  >
-                    {projectsData ? (
+                  <div className="container-fluid border-0 p-1">
+                    {projectsData && filteredKeys ? (
                       <ProjectsTable
-                        keys={filteredKeys!}
+                        keys={filteredKeys}
                         label="Good Projects"
                         projectsData={projectsData}
                         setProjectsData={setProjectsData}
@@ -536,10 +552,14 @@ const Dashboard = () => {
               isFullscreen={true}
               size="xl"
               modalId={"Average"}
+              allowOpen={
+                data && data.needConsidrationProjects === 0 ? false : true
+              }
               button={
                 <Button
                   className="btn p-0 pe-1 shadow-none w-100"
                   onClick={() => getProjectsList("OffTrack")}
+                  disabled={data && data.needConsidrationProjects === 0}
                 >
                   <Menu
                     background="rgba(224, 255, 22, 0.4)"
@@ -557,16 +577,10 @@ const Dashboard = () => {
               }
               body={
                 <>
-                  <div
-                    className="container-fluid border-0 p-1"
-                    style={{
-                      height: "100%",
-                      overflow: "scroll",
-                    }}
-                  >
-                    {projectsData ? (
+                  <div className="container-fluid border-0 p-1">
+                    {projectsData && filteredKeys ? (
                       <ProjectsTable
-                        keys={filteredKeys!}
+                        keys={filteredKeys}
                         label="Average Projects"
                         projectsData={projectsData}
                         setProjectsData={setProjectsData}
@@ -583,10 +597,12 @@ const Dashboard = () => {
               isFullscreen={true}
               size="xl"
               modalId={"Critical"}
+              allowOpen={data && data.criticalProjects === 0 ? false : true}
               button={
                 <Button
                   className="btn p-0 pe-1 shadow-none w-100"
                   onClick={() => getProjectsList("Critical")}
+                  disabled={data && data.criticalProjects === 0}
                 >
                   <Menu
                     background="rgba(233, 12, 16, 0.26)"
@@ -604,16 +620,10 @@ const Dashboard = () => {
               }
               body={
                 <>
-                  <div
-                    className="container-fluid border-0 p-1"
-                    style={{
-                      height: "100%",
-                      overflow: "scroll",
-                    }}
-                  >
-                    {projectsData ? (
+                  <div className="container-fluid border-0 p-1">
+                    {projectsData && filteredKeys ? (
                       <ProjectsTable
-                        keys={filteredKeys!}
+                        keys={filteredKeys}
                         label="Critical Projects"
                         projectsData={projectsData}
                         setProjectsData={setProjectsData}
@@ -649,16 +659,10 @@ const Dashboard = () => {
               }
               body={
                 <>
-                  <div
-                    className="container-fluid border-0 p-1"
-                    style={{
-                      height: "100%",
-                      overflow: "scroll",
-                    }}
-                  >
-                    {projectsData ? (
+                  <div className="container-fluid border-0 p-1">
+                    {projectsData && filteredKeys ? (
                       <ProjectsTable
-                        keys={filteredKeys!}
+                        keys={filteredKeys}
                         label="Reports In Progress"
                         projectsData={projectsData}
                         setProjectsData={setProjectsData}
@@ -675,7 +679,11 @@ const Dashboard = () => {
           </>
         </div>
         <div className={`row m-0 mt-2 ${lexend.className}`}>
-          <div className="col-lg-9 col-md-12 col-sm-12 pe-1">
+          <div
+            className={`${
+              isInRange ? "col-lg-8" : "col-lg-9"
+            } col-md-12 col-sm-12 pe-1`}
+          >
             {devMap && data && (
               <MyMap
                 data={data}
@@ -688,7 +696,11 @@ const Dashboard = () => {
               />
             )}
           </div>
-          <div className="col-lg-3 col-md-12 col-sm-12 pe-1">
+          <div
+            className={`${
+              isInRange ? "col-lg-4" : "col-lg-3"
+            } col-md-12 col-sm-12 pe-1`}
+          >
             <FilterButtons
               handleSubmit={handleSubmit}
               setOtherFilters={setOtherFilters}
@@ -710,6 +722,8 @@ const Dashboard = () => {
               <CustomModal
                 size="xl"
                 modalId="pieBarChart"
+                HeaderRightPos={20}
+                HeaderTopPos={5}
                 button={
                   <Button
                     className="btn fs18px fw-normal text-white w-100"
@@ -731,7 +745,7 @@ const Dashboard = () => {
                 }
                 body={
                   <div className="row d-flex m-0">
-                    {projectsData && pageLoaded && (
+                    {projectsData && projectsData.length > 0 && pageLoaded && (
                       <>
                         <div className="col mb-4">
                           <DistributedColumnChart
@@ -782,7 +796,7 @@ const Dashboard = () => {
                     }}
                   >
                     <Link
-                      href="/dashboardTO"
+                      href="/vehicle-tracking"
                       className="row d-flex m-0 justify-content-center btn w-100 fw-normal fs14px"
                       style={{
                         borderRadius: "8px",
@@ -814,7 +828,7 @@ const Dashboard = () => {
                     onMouseLeave={() => setHoveredButton(-1)}
                   >
                     <Link
-                      href="/dashboardST"
+                      href="/staff-tracking"
                       className="row d-flex m-0 justify-content-center btn w-100 fw-normal fs14px"
                       style={{
                         borderRadius: "8px",
@@ -878,7 +892,7 @@ const Dashboard = () => {
                       style={{ overflow: "hidden" }}
                     >
                       <Link
-                        href="/dashboardTO"
+                        href="/vehicle-tracking"
                         className="row d-flex flex-nowrap m-0 justify-content-center btn w-100 fw-normal fs14px"
                         style={{
                           borderRadius: "8px",
@@ -923,7 +937,7 @@ const Dashboard = () => {
                       style={{ overflow: "hidden" }}
                     >
                       <Link
-                        href="/dashboardST"
+                        href="/staff-tracking"
                         className="row d-flex flex-nowrap m-0 justify-content-center btn w-100 fw-normal fs14px"
                         style={{
                           borderRadius: "8px",
@@ -993,13 +1007,13 @@ const Dashboard = () => {
                     button={
                       <Button
                         onClick={() => getProjectsList("TotalProject")}
-                        className="row d-flex m-0 justify-content-center btn w-100 text-white text-nowrap fw-normal fs12px py-3"
+                        className="row d-flex m-0 justify-content-center btn w-100 text-white text-nowrap fw-normal fs12px py-3 px-0"
                         style={{
                           borderRadius: "8px",
                           background: "#1E6BDD",
                         }}
                       >
-                        <div className="col-auto pe-0">
+                        <div className="col-auto px-1">
                           <Image
                             src={settingCircleArrow}
                             alt="settingCircleArrow"
@@ -1007,7 +1021,7 @@ const Dashboard = () => {
                             height={32}
                           />
                         </div>
-                        <div className="col ps-0">
+                        <div className="col-auto px-1">
                           <p className="mb-0">Utilization</p>
                           <p className="mb-0">
                             <span className="text-nowrap">(20% - 80%)</span>
@@ -1016,7 +1030,8 @@ const Dashboard = () => {
                               {data ? (
                                 <AnimatedCounter
                                   from={0}
-                                  to={data.totalProjects}
+                                  // to={data.totalProjects}
+                                  to={utilizationData?.length}
                                 />
                               ) : (
                                 0
@@ -1024,32 +1039,16 @@ const Dashboard = () => {
                             </span>
                           </p>
                         </div>
-                        {/* <div className="col-lg-4 col-md-2 col text-end">
-                            {data ? (
-                              <AnimatedCounter
-                                from={0}
-                                to={data.totalProjects}
-                              />
-                            ) : (
-                              0
-                            )}
-                          </div> */}
                       </Button>
                     }
                     body={
                       <>
-                        <div
-                          className="container-fluid border-0 p-1"
-                          style={{
-                            height: "100%",
-                            overflow: "scroll",
-                          }}
-                        >
-                          {projectsData ? (
+                        <div className="container-fluid border-0 p-1">
+                          {projectsData && filteredCMADPKeys ? (
                             <ProjectsTable
-                              keys={filteredCMADPKeys!}
+                              keys={filteredCMADPKeys}
                               label="Utilization(20% - 80%)"
-                              projectsData={projectsData}
+                              projectsData={utilizationData}
                               setProjectsData={setProjectsData}
                               allowLink={false}
                             />
@@ -1062,28 +1061,48 @@ const Dashboard = () => {
                   />
                 </div>
                 <div className="col-auto p-1">
-                  <Link
-                    href="/dashboardST"
-                    className="row d-flex flex-nowrap justify-content-center m-0 btn w-100 text-white fw-normal fs12px py-3"
-                    style={{
-                      borderRadius: "8px",
-                      background: "#1E6BDD",
-                    }}
-                  >
-                    <div className="col-auto pe-1">
-                      <Image
-                        src={reportAnalysis}
-                        alt="reportAnalysis"
-                        width={32}
-                        height={32}
-                      />
-                    </div>
-                    <div className="col-auto">
-                      Report
-                      <br />
-                      Analysis
-                    </div>
-                  </Link>
+                  <CustomModal
+                    isFullscreen={true}
+                    modalId="reportAnalysis"
+                    HeaderRightPos={50}
+                    HeaderTopPos={20}
+                    button={
+                      <Button
+                        className="row d-flex flex-nowrap justify-content-center m-0 btn w-100 text-white fw-normal fs12px py-3 px-0"
+                        style={{
+                          borderRadius: "8px",
+                          background: "#1E6BDD",
+                        }}
+                      >
+                        <div className="col-auto px-1">
+                          <Image
+                            src={reportAnalysis}
+                            alt="reportAnalysis"
+                            width={32}
+                            height={32}
+                          />
+                        </div>
+                        <div className="col-auto px-1">
+                          Report
+                          <br />
+                          Analysis
+                        </div>
+                      </Button>
+                    }
+                    body={
+                      <>
+                        <div
+                          className="container-fluid border-0 p-1"
+                          style={{
+                            height: "100%",
+                            overflow: "scroll",
+                          }}
+                        >
+                          <ReportAnalysis />
+                        </div>
+                      </>
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -1380,16 +1399,10 @@ const Dashboard = () => {
                 }
                 body={
                   <>
-                    <div
-                      className="container-fluid border-0 p-1"
-                      style={{
-                        height: "100%",
-                        overflow: "scroll",
-                      }}
-                    >
-                      {projectsData ? (
+                    <div className="container-fluid border-0 p-1">
+                      {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
-                          keys={filteredCMADPKeys!}
+                          keys={filteredCMADPKeys}
                           label="Approved Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
@@ -1426,16 +1439,10 @@ const Dashboard = () => {
                 }
                 body={
                   <>
-                    <div
-                      className="container-fluid border-0 p-1"
-                      style={{
-                        height: "100%",
-                        overflow: "scroll",
-                      }}
-                    >
-                      {projectsData ? (
+                    <div className="container-fluid border-0 p-1">
+                      {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
-                          keys={filteredCMADPKeys!}
+                          keys={filteredCMADPKeys}
                           label="Unapproved Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
@@ -1472,16 +1479,10 @@ const Dashboard = () => {
                 }
                 body={
                   <>
-                    <div
-                      className="container-fluid border-0 p-1"
-                      style={{
-                        height: "100%",
-                        overflow: "scroll",
-                      }}
-                    >
-                      {projectsData ? (
+                    <div className="container-fluid border-0 p-1">
+                      {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
-                          keys={filteredCMADPKeys!}
+                          keys={filteredCMADPKeys}
                           label="Dropped Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
@@ -1525,16 +1526,10 @@ const Dashboard = () => {
                 }
                 body={
                   <>
-                    <div
-                      className="container-fluid border-0 p-1"
-                      style={{
-                        height: "100%",
-                        overflow: "scroll",
-                      }}
-                    >
-                      {projectsData ? (
+                    <div className="container-fluid border-0 p-1">
+                      {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
-                          keys={filteredCMADPKeys!}
+                          keys={filteredCMADPKeys}
                           label="0.1M to Up to 200M DDC Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
@@ -1566,16 +1561,10 @@ const Dashboard = () => {
                 }
                 body={
                   <>
-                    <div
-                      className="container-fluid border-0 p-1"
-                      style={{
-                        height: "100%",
-                        overflow: "scroll",
-                      }}
-                    >
-                      {projectsData ? (
+                    <div className="container-fluid border-0 p-1">
+                      {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
-                          keys={filteredCMADPKeys!}
+                          keys={filteredCMADPKeys}
                           label="Above 200M to Up to 400M DDWP Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
@@ -1607,16 +1596,10 @@ const Dashboard = () => {
                 }
                 body={
                   <>
-                    <div
-                      className="container-fluid border-0 p-1"
-                      style={{
-                        height: "100%",
-                        overflow: "scroll",
-                      }}
-                    >
-                      {projectsData ? (
+                    <div className="container-fluid border-0 p-1">
+                      {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
-                          keys={filteredCMADPKeys!}
+                          keys={filteredCMADPKeys}
                           label="Above 400M Up to 800M DDSC Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
@@ -1648,16 +1631,10 @@ const Dashboard = () => {
                 }
                 body={
                   <>
-                    <div
-                      className="container-fluid border-0 p-1"
-                      style={{
-                        height: "100%",
-                        overflow: "scroll",
-                      }}
-                    >
-                      {projectsData ? (
+                    <div className="container-fluid border-0 p-1">
+                      {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
-                          keys={filteredCMADPKeys!}
+                          keys={filteredCMADPKeys}
                           label="Above 800M to upto 10B PDWP Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
@@ -1689,16 +1666,10 @@ const Dashboard = () => {
                 }
                 body={
                   <>
-                    <div
-                      className="container-fluid border-0 p-1"
-                      style={{
-                        height: "100%",
-                        overflow: "scroll",
-                      }}
-                    >
-                      {projectsData ? (
+                    <div className="container-fluid border-0 p-1">
+                      {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
-                          keys={filteredCMADPKeys!}
+                          keys={filteredCMADPKeys}
                           label="10 Billion or above CDWP Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}

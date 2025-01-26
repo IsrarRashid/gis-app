@@ -351,7 +351,7 @@ const MyMap = ({
         <Toaster />
       </div>
       <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
-        <div style={{ width: "100%", height: "1050px" }}>
+        <div style={{ width: "100%", height: "135vh" }}>
           <Map
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
             defaultZoom={7}

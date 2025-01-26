@@ -55,7 +55,7 @@
 
 //   return (
 //     <div className="table-responsive">
-//       <table className="table mb-5" style={{ border: ".5px solid #858585" }}>
+//       <table className="table table-hover mb-5" style={{ border: ".5px solid #858585" }}>
 //         <thead>
 //           <tr style={{ border: "1px solid #858585" }}>
 //             <th>TIME</th>

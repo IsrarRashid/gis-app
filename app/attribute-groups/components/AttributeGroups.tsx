@@ -5,7 +5,7 @@ import List from "./List";
 
 const AttributeGroups = () => {
   const [refresh, setRefresh] = useState(false);
-  useAuthorization("attribute-groups");
+  // useAuthorization("attribute-groups");
 
   useEffect(() => {
     // Set the background for the body
@@ -22,7 +22,7 @@ const AttributeGroups = () => {
   return (
     <>
       <div
-        className={"container p-3 mt-3 mb-4"}
+        className={"container p-3 mt-3 mb-4 shadow"}
         style={{
           background: "rgba(209, 209, 209, 0.4)",
           border: "1px solid #ededed",

@@ -59,6 +59,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
       [
         item.id.toString(),
         item.userName,
+        item.fullName,
         item.designation,
         item.email,
         item.phoneNumber,
@@ -130,6 +131,18 @@ const List = ({ refresh, setRefresh }: ListProps) => {
     currentPage * rows
   );
 
+  interface ImageProps {
+    src: any;
+    width: any;
+    quality?: any;
+  }
+
+  const imageLoader = ({ src, width, quality }: ImageProps) => {
+    return `${process.env.NEXT_PUBLIC_BACKEND_API}${src}?w=${width}&q=${
+      quality || 75
+    }`;
+  };
+
   return (
     <>
       {isLoading && <Loader />}
@@ -152,7 +165,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
       />
       <div className="table-responsive">
         <table
-          className="table mb-5"
+          className="table table-hover mb-5"
           style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
         >
           <thead>
@@ -165,8 +178,12 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
-                name="username"
+                name="user name"
                 handleSort={() => handleSort("userName")}
+              />
+              <TableHeading
+                name="full Name"
+                handleSort={() => handleSort("fullName")}
               />
               <TableHeading
                 name="picture"
@@ -200,19 +217,25 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               >
                 <td>{d.id}</td>
                 <td>{d.userName}</td>
+                <td>{d.fullName}</td>
                 <td>
                   {d.picture && (
-                    <img
-                      className="img-fluid rounded-circle shadow-sm"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        objectFit: "cover",
-                        objectPosition: "center top",
-                      }}
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
-                      alt="picture"
-                    />
+                    <a
+                      href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
+                      target="_blank"
+                    >
+                      <img
+                        className="img-fluid rounded-circle shadow-sm"
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          objectFit: "cover",
+                          objectPosition: "center top",
+                        }}
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
+                        alt="picture"
+                      />
+                    </a>
                   )}
                 </td>
                 <td>{d.designation}</td>

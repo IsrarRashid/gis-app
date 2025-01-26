@@ -1,3 +1,5 @@
+"use client";
+
 import { formatHHLStringDate } from "@/app/utils";
 import ApexCharts, { ApexOptions } from "apexcharts";
 import { useEffect, useRef, useState } from "react";
@@ -82,7 +84,7 @@ const SimpleLineChart = ({ data }: Props) => {
         ],
         chart: {
           offsetY: -20,
-          height: 280,
+          height: 225,
           type: "line",
           zoom: { enabled: false },
           animations: {

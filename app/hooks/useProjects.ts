@@ -14,9 +14,9 @@ export interface Project {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useProjects = ({ refresh }: Props) =>
+const useProjects = ({ refresh = false }: Props = {}) =>
   useData<Project>({ refresh, endpoint: projectAPI });
 export default useProjects;

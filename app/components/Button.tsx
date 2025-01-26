@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { CSSProperties, ReactNode } from "react";
+import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 
 interface Props {
   type?: "button" | "submit" | "reset";
@@ -17,6 +17,8 @@ interface Props {
   "aria-label"?: string;
   "data-bs-placement"?: string;
   title?: string;
+  onMouseEnter?: MouseEventHandler<HTMLButtonElement> | undefined;
+  onMouseLeave?: MouseEventHandler<HTMLButtonElement> | undefined;
 }
 
 const Button = ({
@@ -34,10 +36,13 @@ const Button = ({
   "aria-label": ariaLabel,
   "data-bs-placement": dataBsPlacement,
   title,
+  onMouseEnter = () => {},
+  onMouseLeave = () => {},
 }: Props) => {
   return (
     <motion.button
-      whileTap={{ scale: 0.9, opacity: 0.9 }}
+      whileTap={{ scale: 0.9, opacity: 1 }}
+      whileHover={{ opacity: 0.9 }}
       type={type}
       style={style}
       className={className}
@@ -51,6 +56,8 @@ const Button = ({
       aria-label={ariaLabel}
       data-bs-placement={dataBsPlacement}
       title={title}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {children}
     </motion.button>

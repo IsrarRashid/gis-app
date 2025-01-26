@@ -15,7 +15,7 @@ const FinancialSlab = ({
   return (
     <div className="table-responsive">
       <table
-        className="table table-borderless mb-1 fs14px fw-normal"
+        className="table table-hover table-borderless mb-1 fs14px fw-normal"
         style={{
           background: "rgba(235, 239, 253, 0.33)",
           borderRadius: "6px",

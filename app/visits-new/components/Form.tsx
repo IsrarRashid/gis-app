@@ -228,7 +228,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <select
                         {...register("visitPlanGroup", { valueAsNumber: true })}
-                        className="form-select form-select-sm color-light-dark bg-silver"
+                        className="form-select form-select-sm color-light-dark"
                       >
                         <option value="">Select</option>
                         {visitPlans?.map((d: any) => (
@@ -248,7 +248,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       <select
                         disabled
                         {...register("projectId", { valueAsNumber: true })}
-                        className="form-select form-select-sm color-light-dark bg-silver"
+                        className="form-select form-select-sm color-light-dark"
                       >
                         {projects?.map((d: any) => (
                           <option key={d.id} value={d.id}>
@@ -267,7 +267,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       <select
                         disabled
                         {...register("assignedTo", { valueAsNumber: true })}
-                        className="form-select form-select-sm color-light-dark bg-silver"
+                        className="form-select form-select-sm color-light-dark"
                       >
                         {users?.map((d: any) => (
                           <option key={d.id} value={d.id}>
@@ -288,7 +288,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("latitude")}
                         id="latitude"
                         type="text"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         placeholder="Enter Latitude"
                       />
                     </div>
@@ -304,7 +304,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("longitude")}
                         id="longitude"
                         type="text"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         placeholder="Enter Longitude"
                       />
                     </div>
@@ -317,7 +317,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <select
                         {...register("vehicleID", { valueAsNumber: true })}
-                        className="form-select form-select-sm color-light-dark bg-silver"
+                        className="form-select form-select-sm color-light-dark"
                       >
                         <option value="">Select</option>
                         {vehicles?.map((vehicle) => (
@@ -341,7 +341,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <select
                         {...register("driverID", { valueAsNumber: true })}
-                        className="form-select form-select-sm color-light-dark bg-silver"
+                        className="form-select form-select-sm color-light-dark"
                       >
                         <option value="">Select</option>
                         {drivers?.map((driver) => (
@@ -367,7 +367,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("fromDate")}
                         id="fromDate"
                         type="date"
-                        className="form-control color-light-dark bg-silver"
+                        className="form-control color-light-dark"
                         placeholder="Enter fromDate"
                       />
                     </div>
@@ -379,7 +379,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("toDate")}
                         id="toDate"
                         type="date"
-                        className="form-control color-light-dark bg-silver"
+                        className="form-control color-light-dark"
                         placeholder="Enter toDate"
                       />
                     </div>

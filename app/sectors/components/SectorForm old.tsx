@@ -197,7 +197,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                   </label>
                   <input
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     id="name"
                     name="name"
                     value={formData.name}
@@ -215,7 +215,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Parent Sector
                       </label>
                       <select
-                        className="form-select form-select-sm color-light-dark bg-silver"
+                        className="form-select form-select-sm color-light-dark"
                         aria-label="Default select example"
                         name="parentId"
                         onChange={handleChange}
@@ -267,7 +267,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                             id="sortId"
                             value={formData.sortId}
                             onChange={handleChange}
-                            className="form-control form-control-sm color-light-dark bg-silver p-0 sortId text-center border-0 bg-light"
+                            className="form-control form-control-sm color-light-dark p-0 sortId text-center border-0 bg-light"
                           />
                         </div>
                         <div className="col text-end pe-1 pt-1 pb-1">
@@ -302,7 +302,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     Description
                   </label>
                   <textarea
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     value={formData.description}
                     onChange={handleChange}
                     name="description"

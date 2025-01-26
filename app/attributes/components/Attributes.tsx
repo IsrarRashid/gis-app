@@ -5,7 +5,7 @@ import List from "./List";
 
 const Attributes = () => {
   const [refresh, setRefresh] = useState(false);
-  useAuthorization("attributes");
+  // useAuthorization("attributes");
 
   useEffect(() => {
     // Set the background for the body

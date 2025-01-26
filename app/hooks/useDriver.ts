@@ -12,10 +12,10 @@ export interface Driver {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useDriver = ({ refresh }: Props) =>
+const useDriver = ({ refresh = false }: Props = {}) =>
   useData<Driver>({ refresh, endpoint: driverApi });
 
 export default useDriver;

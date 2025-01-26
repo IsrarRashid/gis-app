@@ -300,7 +300,7 @@
 //                       {...register("label")}
 //                       id="label"
 //                       type="text"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Label"
 //                     />
 //                     {errors.label && (
@@ -318,7 +318,7 @@
 //                       {...register("placeholder")}
 //                       id="placeholder"
 //                       type="text"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Placeholder"
 //                     />
 //                   </div>
@@ -331,7 +331,7 @@
 //                     </label>
 //                     <select
 //                       {...register("attributeDataType")}
-//                       className="form-select form-select-sm color-light-dark bg-silver"
+//                       className="form-select form-select-sm color-light-dark"
 //                     >
 //                       <option value="">None</option>
 //                       <option value="number">Number</option>
@@ -353,7 +353,7 @@
 //                     </label>
 //                     <select
 //                       {...register("attributeType")}
-//                       className="form-select form-select-sm color-light-dark bg-silver"
+//                       className="form-select form-select-sm color-light-dark"
 //                     >
 //                       <option value="">None</option>
 //                       <option value="text">Text</option>
@@ -375,7 +375,7 @@
 //                       {...register("unit")}
 //                       id="unit"
 //                       type="text"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Unit"
 //                     />
 //                   </div>
@@ -390,7 +390,7 @@
 //                       {...register("validationRegx")}
 //                       id="validationRegx"
 //                       type="text"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Validation Regx"
 //                     />
 //                   </div>
@@ -404,7 +404,7 @@
 //                       {...register("min", { valueAsNumber: true })}
 //                       id="min"
 //                       type="number"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Min"
 //                     />
 //                   </div>
@@ -416,7 +416,7 @@
 //                       {...register("max", { valueAsNumber: true })}
 //                       id="max"
 //                       type="number"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Max"
 //                     />
 //                   </div>
@@ -431,7 +431,7 @@
 //                       {...register("errorMessage")}
 //                       id="errorMessage"
 //                       type="text"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Error Message"
 //                     />
 //                   </div>
@@ -445,7 +445,7 @@
 //                       {...register("sortId", { valueAsNumber: true })}
 //                       id="sortId"
 //                       type="number"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Sort ID"
 //                     />
 //                   </div>
@@ -458,7 +458,7 @@
 //                     </label>
 //                     <select
 //                       {...register("verificationType")}
-//                       className="form-select form-select-sm color-light-dark bg-silver"
+//                       className="form-select form-select-sm color-light-dark"
 //                     >
 //                       <option value="">None</option>
 //                       <option value="image">Image</option>
@@ -476,7 +476,7 @@
 //                       {...register("attributeCode")}
 //                       id="attributeCode"
 //                       type="text"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Attribute Code"
 //                     />
 //                   </div>
@@ -493,7 +493,7 @@
 //                       {...register("weightage", { valueAsNumber: true })}
 //                       id="weightage"
 //                       type="number"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Weightage"
 //                     />
 //                   </div>
@@ -505,7 +505,7 @@
 //                       {...register("remarks")}
 //                       id="remarks"
 //                       type="text"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       placeholder="Enter Remarks"
 //                     />
 //                   </div>
@@ -524,7 +524,7 @@
 //                           {...register("evaluationFormula")}
 //                           id="evaluationFormula"
 //                           type="text"
-//                           className="form-control form-control-sm color-light-dark bg-silver"
+//                           className="form-control form-control-sm color-light-dark"
 //                           placeholder="Enter Evaluation Formula"
 //                         />
 //                       </div>
@@ -536,7 +536,7 @@
 //                           Search Attribute Codes
 //                         </label>
 //                         <select
-//                           className="form-select form-select-sm color-light-dark bg-silver"
+//                           className="form-select form-select-sm color-light-dark"
 //                           aria-label="Default select example"
 //                           name="searchAttributeCodes"
 //                           onChange={handleDatalistSelect}
@@ -658,7 +658,7 @@
 //                           </label>
 //                           <input
 //                             type="text"
-//                             className="form-control form-control-sm color-light-dark bg-silver"
+//                             className="form-control form-control-sm color-light-dark"
 //                             id={`value-${index}`}
 //                             name="value"
 //                             value={option.value}
@@ -675,7 +675,7 @@
 //                           </label>
 //                           <input
 //                             type="text"
-//                             className="form-control form-control-sm color-light-dark bg-silver"
+//                             className="form-control form-control-sm color-light-dark"
 //                             id={`label-${index}`}
 //                             name="label"
 //                             value={option.label}
@@ -692,7 +692,7 @@
 //                           </label>
 //                           <input
 //                             type="number"
-//                             className="form-control form-control-sm color-light-dark bg-silver"
+//                             className="form-control form-control-sm color-light-dark"
 //                             id="sortId"
 //                             name="sortId"
 //                             value={option.sortId}

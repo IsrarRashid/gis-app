@@ -152,7 +152,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("rightName")}
                         id="rightName"
                         type="text"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         placeholder="Enter Right Name"
                       />
                       {errors.rightName && (
@@ -172,7 +172,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("rightIdentifier")}
                         id="rightIdentifier"
                         type="text"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         placeholder="Enter Right Identifier"
                       />
                     </div>

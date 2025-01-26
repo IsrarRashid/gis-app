@@ -9,10 +9,10 @@ export interface Role {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useRoles = ({ refresh }: Props) =>
+const useRoles = ({ refresh = false }: Props = {}) =>
   useData<Role>({ refresh, endpoint: roleAPI });
 
 export default useRoles;

@@ -7,7 +7,7 @@ import List from "./List";
 const Rights = () => {
   const [refresh, setRefresh] = useState(false);
   const router = useRouter();
-  useAuthorization("rights");
+  // useAuthorization("rights");
 
   useEffect(() => {
     // Set the background for the body

@@ -167,7 +167,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("name")}
                     id="name"
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Project Name"
                   />
                   {errors.name && (
@@ -183,7 +183,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("address")}
                       id="address"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Address"
                     />
                   </div>
@@ -195,7 +195,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("city")}
                       id="city"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter City Name"
                     />
                   </div>
@@ -207,7 +207,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <select
                       {...register("status")}
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm color-light-dark"
                     >
                       <option value="">Select</option>
                       <option value="Active">Active</option>
@@ -221,7 +221,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <select
                       {...register("sectorId", { valueAsNumber: true })}
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm color-light-dark"
                     >
                       <option value="">None</option>
                       {sectorsData?.map((d) => (
@@ -248,7 +248,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("locationCoordinates")}
                     id="locationCoordinates"
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Location Coordinates"
                   />
                 </div>

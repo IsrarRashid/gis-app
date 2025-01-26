@@ -6,7 +6,7 @@ import Table from "./Table";
 const SmdpSync = () => {
   const [refresh, setRefresh] = useState(false);
   const [showData, setShowData] = useState(false);
-  useAuthorization("smdp-sync");
+  // useAuthorization("smdp-sync");
 
   useEffect(() => {
     // Set the background for the body

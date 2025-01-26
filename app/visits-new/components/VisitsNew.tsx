@@ -5,7 +5,7 @@ import List from "./List";
 
 const VisitsNew = () => {
   const [refresh, setRefresh] = useState(false);
-  useAuthorization("visits-new");
+  // useAuthorization("visits-new");
 
   useEffect(() => {
     // Set the background for the body

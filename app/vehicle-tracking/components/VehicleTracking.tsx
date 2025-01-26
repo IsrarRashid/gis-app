@@ -22,7 +22,7 @@ const lexend = Lexend({
 const DashboardTO = () => {
   const [mapStatus, setMapStatus] = useState(true);
   const dispatch = useDispatch();
-  useAuthorization("vehicle-tracking");
+  // useAuthorization("vehicle-tracking");
 
   const handleButtonClick = (content: string, tutorialLink: string) => {
     dispatch(setContent(content));

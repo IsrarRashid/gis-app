@@ -144,7 +144,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("name")}
                     id="name"
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Role Name"
                   />
                   {errors.name && (
@@ -164,7 +164,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("normalizedName")}
                         id="normalizedName"
                         type="text"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         placeholder="Enter Normalized Name"
                       />
                     </div>
@@ -179,7 +179,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("concurrencyStamp")}
                         id="concurrencyStamp"
                         type="text"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         placeholder="Enter Concurrency Stamp"
                       />
                     </div>

@@ -19,6 +19,8 @@ const schema = z.object({
   createdAt: z.string().optional().default(new Date().toISOString()),
   updatedAt: z.string().optional().default(new Date().toISOString()),
   sortId: z.number({ invalid_type_error: "Please add Sort Id!" }),
+  group_type: z.number().optional().default(0),
+  group_nature: z.number().optional().default(0),
 });
 
 type AttributeGroup = z.infer<typeof schema>;
@@ -42,7 +44,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   } = useForm<AttributeGroup>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
   const modalId = `formModal-${id}`;
-
+  const [isGroupType, setGroupType] = useState(false);
+  const [isGroupNature, setGroupNature] = useState(false);
   const createdMessage = "Created Successfully";
   const updatedMessage = "Updated Successfully";
 
@@ -53,7 +56,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
   const handleShow = async () => {
     setShow(true);
-
+    setGroupType(false);
+    setGroupNature(false);
     if (method === "PUT") {
       try {
         const response = await apiClient.get(`${api}/${id}`);
@@ -63,8 +67,12 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         setValue("name", itemData.name);
         setValue("description", itemData.description);
         setValue("sortId", itemData.sortId);
+        setValue("group_type", itemData.group_type);
+        setValue("group_nature", itemData.group_nature);
         setValue("createdAt", itemData.createdAt);
         setValue("updatedAt", new Date().toISOString());
+        setGroupType(itemData.group_type === 1 ? true : false);
+        setGroupNature(itemData.group_nature === 1 ? true : false);
       } catch (err) {
         console.log((err as AxiosError).message);
         setError((err as AxiosError).message);
@@ -73,13 +81,15 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   };
 
   const onSubmit = async (formData: AttributeGroup) => {
-    console.log("Form Data:", formData);
     console.log(errors);
     try {
       const modifiedFormData = {
         ...formData,
         parentId: formData.parentId === 0 ? null : formData.parentId, // Change 0 to null
+        group_type: isGroupType ? 1 : 0,
+        group_nature: isGroupNature ? 1 : 0,
       };
+      console.log("modified Form Data:", modifiedFormData);
 
       const response = await apiClient({
         method: method,
@@ -103,7 +113,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       </div>
       <Button
         type="button"
-        className={`btn shadow ${
+        className={`btn ${
           method === "POST"
             ? "text-white bg-color-sea-green"
             : "rounded-pill ps-3 pe-3 pt-1 pb-1"
@@ -161,7 +171,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("name")}
                     id="name"
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Attribute Group Name"
                   />
                   {errors.name && (
@@ -170,7 +180,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                 </div>
                 <div className="col mb-3">
                   <div className="row d-flex justify-content-between">
-                    <div className="col-lg-7 col-md-6 col-sm-12 text-start">
+                    <div className="col-lg-7 col-md-6 col-sm-12 text-start mb-3">
                       <label
                         htmlFor="parentId"
                         className="form-label text-white"
@@ -179,7 +189,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <select
                         {...register("parentId", { valueAsNumber: true })}
-                        className="form-select form-select-sm color-light-dark bg-silver"
+                        className="form-select form-select-sm color-light-dark"
                       >
                         <option value="0">None</option>
                         {data?.map((d) => (
@@ -189,7 +199,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         ))}
                       </select>
                     </div>
-                    <div className="col-lg-5 col-md-6 col-sm-12 text-start">
+                    <div className="col-lg-5 col-md-6 col-sm-12 text-start mb-3">
                       <label htmlFor="sortId" className="form-label text-white">
                         Sort Id
                       </label>
@@ -197,7 +207,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("sortId", { valueAsNumber: true })}
                         id="sortId"
                         type="number"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         placeholder="Enter Sort ID"
                       />
                       {errors.sortId && (
@@ -205,6 +215,42 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           {errors.sortId.message}
                         </p>
                       )}
+                    </div>
+                    <div className="col text-start">
+                      <div className="form-check form-switch">
+                        <label
+                          className="form-check-label text-white"
+                          htmlFor="group_type"
+                        >
+                          Group Type
+                        </label>
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="group_type"
+                          name="group_type"
+                          checked={isGroupType}
+                          onChange={() => setGroupType(!isGroupType)}
+                        />
+                      </div>
+                    </div>
+                    <div className="col text-start">
+                      <div className="form-check form-switch">
+                        <label
+                          className="form-check-label text-white"
+                          htmlFor="group_nature"
+                        >
+                          Group Nature
+                        </label>
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="group_nature"
+                          name="group_nature"
+                          checked={isGroupNature}
+                          onChange={() => setGroupNature(!isGroupNature)}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -218,7 +264,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   <textarea
                     id="description"
                     {...register("description")}
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Write Brief Description..."
                     style={{ height: "100px" }}
                   />

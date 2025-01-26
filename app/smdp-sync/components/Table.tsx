@@ -273,7 +273,7 @@ const ProjectsList = ({
               {/* Add your table or other content to show after the loading */}
               <div className="table-responsive">
                 <table
-                  className="table mb-5"
+                  className="table table-hover mb-5"
                   style={{
                     border: ".41px solid rgba(81,81,81,0.20) !important",
                   }}
@@ -392,7 +392,7 @@ const ProjectsList = ({
                       </div>
                       <div className="col-lg-1 col-md-6 col-sm-12 text-start p-0">
                         <select
-                          className="form-select form-select-sm color-light-dark bg-silver rounded bg-color-sea-green text-white shadow"
+                          className="form-select form-select-sm color-light-dark rounded bg-color-sea-green text-white shadow"
                           style={{ color: "#fff" }}
                           aria-label="Rows per page"
                           name="rowPerPage"

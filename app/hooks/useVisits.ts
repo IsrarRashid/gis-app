@@ -9,6 +9,8 @@ export interface Visit {
   latitude: string;
   longitude: string;
   vehicleID: number;
+  districtID: number;
+  mriValue: number;
   driverID: number;
   fromDate: string;
   toDate: string;
@@ -17,15 +19,17 @@ export interface Visit {
   complete_at: string;
   submitted_at: string;
   issued_at: string;
-  reportPath: string;
-  tracking_status: boolean;
+  tracking_status: true;
+  visitPlanGroup: number;
+  one_pager_status: string;
+  op_submitted_at: string;
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useVisits = ({ refresh }: Props) =>
+const useVisits = ({ refresh = false }: Props = {}) =>
   useData<Visit>({ refresh, endpoint: visitAPI });
 
 export default useVisits;

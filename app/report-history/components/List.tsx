@@ -5,17 +5,13 @@ import CustomModal from "@/app/components/CustomModal";
 import useProjects from "@/app/hooks/useProjects";
 import useReportHistoryUser from "@/app/hooks/useReportHistoryUsers";
 import apiClient from "@/app/services/api-client";
-import {
-  addDayToFormattedDate,
-  getFormattedDate,
-  SingleProjectLessData,
-} from "@/app/utils";
+import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
 import search3 from "@/public/icons/search3.svg";
-import tickBgGreen from "@/public/icons/tickBgGreen.svg";
 import Cookies from "js-cookie";
 import { Raleway } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import RenderStatusBadge from "./RenderStatusBadge";
 import ReportNoting from "./ReportNoting";
 
 const raleway = Raleway({
@@ -31,18 +27,36 @@ export interface ReportHistory {
   remarks: string;
   reportPath: string;
   status: number;
+  lastStatus: number;
+  submittedUser: number;
   sDate: string;
   reportType: number;
 }
+
+export const ONE_PAGER_REPORT_ID = 0;
+export const COMPLETE_REPORT_ID = 1;
+// happy path
+export const ASSISTANT_DIRECTOR_SUBMITTED_ID = 0;
+export const DEPUTY_DIRECTOR_APPROVED_ID = 1;
+export const DIRECTOR_APPROVED_ID = 2;
+export const DEPUTY_DIRECTOR_APPROVED_AND_ALLOW_ISSUE_ID = 3;
+export const ASSISTANT_DIRECTOR_ISSUED_ID = 4;
+
+// edge cases
+export const DEPUTY_DIRECTOR_REFERBACK_ID = -1;
+export const DIRECTOR_REFERBACK_ID = -2;
+export const ASSISTANT_DIRECTOR_RESUBMITTED_ID = 5;
 
 const List = () => {
   const [refresh, setRefresh] = useState(false);
   // useAuthorization("report-history");
   const [data, setData] = useState<ReportHistory[]>();
   const [userId, setUserId] = useState<number>();
+  const [role, setRole] = useState<string>();
+  // const [reportHistoryList, setReportHistoryList] = useState<ReportHistory[]>();
   const { data: users } = useReportHistoryUser({ refresh });
-  const [singleProjectData, setSingleProjectData] =
-    useState<SingleProjectLessData>();
+  // const [singleProjectData, setSingleProjectData] =
+  //   useState<SingleProjectLessData>();
 
   useEffect(() => {
     // Set the background for the body
@@ -58,8 +72,9 @@ const List = () => {
 
   useEffect(() => {
     const id = Cookies.get("userId");
-    // const role = Cookies.get("role");
+    const role = Cookies.get("role");
     if (id) setUserId(parseInt(id));
+    if (role) setRole(role);
   }, []);
 
   useEffect(() => {
@@ -77,6 +92,18 @@ const List = () => {
   }, [userId, refresh]);
 
   const { data: projects } = useProjects({ refresh });
+
+  const getReportHistory = async (visitId: number, projectId: number) => {
+    try {
+      const response = await apiClient.get(
+        `${reportsHistoryAPI}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}`
+      );
+      // setReportHistoryList(response.data.data);
+      return response.data.data.status;
+    } catch (err) {
+      console.error("Submission error:", err);
+    }
+  };
 
   return (
     <>
@@ -160,7 +187,7 @@ const List = () => {
                   <span>Project: </span>{" "}
                   {projects.find((project) => project.id === d.projectId)?.name}
                 </p>
-                <div className="row d-flex m-0">
+                <div className="row d-flex justify-content-between m-0">
                   <div className="col-auto">
                     <p
                       className="mb-0 mb-2 fs18px fw-bold me-3"
@@ -177,7 +204,6 @@ const List = () => {
                         users.find((user) => user.id === d.submittedFrom)
                           ?.fullName
                       }
-                      {d.submittedFrom}
                       <br />
                       <span>
                         (
@@ -189,7 +215,7 @@ const List = () => {
                       </span>
                     </p>
                   </div>
-                  <div className="col">
+                  <div className="col-auto">
                     <p
                       className="mb-0 mb-2 fs18px fw-bold me-3"
                       style={{ color: "#263238", fontWeight: "500" }}
@@ -205,7 +231,7 @@ const List = () => {
                       )}
                     </p>
                   </div>
-                  <div className="col">
+                  <div className="col-auto">
                     <p
                       className="mb-0 mb-2 fs18px fw-bold me-3"
                       style={{ color: "#263238" }}
@@ -216,72 +242,64 @@ const List = () => {
                       className="mb-0 fw-normal me-3"
                       style={{ color: "#263238", fontWeight: "500" }}
                     >
-                      {d.reportType === 0 ? "One Pager" : "Complete Report"}
+                      {d.reportType === ONE_PAGER_REPORT_ID
+                        ? "One Pager"
+                        : "Complete Report"}
                     </p>
                   </div>
-                  <div className="col">
+                  <div className="col-auto mb-2">
                     <p
-                      className="mb-0 mb-2 fs18px fw-bold me-3"
+                      className="mb-0 mb-2 fs18px fw-bold"
                       style={{ color: "#263238", fontWeight: "500" }}
                     >
-                      Status
+                      Last Status
                     </p>
                     <p
-                      className="mb-0 fs14px me-3"
+                      className="mb-0 fs14px"
                       style={{ color: "#263238", fontWeight: "500" }}
                     >
-                      {d.status === 0 ? (
-                        <span
-                          className="py-2 px-3 rounded-pill"
-                          style={{ background: "#E3F0E7" }}
-                        >
-                          <Image
-                            src={tickBgGreen}
-                            alt="tickBgGreen"
-                            className="mb-1"
-                            width={14}
-                            height={14}
-                          />{" "}
-                          Marked to Deputy Director
-                        </span>
-                      ) : d.status === 1 ? (
-                        <span
-                          className="py-2 px-3 rounded-pill"
-                          style={{ background: "#E3F0E7" }}
-                        >
-                          <Image
-                            src={tickBgGreen}
-                            alt="tickBgGreen"
-                            className="mb-1"
-                            width={14}
-                            height={14}
-                          />{" "}
-                          Approved by Deputy Director
-                        </span>
-                      ) : (
-                        ""
-                      )}
+                      <RenderStatusBadge status={d.lastStatus} />
                     </p>
                   </div>
                   {/* hide comment button if status === 1 */}
-                  <div className="col-auto d-flex justify-content-end align-items-end">
-                    <CustomModal
-                      isFullscreen={true}
-                      modalId={`comment${d.id}`}
-                      button={
-                        <Button
-                          className="btn shadow-none py-2 px-3 fs20px rounded-pill fw-bold"
-                          style={{
-                            background: "rgba(0, 57, 206,.05)",
-                            color: "#0039CE",
-                          }}
-                        >
-                          Comment
-                        </Button>
-                      }
-                      body={<ReportNoting data={d} />}
-                    />
-                  </div>
+                  {role && (
+                    <div className="col-auto d-flex justify-content-end align-items-end">
+                      <CustomModal
+                        isFullscreen={true}
+                        modalId={`comment${d.id}`}
+                        button={
+                          <Button
+                            className="btn shadow-sm py-2 px-3 fs20px rounded-pill fw-bold"
+                            style={{
+                              background: "rgba(0, 57, 206,.05)",
+                              color: "#0039CE",
+                            }}
+                          >
+                            {(role.toLowerCase() === "deputy director" &&
+                              d.lastStatus ===
+                                ASSISTANT_DIRECTOR_SUBMITTED_ID) ||
+                            (role.toLowerCase() === "deputy director" &&
+                              d.lastStatus === DIRECTOR_REFERBACK_ID) ||
+                            (role.toLowerCase() === "deputy director" &&
+                              d.lastStatus === DIRECTOR_APPROVED_ID) ||
+                            (role.toLowerCase() === "director" &&
+                              d.lastStatus === DEPUTY_DIRECTOR_APPROVED_ID)
+                              ? "Comment"
+                              : d.lastStatus === ASSISTANT_DIRECTOR_ISSUED_ID
+                              ? "Issued"
+                              : "Submitted"}
+                          </Button>
+                        }
+                        body={
+                          <ReportNoting
+                            data={d}
+                            setRefresh={setRefresh}
+                            refresh={refresh}
+                          />
+                        }
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

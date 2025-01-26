@@ -1,6 +1,9 @@
 import Button from "@/app/components/Button";
 import useRoles from "@/app/hooks/useRoles";
-import apiClient, { AxiosError } from "@/app/services/api-client";
+import apiClient, {
+  AxiosError,
+  ErrorResponse,
+} from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useState } from "react";
@@ -56,8 +59,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     reset,
     formState: { errors },
   } = useForm<User>({ resolver: zodResolver(schema) });
-  const { data: rolesData } = useRoles({ refresh });
-  // console.log(errors);
+  const { data: rolesData } = useRoles();
+  console.log(errors);
   const modalId = `formModal-${id}`;
   const createdMessage = "Created Successfully";
   const updatedMessage = "Updated Successfully";
@@ -100,7 +103,10 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       handleClose();
     } catch (err) {
       console.error("Submission error:", err);
-      toast.error((err as AxiosError).message);
+      toast.error(
+        (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
+          (err as AxiosError<ErrorResponse>).message
+      );
     }
   };
 
@@ -168,7 +174,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("username")}
                       id="username"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter User Name"
                     />
                     {errors.username && (
@@ -185,7 +191,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("email")}
                       id="email"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Email"
                     />
                     {errors.email && (
@@ -200,7 +206,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <select
                       {...register("roleID", { valueAsNumber: true })}
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm color-light-dark"
                     >
                       <option value="">None</option>
                       {rolesData?.map((d) => (
@@ -223,7 +229,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("password")}
                       id="password"
                       type="password"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Password"
                     />
                     {errors.password && (

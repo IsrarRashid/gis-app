@@ -5,7 +5,7 @@ import List from "./List";
 
 const Roles = () => {
   const [refresh, setRefresh] = useState(false);
-  useAuthorization("rights");
+  // useAuthorization("rights");
 
   useEffect(() => {
     // Set the background for the body

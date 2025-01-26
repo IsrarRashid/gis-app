@@ -18,10 +18,10 @@ export interface Vehicle {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useVehicle = ({ refresh }: Props) =>
+const useVehicle = ({ refresh = false }: Props = {}) =>
   useData<Vehicle>({ refresh, endpoint: vehicleApi });
 
 export default useVehicle;

@@ -173,7 +173,7 @@ const Form = ({
                   </label>
                   <input
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     id="nameschemeId"
                     name="schemeId"
                     value={formData.schemeId}

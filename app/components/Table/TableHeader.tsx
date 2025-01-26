@@ -1,5 +1,7 @@
+"use client";
+
 import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 
 interface Props {
@@ -21,6 +23,27 @@ const TableHeader = ({
   form,
   status,
 }: Props) => {
+  const [isInputFocused, setIsInputFocused] = useState(false); // Detect input focus
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Handle clicks outside the input field
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node)
+      ) {
+        setIsInputFocused(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <div className="row d-flex m-0 p-3">
@@ -35,7 +58,7 @@ const TableHeader = ({
         </div>
         {form}
       </div>
-      <div className="row d-flex justify-content-between p-3">
+      <div className="row d-flex justify-content-between p-3 m-0">
         <div className="col-lg-6 col-md-5 col-sm-12">
           <p>
             Showing:{" "}
@@ -56,23 +79,50 @@ const TableHeader = ({
         <div className="col-lg-4 col-md-6 col-sm-12">
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="input-group">
+              {isInputFocused && (
+                <span
+                  className="rounded-end rounded-pill border-0"
+                  style={{
+                    boxSizing: "border-box",
+                    background: "rgba(16, 143, 168, 0.1)",
+                    padding: "7.5px 0px 7.5px 10px",
+                    boxShadow: isInputFocused
+                      ? "0 -2px 0 #108fa8, -2px 0 0 #108fa8, 0 2px 0 #108fa8"
+                      : "none", // Top, left, bottom only
+                  }}
+                >
+                  <IoSearch />
+                </span>
+              )}
               <input
                 type="text"
-                className="form-control border-0 rounded-pill rounded-end"
+                className={`form-control border-0 ${
+                  isInputFocused ? "m-0" : "ps-3 rounded-pill rounded-end"
+                }`}
                 style={{
+                  boxSizing: "border-box",
                   background: "rgba(16, 143, 168, .1)",
+                  boxShadow: isInputFocused
+                    ? "0 -2px 0 #108fa8, 2px 0 0 #108fa8, 0 2px 0 #108fa8"
+                    : "none", // Top, left, bottom only
                   outline: "none",
-                  border: "1px solid #D0D5DD",
                 }}
+                onFocus={() => setIsInputFocused(true)}
+                onBlur={() => setIsInputFocused(false)}
                 placeholder="Search"
                 value={searchTerm}
                 onChange={handleChange}
               />
               <button
-                className="btn rounded-start rounded-pill bg-color-sea-green text-white"
+                className="btn rounded-start rounded-pill bg-color-sea-green text-white border-0 m-0"
                 type="submit"
+                style={{
+                  boxShadow: isInputFocused
+                    ? "0 -2px 0 #108fa8, -2px 0 0 #108fa8, 0 2px 0 #108fa8"
+                    : "none", // Top, left, bottom only
+                }}
               >
-                <IoSearch className="mb-1" style={{ color: "#fff" }} />
+                <IoSearch className="my-auto" style={{ color: "#fff" }} />
               </button>
             </div>
           </form>

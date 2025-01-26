@@ -16,56 +16,10 @@ interface Props {
 }
 
 const VehicleTracking = ({ data }: Props) => {
-  // const items = [
-  //   {
-  //     driverName: "Jamshed Ali",
-  //     carName: "Toyota Corolla GLi",
-  //     carIcon: car1Right,
-  //   },
-  //   {
-  //     driverName: "Haroon",
-  //     carName: "Suzuki Swift",
-  //     carIcon: car2Left,
-  //   },
-  //   {
-  //     driverName: "Hammad",
-  //     carName: "Suzuki Alto",
-  //     carIcon: car3Left,
-  //   },
-  //   {
-  //     driverName: "Jamshed Ali",
-  //     carName: "Toyota Corolla GLi",
-  //     carIcon: car1Right,
-  //   },
-  //   {
-  //     driverName: "Haroon",
-  //     carName: "Suzuki Swift",
-  //     carIcon: car2Left,
-  //   },
-  //   {
-  //     driverName: "Hammad",
-  //     carName: "Suzuki Alto",
-  //     carIcon: car3Left,
-  //   },
-  // ];
-  // const refContainer = useRef<HTMLDivElement>(null);
-  // const refContent = useRef<HTMLDivElement>(null);
-  // const [constraints, setConstraints] = useState({});
   const [refresh, setRefresh] = useState(false);
 
   const { data: vehicles } = useVehicle({ refresh });
   const { data: drivers } = useDriver({ refresh });
-
-  // useEffect(() => {
-  //   // Wait until both container and content are rendered
-  //   if (refContainer.current && refContent.current) {
-  //     // Calculate the width difference between container and content
-  //     const containerWidth = refContainer.current.offsetWidth;
-  //     const contentWidth = refContent.current.scrollWidth;
-  //     // Set drag constraints dynamically based on the difference
-  //     setConstraints({ right: 0, left: -(contentWidth - containerWidth) });
-  //   }
-  // }, []); // Recalculate if the items change
 
   const getVehicleInfo = (vehicleNumber: string, data: Vehicle[]) => {
     const record = data.find((item) => item.vehicleNumber === vehicleNumber);
@@ -80,34 +34,22 @@ const VehicleTracking = ({ data }: Props) => {
   return (
     <>
       <div
-        className="col bg-color-matte-light-blue shadow-sm p-2 mb-3"
+        className="col bg-color-matte-light-blue shadow-sm p-2 mb-3 mx-2"
         style={{ borderRadius: "17px" }}
       >
         <div className="row d-flex ps-3 pe-3">
           <div className="col">
             <h4 className="fw-bold fs-3">Vehicle Tracking</h4>
           </div>
-          {/* <div className="col text-end">
-          <Button
-            className="btn bg-color-sea-blue text-white"
-            style={{
-              fontSize: ".75rem",
-              padding: "10px 15px 10px 15px",
-            }}
-          >
-            VISIT DETAILS
-          </Button>
-        </div> */}
         </div>
         <div
           className="d-flex me-2"
-          // ref={refContainer}
           style={{
             padding: "10px",
             borderRadius: "10px",
             whiteSpace: "nowrap",
             overflow: "hidden",
-            overflowX: "scroll",
+            // overflowX: "scroll",
             display: "inline-block",
           }}
         >
@@ -117,61 +59,52 @@ const VehicleTracking = ({ data }: Props) => {
               style={{ width: "500px" }}
               className="col bg-white me-3 rounded-3 p-3"
             >
-              <div className="row d-flex">
-                <div className="col">
-                  <div className="row d-flex">
-                    <div className="col">
-                      <span>
-                        {d.officerPicture ? (
-                          <img
-                            className="img-fluid rounded-circle"
-                            src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.officerPicture}`}
-                            alt="profilePic2"
-                            style={{
-                              width: "47px",
-                              height: "47px",
-                              objectFit: "cover",
-                              objectPosition: "center top",
-                            }}
-                          />
-                        ) : (
-                          <Image
-                            className="img-fluid"
-                            src={profilePic2}
-                            width={47}
-                            height={47}
-                            style={{ width: "47px", height: "47px" }}
-                            alt="profilePic2"
-                          />
-                        )}
-                      </span>
-                      <span className="col">
-                        <span className="fw-bold m-0 mt-1 ps-1">
-                          {d.officerName}
-                        </span>
-                        {/* <p
+              <div className="row d-flex justify-content-between m-0">
+                <div className="col-auto">
+                  <span>
+                    {d.officerPicture ? (
+                      <img
+                        className="img-fluid rounded-circle"
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.officerPicture}`}
+                        alt="profilePic2"
+                        style={{
+                          width: "47px",
+                          height: "47px",
+                          objectFit: "cover",
+                          objectPosition: "center top",
+                        }}
+                      />
+                    ) : (
+                      <Image
+                        className="img-fluid"
+                        src={profilePic2}
+                        width={47}
+                        height={47}
+                        style={{ width: "47px", height: "47px" }}
+                        alt="profilePic2"
+                      />
+                    )}
+                  </span>
+                  <span className="col">
+                    <span className="fw-bold m-0 mt-1 ps-1">
+                      {d.officerName}
+                    </span>
+                    {/* <p
                         className="text-secondary fs14px"
                         style={{ marginTop: "-5px", marginBottom: "0" }}
                       >
                         {d.vehicalNumber}
                       </p> */}
-                      </span>
-                    </div>
-                  </div>
+                  </span>
                 </div>
-                <div className="col-lg-5 col-md-5 col fw-bold text-end mt-2 fs12px">
-                  <div className="row d-flex justify-content-end pe-3">
-                    <span className="col p-0">
-                      <Image src={greenCircle} alt="greenCircle" />
-                      <span className="col ps-1" style={{ paddingTop: "1px" }}>
-                        {d.visitStatus === "scheduled"
-                          ? "Driving"
-                          : "Completed"}
-                      </span>
-                    </span>
-                  </div>
+                <div className="col-auto fw-bold text-end mt-2 fs12px">
+                  <Image src={greenCircle} alt="greenCircle" className="mb-1" />
+                  <span className="col-auto ps-1" style={{ paddingTop: "1px" }}>
+                    {d.visitStatus === "scheduled" ? "Driving" : "Completed"}
+                  </span>
                 </div>
               </div>
+
               <div className="col mb-4" style={{ position: "relative" }}>
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d54392.888661368466!2d74.28403876953124!3d31.563810199999992!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39191b678e6a2e75%3A0xb4c984519f85bf0d!2sDirectorate%20General%20Monitoring%20%26%20Evaluation!5e0!3m2!1sen!2s!4v1726221823092!5m2!1sen!2s"
@@ -186,17 +119,16 @@ const VehicleTracking = ({ data }: Props) => {
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
 
-                {/* Button in the bottom-right corner of the parent div */}
                 <div
-                  className="col-lg-1 col-md-4 col-sm-6 col-6 p-0"
+                  className="col-auto"
                   style={{
                     position: "absolute", // Absolute positioning relative to the parent
                     bottom: "-25px", // 20px from the bottom of the parent
-                    right: "-50px", // 20px from the right of the parent
+                    right: "20px", // 20px from the right of the parent
                   }}
                 >
                   <Link
-                    href="/dashboardTO"
+                    href="/vehicle-tracking"
                     className="btn p-0 rounded rounded-pill"
                   >
                     <Image src={blueCirclePointer} alt="blueCirclePointer" />
@@ -208,31 +140,28 @@ const VehicleTracking = ({ data }: Props) => {
                 className="col pb-2 mb-2 me-2 ms-2"
                 style={{ borderBottom: "1px dashed #97ABBD", opacity: 0.5 }}
               ></div>
-              <div className="row d-flex">
+
+              <div className="row d-flex m-0">
                 <div className="col-lg-4 col-md-6 col-sm-12">
-                  <div className="row d-flex flex-column">
-                    <div className="col">
-                      <div className="row d-flex">
-                        <div className="col-2 me-2">
-                          <Image src={fromToDirection} alt="fromToDirection" />
-                        </div>
-                        <div className="col">
-                          <p className="m-0 fw-bold">{d.startingDistrict}</p>
-                          <p className="m-0" style={{ fontSize: ".75rem" }}>
-                            {d.startingDistrict}, Punjab, Pakistan
-                          </p>
-                          <p className="m-0 mt-3 fw-bold">{d.endDistrict}</p>
-                          <p className="m-0" style={{ fontSize: ".75rem" }}>
-                            {d.endDistrict}, Punjab, Pakistan
-                          </p>
-                        </div>
-                      </div>
+                  <div className="row d-flex m-0">
+                    <div className="col-auto px-0">
+                      <Image src={fromToDirection} alt="fromToDirection" />
+                    </div>
+                    <div className="col-auto">
+                      <p className="m-0 fw-bold">{d.startingDistrict}</p>
+                      <p className="m-0" style={{ fontSize: ".75rem" }}>
+                        {d.startingDistrict}, Punjab, Pakistan
+                      </p>
+                      <p className="m-0 mt-3 fw-bold">{d.endDistrict}</p>
+                      <p className="m-0" style={{ fontSize: ".75rem" }}>
+                        {d.endDistrict}, Punjab, Pakistan
+                      </p>
                     </div>
                   </div>
                 </div>
                 <div className="col-lg-4 col-md-8 col-sm-12">
-                  <div className="row d-flex mt-2">
-                    <span className="col-lg-2 col-md-2 col mb-1">
+                  <div className="row d-flex mt-2 m-0">
+                    <div className="col-auto px-0">
                       <img
                         className="img-fluid rounded-circle"
                         style={{
@@ -243,8 +172,8 @@ const VehicleTracking = ({ data }: Props) => {
                         src="/images/carFrontCircleBlue.png"
                         alt="carFrontCircleBlue"
                       />
-                    </span>
-                    <span className="col p-0">
+                    </div>
+                    <div className="col-auto">
                       <p className="m-0 fw-bold">{d.vehicalNumber}</p>
                       <p className="m-0 fs14px">
                         {getVehicleInfo(d.vehicalNumber, vehicles)?.name}
@@ -286,7 +215,7 @@ const VehicleTracking = ({ data }: Props) => {
                           </p>
                         </div>
                       </div>
-                    </span>
+                    </div>
                   </div>
                 </div>
                 <div className="col-lg-4 col-md-6 col-sm-12 text-end pe-4">
@@ -311,7 +240,6 @@ const VehicleTracking = ({ data }: Props) => {
                   )}
                 </div>
               </div>
-              <div className="row d-flex"></div>
             </div>
           ))}
         </div>
@@ -399,7 +327,7 @@ export default VehicleTracking;
 //         }}
 //       >
 //         <Link
-//           href="/dashboardTO"
+//           href="/vehicle-tracking"
 //           className="btn p-0 rounded rounded-pill"
 //         >
 //           <Image src={blueCirclePointer} alt="blueCirclePointer" />

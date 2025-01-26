@@ -11,10 +11,10 @@ export interface StaffTracking {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useStaffTrackings = ({ refresh }: Props) =>
+const useStaffTrackings = ({ refresh = false }: Props = {}) =>
   useData<StaffTracking>({ refresh, endpoint: coordinatesAPI });
 
 export default useStaffTrackings;

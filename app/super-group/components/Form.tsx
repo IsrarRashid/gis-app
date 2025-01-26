@@ -153,7 +153,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("superGroupLabel")}
                     id="superGroupLabel"
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Super Group Label"
                   />
                   {errors.superGroupLabel && (

@@ -13,10 +13,10 @@ export interface ReportHistoryUser {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useReportHistoryUser = ({ refresh }: Props) =>
+const useReportHistoryUser = ({ refresh = false }: Props = {}) =>
   useData<ReportHistoryUser>({
     refresh,
     endpoint: getAllUsersAndOfficersAPI,

@@ -74,7 +74,7 @@ const Pagination = ({
       pageNumbers.push(
         <Button
           key="ellipsis-start"
-          className="btn bg-color-sea-green shadow me-2"
+          className="btn bg-color-sea-green shadow-sm me-2 mb-2"
           disabled
           style={{ border: "1px solid #445E84" }}
         >
@@ -87,10 +87,10 @@ const Pagination = ({
       pageNumbers.push(
         <Button
           key={i}
-          className={`btn ${
+          className={`btn mb-2 ${
             i === currentPage
               ? "bg-color-matte-light-blue text-dark"
-              : "bg-color-sea-green shadow text-white"
+              : "bg-color-sea-green shadow-sm text-white"
           } me-2`}
           onClick={() => handlePageChange(i)}
           style={{
@@ -106,7 +106,7 @@ const Pagination = ({
       pageNumbers.push(
         <Button
           key="ellipsis-end"
-          className="btn bg-color-sea-green shadow me-2 text-white"
+          className="btn bg-color-sea-green shadow-sm me-2 text-white mb-2"
           disabled
           style={{ border: "1px solid #445E84" }}
         >
@@ -124,23 +124,65 @@ const Pagination = ({
 
   return (
     <>
-      <div className="row d-flex mb-3 m-0">
-        <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
+      <div className="row d-flex flex-wrap justify-content-between align-items-center mb-2 m-0">
+        <div className="col-auto mt-2">
           {/* Display the current range and total */}
           {indexOfFirstRow + 1} - {Math.min(indexOfLastRow, data.length)} of{" "}
           {(searchTerm || status ? filteredData : data).length}
         </div>
-        <div className="col-lg-6 col-md-9 col-sm-12">
-          <div className="row d-flex justify-content-end align-items-center">
-            {/* <div className="col-lg-2 col-md-1 col"></div> */}
-            <div className="col text-end">
+        <div className="col-auto text-center">
+          <Button
+            className="btn bg-color-sea-green shadow-sm me-2 text-white mb-2"
+            onClick={handleFirstPage}
+            disabled={currentPage === 1}
+            style={{
+              border: "1px solid #445E84",
+            }}
+          >
+            <MdFirstPage size={20} />
+          </Button>
+          <Button
+            className="btn bg-color-sea-green shadow-sm me-2 text-white mb-2"
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            style={{
+              border: "1px solid #445E84",
+            }}
+          >
+            <MdNavigateBefore size={20} />
+          </Button>
+          {renderPageNumbers()}
+          <Button
+            className="btn bg-color-sea-green shadow-sm me-2 text-white mb-2"
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            style={{
+              border: "1px solid #445E84",
+            }}
+          >
+            <MdNavigateNext size={20} />
+          </Button>
+          <Button
+            className="btn bg-color-sea-green shadow-sm text-white mb-2"
+            onClick={handleLastPage}
+            disabled={currentPage === totalPages}
+            style={{
+              border: "1px solid #445E84",
+            }}
+          >
+            <MdLastPage size={20} />
+          </Button>
+        </div>
+        <div className="col-auto">
+          <div className="row d-flex m-0 justify-content-end align-items-center">
+            <div className="col-auto">
               <label htmlFor="rowPerPage" className="form-label mt-2">
                 Rows Per Page:
               </label>
             </div>
-            <div className="col-auto text-start">
+            <div className="col-auto">
               <select
-                className="rounded bg-color-sea-green text-white shadow p-2"
+                className="rounded bg-color-sea-green text-white shadow-sm p-2"
                 style={{
                   color: "#fff",
                   border: "1px solid #445E84",
@@ -160,49 +202,6 @@ const Pagination = ({
             </div>
           </div>
         </div>
-      </div>
-      <div className="col text-center mt-2">
-        <Button
-          className="btn bg-color-sea-green shadow me-2 text-white"
-          onClick={handleFirstPage}
-          disabled={currentPage === 1}
-          style={{
-            border: "1px solid #445E84",
-          }}
-        >
-          <MdFirstPage size={20} />
-        </Button>
-        <Button
-          className="btn bg-color-sea-green shadow me-2 text-white"
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-          style={{
-            border: "1px solid #445E84",
-          }}
-        >
-          <MdNavigateBefore size={20} />
-        </Button>
-        {renderPageNumbers()}
-        <Button
-          className="btn bg-color-sea-green shadow me-2 text-white"
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-          style={{
-            border: "1px solid #445E84",
-          }}
-        >
-          <MdNavigateNext size={20} />
-        </Button>
-        <Button
-          className="btn bg-color-sea-green shadow text-white"
-          onClick={handleLastPage}
-          disabled={currentPage === totalPages}
-          style={{
-            border: "1px solid #445E84",
-          }}
-        >
-          <MdLastPage size={20} />
-        </Button>
       </div>
     </>
   );

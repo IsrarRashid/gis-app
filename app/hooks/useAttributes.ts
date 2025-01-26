@@ -42,10 +42,10 @@ export interface Attribute {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useAttributes = ({ refresh }: Props) =>
+const useAttributes = ({ refresh = false }: Props = {}) =>
   useData<Attribute>({ refresh, endpoint: attributesAPI });
 
 export default useAttributes;

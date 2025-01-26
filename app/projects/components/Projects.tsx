@@ -6,7 +6,7 @@ import ProjectsList from "./ProjectsList";
 const Projects = () => {
   const [refresh, setRefresh] = useState(false);
   const [showData, setShowData] = useState(false);
-  useAuthorization("projects");
+  // useAuthorization("projects");
 
   useEffect(() => {
     // Set the background for the body

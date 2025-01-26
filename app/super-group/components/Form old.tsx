@@ -193,7 +193,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   </label>
                   <input
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     id="name"
                     name="name"
                     value={formData.name}
@@ -211,7 +211,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Parent Sector
                       </label>
                       <select
-                        className="form-select form-select-sm color-light-dark bg-silver"
+                        className="form-select form-select-sm color-light-dark"
                         aria-label="Default select example"
                         name="parentId"
                         onChange={handleChange}
@@ -261,7 +261,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     Description
                   </label>
                   <textarea
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     value={formData.description}
                     onChange={handleChange}
                     name="description"

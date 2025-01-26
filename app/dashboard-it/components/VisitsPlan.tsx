@@ -9,6 +9,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Accordion } from "react-bootstrap";
 import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
 import visitPlan from "@/public/icons/visitPlan.svg";
+import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
 
 interface VisitsPlan {
   nameOfVisit: string;
@@ -20,11 +21,14 @@ interface VisitsPlan {
     {
       officerName: string;
       designation: string;
+      fromDate: string;
+      toDate: string;
+      totalVisits: number;
       completeVisits: number;
       pendingVisits: number;
       onTimeSubmitted: number;
       lateSubmitted: number;
-      reportGenrated: number;
+      issuedReport: number;
     }
   ];
 }
@@ -46,7 +50,7 @@ const VisitsPlan = ({
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get(`${visitAPI}/GetAllVisitSchedule`);
+      const response = await apiClient.get(`${visitAPI}/GetVisitPlan`);
       setData(response.data.data);
       console.log("visits plan data", response.data.data);
       setLoading(false);
@@ -168,7 +172,7 @@ const VisitsPlan = ({
                           overflow: "scroll",
                         }}
                       >
-                        <table className="table text-center">
+                        <table className="table table-hover text-center">
                           <thead>
                             <tr className="fs14px">
                               <th className="border-0">&nbsp;</th>
@@ -230,7 +234,7 @@ const VisitsPlan = ({
                                     // background: "rgba(241, 241, 241, 0.88)",
                                     color: "#414651",
                                   }}
-                                  className="rounded-pill rounded-end border-0 ps-4 fs14px fw-bold px-0 py-1"
+                                  className="rounded-pill rounded-end border-0 fs14px fw-bold px-0 py-1"
                                 >
                                   <div
                                     className="rounded-pill rounded-end "
@@ -252,6 +256,21 @@ const VisitsPlan = ({
                                           {visit.officerName}
                                           <br />
                                           {visit.designation}
+                                          <br />
+                                          From:{" "}
+                                          {addDayToFormattedDate(
+                                            getFormattedDate(
+                                              new Date(visit.fromDate),
+                                              "short"
+                                            )!
+                                          )}
+                                          To:
+                                          {addDayToFormattedDate(
+                                            getFormattedDate(
+                                              new Date(visit.toDate),
+                                              "short"
+                                            )!
+                                          )}
                                         </Button>
                                       }
                                       body={
@@ -365,7 +384,7 @@ const VisitsPlan = ({
                                       borderBottomRightRadius: "20px",
                                     }}
                                   >
-                                    {visit.reportGenrated}
+                                    {visit.issuedReport}
                                   </div>
                                 </td>
                               </tr>

@@ -19,10 +19,10 @@ export interface User {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useUsers = ({ refresh }: Props) =>
+const useUsers = ({ refresh = false }: Props = {}) =>
   useData<User>({ refresh, endpoint: userAPI });
 
 export default useUsers;

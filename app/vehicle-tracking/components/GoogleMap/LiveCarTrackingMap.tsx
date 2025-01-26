@@ -59,6 +59,8 @@ const LiveCarTrackingMap = () => {
   const [apiData, setAPIData] = useState<Tracking>();
   const [arrayIndex, setArrayIndex] = useState(0);
 
+  const [isError, setError] = useState(false);
+
   const getRotationAngle = (direction: string): number => {
     switch (direction?.toLocaleLowerCase()) {
       case "north":
@@ -117,37 +119,40 @@ const LiveCarTrackingMap = () => {
     // Function to fetch the latest coordinates from the API
     const fetchCoordinates = async () => {
       try {
-        const response = await fetch(trackingAPI); // Replace with your API endpoint
-        const data: Tracking = await response.json();
-        setAPIData(data);
-        // Get the coordinates from the response
-        const coordinatesList = data["GBB-062"]["coordnaties list"];
+        if (!isError) {
+          const response = await fetch(trackingAPI); // Replace with your API endpoint
+          const data: Tracking = await response.json();
+          setAPIData(data);
+          // Get the coordinates from the response
+          const coordinatesList = data["GBB-062"]["coordnaties list"];
 
-        if (coordinatesList.length > 0) {
-          const latestCoordinates: Position = {
-            lat: coordinatesList[coordinatesList.length - 1].lat, // Get the last coordinate's latitude
-            lng: coordinatesList[coordinatesList.length - 1].lon, // Get the last coordinate's longitude
-          };
-          const latestDirection: string =
-            coordinatesList[coordinatesList.length - 1].direction;
-          // Update the path with the latest coordinates
-          if (
-            path.length === 0 ||
-            !path.some(
-              (coord) =>
-                coord.lat === latestCoordinates.lat &&
-                coord.lng === latestCoordinates.lng
-            )
-          ) {
-            setPath((prevPath) => [...prevPath, latestCoordinates]);
-            setDirection(latestDirection);
+          if (coordinatesList.length > 0) {
+            const latestCoordinates: Position = {
+              lat: coordinatesList[coordinatesList.length - 1].lat, // Get the last coordinate's latitude
+              lng: coordinatesList[coordinatesList.length - 1].lon, // Get the last coordinate's longitude
+            };
+            const latestDirection: string =
+              coordinatesList[coordinatesList.length - 1].direction;
+            // Update the path with the latest coordinates
+            if (
+              path.length === 0 ||
+              !path.some(
+                (coord) =>
+                  coord.lat === latestCoordinates.lat &&
+                  coord.lng === latestCoordinates.lng
+              )
+            ) {
+              setPath((prevPath) => [...prevPath, latestCoordinates]);
+              setDirection(latestDirection);
 
-            if (!position) {
-              setPosition(latestCoordinates);
+              if (!position) {
+                setPosition(latestCoordinates);
+              }
             }
           }
         }
       } catch (error) {
+        setError(true);
         console.error("Error fetching coordinates:", error);
       }
     };

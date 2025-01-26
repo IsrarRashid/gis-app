@@ -1,3 +1,5 @@
+"use client";
+
 import { Asap } from "next/font/google";
 import { Groups } from "./ProjectDetailsDashboard";
 import WBSAttributesFlow from "./WBSFlow/WBSAttributesFlow";
@@ -24,8 +26,10 @@ const WBSReportUpdated = ({ majorDeliverables }: Props) => {
         </p>
         {majorDeliverables?.group?.length > 0 ? (
           <WBSGroupFlow majorDeliverables={majorDeliverables} />
-        ) : (
+        ) : majorDeliverables ? (
           <WBSAttributesFlow majorDeliverables={majorDeliverables} />
+        ) : (
+          ""
         )}
       </div>
     </>

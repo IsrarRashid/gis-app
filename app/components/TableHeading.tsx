@@ -8,7 +8,7 @@ interface Props {
 
 const TableHeading = ({ name, handleSort }: Props) => {
   return (
-    <th style={{ whiteSpace: "nowrap" }} onClick={handleSort}>
+    <th onClick={handleSort}>
       {name.toUpperCase()}&nbsp;
       <Image src={upDownArrow} alt="upDownArrow" />
     </th>

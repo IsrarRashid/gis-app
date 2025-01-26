@@ -56,6 +56,13 @@ const Login = () => {
       console.log("user logged in successfully", response);
       // console.log("token: ", response.data.data.token);
       // const expires = new Date(new Date().getTime() + 5 * 60 * 1000); // 5 minutes from now
+      if (Cookies.get("token")) Cookies.remove("token");
+      if (Cookies.get("email")) Cookies.remove("email");
+      if (Cookies.get("userName")) Cookies.remove("userName");
+      if (Cookies.get("userId")) Cookies.remove("userId");
+      if (Cookies.get("role")) Cookies.remove("role");
+      if (Cookies.get("rights")) Cookies.remove("rights");
+
       Cookies.set("token", response.data.data.token, {
         expires: new Date(response.data.data.expiration),
       });

@@ -25,6 +25,7 @@ interface SectorsTableProps {
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
 const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   const { data, setData, setError, isLoading } = useSectors({ refresh });
   const deleteMessage = "Deleted Successfully!";
@@ -129,7 +130,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
       />
       <div className="table-responsive">
         <table
-          className="table mb-5"
+          className="table table-hover mb-5"
           style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
         >
           <thead>

@@ -12,10 +12,10 @@ export interface AttributeGroup {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useAttributeGroups = ({ refresh }: Props) =>
+const useAttributeGroups = ({ refresh = false }: Props = {}) =>
   useData<AttributeGroup>({ refresh, endpoint: attributeGroupsAPI });
 
 export default useAttributeGroups;

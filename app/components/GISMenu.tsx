@@ -5,9 +5,10 @@ import vehicleTrackingIcon from "@/public/icons/vehicleTracking.svg";
 import visitSchedule from "@/public/icons/visitSchedule.svg";
 import Cookies from "js-cookie";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { Modal } from "react-bootstrap";
 import clock2 from "../../public/icons/clock-2.svg";
 import cross from "../../public/icons/cross-2.svg";
 import dashboard from "../../public/icons/dashboard.svg";
@@ -22,7 +23,6 @@ import superGroupWhite from "../../public/icons/superGroupWhite.svg";
 import truck from "../../public/icons/truck.svg";
 import user3White from "../../public/icons/user3White.svg";
 import visits from "../../public/icons/visits.svg";
-import { setContent } from "../features/content/contentSlice";
 import Button from "./Button";
 
 interface Data {
@@ -33,12 +33,12 @@ interface Data {
 }
 
 const GISMenu = () => {
-  const dispatch = useDispatch();
-  const [rights, setRights] = useState([]);
+  const [show, setShow] = useState(false);
 
-  const handleButtonClick = (content: string) => {
-    dispatch(setContent(content));
-  };
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const [rights, setRights] = useState([]);
 
   const router = useRouter();
   const [role, setRole] = useState("");
@@ -57,6 +57,13 @@ const GISMenu = () => {
       backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
     },
     {
+      name: "Attendance Dashboard",
+      nameId: "dashboard-attendance",
+      link: "/dashboard-attendance",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+    },
+    {
       name: "Director Dashboard",
       nameId: "dashboard-director",
       link: "/dashboard-director",
@@ -70,17 +77,24 @@ const GISMenu = () => {
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
     },
+    // {
+    //   name: "Officer Dashboard",
+    //   nameId: "dashboard-officer",
+    //   link: "/dashboard-officer",
+    //   icon: dashboard,
+    //   backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+    // },
+    // {
+    //   name: "IT Dashboard",
+    //   nameId: "dashboard-it",
+    //   link: "/dashboard-it",
+    //   icon: dashboard,
+    //   backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+    // },
     {
-      name: "Officier Dashboard",
-      nameId: "dashboard-officier",
-      link: "/dashboard-officier",
-      icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
-    },
-    {
-      name: "IT Dashboard",
-      nameId: "dashboard-it",
-      link: "/dashboard-it",
+      name: "TO Dashboard",
+      nameId: "dashboard-to",
+      link: "/dashboard-to",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
     },
@@ -249,94 +263,70 @@ const GISMenu = () => {
             fontSize: "22px",
             letterSpacing: 1,
           }}
-          data-bs-toggle="modal"
-          data-bs-target="#gisMenuModal"
+          onClick={handleShow}
         >
           Monitoring Dashboard &nbsp;
           <Image src={downArrow} alt="down arrow" />
         </Button>
       )}
 
-      <div
-        className="modal fade"
-        id="gisMenuModal"
-        aria-labelledby="gisMenuModalLabel"
-        aria-hidden="true"
-        data-bs-backdrop="false"
+      <Modal
+        size="xl"
+        show={show}
+        onHide={handleClose}
+        dialogClassName="custom-modal"
+        backdropClassName="custom-backdrop"
       >
-        <div className="modal-dialog modal-xl" style={{ marginTop: "80px" }}>
+        <Modal.Body className="bg-transparent">
           <div
-            className="modal-content border-0"
-            style={{ background: "rgba(255,255,255,0)" }}
+            className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4 bg-blur"
+            style={{
+              borderRadius: "20px",
+              marginTop: "30px",
+            }}
           >
-            <div className="modal-body p-0">
-              <div
-                className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4 bg-blur"
-                style={{
-                  borderRadius: "20px",
-                }}
-              >
-                <div className="col">
-                  <Button
-                    className="btn p-0"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
+            <div className="col">
+              <Button className="btn p-0" onClick={() => setShow(!show)}>
+                <Image src={cross} alt="cross" width={30} />
+              </Button>
+            </div>
+            <div className="row d-flex justify-content-center p-4">
+              {filteredMenu?.map((d) => (
+                <Link
+                  key={d.name.toString()}
+                  href={d.link}
+                  className="col text-center text-decoration-none mb-2"
+                  onClick={() => setShow(!show)}
+                >
+                  <div
+                    className="col text-center"
+                    style={{
+                      backgroundImage: d.backgroundColor,
+                      borderRadius: "10px",
+                      padding: "40px 45px",
+                    }}
                   >
-                    <Image src={cross} alt="cross" width={30} />
-                  </Button>
-                </div>
-                <div className="row d-flex justify-content-center p-4">
-                  {filteredMenu.map((d) => (
-                    <div
-                      key={d.name.toString()}
-                      className="col text-center mb-3"
-                    >
-                      <Button
-                        className="btn p-0"
-                        onClick={() => {
-                          router.push(d.link);
-                          handleButtonClick(d.name);
-                        }}
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                      >
-                        <div
-                          className="col text-center"
-                          style={{
-                            backgroundImage: d.backgroundColor,
-                            borderRadius: "10px",
-                            padding: "40px 45px",
-                          }}
-                        >
-                          <Image
-                            src={d.icon}
-                            alt={d.icon}
-                            width={40}
-                            height={40}
-                          />
-                        </div>
-                        <div
-                          className="col text-center fw-bold mt-1 fs18px"
-                          style={{ color: "#676767" }}
-                        >
-                          {d.name === "Summary Dashboard" ? (
-                            <>
-                              Summary <br />
-                              Dashboard
-                            </>
-                          ) : (
-                            d.name
-                          )}
-                        </div>
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                    <Image src={d.icon} alt={d.icon} width={40} height={40} />
+                  </div>
+                  <div
+                    className="col text-center fw-bold mt-1 fs18px"
+                    style={{ color: "#676767" }}
+                  >
+                    {d.name === "Summary Dashboard" ? (
+                      <>
+                        Summary <br />
+                        Dashboard
+                      </>
+                    ) : (
+                      d.name
+                    )}
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };

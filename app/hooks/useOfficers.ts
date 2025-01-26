@@ -13,10 +13,10 @@ export interface Officer {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useOfficers = ({ refresh }: Props) =>
+const useOfficers = ({ refresh = false }: Props = {}) =>
   useData<Officer>({ refresh, endpoint: getAllOfficersAPI });
 
 export default useOfficers;

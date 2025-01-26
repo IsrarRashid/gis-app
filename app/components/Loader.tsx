@@ -1,3 +1,5 @@
+"use client";
+
 import EarthLoading from "@/app/earthLoading.json";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
@@ -28,34 +30,36 @@ const Loader = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        background: "rgba(0, 0, 0,.4)",
-        position: "fixed",
-        top: "0",
-        left: "0",
-        width: "100%",
-        height: "100%",
-        zIndex: 3,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <motion.div
-        style={{ width: "100px", height: "100px" }}
-        animate={{
-          scale: [1, 1.2, 1], // Keyframes for zoom in and zoom out
-        }}
-        transition={{
-          duration: 2, // Total duration for one cycle
-          repeat: Infinity, // Loop the animation
-          ease: "easeInOut", // Smooth easing
+    <>
+      <div
+        style={{
+          background: "rgba(0, 0, 0,.4)",
+          position: "absolute",
+          top: "0",
+          left: "0",
+          width: "100%",
+          height: "100%",
+          zIndex: 3,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <Lottie animationData={EarthLoading} loop={true} />
-      </motion.div>
-    </div>
+        <motion.div
+          style={{ width: "100px", height: "100px" }}
+          animate={{
+            scale: [1, 1.2, 1], // Keyframes for zoom in and zoom out
+          }}
+          transition={{
+            duration: 2, // Total duration for one cycle
+            repeat: Infinity, // Loop the animation
+            ease: "easeInOut", // Smooth easing
+          }}
+        >
+          <Lottie animationData={EarthLoading} loop={true} />
+        </motion.div>
+      </div>
+    </>
   );
 };
 

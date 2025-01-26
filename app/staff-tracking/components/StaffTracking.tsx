@@ -1,5 +1,10 @@
 "use client";
-import { getUserProjectsAPI, staffTrackingAPI, visitAPI } from "@/app/APIs";
+import {
+  getUserProjectsAPI,
+  reverseGeoCodingAPI,
+  staffTrackingAPI,
+  visitAPI,
+} from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import { setContent } from "@/app/features/content/contentSlice";
@@ -8,7 +13,7 @@ import useAuthentication from "@/app/hooks/useAuthentication";
 import useAuthorization from "@/app/hooks/useAuthorization";
 import { Project } from "@/app/hooks/useProjects";
 import apiClient from "@/app/services/api-client";
-import { devMap } from "@/app/utils";
+import { devMap, triggerEscapeKeyPress } from "@/app/utils";
 import redCircle from "@/public/icons/redCircle.svg";
 import { motion } from "framer-motion";
 import { Lexend } from "next/font/google";
@@ -16,8 +21,12 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import LiveStaffTrackingMap from "./GoogleMap/LiveStaffTrackingMap";
-import RecordingStaffTrackingMap from "./GoogleMap/RecordingStaffTrackingMap";
+import TimelineAuto from "./GoogleMap/TimelineAuto";
+import TimelineBothCustomAndGoogle from "./GoogleMap/TimelineBothCustomAndGoogle";
+import TimelineCard from "./GoogleMap/TimelineCard";
+import TimelineCustomPath from "./GoogleMap/TimelineCustomPath";
 import StaffMember from "./StaffMember";
+import StaffMemberInRecording from "./StaffMemberInRecording";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -133,7 +142,7 @@ interface ProjectVisit {
 const StaffTracking = () => {
   const [mapStatus, setMapStatus] = useState(false);
   const dispatch = useDispatch();
-  useAuthorization("staff-tracking");
+  // useAuthorization("staff-tracking");
   const [userId, setUserId] = useState<number>();
   const [visitId, setVisitId] = useState<number>();
   const [visits, setVisits] = useState();
@@ -152,6 +161,11 @@ const StaffTracking = () => {
       visitId: 0,
       date: getCurrentDate(), //remember to set current date
     });
+  const [googleDuration, setGoogleDuration] = useState<string | undefined>("");
+  const [officerDuration, setOfficerDuration] = useState<string | undefined>(
+    ""
+  );
+
   const [markerPositions, setMarkerPositions] = useState<{
     [key: string]: { lat: number; lng: number };
   }>({});
@@ -234,7 +248,7 @@ const StaffTracking = () => {
 
     handleButtonClick(
       "StaffTracking",
-      "https://www.youtube.com/watch?v=Sdi4aiucJ-8&ab_channel=DirectorateGeneralMonitoringandEvaluation"
+      "https://www.youtube.com/watch?v=L38gouuFtyo&ab_channel=DirectorateGeneralMonitoringandEvaluation"
     );
     // Cleanup on unmount
     return () => {
@@ -274,6 +288,44 @@ const StaffTracking = () => {
     }
   };
 
+  const [startLocation, setStartLocation] = useState<string>();
+  const [endLocation, setEndLocation] = useState<string>();
+
+  const fetchStartLocationAddress = async (data: StaffTracking) => {
+    try {
+      if (data && data.startAddressLat && data.startAddressLong) {
+        const response = await fetch(
+          `${reverseGeoCodingAPI}${data.startAddressLat},${data.startAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
+        );
+        const resopnseData = await response.json();
+        setStartLocation(resopnseData.results[0].formatted_address);
+      }
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
+    }
+  };
+
+  const fetchEndLocationAddress = async (data: StaffTracking) => {
+    try {
+      if (data && data.endAddressLat && data.endAddressLong) {
+        const response = await fetch(
+          `${reverseGeoCodingAPI}${data.endAddressLat},${data.endAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
+        );
+        const resopnseData = await response.json();
+        setEndLocation(resopnseData.results[0].formatted_address);
+      }
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (recordingData && recordingData.length > 0) {
+      fetchStartLocationAddress(recordingData[0]);
+      fetchEndLocationAddress(recordingData[0]);
+    }
+  }, [recordingData]);
+
   const [selectedButton, setSelectedButton] = useState(1);
 
   const [userProjects, setUserProjects] = useState<Project[]>([]); // Store the original data
@@ -281,6 +333,8 @@ const StaffTracking = () => {
   const [userDate, setUserDate] = useState<Date | null>(); // Store the original data
   const [isVisitSelected, setVisitSelected] = useState<boolean>(false); // Store the original data
   const [isDateSelected, setDateSelected] = useState<boolean>(false); // Store the original data
+  const [isCombineRouteSelected, setCombineRouteSelected] =
+    useState<boolean>(true); // Store the original data
 
   const handleUserSubmit = async (id: number) => {
     try {
@@ -310,323 +364,404 @@ const StaffTracking = () => {
 
   return (
     <div
-      className={`container-fluid p-3 mb-4 ${lexend.className}`}
+      className={`container-fluid p-2 mb-4 ${lexend.className}`}
       style={{
         backgroundImage:
           "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6), rgba(255, 255, 255, 0.08))",
         border: "1px solid rgba(255, 255, 255, 0.6)",
-        padding: "10px",
         borderRadius: "10px",
       }}
     >
-      <div className="row mb-3 ms-2 me-2">
-        <div className="col-lg-8 col-md-12 col-sm-12 position-relative">
-          <div className="row">
-            <div className="col">
-              <div
-                className="col position-absolute text-end"
-                style={{ zIndex: 1, left: 200, top: 10 }}
-              >
-                <div
-                  className={`row d-flex flex-wrap rounded-pill m-0 ${lexend.className}`}
-                  style={{ background: "rgba(235, 239, 253, 0.33)" }}
+      <div className="col text-end position-relative">
+        <div
+          className="position-absolute rounded-pill m-0"
+          style={{ zIndex: 1, right: 10 }}
+        >
+          <div
+            className="p-0 col-auto btn-group rounded-pill"
+            style={{ background: "#EBEFFD" }}
+            role="group"
+          >
+            <CustomModal
+              modalId="staffRecording"
+              button={
+                <Button
+                  type="button"
+                  className={`btn rounded-pill border-0 shadow-none fw-bold whiteSpaceNoWrap px-4 ${
+                    selectedButton === 2 ? "text-white" : ""
+                  }`}
+                  style={{
+                    paddingTop: "12px",
+                    paddingBottom: "12px",
+                    background: `${
+                      selectedButton === 2
+                        ? "radial-gradient(#0C8CE9, #13629B)"
+                        : ""
+                    }`,
+                  }}
+                  onClick={() => {
+                    setSelectedButton(2);
+                    setDateSelected(false);
+                    setVisitSelected(false);
+                    setData([]);
+                  }}
                 >
-                  <div
-                    className="p-0 col btn-group rounded-pill"
-                    style={{ background: "#EBEFFD" }}
-                    role="group"
+                  RECORDING
+                </Button>
+              }
+              body={
+                <div
+                  className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
+                  style={{
+                    borderRadius: "20px",
+                    background: "#fff",
+                  }}
+                >
+                  <h3 className="fw-bold text-center">Recordings</h3>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (recordingTrackingRequestBody) {
+                        getStaffWithCoordinates(recordingTrackingRequestBody);
+                      }
+                      setMapStatus(true);
+                      triggerEscapeKeyPress();
+                    }}
                   >
-                    <CustomModal
-                      modalId="staffRecording"
-                      button={
+                    <div className="col mb-3 text-start">
+                      <label htmlFor="users" className="form-label">
+                        Users
+                      </label>
+                      <select
+                        className="form-select form-select-sm"
+                        aria-label="users"
+                        name="users"
+                        onChange={(e) => {
+                          const selectedValue = e.target.value;
+                          if (selectedValue === "") {
+                            setUserProjects([]); // Set null if "Select" option is chosen
+                            setRecordingTrackingRequestBody((prev) => ({
+                              ...prev,
+                              userId: 0,
+                            }));
+                          } else {
+                            const selectedId = parseInt(selectedValue, 10);
+                            handleUserSubmit(selectedId); // Call handleUserSubmit with the selected userId
+                            setRecordingTrackingRequestBody((prev) => ({
+                              ...prev,
+                              userId: selectedId,
+                            }));
+                          }
+                        }}
+                      >
+                        <option value="">Select</option>
+                        {users.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            {d.userName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="col mb-3 text-start">
+                      <label htmlFor="date" className="form-label">
+                        Date
+                      </label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="date"
+                        placeholder="Select Date"
+                        disabled={isVisitSelected}
+                        onChange={(e) => {
+                          const selectedValue = e.target.value;
+                          if (selectedValue === "") {
+                            setUserDate(null); // Set null if "Select" option is chosen
+                            setRecordingTrackingRequestBody((prev) => ({
+                              ...prev,
+                              date: null,
+                            }));
+                            setDateSelected(false);
+                          } else {
+                            const newDate = new Date(selectedValue);
+                            setRecordingTrackingRequestBody((prev) => ({
+                              ...prev,
+                              date: getFormattedDate(newDate),
+                              visitId: 0,
+                            }));
+                            setDateSelected(true);
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div className="col mb-3 text-start">
+                      <label htmlFor="projects" className="form-label">
+                        Projects
+                      </label>
+                      <select
+                        className="form-select form-select-sm"
+                        aria-label="projects"
+                        name="projects"
+                        disabled={isDateSelected}
+                        onChange={(e) => {
+                          const selectedValue = e.target.value;
+                          if (selectedValue === "") {
+                            setUserVisits([]); // Set null if "Select" option is chosen
+                          } else {
+                            const selectedId = parseInt(selectedValue, 10);
+                            handleProjectSubmit(selectedId); // Call handleUserSubmit with the selected userId
+                          }
+                        }}
+                      >
+                        <option value="">Select</option>
+                        {userProjects.length > 0 &&
+                          userProjects.map((d) => (
+                            <option key={d.id} value={d.id}>
+                              {d.name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    <div className="col mb-3 text-start">
+                      <label htmlFor="visits" className="form-label">
+                        Visits
+                      </label>
+                      <select
+                        className="form-select form-select-sm"
+                        aria-label="visits"
+                        name="visits"
+                        disabled={isDateSelected}
+                        onChange={(e) => {
+                          const selectedValue = e.target.value;
+                          if (selectedValue === "") {
+                            setRecordingTrackingRequestBody((prev) => ({
+                              ...prev,
+                              visitId: 0,
+                              date: null,
+                            }));
+                            setVisitSelected(false);
+                          } else {
+                            setRecordingTrackingRequestBody((prev) => ({
+                              ...prev,
+                              visitId: parseInt(selectedValue),
+                              date: null,
+                            }));
+                            setVisitSelected(true);
+                          }
+                        }}
+                      >
+                        <option value="">Select</option>
+                        {userVisits.length > 0 &&
+                          userVisits.map((d) => (
+                            <option key={d.visitId} value={d.visitId}>
+                              {d.visitName}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    <div className="row d-flex">
+                      <div className="col-lg-6 col-md-6 col-sm-12 text-end">
                         <Button
-                          type="button"
-                          className={`btn rounded-pill border-0 shadow-none fw-bold whiteSpaceNoWrap px-4 ${
-                            selectedButton === 2 ? "text-white" : ""
-                          }`}
+                          disabled={
+                            recordingTrackingRequestBody.userId >= 0 &&
+                            isDateSelected
+                              ? false
+                              : recordingTrackingRequestBody.userId &&
+                                isVisitSelected
+                              ? false
+                              : true
+                          }
+                          className="btn w-50 fs-5 text-white"
+                          type="submit"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
                           style={{
-                            paddingTop: "12px",
-                            paddingBottom: "12px",
-                            background: `${
-                              selectedButton === 2
-                                ? "radial-gradient(#0C8CE9, #13629B)"
-                                : ""
-                            }`,
+                            backgroundImage:
+                              "linear-gradient(to right, #0C8CE9 , #13629B)",
+                            border: "0px",
                           }}
                           onClick={() => {
-                            setSelectedButton(2);
+                            setMapStatus(true);
+                            fetchRecordingData();
                           }}
                         >
-                          RECORDING
+                          Filter
                         </Button>
-                      }
-                      body={
-                        <div
-                          className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
+                      </div>
+                      <div className="col-lg-6 col-md-6 col-sm-12 text-start">
+                        <Button
+                          className="btn w-50 fs-5"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
                           style={{
-                            borderRadius: "20px",
-                            background: "#fff",
+                            border: "2px solid #0C8CE9",
+                            color: "#0C8CE9",
                           }}
                         >
-                          <h3 className="fw-bold text-center">Recordings</h3>
-                          <form
-                            onSubmit={(e) => {
-                              e.preventDefault();
-                              if (recordingTrackingRequestBody) {
-                                getStaffWithCoordinates(
-                                  recordingTrackingRequestBody
-                                );
-                              }
-                              setMapStatus(true);
-
-                              // Programmatically trigger the Escape key press
-                              const escapeEvent = new KeyboardEvent("keydown", {
-                                key: "Escape",
-                                keyCode: 27,
-                                code: "Escape",
-                                bubbles: true,
-                                cancelable: true,
-                              });
-                              document.dispatchEvent(escapeEvent);
-                            }}
-                          >
-                            <div className="col mb-3 text-start">
-                              <label htmlFor="users" className="form-label">
-                                Users
-                              </label>
-                              <select
-                                className="form-select form-select-sm"
-                                aria-label="users"
-                                name="users"
-                                onChange={(e) => {
-                                  const selectedValue = e.target.value;
-                                  if (selectedValue === "") {
-                                    setUserProjects([]); // Set null if "Select" option is chosen
-                                    setRecordingTrackingRequestBody((prev) => ({
-                                      ...prev,
-                                      userId: 0,
-                                    }));
-                                  } else {
-                                    const selectedId = parseInt(
-                                      selectedValue,
-                                      10
-                                    );
-                                    handleUserSubmit(selectedId); // Call handleUserSubmit with the selected userId
-                                    setRecordingTrackingRequestBody((prev) => ({
-                                      ...prev,
-                                      userId: selectedId,
-                                    }));
-                                  }
-                                }}
-                              >
-                                <option value="">Select</option>
-                                {users.map((d) => (
-                                  <option key={d.id} value={d.id}>
-                                    {d.userName}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-
-                            <div className="col mb-3 text-start">
-                              <label htmlFor="date" className="form-label">
-                                Date
-                              </label>
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="date"
-                                placeholder="Select Date"
-                                disabled={isVisitSelected}
-                                onChange={(e) => {
-                                  const selectedValue = e.target.value;
-                                  if (selectedValue === "") {
-                                    setUserDate(null); // Set null if "Select" option is chosen
-                                    setRecordingTrackingRequestBody((prev) => ({
-                                      ...prev,
-                                      date: null,
-                                    }));
-                                    setDateSelected(false);
-                                  } else {
-                                    const newDate = new Date(selectedValue);
-                                    setRecordingTrackingRequestBody((prev) => ({
-                                      ...prev,
-                                      date: getFormattedDate(newDate),
-                                      visitId: 0,
-                                    }));
-                                    setDateSelected(true);
-                                  }
-                                }}
-                              />
-                            </div>
-
-                            <div className="col mb-3 text-start">
-                              <label htmlFor="projects" className="form-label">
-                                Projects
-                              </label>
-                              <select
-                                className="form-select form-select-sm"
-                                aria-label="projects"
-                                name="projects"
-                                disabled={isDateSelected}
-                                onChange={(e) => {
-                                  const selectedValue = e.target.value;
-                                  if (selectedValue === "") {
-                                    setUserVisits([]); // Set null if "Select" option is chosen
-                                  } else {
-                                    const selectedId = parseInt(
-                                      selectedValue,
-                                      10
-                                    );
-                                    handleProjectSubmit(selectedId); // Call handleUserSubmit with the selected userId
-                                  }
-                                }}
-                              >
-                                <option value="">Select</option>
-                                {userProjects.length > 0 &&
-                                  userProjects.map((d) => (
-                                    <option key={d.id} value={d.id}>
-                                      {d.name}
-                                    </option>
-                                  ))}
-                              </select>
-                            </div>
-
-                            <div className="col mb-3 text-start">
-                              <label htmlFor="visits" className="form-label">
-                                Visits
-                              </label>
-                              <select
-                                className="form-select form-select-sm"
-                                aria-label="visits"
-                                name="visits"
-                                disabled={isDateSelected}
-                                onChange={(e) => {
-                                  const selectedValue = e.target.value;
-                                  if (selectedValue === "") {
-                                    setRecordingTrackingRequestBody((prev) => ({
-                                      ...prev,
-                                      visitId: 0,
-                                      date: null,
-                                    }));
-                                    setVisitSelected(false);
-                                  } else {
-                                    setRecordingTrackingRequestBody((prev) => ({
-                                      ...prev,
-                                      visitId: parseInt(selectedValue),
-                                      date: null,
-                                    }));
-                                    setVisitSelected(true);
-                                  }
-                                }}
-                              >
-                                <option value="">Select</option>
-                                {userVisits.length > 0 &&
-                                  userVisits.map((d) => (
-                                    <option key={d.visitId} value={d.visitId}>
-                                      {d.visitName}
-                                    </option>
-                                  ))}
-                              </select>
-                            </div>
-
-                            <div className="row d-flex">
-                              <div className="col-lg-6 col-md-6 col-sm-12 text-end">
-                                <Button
-                                  className="btn w-50 fs-5 text-white"
-                                  type="submit"
-                                  data-bs-dismiss="modal"
-                                  aria-label="Close"
-                                  style={{
-                                    backgroundImage:
-                                      "linear-gradient(to right, #0C8CE9 , #13629B)",
-                                    border: "0px",
-                                  }}
-                                  onClick={() => {
-                                    setMapStatus(true);
-                                    fetchRecordingData();
-                                  }}
-                                >
-                                  Filter
-                                </Button>
-                              </div>
-                              <div className="col-lg-6 col-md-6 col-sm-12 text-start">
-                                <Button
-                                  className="btn w-50 fs-5"
-                                  data-bs-dismiss="modal"
-                                  aria-label="Close"
-                                  style={{
-                                    border: "2px solid #0C8CE9",
-                                    color: "#0C8CE9",
-                                  }}
-                                >
-                                  Reset
-                                </Button>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-                      }
-                    />
-                    <Button
-                      type="button"
-                      className={`btn rounded-pill border-0 shadow-none fw-bold px-4 ${
-                        selectedButton === 1 ? "text-white" : ""
-                      }`}
-                      style={{
-                        paddingTop: "12px",
-                        paddingBottom: "12px",
-                        background: `${
-                          selectedButton === 1
-                            ? "radial-gradient(#0C8CE9, #13629B)"
-                            : ""
-                        }`,
-                      }}
-                      onClick={() => setSelectedButton(1)}
-                    >
-                      &nbsp;&nbsp;
-                      {selectedButton === 1 ? (
-                        <motion.span
-                          animate={{ opacity: [0, 1, 0] }} // Keyframes: fade in and out
-                          transition={{
-                            duration: 2, // Time for one complete cycle
-                            repeat: Infinity, // Loop animation infinitely
-                            ease: "easeInOut", // Smoother transition
-                          }}
-                        >
-                          <Image
-                            src={redCircle}
-                            alt="redCircle"
-                            width={20}
-                            height={20}
-                          />
-                        </motion.span>
-                      ) : (
-                        <Image
-                          src={redCircle}
-                          alt="redCircle"
-                          width={20}
-                          height={20}
+                          Reset
+                        </Button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              }
+            />
+            <Button
+              type="button"
+              className={`btn rounded-pill border-0 shadow-none fw-bold px-4 ${
+                selectedButton === 1 ? "text-white" : ""
+              }`}
+              style={{
+                paddingTop: "12px",
+                paddingBottom: "12px",
+                background: `${
+                  selectedButton === 1
+                    ? "radial-gradient(#0C8CE9, #13629B)"
+                    : ""
+                }`,
+              }}
+              onClick={() => {
+                setSelectedButton(1);
+                setMapStatus(false);
+                setRecordingData([]);
+              }}
+            >
+              &nbsp;&nbsp;
+              {selectedButton === 1 ? (
+                <motion.span
+                  animate={{ opacity: [0, 1, 0] }} // Keyframes: fade in and out
+                  transition={{
+                    duration: 2, // Time for one complete cycle
+                    repeat: Infinity, // Loop animation infinitely
+                    ease: "easeInOut", // Smoother transition
+                  }}
+                >
+                  <Image
+                    src={redCircle}
+                    alt="redCircle"
+                    width={20}
+                    height={20}
+                  />
+                </motion.span>
+              ) : (
+                <Image src={redCircle} alt="redCircle" width={20} height={20} />
+              )}
+              &nbsp;LIVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </Button>
+          </div>
+          {recordingData && recordingData.length > 0 && (
+            <Button
+              className="btn btn-info ms-2"
+              onClick={() => setCombineRouteSelected(!isCombineRouteSelected)}
+            >
+              Toggle Maps
+            </Button>
+          )}
+        </div>
+      </div>
+      {mapStatus ? (
+        <>
+          <div className="col">
+            {devMap && (
+              <div>
+                <>
+                  {/* <RecordingStaffTrackingMap
+                        trackingRequestBody={recordingTrackingRequestBody}
+                        fetchRecordingData={fetchRecordingData}
+                        position={position}
+                        setPosition={setPosition}
+                        path={path}
+                        recordingData={recordingData}
+                      /> */}
+                  {isCombineRouteSelected ? (
+                    <div className="col" style={{ marginTop: "60px" }}>
+                      {recordingData && startLocation && endLocation && (
+                        <TimelineBothCustomAndGoogle
+                          recordingData={recordingData}
+                          path={path}
+                          setGoogleDuration={setGoogleDuration}
+                          setOfficerDuration={setOfficerDuration}
+                          startLocation={startLocation}
+                          endLocation={endLocation}
                         />
                       )}
-                      &nbsp;LIVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              {devMap && data && (
-                <div className="position-relative" style={{ zIndex: 0 }}>
-                  {/* {mapStatus ? <MapCarsRecorded /> : <MapCars />} */}
-                  {mapStatus ? (
-                    <RecordingStaffTrackingMap
-                      trackingRequestBody={liveTrackingRequestBody}
-                      fetchRecordingData={fetchRecordingData}
-                      position={position}
-                      setPosition={setPosition}
-                      path={path}
-                      recordingData={recordingData}
-                    />
+                    </div>
                   ) : (
+                    <>
+                      {recordingData && startLocation && endLocation && (
+                        <div className="row d-flex flex-wrap m-0">
+                          <div className="col-lg-6 col-md-12 col-sm-12 mb-3">
+                            <h3 className="fw-normal mb-4">Officer Path</h3>
+                            <TimelineCustomPath
+                              recordingData={recordingData}
+                              path={path}
+                              startLocation={startLocation}
+                              endLocation={endLocation}
+                              setOfficerDuration={setOfficerDuration}
+                            />
+                          </div>
+
+                          <div className="col-lg-6 col-md-12 col-sm-12 mb-3">
+                            {position && path && (
+                              <>
+                                <h3 className="fw-normal mb-4">Google Path</h3>
+                                <TimelineAuto
+                                  recordingData={recordingData}
+                                  setGoogleDuration={setGoogleDuration}
+                                />
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </>
+              </div>
+            )}
+            {/* <Visits /> */}
+          </div>
+
+          {recordingData &&
+            recordingData.length > 0 &&
+            selectedButton === 2 && (
+              <>
+                <p className="col fs-6 fw-normal mb-2 ps-3">
+                  <span style={{ color: "#7A889C" }}>Project:</span>{" "}
+                  {recordingData[0]?.projectName}
+                </p>
+                <div className="row d-flex flex-wrap m-0">
+                  <div className="col-auto">
+                    <StaffMemberInRecording recordingData={recordingData} />
+                  </div>
+                  <div className="col">
+                    <TimelineCard
+                      data={recordingData[0]}
+                      startLocation={startLocation}
+                      endLocation={endLocation}
+                      googleDuration={googleDuration}
+                      officerDuration={officerDuration}
+                    />
+                  </div>
+                  {/* <ScheduleVisit /> */}
+                </div>
+              </>
+            )}
+        </>
+      ) : (
+        <div className="row mb-3 ms-2 me-2">
+          <div className="col-lg-8 col-md-12 col-sm-12 position-relative">
+            <div className="row">
+              <div className="col">
+                {data && data?.length === 0 && selectedButton === 1 && (
+                  <p className="mt-5">No one is on Visit.</p>
+                )}
+                {devMap && data && (
+                  <div className="position-relative" style={{ zIndex: 0 }}>
+                    {/* {mapStatus ? <MapCarsRecorded /> : <MapCars />} */}
                     <>
                       <LiveStaffTrackingMap
                         data={data}
@@ -635,24 +770,29 @@ const StaffTracking = () => {
                         liveTrackingRequestBody={liveTrackingRequestBody}
                       />
                     </>
-                  )}
-                </div>
-              )}
-              {/* <Visits /> */}
+                  </div>
+                )}
+                {/* <Visits /> */}
+              </div>
             </div>
           </div>
+          <div className="col-lg-4 col-md-12 col-sm-12">
+            {data && data.length > 0 && selectedButton === 1 && (
+              <StaffMember
+                setLiveTrackingRequestBody={setLiveTrackingRequestBody}
+                setMapStatus={setMapStatus}
+                getStaffWithCoordinates={getStaffWithCoordinates}
+              />
+            )}
+            {recordingData &&
+              recordingData.length > 0 &&
+              selectedButton === 2 && (
+                <StaffMemberInRecording recordingData={recordingData} />
+              )}
+            {/* <ScheduleVisit /> */}
+          </div>
         </div>
-        <div className="col-lg-4 col-md-12 col-sm-12">
-          {data && (
-            <StaffMember
-              setLiveTrackingRequestBody={setLiveTrackingRequestBody}
-              setMapStatus={setMapStatus}
-              getStaffWithCoordinates={getStaffWithCoordinates}
-            />
-          )}
-          {/* <ScheduleVisit /> */}
-        </div>
-      </div>
+      )}
     </div>
   );
 };

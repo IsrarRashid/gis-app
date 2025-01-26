@@ -5,7 +5,7 @@ import SectorsTable from "./SectorsTable";
 
 const Sectors = () => {
   const [refresh, setRefresh] = useState(false);
-  useAuthorization("sectors");
+  // useAuthorization("sectors");
 
   useEffect(() => {
     // Set the background for the body

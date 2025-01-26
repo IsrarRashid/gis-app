@@ -6,8 +6,8 @@
 }
 
 .shiftRight {
-  margin-left: 350px; /* Expanded sidenav width */
-  width: calc(100% - 350px); /* Adjust width when expanded */
+  margin-left: 400px; /* Expanded sidenav width */
+  width: calc(100% - 400px); /* Adjust width when expanded */
 }
 
 .sidenav {
@@ -26,7 +26,7 @@
 }
 
 .sidenav.expanded {
-  width: 350px; /* Expanded width */
+  width: 400px; /* Expanded width */
 }
 
 /* side nav */
@@ -43,7 +43,7 @@
 }
 
 .sidenav.expanded {
-  width: 350px; /* Expanded width */
+  width: 400px; /* Expanded width */
 }
 
 .sidenav .btn {
@@ -64,18 +64,22 @@
 }
 
 /* Date Range */
-.customDateRange {
-  width: 300px; /* Set desired width */
-}
+/* .customDateRange { */
+/* Set desired width */
+/* width: 300px; */
+/* } */
 
-.customDateRange .rdrCalendarWrapper {
-  width: 300px; /* Adjust calendar container width */
-}
+/* .customDateRange .rdrCalendarWrapper { */
+/* Adjust calendar container width */
+/* width: 300px; */
+/* } */
 
-.customDateRange .rdrMonths {
-  width: 300px; /* Adjust calendar months section */
-}
+/* .customDateRange .rdrMonths { */
+/* Adjust calendar months section */
+/* width: 300px; */
+/* } */
 
-.customDateRange .rdrMonth {
-  min-width: 280px; /* Adjust individual month width */
-}
+/* .customDateRange .rdrMonth { */
+/* Adjust individual month width */
+/* min-width: 280px; */
+/* } */

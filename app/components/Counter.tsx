@@ -48,7 +48,7 @@ const Counter = ({
             id={name}
             value={value}
             onChange={onChange}
-            className="form-control form-control-sm color-light-dark bg-silver p-0 sortId text-center border-0 bg-light"
+            className="form-control form-control-sm color-light-dark p-0 sortId text-center border-0 bg-light"
           />
         </div>
         <div className="col text-end pe-1 pt-1 pb-1">

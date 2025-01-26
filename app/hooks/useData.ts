@@ -3,11 +3,11 @@ import { toast } from "react-toastify";
 import apiClient, { AxiosError, CanceledError } from "../services/api-client";
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
   endpoint: string;
 }
 
-const useData = <T>({ refresh, endpoint }: Props) => {
+const useData = <T>({ refresh = false, endpoint }: Props) => {
   const [data, setData] = useState<T[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ const useData = <T>({ refresh, endpoint }: Props) => {
       return () => controller.abort();
     };
     loadItems();
-  }, [refresh]);
+  }, [refresh, endpoint]);
 
   return { data, setData, error, setError, isLoading, setLoading };
 };

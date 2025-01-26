@@ -22,7 +22,7 @@ const useAuthorization = (requiredRight: string) => {
 
     const rights = JSON.parse(Cookies.get("rights") || "[]");
     if (!rights.includes(requiredRight)) {
-      router.push(rights.length > 0 ? `/${rights[0]}` : "/notAuthorized");
+      router.push(rights.length > 0 ? `/${rights[0]}` : "/not-authorized");
     }
   }, [router, requiredRight]);
 };

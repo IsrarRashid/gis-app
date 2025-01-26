@@ -52,7 +52,7 @@ const WBSAttributesFlow = ({ majorDeliverables }: Props) => {
       style: nodeStyle,
     },
     // Attribute Nodes
-    ...majorDeliverables.attributes
+    ...majorDeliverables?.attributes
       .filter(
         (attribute) =>
           attribute.attributeId !== 68 && attribute.attributeId !== 69

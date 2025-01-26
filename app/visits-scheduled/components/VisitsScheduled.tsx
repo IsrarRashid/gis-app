@@ -5,7 +5,7 @@ import List from "./List";
 
 const VisitsScheduled = () => {
   const [refresh, setRefresh] = useState(false);
-  useAuthorization("visits-scheduled");
+  // useAuthorization("visits-scheduled");
 
   useEffect(() => {
     // Set the background for the body

@@ -165,7 +165,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("name")}
                       id="name"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Name"
                     />
                     {errors.name && (
@@ -185,7 +185,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("description")}
                       id="description"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Description"
                     />
                     {errors.description && (
@@ -205,7 +205,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("vehicleNumber")}
                       id="vehicleNumber"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter vehicleNumber"
                     />
                     {errors.vehicleNumber && (
@@ -222,7 +222,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("model")}
                       id="model"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Model"
                     />
                     {errors.model && (
@@ -239,7 +239,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("color")}
                       id="color"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Color"
                     />
                     {errors.color && (
@@ -259,7 +259,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("trasnmission")}
                       id="trasnmission"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Trasnmission"
                     />
                     {errors.trasnmission && (
@@ -279,7 +279,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("seatsCapacity", { valueAsNumber: true })}
                       id="seatsCapacity"
                       type="number"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Seats Capacity"
                     />
                     {errors.seatsCapacity && (
@@ -296,7 +296,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("fuelType")}
                       id="fuelType"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter fuel Type"
                     />
                     {errors.fuelType && (
@@ -316,7 +316,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("vehicleImage")}
                       id="vehicleImage"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Vehicle Image"
                     />
                     {errors.vehicleImage && (
@@ -336,7 +336,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       {...register("vehicleIcon")}
                       id="vehicleIcon"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Vehicle Icon"
                     />
                     {errors.vehicleIcon && (

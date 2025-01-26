@@ -9,8 +9,8 @@ import Button from "../Button";
 import styles from "./UserDropDown.module.css";
 
 interface Props {
-  onClickPdf: () => void;
-  onClickExcel: () => void;
+  onClickPdf?: () => void;
+  onClickExcel?: () => void;
 }
 
 const DownloadDropDown = ({ onClickPdf, onClickExcel }: Props) => {
@@ -52,28 +52,38 @@ const DownloadDropDown = ({ onClickPdf, onClickExcel }: Props) => {
       <div
         className={`fs12px ${styles.dropdownContent} ${show && styles.show}`}
       >
-        <Link
-          href="#"
-          className="btn w-100 fs12px fw-bold text-start shadow-none"
-          onClick={onClickPdf}
-        >
-          <Image src={pdf} alt="pdf" width={16} height={16} className="mb-1" />
-          &nbsp;PDF
-        </Link>
-        <Link
-          href="#"
-          className="btn w-100 fs12px fw-bold text-start shadow-none"
-          onClick={onClickExcel}
-        >
-          <Image
-            src={excel}
-            alt="excel"
-            width={16}
-            height={16}
-            className="mb-1"
-          />
-          &nbsp;Excel
-        </Link>
+        {onClickPdf && (
+          <Link
+            href="#"
+            className="btn w-100 fs12px fw-bold text-start shadow-none"
+            onClick={onClickPdf}
+          >
+            <Image
+              src={pdf}
+              alt="pdf"
+              width={16}
+              height={16}
+              className="mb-1"
+            />
+            &nbsp;PDF
+          </Link>
+        )}
+        {onClickExcel && (
+          <Link
+            href="#"
+            className="btn w-100 fs12px fw-bold text-start shadow-none"
+            onClick={onClickExcel}
+          >
+            <Image
+              src={excel}
+              alt="excel"
+              width={16}
+              height={16}
+              className="mb-1"
+            />
+            &nbsp;Excel
+          </Link>
+        )}
       </div>
     </div>
   );

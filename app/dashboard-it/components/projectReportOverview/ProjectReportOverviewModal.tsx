@@ -14,6 +14,7 @@ import levelsUp from "@/public/icons/levelsUp.svg";
 import mainPage from "@/public/icons/mainPage.svg";
 import money from "@/public/icons/money.svg";
 import star from "@/public/icons/star.svg";
+import fileAttach from "@/public/icons/fileAttach.svg";
 import starBalloon from "@/public/icons/starBalloon.svg";
 import warningIcon2 from "@/public/icons/warningIcon2.svg";
 import waveUp2 from "@/public/icons/waveUp2.svg";
@@ -112,6 +113,9 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
     {
       icon: waveUp2,
     },
+    {
+      icon: fileAttach,
+    },
   ];
 
   const calculatePercentage = (attributes: any, groups: any) => {
@@ -156,17 +160,18 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
   return (
     <>
       <CustomModal
+        showCloseButton={false}
         button={
           <Button
             type="button"
             onClick={() => {
               handleSubmit(id, visitId);
             }}
-            className="col w-100 shadow-none btn"
+            className="col w-100 shadow-none btn p-0"
           >
             <div className="row d-flex m-0">
               <ProgressBar value={Math.round(value)} />
-              <div className="col-1 p-0 color-dark-blue fw-bold fs13px">
+              <div className="col-auto p-0 color-dark-blue fw-bold fs13px">
                 {Math.round(value)}%
               </div>
             </div>
@@ -184,16 +189,16 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
                       className="border-top-0 border-end-0 border-start-0"
                     >
                       <Accordion.Header>
-                        <div className="col-lg-1 col-md-1 col-1 p-0 me-1">
+                        <div className="col-auto pe-1">
                           <Image
-                            src={icons[index].icon}
+                            src={icons[index]?.icon}
                             alt="mainPage"
                             className="img-fluid"
                             width={40}
                             height={40}
                           />
                         </div>
-                        <div className="col p-0">
+                        <div className="col">
                           <div className="row d-flex flex-column m-0">
                             <p className="m-0 fs14px ps-0 flex-wrap">
                               {group.name}

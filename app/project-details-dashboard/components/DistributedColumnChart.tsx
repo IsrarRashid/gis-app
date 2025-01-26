@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
@@ -135,7 +137,7 @@ const DistributedColumnChart = ({ data, spi, cpi, projectRating }: Props) => {
       const chartOptions: ApexOptions = {
         chart: {
           type: "bar",
-          height: 300,
+          height: 250,
           toolbar: { show: false },
         },
         plotOptions: {
@@ -299,7 +301,7 @@ const DistributedColumnChart = ({ data, spi, cpi, projectRating }: Props) => {
                   <thead>
                     <tr className="bg-color-sea-blue text-white fs12px">
                       <th className="border-0">VISIT</th>
-                      <th className="border-0">OFFICIER NAME</th>
+                      <th className="border-0">OFFICER NAME</th>
                       <th className="border-0">DATE</th>
                       <th className="border-0">SPI</th>
                       <th className="border-0">CPI</th>

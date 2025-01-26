@@ -1,3 +1,5 @@
+"use client";
+
 import ApexCharts, { ApexOptions } from "apexcharts";
 import { useEffect, useRef, useState } from "react";
 import { Groups, SingleProjectDashboard } from "./ProjectDetailsDashboard";
@@ -30,13 +32,13 @@ const SimplePieChart = ({ financialAnalysis, projectProfile, data }: Props) => {
     setCalculatedData(["30%", "70%"]);
 
     // Initialize series and labels
-    const parsedSeries = financialAnalysis.attributes
+    const parsedSeries = financialAnalysis?.attributes
       .slice(1, -2)
       .map((attribute) =>
         Math.round(parseFloat(attribute.values[0]?.value || "0"))
       );
 
-    const parsedLabels = financialAnalysis.attributes
+    const parsedLabels = financialAnalysis?.attributes
       .slice(1, -2)
       .map((attribute) => attribute.label);
 
@@ -51,7 +53,7 @@ const SimplePieChart = ({ financialAnalysis, projectProfile, data }: Props) => {
 
   useEffect(() => {
     // Render chart only when both series and labels are initialized
-    if (chartRef.current && series.length && labels.length) {
+    if (chartRef?.current && series?.length && labels?.length) {
       const chartOptions: ApexOptions = {
         chart: {
           type: "pie",

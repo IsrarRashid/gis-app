@@ -41,7 +41,7 @@ const dmSans = DM_Sans({
 const SummaryDashboard = () => {
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
-  useAuthorization("dashboard-summary");
+  // useAuthorization("dashboard-summary");
 
   const options = [
     { value: "daily", label: "Daily" },

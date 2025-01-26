@@ -355,7 +355,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   </div>
                   <div className="table-responsive">
                     <table
-                      className="table mb-5"
+                      className="table table-hover mb-5"
                       style={{
                         border: ".41px solid rgba(81,81,81,0.20) !important",
                       }}
@@ -428,10 +428,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                           <TableHeading
                             name="issued at"
                             handleSort={() => handleSort("issued_at")}
-                          />
-                          <TableHeading
-                            name="report Path"
-                            handleSort={() => handleSort("reportPath")}
                           />
                           <th colSpan={2}>
                             <div className="text-center"></div>
@@ -559,13 +555,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                               {d.issued_at &&
                                 getFormattedDate(
                                   new Date(d.issued_at),
-                                  "short"
-                                )}
-                            </td>
-                            <td>
-                              {d.reportPath &&
-                                getFormattedDate(
-                                  new Date(d.reportPath),
                                   "short"
                                 )}
                             </td>
@@ -795,7 +784,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   </div>
                   <div className="table-responsive">
                     <table
-                      className="table mb-5"
+                      className="table table-hover mb-5"
                       style={{
                         border: ".41px solid rgba(81,81,81,0.20) !important",
                       }}
@@ -868,10 +857,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                           <TableHeading
                             name="issued at"
                             handleSort={() => handleSort("issued_at")}
-                          />
-                          <TableHeading
-                            name="report Path"
-                            handleSort={() => handleSort("reportPath")}
                           />
                           <th colSpan={2}>
                             <div className="text-center"></div>
@@ -999,13 +984,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                               {d.issued_at &&
                                 getFormattedDate(
                                   new Date(d.issued_at),
-                                  "short"
-                                )}
-                            </td>
-                            <td>
-                              {d.reportPath &&
-                                getFormattedDate(
-                                  new Date(d.reportPath),
                                   "short"
                                 )}
                             </td>

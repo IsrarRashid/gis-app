@@ -1,5 +1,4 @@
 "use client";
-import { singleProjectDashboardAPI } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import TableHeading from "@/app/components/TableHeading";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
@@ -7,7 +6,6 @@ import ProjectReportOverviewModal from "@/app/dashboard/components/projectReport
 import useDistrict from "@/app/hooks/useDistrict";
 import useSectors from "@/app/hooks/useSectors";
 import useUsers from "@/app/hooks/useUsers";
-import apiClient from "@/app/services/api-client";
 import {
   addDayToFormattedDate,
   exportToPDF,
@@ -20,12 +18,13 @@ import { format } from "date-fns";
 import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
 import Image from "next/image";
+import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Accordion } from "react-bootstrap";
 import { DateRange, RangeKeyDict } from "react-date-range";
 import "react-date-range/dist/styles.css"; // Main style file
 import "react-date-range/dist/theme/default.css"; // Theme CSS
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { FaRegClock, FaSearch, FaUser } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import {
@@ -73,10 +72,12 @@ export interface ProjectsList {
   pnDReleases: number;
   visitCount: number;
   utilization: number;
+  utilPercent: number;
+  expUpToJune: number;
   totalRevenueCost: number;
   totalCapitalCost: number;
-  fileGenrated: string;
-  reportStatus: string;
+  reportSubmitted: string;
+  onePagerSubmitted: string;
 }
 
 interface Props {
@@ -122,13 +123,12 @@ const ProjectsTable = ({
 
     const filtered = projectsData.filter((item) =>
       [
-        item.id.toString(),
+        item.gSno,
         item.projectName,
         item.sectorName,
         item.districtName,
         item.userName,
         item.designation,
-        item.reportStatus,
       ]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
@@ -212,6 +212,17 @@ const ProjectsTable = ({
       }
     }
   };
+  const [utilizationPercentage, setUtilizationPercentage] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (projectsData) {
+      const filteredProjects = projectsData?.map((project) => {
+        const utilizationPercentage =
+          ((project.expUpToJune + project.utilization) / project.cost) * 100;
+        setUtilizationPercentage((prev) => [...prev, utilizationPercentage]);
+      });
+    }
+  }, [projectsData]);
 
   // Paginate data to display only the current page's rows
   const paginatedData =
@@ -221,31 +232,31 @@ const ProjectsTable = ({
       : projectsData
     ).slice((currentPage - 1) * rows, currentPage * rows);
 
-  const handleProjectSubmit = async (projectId: number, visitId: number) => {
-    try {
-      const response = await apiClient.get(
-        `${singleProjectDashboardAPI}?projectid=${projectId}&visit=${visitId}`
-      );
-      if (
-        (response.data.data && response.data.data !== null) ||
-        response.data.data.groups ||
-        response.data.data.attributes ||
-        response.data.data.groups.length > 0 ||
-        response.data.data.attributes.length > 0
-      ) {
-        window.open(
-          `/project-details-dashboard/${projectId}/${visitId}`,
-          "_blank"
-        );
-        // router.push(`/projectDetailsDashboard/${projectId}/${visitId}`);
-      } else {
-        toast.error("This Project is not yet Monitored.");
-      }
-    } catch (err) {
-      console.error("Submission error:", err);
-      toast.error("This Project is not yet Monitored.");
-    }
-  };
+  // const handleProjectSubmit = async (projectId: number, visitId: number) => {
+  //   try {
+  //     const response = await apiClient.get(
+  //       `${singleProjectDashboardAPI}?projectid=${projectId}&visit=${visitId}`
+  //     );
+  //     if (
+  //       (response.data.data && response.data.data !== null) ||
+  //       response.data.data.groups ||
+  //       response.data.data.attributes ||
+  //       response.data.data.groups.length > 0 ||
+  //       response.data.data.attributes.length > 0
+  //     ) {
+  //       window.open(
+  //         `/project-details-dashboard/${projectId}/${visitId}`,
+  //         "_blank"
+  //       );
+  //       // router.push(`/projectDetailsDashboard/${projectId}/${visitId}`);
+  //     } else {
+  //       toast.error("This Project is not yet Monitored.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Submission error:", err);
+  //     toast.error("This Project is not yet Monitored.");
+  //   }
+  // };
 
   // pdf generation
   // const columns = [
@@ -301,16 +312,51 @@ const ProjectsTable = ({
 
   const renameMap: Record<string, string> = {
     srNo: "Sr No",
-    id: "GS No.",
+    gSno: "GS No.",
+    projectName: "PROJECT NAME",
+    districtName: "DISTRICT NAME",
+    sectorName: "SECTOR NAME",
+    userName: "USER NAME",
+    reportCompletion: "REPORT COMPLETION",
     fileGenrated: "REPORT GENERATED",
     visitStartDate: "DATE RANGE",
+    completedDate: "COMPLETED DATE",
+    deadline: "DEADLINE",
     visitCount: "No. OF VISITS",
+    cost: "COST (M)",
+    revisedAllocation: "REVISED ALLOCATION (M)",
+    pnDReleases: "PN D RELEASES (M)",
+    utilization: "EXPENDITURE + UTILIZATION (M)",
+    utilPercent: "UTIL. PERCENT",
+    reportSubmitted: "REPORT SUBMITTED",
+    onePagerSubmitted: "ONE PAGER SUBMITTED",
     // Add other mappings as needed
   };
 
   // Helper function to rename columns dynamically
   const formatKeyName = (key: string): string => {
     return renameMap[key] || key.replace(/([A-Z])/g, " $1").toUpperCase();
+  };
+
+  const deadlineColumnValue = (submittedDate: string, deadlineDate: string) => {
+    const submittedTime = new Date(submittedDate);
+    const deadlineTime = new Date(deadlineDate);
+
+    const diffInMilliseconds = submittedTime.getTime() - deadlineTime.getTime();
+
+    const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
+    const diffInMonths = Math.floor(diffInDays / 30); // Approximate months
+    const diffInYears = Math.floor(diffInDays / 365); // Approximate years
+    const result =
+      submittedTime <= deadlineTime
+        ? "Submitted on time"
+        : diffInYears >= 1 && diffInMonths >= 12
+        ? `${diffInYears} year${diffInYears > 1 ? "s" : ""} Late Submitted`
+        : diffInMonths >= 1
+        ? `${diffInMonths} month${diffInMonths > 1 ? "s" : ""} Late Submitted`
+        : `${diffInDays} day${diffInDays > 1 ? "s" : ""} Late Submitted`;
+
+    return result;
   };
 
   const keysForPDF = ["srNo", ...keys];
@@ -329,8 +375,8 @@ const ProjectsTable = ({
         case "srNo":
           row[key] = index + 1;
           break;
-        case "id":
-          row[key] = data.id;
+        case "gSno":
+          row[key] = data.gSno;
           break;
         case "projectName":
           row[key] = data.projectName;
@@ -366,14 +412,16 @@ const ProjectsTable = ({
               getFormattedDate(new Date(data.completedDate), "short")!
             )}`;
           break;
-        case "deadline":
-          row[key] =
-            data.reportStatus && data.reportStatus.toLowerCase() === "yes"
-              ? "Submitted"
-              : `${getTimeLeft(data.deadline).replace("-", "")}`;
+        case "utilization":
+          row[key] = `${data.utilization + data.expUpToJune} (${Math.round(
+            utilizationPercentage[index]
+          )}%)`;
           break;
-        case "fileGenrated":
-          row[key] = data.fileGenrated;
+        case "utilPercent":
+          row[key] = `(${Math.round(utilizationPercentage[index])}%)`;
+          break;
+        case "deadline":
+          row[key] = deadlineColumnValue(data.submittedDate, data.deadline);
           break;
         default:
           row[key] = data[key]; // Handle any additional keys dynamically
@@ -394,29 +442,30 @@ const ProjectsTable = ({
 
       headers.forEach((header) => {
         const key =
-          Object.keys(renameMap).find((k) => formatKeyName(k) === header) ||
-          header; // Find original key from renamed header
+          Object.entries(renameMap).find(
+            ([, value]) => value === header
+          )?.[0] || header; // Find original key from renamed header
 
         switch (key) {
           case "srNo":
             row[header] = index + 1;
             break;
-          case "id":
-            row[header] = item.id;
+          case "gSno":
+            row[header] = item.gSno;
             break;
-          case formatKeyName("projectName"):
+          case "projectName":
             row[header] = item.projectName;
             break;
-          case formatKeyName("districtName"):
+          case "districtName":
             row[header] = item.districtName;
             break;
-          case formatKeyName("sectorName"):
+          case "sectorName":
             row[header] = item.sectorName;
             break;
-          case formatKeyName("userName"):
+          case "userName":
             row[header] = `${item.userName} (${item.designation})`;
             break;
-          case formatKeyName("reportCompletion"):
+          case "reportCompletion":
             row[header] = `${Math.round(item.reportCompletion)}%`;
             break;
           case "visitStartDate":
@@ -431,36 +480,44 @@ const ProjectsTable = ({
                 )
               }`;
             break;
-          case formatKeyName("completedDate"):
+          case "completedDate":
             row[header] =
               item.completedDate &&
               `${addDayToFormattedDate(
                 getFormattedDate(new Date(item.completedDate), "short")!
               )}`;
             break;
-          case formatKeyName("deadline"):
-            row[header] =
-              item.reportStatus && item.reportStatus.toLowerCase() === "yes"
-                ? "Submitted"
-                : `${getTimeLeft(item.deadline).replace("-", "")}`;
+          case "deadline":
+            row[header] = deadlineColumnValue(
+              item.submittedDate,
+              item.deadline
+            );
             break;
           case "visitCount":
             row[header] = item.visitCount;
             break;
-          case "fileGenrated":
-            row[header] = item.fileGenrated;
-            break;
-          case formatKeyName("cost"):
+          case "cost":
             row[header] = item.cost;
             break;
-          case formatKeyName("revisedAllocation"):
+          case "revisedAllocation":
             row[header] = item.revisedAllocation;
             break;
-          case formatKeyName("pnDReleases"):
+          case "pnDReleases":
             row[header] = item.pnDReleases;
             break;
-          case formatKeyName("utilization"):
-            row[header] = item.utilization;
+          case "utilization":
+            row[header] = `${item.utilization + item.expUpToJune} (${Math.round(
+              utilizationPercentage[index]
+            )}%)`;
+            break;
+          case "utilPercent":
+            row[header] = `(${Math.round(utilizationPercentage[index])}%)`;
+            break;
+          case "reportSubmitted":
+            row[header] = item.reportSubmitted;
+            break;
+          case "onePagerSubmitted":
+            row[header] = item.onePagerSubmitted;
             break;
 
           default:
@@ -550,7 +607,6 @@ const ProjectsTable = ({
   const [startDate, setStartDate] = useState<string>();
   const [endDate, setEndDate] = useState<string>();
   const [reportSubmitted, setReportSubmitted] = useState<string>();
-  const [reportGenerated, setReportGenerated] = useState<string>();
 
   const applyFilters = ({
     districtName = "",
@@ -558,8 +614,7 @@ const ProjectsTable = ({
     userName = "",
     startDate = "", // Start date for  range
     endDate = "", // End date for  range
-    reportGenerated = "", // Boolean for report generation
-    reportSubmitted = "", // Boolean for report submission
+    reportSubmitted = "",
   }) => {
     let filtered = projectsData;
 
@@ -601,18 +656,9 @@ const ProjectsTable = ({
     // Filter by report submitted
     if (reportSubmitted) {
       filtered = filtered.filter((project) =>
-        project.reportStatus
+        project.reportSubmitted
           .toLowerCase()
           .includes(reportSubmitted.toLowerCase())
-      );
-    }
-
-    // Filter by report generated
-    if (reportGenerated) {
-      filtered = filtered.filter((project) =>
-        project.fileGenrated
-          .toLowerCase()
-          .includes(reportGenerated.toLowerCase())
       );
     }
 
@@ -646,7 +692,6 @@ const ProjectsTable = ({
       startDate: updatedSelection.startDate.toISOString().split("T")[0],
       endDate: updatedSelection.endDate.toISOString().split("T")[0],
       reportSubmitted,
-      reportGenerated,
     });
     setDropdownFilterValue((prev) => {
       if (selection.startDate!.toString() === "") {
@@ -801,7 +846,6 @@ const ProjectsTable = ({
                         ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
                         : "",
                       reportSubmitted,
-                      reportGenerated,
                     });
                   }}
                   disabled={searchTerm ? true : false}
@@ -836,7 +880,7 @@ const ProjectsTable = ({
                           moveRangeOnFirstSelection={false}
                           maxDate={new Date()} // Restrict future dates
                           dateDisplayFormat="dd/MM/yyyy"
-                          className={styles.customDateRange}
+                          // className={styles.customDateRange}
                         />
                         <p>
                           Selected Range:{" "}
@@ -871,7 +915,6 @@ const ProjectsTable = ({
                               startDate: "",
                               endDate: "",
                               reportSubmitted,
-                              reportGenerated,
                             });
                           }}
                           style={{
@@ -933,7 +976,6 @@ const ProjectsTable = ({
                         ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
                         : "",
                       reportSubmitted,
-                      reportGenerated,
                     });
                   }}
                   disabled={searchTerm ? true : false}
@@ -989,7 +1031,6 @@ const ProjectsTable = ({
                         ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
                         : "",
                       reportSubmitted,
-                      reportGenerated,
                     });
                   }}
                   disabled={searchTerm ? true : false}
@@ -1045,60 +1086,6 @@ const ProjectsTable = ({
                         ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
                         : "",
                       reportSubmitted: e.target.value,
-                      reportGenerated,
-                    });
-                  }}
-                  disabled={searchTerm ? true : false}
-                >
-                  <option value="">Select</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">NO</option>
-                </select>
-              </div>
-            )}
-            {keys.includes("fileGenrated") && (
-              <div className="col mb-3 text-start">
-                <label htmlFor="reportGenerated" className="form-label">
-                  Report Generated
-                </label>
-                <select
-                  className="w-100"
-                  style={{
-                    background: "rgba(16, 143, 168, .1)",
-                    outline: "none",
-                    border: "1px solid #D0D5DD",
-                  }}
-                  aria-label="Report Generated"
-                  name="reportGenerated"
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setReportGenerated(value);
-                    setDropdownFilterValue((prev) => {
-                      if (value === "") {
-                        // Remove "Report Generated" from the filter
-                        return prev.filter(
-                          (item) => !item.startsWith("Report Generated:")
-                        );
-                      } else {
-                        // Add/Update "Report Generated" in the filter
-                        const updated = prev.filter(
-                          (item) => !item.startsWith("Report Generated:")
-                        );
-                        return [...updated, `Report Generated: ${value}`];
-                      }
-                    });
-                    applyFilters({
-                      districtName,
-                      sectorName,
-                      userName,
-                      startDate: dateRangeState[0].startDate
-                        ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
-                        : "",
-                      endDate: dateRangeState[0].endDate
-                        ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
-                        : "",
-                      reportSubmitted,
-                      reportGenerated: e.target.value,
                     });
                   }}
                   disabled={searchTerm ? true : false}
@@ -1170,20 +1157,6 @@ const ProjectsTable = ({
                   />
                 </li>
               )}
-              {keys.includes("fileGenrated") && (
-                <li
-                  className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
-                  onClick={toggleSidenav}
-                >
-                  <Image
-                    className="img-fluid"
-                    src="/icons/generatedReport.svg"
-                    alt="dates"
-                    width={20}
-                    height={20}
-                  />
-                </li>
-              )}
             </ul>
           </div>
         </div>
@@ -1197,33 +1170,34 @@ const ProjectsTable = ({
             marginTop: "0px",
           }}
         >
-          <table
-            id="my-table"
-            className="table mb-5 "
-            style={{
-              border: ".41px solid rgba(159, 159, 159, 0.75) !important",
-            }}
-          >
-            <thead>
-              <tr>
-                <th
-                  colSpan={11}
-                  className="p-0 text-center text-white rounded bg-color-sea-blue"
-                >
-                  <div className="row d-flex m-0">
-                    <div className="col m-auto text-start">
-                      {/* <ImCross /> */}
-                    </div>
-                    <div className="col" style={{ marginTop: "10px" }}>
-                      <p
-                        className="m-0 fs12px fw-bold"
-                        style={{ letterSpacing: 1 }}
-                      >
-                        List of {label}
-                      </p>
-                    </div>
-                    <div className="col d-flex justify-content-end mt-1 mb-1">
-                      {/* <Dropdown>
+          <div style={{ height: "96vh", overflow: "scroll" }}>
+            <table
+              id="my-table"
+              className="table table-hover mb-5 "
+              style={{
+                border: ".41px solid rgba(159, 159, 159, 0.75) !important",
+              }}
+            >
+              <thead>
+                <tr>
+                  <th
+                    colSpan={keys?.length}
+                    className="p-0 text-center text-white rounded bg-color-sea-blue"
+                  >
+                    <div className="row d-flex m-0">
+                      <div className="col m-auto text-start">
+                        {/* <ImCross /> */}
+                      </div>
+                      <div className="col" style={{ marginTop: "10px" }}>
+                        <p
+                          className="m-0 fs12px fw-bold"
+                          style={{ letterSpacing: 1 }}
+                        >
+                          List of {label}
+                        </p>
+                      </div>
+                      <div className="col d-flex justify-content-end mt-1 mb-1">
+                        {/* <Dropdown>
                         <Dropdown.Toggle variant="light" id="dropdown-basic">
                           Downloads&nbsp;
                           <Image
@@ -1259,59 +1233,61 @@ const ProjectsTable = ({
                           </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown> */}
-                      <DownloadDropDown
-                        onClickPdf={() =>
-                          tableRows &&
-                          exportToPDF(columns, tableRows, new Date(), label)
-                        }
-                        onClickExcel={exportToExcel}
-                      />
+                        <DownloadDropDown
+                          onClickPdf={() =>
+                            tableRows &&
+                            exportToPDF(columns, tableRows, new Date(), label)
+                          }
+                          onClickExcel={exportToExcel}
+                        />
+                      </div>
                     </div>
-                  </div>
-                </th>
-              </tr>
-              <tr>
-                <th colSpan={11} className="p-0">
-                  <div className="row m-0 d-flex justify-content-between p-3">
-                    <div className="col-lg-6 col-md-5 col-sm-12">
-                      <p>
-                        Showing:{" "}
-                        <span className="fw-bold">
-                          {searchTerm || dropdownFilterValue.length > 0
-                            ? `${filteredData.length}/${filteredData.length}`
-                            : projectsData?.length}{" "}
-                          {label}
-                        </span>
-                      </p>
+                  </th>
+                </tr>
+                <tr>
+                  <th colSpan={keys?.length} className="p-0">
+                    <div className="row m-0 d-flex justify-content-between p-3">
+                      <div className="col-lg-6 col-md-5 col-sm-12">
+                        <p>
+                          Showing:{" "}
+                          <span className="fw-bold">
+                            {searchTerm || dropdownFilterValue.length > 0
+                              ? `${filteredData.length}/${filteredData.length}`
+                              : projectsData?.length}{" "}
+                            {label}
+                          </span>
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </th>
-              </tr>
-              <tr
-                className={`color-dark-blue cursor-pointer ${inter.className}`}
-                style={{
-                  border: ".41px solid rgba(159, 159, 159, 0.75) !important",
-                  fontSize: ".85rem",
-                }}
-              >
-                {keys.map((k, i) => (
-                  <TableHeading
-                    key={k + i}
-                    name={
-                      k.toLowerCase() === "id"
-                        ? "GIS No."
-                        : k.toLowerCase() === "visitcount"
-                        ? "no. of visits"
-                        : k.toLowerCase() === "visitstartdate"
-                        ? "Date Range"
-                        : k.toLowerCase() === "filegenrated"
-                        ? "report generated"
-                        : formatKeyName(k)
-                    }
-                    handleSort={() => handleSort(`${k}`)}
-                  />
-                ))}
-                {/* <TableHeading
+                  </th>
+                </tr>
+                <tr
+                  className={`color-dark-blue cursor-pointer text-center ${inter.className}`}
+                  style={{
+                    border: ".41px solid rgba(159, 159, 159, 0.75) !important",
+                    fontSize: ".85rem",
+                  }}
+                >
+                  {keys.map((k, i) => (
+                    <TableHeading
+                      key={k + i}
+                      name={
+                        k.toLowerCase() === "id"
+                          ? "ID"
+                          : k.toLowerCase() === "gSno"
+                          ? "GS NO."
+                          : k.toLowerCase() === "visitcount"
+                          ? "no. of visits"
+                          : k.toLowerCase() === "visitstartdate"
+                          ? "Date Range"
+                          : k.toLowerCase() === "filegenrated"
+                          ? "report generated"
+                          : formatKeyName(k)
+                      }
+                      handleSort={() => handleSort(`${k}`)}
+                    />
+                  ))}
+                  {/* <TableHeading
                   name="project Name"
                   handleSort={() => handleSort("projectName")}
                 />
@@ -1351,230 +1327,253 @@ const ProjectsTable = ({
                   name="report generated"
                   handleSort={() => handleSort("fileGenrated")}
                 /> */}
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedData?.map((d, i) => (
-                <tr
-                  key={i}
-                  className={`fs13px ${dmSans.className}`}
-                  style={{
-                    border: ".41px solid rgba(81,81,81,0.20) !important",
-                  }}
-                >
-                  {keys.map((key) => {
-                    if (key === "visitStartDate") {
-                      // Handle visitStartDate and visitEndDate together
-                      return (
-                        <td key="visitDates">
-                          {d.visitStartDate && d.visitEndDate ? (
-                            <>
-                              {addDayToFormattedDate(
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedData?.map((d, i) => (
+                  <tr
+                    key={i}
+                    className={`fs13px text-center ${dmSans.className}`}
+                    style={{
+                      border: ".41px solid rgba(81,81,81,0.20) !important",
+                    }}
+                  >
+                    {keys.map((key) => {
+                      if (key === "visitStartDate") {
+                        // Handle visitStartDate and visitEndDate together
+                        return (
+                          <td key="visitDates">
+                            {d.visitStartDate && d.visitEndDate ? (
+                              <>
+                                {addDayToFormattedDate(
+                                  getFormattedDate(
+                                    new Date(d.visitStartDate),
+                                    "short"
+                                  )!
+                                )}
+                                <div className="text-center">TO</div>
+                                {addDayToFormattedDate(
+                                  getFormattedDate(
+                                    new Date(d.visitEndDate),
+                                    "short"
+                                  )!
+                                )}
+                              </>
+                            ) : d.visitStartDate ? (
+                              addDayToFormattedDate(
                                 getFormattedDate(
                                   new Date(d.visitStartDate),
                                   "short"
                                 )!
-                              )}
-                              <div className="text-center">TO</div>
-                              {addDayToFormattedDate(
-                                getFormattedDate(
-                                  new Date(d.visitEndDate),
-                                  "short"
-                                )!
-                              )}
+                              )
+                            ) : (
+                              ""
+                            )}
+                          </td>
+                        );
+                      }
+                      if (key === "deadline") {
+                        const submittedTime = new Date(d.submittedDate);
+                        const deadlineTime = new Date(d.deadline);
+
+                        return (
+                          <td key="deadline">
+                            {d.deadline && d.submittedDate ? (
+                              <>
+                                <div
+                                  className={`text-center ${
+                                    submittedTime <= deadlineTime
+                                      ? "text-success"
+                                      : "text-danger"
+                                  }`}
+                                >
+                                  {deadlineColumnValue(
+                                    d.submittedDate,
+                                    d.deadline
+                                  )}
+                                </div>
+                              </>
+                            ) : (
+                              <span
+                                className={`text-wrap ${
+                                  getTimeLeft(d.deadline).includes("-")
+                                    ? "text-danger"
+                                    : ""
+                                }`}
+                              >
+                                {getTimeLeft(d.deadline).replace("-", "")}
+                              </span>
+                            )}
+                          </td>
+                        );
+                      }
+                      // For other keys
+                      return (
+                        <td key={key}>
+                          {key === "projectName" && allowLink ? (
+                            <Link
+                              target="_blank"
+                              href={`/project-details-dashboard/${d.id}/${d.visitId}`}
+                              className="text-start color-sea-blue"
+                            >
+                              {d[key]}
+                            </Link>
+                          ) : key === "reportCompletion" ? (
+                            <ProjectReportOverviewModal
+                              value={d[key]}
+                              id={d.id}
+                              visitId={d.visitId}
+                            />
+                          ) : key === "utilization" ? (
+                            <>{d.utilization + d.expUpToJune}</>
+                          ) : key === "utilPercent" ? (
+                            <>
+                              <span className="text-danger">
+                                ({Math.round(utilizationPercentage[i])}%)
+                              </span>
                             </>
-                          ) : d.visitStartDate ? (
+                          ) : key === "completedDate" ? (
                             addDayToFormattedDate(
-                              getFormattedDate(
-                                new Date(d.visitStartDate),
-                                "short"
-                              )!
+                              getFormattedDate(new Date(d[key]), "short")!
                             )
                           ) : (
-                            ""
+                            d[key]
                           )}
                         </td>
                       );
-                    }
-
-                    // For other keys
-                    return (
-                      <td key={key}>
-                        {key === "projectName" && allowLink ? (
-                          <Button
-                            className="btn w-100 p-0 text-start shadow-none color-sea-blue cursor-pointer"
-                            style={{ textDecoration: "underline" }}
-                            onClick={() => handleProjectSubmit(d.id, d.visitId)}
-                          >
-                            {d[key]}
-                          </Button>
-                        ) : key === "reportCompletion" ? (
-                          <ProjectReportOverviewModal
-                            value={d[key]}
-                            id={d.id}
-                            visitId={d.visitId}
-                          />
-                        ) : key === "completedDate" ? (
-                          addDayToFormattedDate(
-                            getFormattedDate(new Date(d[key]), "short")!
-                          )
-                        ) : key === "deadline" ? (
-                          d.reportStatus &&
-                          d.reportStatus.toLowerCase() === "yes" ? (
-                            "Submitted"
-                          ) : (
-                            <span
-                              className={`text-wrap ${
-                                getTimeLeft(d[key]).includes("-")
-                                  ? "text-danger"
-                                  : ""
-                              }`}
+                    })}
+                  </tr>
+                ))}
+                {keys.includes("cost") && (
+                  <tr className="bg-color-sea-blue text-light">
+                    <td className="rounded-start text-center" colSpan={4}>
+                      Total
+                    </td>
+                    <td className="text-nowrap">
+                      {formatAmountWithCommas(
+                        projectsData.reduce((sum, d) => sum + (d.cost || 0), 0)
+                      )}
+                    </td>
+                    <td className="text-nowrap">
+                      {formatAmountWithCommas(
+                        projectsData.reduce(
+                          (sum, d) => sum + (d.revisedAllocation || 0),
+                          0
+                        )
+                      )}
+                    </td>
+                    <td className="text-nowrap">
+                      {formatAmountWithCommas(
+                        projectsData.reduce(
+                          (sum, d) => sum + (d.pnDReleases || 0),
+                          0
+                        )
+                      )}
+                    </td>
+                    <td className="rounded-end text-nowrap">
+                      {formatAmountWithCommas(
+                        projectsData.reduce(
+                          (sum, d) => sum + (d.utilization || 0),
+                          0
+                        )
+                      )}
+                    </td>
+                  </tr>
+                )}
+                <tr>
+                  <td colSpan={keys.length} className="p-0">
+                    <div className="row d-flex mb-3 m-0">
+                      <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
+                        {indexOfFirstRow + 1} -{" "}
+                        {Math.min(indexOfLastRow, projectsData.length)} of{" "}
+                        {projectsData.length}
+                      </div>
+                      <div className="col-lg-6 col-md-9 col-sm-12">
+                        <div className="row d-flex m-0 me-2 justify-content-end align-items-center">
+                          <div className="col-lg-2 col-md-1 col"></div>
+                          <div className="col-lg-5 col-md-4 col text-end">
+                            <label
+                              htmlFor="rowPerPage"
+                              className="form-label mt-2"
                             >
-                              {getTimeLeft(d[key]).replace("-", "")}
-                            </span>
-                          )
-                        ) : (
-                          d[key]
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-              {keys.includes("cost") && (
-                <tr className="bg-color-sea-blue text-light">
-                  <td className="rounded-start text-center" colSpan={4}>
-                    Total
-                  </td>
-                  <td className="text-nowrap">
-                    {formatAmountWithCommas(
-                      projectsData.reduce((sum, d) => sum + (d.cost || 0), 0)
-                    )}{" "}
-                    M
-                  </td>
-                  <td className="text-nowrap">
-                    {formatAmountWithCommas(
-                      projectsData.reduce(
-                        (sum, d) => sum + (d.revisedAllocation || 0),
-                        0
-                      )
-                    )}{" "}
-                    M
-                  </td>
-                  <td className="text-nowrap">
-                    {formatAmountWithCommas(
-                      projectsData.reduce(
-                        (sum, d) => sum + (d.pnDReleases || 0),
-                        0
-                      )
-                    )}{" "}
-                    M
-                  </td>
-                  <td className="rounded-end text-nowrap">
-                    {formatAmountWithCommas(
-                      projectsData.reduce(
-                        (sum, d) => sum + (d.utilization || 0),
-                        0
-                      )
-                    )}{" "}
-                    M
-                  </td>
-                </tr>
-              )}
-              <tr>
-                <td colSpan={11} className="p-0">
-                  <div className="row d-flex mb-3 m-0">
-                    <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
-                      {/* Display the current range and total */}
-                      {indexOfFirstRow + 1} -{" "}
-                      {Math.min(indexOfLastRow, projectsData.length)} of{" "}
-                      {projectsData.length}
-                    </div>
-                    <div className="col-lg-6 col-md-9 col-sm-12">
-                      <div className="row d-flex m-0 me-2 justify-content-end align-items-center">
-                        <div className="col-lg-2 col-md-1 col"></div>
-                        <div className="col-lg-5 col-md-4 col text-end">
-                          <label
-                            htmlFor="rowPerPage"
-                            className="form-label mt-2"
-                          >
-                            Rows Per Page:
-                          </label>
-                        </div>
-                        <div className="col-lg-1 col-md-3 col text-start p-0">
-                          <select
-                            className="rounded bg-color-sea-green text-white shadow p-2"
-                            style={{
-                              color: "#fff",
-                              border: "1px solid #445E84",
-                              outline: "none",
-                            }}
-                            aria-label="Rows per page"
-                            name="rowPerPage"
-                            value={rows}
-                            onChange={handleRowsPerPage}
-                          >
-                            {[10, 20, 30, 40, 50].map((num) => (
-                              <option key={num} value={num}>
-                                &nbsp;{num}
-                              </option>
-                            ))}
-                          </select>
+                              Rows Per Page:
+                            </label>
+                          </div>
+                          <div className="col-lg-1 col-md-3 col text-start p-0">
+                            <select
+                              className="rounded bg-color-sea-green text-white shadow p-2"
+                              style={{
+                                color: "#fff",
+                                border: "1px solid #445E84",
+                                outline: "none",
+                              }}
+                              aria-label="Rows per page"
+                              name="rowPerPage"
+                              value={rows}
+                              onChange={handleRowsPerPage}
+                            >
+                              {[10, 20, 30, 40, 50].map((num) => (
+                                <option key={num} value={num}>
+                                  &nbsp;{num}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td colSpan={11} className="p-0">
-                  <div className="col text-center mt-2">
-                    <Button
-                      className="btn bg-color-sea-green shadow me-2 text-white"
-                      onClick={handleFirstPage}
-                      disabled={currentPage === 1}
-                      style={{
-                        border: "1px solid #445E84",
-                      }}
-                    >
-                      <MdFirstPage size={20} />
-                    </Button>
-                    <Button
-                      className="btn bg-color-sea-green shadow me-2 text-white"
-                      onClick={handlePreviousPage}
-                      disabled={currentPage === 1}
-                      style={{
-                        border: "1px solid #445E84",
-                      }}
-                    >
-                      <MdNavigateBefore size={20} />
-                    </Button>
-                    {renderPageNumbers()}
-                    <Button
-                      className="btn bg-color-sea-green shadow me-2 text-white"
-                      onClick={handleNextPage}
-                      disabled={currentPage === totalPages}
-                      style={{
-                        border: "1px solid #445E84",
-                      }}
-                    >
-                      <MdNavigateNext size={20} />
-                    </Button>
-                    <Button
-                      className="btn bg-color-sea-green shadow text-white"
-                      onClick={handleLastPage}
-                      disabled={currentPage === totalPages}
-                      style={{
-                        border: "1px solid #445E84",
-                      }}
-                    >
-                      <MdLastPage size={20} />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan={keys?.length} className="p-0">
+                    <div className="col text-center mt-2">
+                      <Button
+                        className="btn bg-color-sea-green shadow me-2 text-white"
+                        onClick={handleFirstPage}
+                        disabled={currentPage === 1}
+                        style={{
+                          border: "1px solid #445E84",
+                        }}
+                      >
+                        <MdFirstPage size={20} />
+                      </Button>
+                      <Button
+                        className="btn bg-color-sea-green shadow me-2 text-white"
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        style={{
+                          border: "1px solid #445E84",
+                        }}
+                      >
+                        <MdNavigateBefore size={20} />
+                      </Button>
+                      {renderPageNumbers()}
+                      <Button
+                        className="btn bg-color-sea-green shadow me-2 text-white"
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                        style={{
+                          border: "1px solid #445E84",
+                        }}
+                      >
+                        <MdNavigateNext size={20} />
+                      </Button>
+                      <Button
+                        className="btn bg-color-sea-green shadow text-white"
+                        onClick={handleLastPage}
+                        disabled={currentPage === totalPages}
+                        style={{
+                          border: "1px solid #445E84",
+                        }}
+                      >
+                        <MdLastPage size={20} />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>

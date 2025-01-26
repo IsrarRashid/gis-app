@@ -30,7 +30,7 @@ const Header = ({ data }: Props) => {
                 ?.attributes &&
               data.groups
                 .find((d) => d.name === "Project Profile")!
-                .attributes.filter(
+                .attributes?.filter(
                   (attribute) =>
                     attribute.label.toLowerCase().includes("gs no") ||
                     attribute.label
@@ -63,10 +63,7 @@ const Header = ({ data }: Props) => {
                           }M`
                         : attribute.label.toLowerCase().includes("date") &&
                           attribute?.values[0]?.value
-                        ? getFormattedDate(
-                            new Date(attribute?.values[0]?.value),
-                            "short"
-                          )
+                        ? getFormattedDate(attribute?.values[0]?.value, "short")
                         : attribute.values[0]?.value}
                     </p>
                   </div>
@@ -74,14 +71,14 @@ const Header = ({ data }: Props) => {
           </div>
           <div className="col px-5">
             <div
-              className="row d-flex flex-wrap rounded-3 m-0 p-1"
+              className="row d-flex justify-content-around flex-wrap rounded-3 m-0 p-1"
               style={{
                 background: "rgba(255, 255, 255, 0.5)",
               }}
             >
               {data.staffTrackings && (
                 <>
-                  <div className="col">
+                  <div className="col-auto">
                     <p
                       className="m-0 fw-normal fs14px text-wrap"
                       style={{ color: "#7A889C" }}
@@ -92,18 +89,18 @@ const Header = ({ data }: Props) => {
                       {
                         data.staffTrackings?.filter(
                           (tracking) => tracking.userName
-                        )[0].userName
+                        )[0]?.userName
                       }
                     </p>
                   </div>
-                  <div className="col">
+                  <div className="col-auto">
                     <p
                       className="m-0 fw-normal fs14px text-wrap"
                       style={{ color: "#7A889C" }}
                     >
                       Monitoring Reports
                     </p>
-                    <p className="m-0 fw-normal fs18px text-nowrap">
+                    <p className="m-0 fw-normal fs18px text-wrap">
                       {data.reports && data.reports.length}st Monitoring Report
                       {data.reports.length > 1 && "s"}
                     </p>
@@ -121,7 +118,7 @@ const Header = ({ data }: Props) => {
                       attribute.label.toLowerCase().includes("visit date")
                   )
                   .map((attribute) => (
-                    <div key={attribute.attributeId} className="col">
+                    <div key={attribute.attributeId} className="col-auto">
                       <p
                         className="m-0 fw-normal fs14px text-wrap"
                         style={{ color: "#7A889C" }}
@@ -132,14 +129,14 @@ const Header = ({ data }: Props) => {
                         {attribute.values[0]?.value &&
                           addDayToFormattedDate(
                             getFormattedDate(
-                              new Date(attribute.values[0]?.value),
+                              attribute.values[0]?.value,
                               "short"
                             )!
                           )}
                       </p>
                     </div>
                   ))}
-              <div className="col">
+              <div className="col-auto">
                 <p
                   className="m-0 fw-normal fs14px text-wrap"
                   style={{ color: "#7A889C" }}
@@ -147,13 +144,12 @@ const Header = ({ data }: Props) => {
                   Location
                 </p>
                 <p className="m-0 fw-normal fs18px text-nowrap">
-                  {
+                  {data.groups &&
                     data.groups
-                      .find((d) => d.name === "Project Profile")!
-                      .attributes.filter((attribute) =>
+                      .find((d) => d.name === "Project Profile")
+                      ?.attributes.filter((attribute) =>
                         attribute.label.toLowerCase().includes("location")
-                      )[0]?.values[0]?.value
-                  }
+                      )[0]?.values[0]?.value}
                 </p>
               </div>
             </div>

@@ -5,7 +5,7 @@ import List from "./List";
 
 const Vehilcles = () => {
   const [refresh, setRefresh] = useState(false);
-  useAuthorization("vehicles");
+  // useAuthorization("vehicles");
 
   useEffect(() => {
     // Set the background for the body

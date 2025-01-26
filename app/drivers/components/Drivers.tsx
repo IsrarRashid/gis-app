@@ -5,7 +5,7 @@ import List from "./List";
 
 const Drivers = () => {
   const [refresh, setRefresh] = useState(false);
-  useAuthorization("drivers");
+  // useAuthorization("drivers");
 
   useEffect(() => {
     // Set the background for the body

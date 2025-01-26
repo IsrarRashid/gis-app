@@ -134,7 +134,10 @@ const List = ({ refresh, setRefresh }: Props) => {
         }
       />
       <div className="table-responsive">
-        <table className="table mb-5" style={{ border: ".5px solid #858585" }}>
+        <table
+          className="table table-hover mb-5"
+          style={{ border: ".5px solid #858585" }}
+        >
           <thead>
             <tr
               className={`color-dark-blue cursor-pointer ${inter.className}`}
@@ -234,14 +237,14 @@ const List = ({ refresh, setRefresh }: Props) => {
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((d) => (
+            {paginatedData.map((d, i) => (
               <tr
                 className={dmSans.className}
                 style={{
                   border: ".41px solid rgba(81,81,81,0.20) !important",
                   fontSize: ".85rem",
                 }}
-                key={d.attributeId}
+                key={i}
               >
                 <td>{d.attributeId}</td>
                 <td>{d.sortId}</td>
@@ -265,11 +268,11 @@ const List = ({ refresh, setRefresh }: Props) => {
                 <td>{d.remarks}</td>
                 <td>{d.removeable}</td>
                 <td>
-                  {d.options?.map((option: any) => (
-                    <>
+                  {d.options?.map((option: any, i) => (
+                    <span key={i}>
                       {option.label}
                       ,&nbsp;
-                    </>
+                    </span>
                   ))}
                 </td>
                 <td>

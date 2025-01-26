@@ -10,10 +10,10 @@ export interface Right {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useRights = ({ refresh }: Props) =>
+const useRights = ({ refresh = false }: Props = {}) =>
   useData<Right>({ refresh, endpoint: rightAPI });
 
 export default useRights;

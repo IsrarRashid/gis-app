@@ -37,7 +37,7 @@ export interface Feedback {
 }
 
 const DashboardTO = () => {
-  useAuthorization("feedback");
+  // useAuthorization("feedback");
 
   useEffect(() => {
     // Set the background for the body

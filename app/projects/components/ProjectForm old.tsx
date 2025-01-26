@@ -199,7 +199,7 @@
 //                   </label>
 //                   <input
 //                     type="text"
-//                     className="form-control form-control-sm color-light-dark bg-silver"
+//                     className="form-control form-control-sm color-light-dark"
 //                     id="name"
 //                     name="name"
 //                     value={formData.name}
@@ -214,7 +214,7 @@
 //                     </label>
 //                     <input
 //                       type="text"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       id="address"
 //                       name="address"
 //                       value={formData.address}
@@ -228,7 +228,7 @@
 //                         Status
 //                       </label>
 //                       <select
-//                         className="form-select form-select-sm color-light-dark bg-silver"
+//                         className="form-select form-select-sm color-light-dark"
 //                         aria-label="Default select example"
 //                         name="status"
 //                         onChange={handleChange}
@@ -247,7 +247,7 @@
 //                         Sector
 //                       </label>
 //                       <select
-//                         className="form-select form-select-sm color-light-dark bg-silver"
+//                         className="form-select form-select-sm color-light-dark"
 //                         name="sectorId"
 //                         onChange={handleChange}
 //                         value={formData.sectorId}
@@ -273,7 +273,7 @@
 //                     </label>
 //                     <input
 //                       type="text"
-//                       className="form-control form-control-sm color-light-dark bg-silver"
+//                       className="form-control form-control-sm color-light-dark"
 //                       id="city"
 //                       name="city"
 //                       value={formData.city}
@@ -291,7 +291,7 @@
 //                   </label>
 //                   <input
 //                     type="text"
-//                     className="form-control form-control-sm color-light-dark bg-silver"
+//                     className="form-control form-control-sm color-light-dark"
 //                     id="locationCoordinates"
 //                     name="locationCoordinates"
 //                     value={formData.locationCoordinates}

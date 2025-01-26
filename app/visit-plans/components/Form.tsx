@@ -178,7 +178,7 @@ const Form = ({ api, method, id, setRefresh, refresh, setData }: Props) => {
                       {...register("name")}
                       id="name"
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter TourPlan Name"
                     />
                     {errors.name && (
@@ -198,7 +198,7 @@ const Form = ({ api, method, id, setRefresh, refresh, setData }: Props) => {
                       {...register("tourStartDate")}
                       id="tourStartDate"
                       type="date"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Tour Start Date"
                     />
                     {errors.tourStartDate && (
@@ -218,7 +218,7 @@ const Form = ({ api, method, id, setRefresh, refresh, setData }: Props) => {
                       {...register("tourEndDate")}
                       id="tourEndDate"
                       type="date"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Tour End Date"
                     />
                     {errors.tourEndDate && (
@@ -238,7 +238,7 @@ const Form = ({ api, method, id, setRefresh, refresh, setData }: Props) => {
                       {...register("approvalDate")}
                       id="approvalDate"
                       type="date"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       placeholder="Enter Approval Date"
                     />
                     {errors.approvalDate && (

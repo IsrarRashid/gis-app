@@ -7,6 +7,10 @@ interface Props {
   modalId: string;
   size?: "sm" | "lg" | "xl";
   isFullscreen?: true | false;
+  allowOpen?: true | false;
+  HeaderRightPos?: number;
+  HeaderTopPos?: number;
+  showCloseButton?: true | false;
 }
 
 const CustomModal = ({
@@ -15,11 +19,15 @@ const CustomModal = ({
   modalId,
   size,
   isFullscreen = false,
+  allowOpen = true,
+  HeaderRightPos = 35,
+  HeaderTopPos = 35,
+  showCloseButton = true,
 }: Props) => {
   const handleClose = () => setShow(false);
   const [show, setShow] = useState(false);
   const handleShow = async () => {
-    setShow(true);
+    if (allowOpen) setShow(true);
   };
 
   return (
@@ -44,11 +52,19 @@ const CustomModal = ({
         dialogClassName="custom-modal"
         fullscreen={isFullscreen ? true : undefined}
       >
-        <Modal.Header
-          closeButton
-          className="border-0 position-absolute"
-          style={{ marginTop: "0px", right: 20, zIndex: 2, top: 15 }}
-        ></Modal.Header>
+        {showCloseButton && (
+          <Modal.Header
+            closeButton
+            className="border-0 position-absolute"
+            style={{
+              marginTop: "0px",
+              right: HeaderRightPos,
+              zIndex: 2,
+              top: HeaderTopPos,
+            }}
+          ></Modal.Header>
+        )}
+
         <Modal.Body
           className="p-0"
           style={{ background: "rgba(156,255,255,0)" }}

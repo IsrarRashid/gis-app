@@ -3,23 +3,33 @@ import useData from "./useData";
 
 export interface VisitNew {
   id: number;
-  gsNo: string;
+  superGroupID: number;
+  smdpProjectID: number;
   name: string;
-  userName: string;
   userId: number;
+  userName: string;
   designation: string;
+  gsNo: string;
   sectorId: number;
   sectorName: string;
-  districtName: string;
+  address: string;
+  city: string;
+  division: string;
   districtId: number;
+  districtName: string;
+  latitude: string;
+  longitude: string;
+  locationCoordinates: string;
   status: string;
+  visitStatus: true;
+  approvalDate: string;
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useVisitsNew = ({ refresh }: Props) =>
+const useVisitsNew = ({ refresh = false }: Props = {}) =>
   useData<VisitNew>({ refresh, endpoint: visitNewAPI });
 
 export default useVisitsNew;

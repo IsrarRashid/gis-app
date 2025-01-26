@@ -10,10 +10,10 @@ export interface District {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useDistrict = ({ refresh }: Props) =>
+const useDistrict = ({ refresh = false }: Props = {}) =>
   useData<District>({ refresh, endpoint: districtAPI });
 
 export default useDistrict;

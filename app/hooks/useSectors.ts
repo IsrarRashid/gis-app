@@ -12,10 +12,10 @@ export interface Sector {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useSectors = ({ refresh }: Props) =>
+const useSectors = ({ refresh = false }: Props = {}) =>
   useData<Sector>({ refresh, endpoint: sectorAPI });
 
 export default useSectors;

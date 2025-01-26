@@ -151,7 +151,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {...register("name")}
                     id="name"
                     type="text"
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Sector Name"
                   />
                   {errors.name && (
@@ -169,7 +169,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <select
                         {...register("parentId", { valueAsNumber: true })}
-                        className="form-select form-select-sm color-light-dark bg-silver"
+                        className="form-select form-select-sm color-light-dark"
                       >
                         <option value="0">None</option>
                         {data?.map((d) => (
@@ -187,7 +187,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                         {...register("sortId", { valueAsNumber: true })}
                         id="sortId"
                         type="number"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         placeholder="Enter Sort ID"
                       />
                       {errors.sortId && (
@@ -208,7 +208,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                   <textarea
                     id="description"
                     {...register("description")}
-                    className="form-control form-control-sm color-light-dark bg-silver"
+                    className="form-control form-control-sm color-light-dark"
                     placeholder="Write Brief Description..."
                     style={{ height: "100px" }}
                   />

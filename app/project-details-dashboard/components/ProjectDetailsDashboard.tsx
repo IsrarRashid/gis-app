@@ -6,9 +6,9 @@ import apiClient from "@/app/services/api-client";
 import { Lexend } from "next/font/google";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import DistributedColumnChart from "./DistributedColumnChart";
+// import DistributedColumnChart from "./DistributedColumnChart";
 import Reports from "./Reports";
-import SimplePieChart from "./SimplePieChart";
+// import SimplePieChart from "./SimplePieChart";
 import StaffTracking from "./StaffTracking";
 import VehicleTracking from "./VehicleTracking";
 // import Menu from "./Menu";
@@ -16,13 +16,31 @@ import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import Menu from "@/app/components/Menu";
 import { setTutorial } from "@/app/features/tutorial/tutorialSlice";
-import useAuthorization from "@/app/hooks/useAuthorization";
 import { devMap } from "@/app/utils";
 import MyMap from "./GoogleMap/MyMap";
 import Header from "./Header";
 import MonitoringRatingIndex from "./MonitoringRatingIndex";
-import SimpleLineChart from "./SimpleLineChart";
-import WBSReportUpdated from "./WBSReportUpdated";
+// import SimpleLineChart from "./SimpleLineChart";
+// import WBSReportUpdated from "./WBSReportUpdated";
+import dynamic from "next/dynamic";
+import useAuthorization from "@/app/hooks/useAuthorization";
+
+const DistributedColumnChart = dynamic(
+  () => import("./DistributedColumnChart"),
+  { ssr: false }
+);
+
+const SimplePieChart = dynamic(() => import("./SimplePieChart"), {
+  ssr: false,
+});
+
+const WBSReportUpdated = dynamic(() => import("./WBSReportUpdated"), {
+  ssr: false,
+});
+
+const SimpleLineChart = dynamic(() => import("./SimpleLineChart"), {
+  ssr: false,
+});
 
 export interface VehicleTrackings {
   visitId: number;
@@ -219,7 +237,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
 
     handleButtonClick(
       "projectDetailsDashboard",
-      "https://www.youtube.com/watch?v=YsnLey9JCc4&ab_channel=DirectorateGeneralMonitoringandEvaluation"
+      "https://www.youtube.com/watch?v=PDHSsWfMhNM&ab_channel=DirectorateGeneralMonitoringandEvaluation"
     );
     // Cleanup on unmount
     return () => {
@@ -368,7 +386,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
               />
             </div>
             <div
-              className="col-lg-4 col-md-12 col-sm-12 p-2 bg-color-matte-light-blue"
+              className="col-lg-4 col-md-12 col-sm-12 p-2 bg-color-matte-light-blue shadow-sm"
               style={{ borderRadius: "17px", height: "100%" }}
             >
               <div className="row d-flex m-0">
@@ -384,7 +402,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                 </div>
               </div>
               <div className="row d-flex flex-wrap m-0">
-                <div className="col-6 p-1 pb-0">
+                <div className="col-lg-6 col-md-6 col-sm-12 p-1 pb-0">
                   {data.groups
                     .find((group) =>
                       group.name.toLowerCase().includes("progress analysis")
@@ -421,7 +439,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                       />
                     ))}
                 </div>
-                <div className="col-6 p-1 pb-0">
+                <div className="col-lg-6 col-md-6 col-sm-12 p-1 pb-0">
                   {data.groups
                     .find((group) =>
                       group.name.toLowerCase().includes("progress analysis")
@@ -503,12 +521,13 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
               </div>
             </div>
             <div className="col-lg-4 col-md-12 col-sm-12">
-              <div className="row d-flex m-0 mb-1">
+              <div className="row d-flex flex-wrap m-0 mb-1">
                 <CustomModal
                   size="lg"
                   modalId="detailAnalysis"
+                  HeaderTopPos={5}
                   button={
-                    <Button className="btn p-0 pe-2 w-100 shadow-none">
+                    <Button className="col btn p-0 pe-2 w-100 shadow-none">
                       <Menu
                         background={
                           projectRating > 70
@@ -599,7 +618,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                     borderRadius: "10px",
                   }}
                 >
-                  <div className="col py-3">
+                  <div className="col py-2">
                     <p className="m-0 fw-bold fs22px text-white">SPI= {spi}</p>
                     {spi > 1 && (
                       <>
@@ -644,7 +663,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                     borderRadius: "10px",
                   }}
                 >
-                  <div className="col py-3">
+                  <div className="col py-2">
                     <p className="m-0 fw-bold fs22px text-white">CPI= {cpi}</p>
                     {cpi > 1 && (
                       <>
@@ -720,7 +739,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
             <WBSReportUpdated
               majorDeliverables={
                 data.groups.find((group) =>
-                  group.name.toLowerCase().includes("major deliverable")
+                  group.name.toLowerCase().includes("work breakdown structure")
                 )!
               }
             />

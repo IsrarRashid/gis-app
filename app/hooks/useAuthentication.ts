@@ -13,10 +13,10 @@ export interface Authentication {
 }
 
 interface Props {
-  refresh: boolean;
+  refresh?: boolean;
 }
 
-const useAuthentication = ({ refresh }: Props) =>
+const useAuthentication = ({ refresh = false }: Props = {}) =>
   useData<Authentication>({ refresh, endpoint: getAllUsersAPI });
 
 export default useAuthentication;

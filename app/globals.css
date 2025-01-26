@@ -53,6 +53,10 @@
   border: none;
 }
 
+.custom-backdrop {
+  opacity: 0 !important;
+}
+
 /* body {
   background-image: url("../public/images/bg.png");
   background-repeat: no-repeat;

@@ -509,7 +509,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       id="label"
                       name="label"
                       value={formData.label}
@@ -526,7 +526,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       id="placeholder"
                       name="placeholder"
                       value={formData.placeholder}
@@ -542,7 +542,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Attribute DataType
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm color-light-dark"
                       aria-label="Default select example"
                       name="attributeDataType"
                       onChange={handleChange}
@@ -561,7 +561,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Attribute Type
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm color-light-dark"
                       aria-label="Default select example"
                       name="attributeType"
                       onChange={handleChange}
@@ -585,7 +585,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       id="unit"
                       name="unit"
                       value={formData.unit}
@@ -602,7 +602,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       id="validationRegx"
                       name="validationRegx"
                       value={formData.validationRegx}
@@ -616,7 +616,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="number"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       id="sortId"
                       name="sortId"
                       value={formData.sortId}
@@ -632,7 +632,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Verification Type
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm color-light-dark"
                       aria-label="Default select example"
                       name="verificationType"
                       onChange={handleChange}
@@ -651,7 +651,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Smdp Identifier
                     </label>
                     <select
-                      className="form-select form-select-sm color-light-dark bg-silver"
+                      className="form-select form-select-sm color-light-dark"
                       aria-label="Default select example"
                       name="smdpIdentifier"
                       onChange={handleChange}
@@ -674,7 +674,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       id="errorMessage"
                       name="errorMessage"
                       value={formData.errorMessage}
@@ -688,7 +688,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       id="remarks"
                       name="remarks"
                       value={formData.remarks}
@@ -705,7 +705,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-sm color-light-dark bg-silver"
+                      className="form-control form-control-sm color-light-dark"
                       id="attributeCode"
                       name="attributeCode"
                       value={formData.attributeCode}
@@ -722,7 +722,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <input
                         type="number"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         id="min"
                         name="min"
                         value={formData.min}
@@ -736,7 +736,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <input
                         type="number"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         id="max"
                         name="max"
                         value={formData.max}
@@ -753,7 +753,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <input
                         type="number"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         id="weightage"
                         name="weightage"
                         value={formData.weightage}
@@ -774,7 +774,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <input
                         type="text"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         id="evaluationFormula"
                         name="evaluationFormula"
                         value={formData.evaluationFormula}
@@ -790,7 +790,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Search Attribute Codes
                       </label>
                       <select
-                        className="form-select form-select-sm color-light-dark bg-silver"
+                        className="form-select form-select-sm color-light-dark"
                         aria-label="Default select example"
                         name="searchAttributeCodes"
                         onChange={handleDatalistSelect}
@@ -815,7 +815,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       </label>
                       <input
                         type="number"
-                        className="form-control form-control-sm color-light-dark bg-silver"
+                        className="form-control form-control-sm color-light-dark"
                         id="evaluationFormulaWeightage"
                         name="evaluationFormulaWeightage"
                         value={formData.evaluationFormulaWeightage}
@@ -973,7 +973,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </label>
                           <input
                             type="text"
-                            className="form-control form-control-sm color-light-dark bg-silver"
+                            className="form-control form-control-sm color-light-dark"
                             id={`value-${index}`}
                             name="value"
                             value={option.value}
@@ -990,7 +990,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </label>
                           <input
                             type="text"
-                            className="form-control form-control-sm color-light-dark bg-silver"
+                            className="form-control form-control-sm color-light-dark"
                             id={`label-${index}`}
                             name="label"
                             value={option.label}
@@ -1007,7 +1007,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                           </label>
                           <input
                             type="number"
-                            className="form-control form-control-sm color-light-dark bg-silver"
+                            className="form-control form-control-sm color-light-dark"
                             id="sortId"
                             name="sortId"
                             value={option.sortId}

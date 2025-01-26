@@ -216,7 +216,7 @@ const ProjectsList = ({
       </>
       <div className="table-responsive">
         <table
-          className="table mb-5"
+          className="table table-hover mb-5"
           style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
         >
           <thead>

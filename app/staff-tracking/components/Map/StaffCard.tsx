@@ -7,11 +7,14 @@ import { StaffTracking } from "../StaffTracking";
 
 interface Props {
   data: StaffTracking;
-  setSelectedStaffIndex: React.Dispatch<
+  setSelectedStaffIndex?: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
   startLocation: string | undefined;
   endLocation: string | undefined;
+  width?: string;
+  distance?: string;
+  duration?: string;
 }
 
 const StaffCard = ({
@@ -19,6 +22,9 @@ const StaffCard = ({
   setSelectedStaffIndex,
   startLocation,
   endLocation,
+  distance,
+  duration,
+  width = "350px",
 }: Props) => {
   const [refresh, setRefresh] = useState(false);
   const { data: users } = useAuthentication({ refresh });
@@ -26,7 +32,7 @@ const StaffCard = ({
     <div
       className="card border-0 letterSpacing1px"
       style={{
-        width: "350px",
+        width,
         borderRadius: "10px",
       }}
     >
@@ -49,7 +55,10 @@ const StaffCard = ({
             <div className="col text-end p-0">
               <button
                 className="btn shadow-none"
-                onClick={() => setSelectedStaffIndex(9 + parseInt("a"))}
+                onClick={() =>
+                  setSelectedStaffIndex &&
+                  setSelectedStaffIndex(9 + parseInt("a"))
+                }
               >
                 <img src="/icons/cross.svg" alt="cross" />
               </button>
@@ -224,7 +233,13 @@ const StaffCard = ({
               </div>
             </div>
           </div>
-          <div className="col fs-6 fw-normal m-0">{data.projectName}</div>
+          <div className="col fs-6 fw-normal m-0">{data?.projectName}</div>
+          <p className="col fs-6 fw-bold m-0 ps-3">
+            Distance: <span className="fw-normal">{distance}</span>
+          </p>
+          <p className="col fs-6 fw-bold m-0 ps-3 pb-2">
+            Duration: <span className="fw-normal">{duration}</span>
+          </p>
         </>
       )}
     </div>
