@@ -35,6 +35,8 @@ import {
   MdOutlineDateRange,
 } from "react-icons/md";
 import styles from "./ProjectsTable.module.css";
+import Select, { ActionMeta, SingleValue } from "react-select";
+import SearchableSingleSelect from "@/app/components/SearchableSingleSelect";
 
 // Define the type of the range state
 interface RangeType {
@@ -80,6 +82,15 @@ export interface ProjectsList {
   onePagerSubmitted: string;
 }
 
+interface DefaultFilter {
+  districtName: string;
+  sectorName: string;
+  userName: string;
+  startDate: string; // Start date for  range
+  endDate: string; // End date for  range
+  reportSubmitted: string;
+}
+
 interface Props {
   projectsData: ProjectsList[];
   setProjectsData: Dispatch<SetStateAction<ProjectsList[] | undefined>>;
@@ -87,6 +98,7 @@ interface Props {
   keys: (keyof ProjectsList)[];
   allowLink?: boolean;
   searchTermDefault?: string;
+  defaultFilters?: DefaultFilter;
 }
 
 const ProjectsTable = ({
@@ -96,6 +108,7 @@ const ProjectsTable = ({
   keys,
   allowLink = true,
   searchTermDefault,
+  defaultFilters,
 }: Props) => {
   const [refresh, setRefresh] = useState(false);
   const { data: districts } = useDistrict({ refresh });
@@ -107,7 +120,6 @@ const ProjectsTable = ({
 
   // State for filtered data
   const [filteredData, setFilteredData] = useState<ProjectsList[]>([]);
-  const [searchEnable, setsearchEnable] = useState(false);
   const [dropdownFilterValue, setDropdownFilterValue] = useState<string[]>([]);
 
   useEffect(() => {
@@ -115,6 +127,10 @@ const ProjectsTable = ({
       setSearchTerm(searchTermDefault);
       handleSearch(searchTermDefault);
     }
+    // if (defaultFilters) {
+    //   applyFilters(defaultFilters);
+    //   console.log("defaultFilters",defaultFilters)
+    // }
   }, []);
 
   // Handle search logic
@@ -135,13 +151,6 @@ const ProjectsTable = ({
         .some((field) => field.includes(value.toLowerCase()))
     );
     setFilteredData(filtered);
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm !== "") {
-      // handleSearch();
-    }
   };
 
   // Update searchTerm and clear search if empty
@@ -212,17 +221,17 @@ const ProjectsTable = ({
       }
     }
   };
-  const [utilizationPercentage, setUtilizationPercentage] = useState<any[]>([]);
+  // const [utilizationPercentage, setUtilizationPercentage] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (projectsData) {
-      const filteredProjects = projectsData?.map((project) => {
-        const utilizationPercentage =
-          ((project.expUpToJune + project.utilization) / project.cost) * 100;
-        setUtilizationPercentage((prev) => [...prev, utilizationPercentage]);
-      });
-    }
-  }, [projectsData]);
+  // useEffect(() => {
+  //   if (projectsData) {
+  //     const filteredProjects = projectsData?.map((project) => {
+  //       const utilizationPercentage =
+  //         ((project.expUpToJune + project.utilization) / project.cost) * 100;
+  //       setUtilizationPercentage((prev) => [...prev, utilizationPercentage]);
+  //     });
+  //   }
+  // }, [projectsData]);
 
   // Paginate data to display only the current page's rows
   const paginatedData =
@@ -329,7 +338,7 @@ const ProjectsTable = ({
     utilization: "EXPENDITURE + UTILIZATION (M)",
     utilPercent: "UTIL. PERCENT",
     reportSubmitted: "REPORT SUBMITTED",
-    onePagerSubmitted: "ONE PAGER SUBMITTED",
+    onePagerSubmitted: "ISSUED REPORT",
     // Add other mappings as needed
   };
 
@@ -398,7 +407,7 @@ const ProjectsTable = ({
             data.visitStartDate &&
             `${addDayToFormattedDate(
               getFormattedDate(new Date(data.visitStartDate), "short")!
-            )} To ${
+            )} to ${
               data.visitEndDate &&
               addDayToFormattedDate(
                 getFormattedDate(new Date(data.visitEndDate), "short")!
@@ -413,12 +422,10 @@ const ProjectsTable = ({
             )}`;
           break;
         case "utilization":
-          row[key] = `${data.utilization + data.expUpToJune} (${Math.round(
-            utilizationPercentage[index]
-          )}%)`;
+          row[key] = `${data.utilization + data.expUpToJune}`;
           break;
         case "utilPercent":
-          row[key] = `(${Math.round(utilizationPercentage[index])}%)`;
+          row[key] = `${data.utilPercent}%`;
           break;
         case "deadline":
           row[key] = deadlineColumnValue(data.submittedDate, data.deadline);
@@ -473,7 +480,7 @@ const ProjectsTable = ({
               item.visitStartDate &&
               `${addDayToFormattedDate(
                 getFormattedDate(new Date(item.visitStartDate), "short")!
-              )} To ${
+              )} to ${
                 item.visitEndDate &&
                 addDayToFormattedDate(
                   getFormattedDate(new Date(item.visitEndDate), "short")!
@@ -506,12 +513,10 @@ const ProjectsTable = ({
             row[header] = item.pnDReleases;
             break;
           case "utilization":
-            row[header] = `${item.utilization + item.expUpToJune} (${Math.round(
-              utilizationPercentage[index]
-            )}%)`;
+            row[header] = `${item.utilization + item.expUpToJune}`;
             break;
           case "utilPercent":
-            row[header] = `(${Math.round(utilizationPercentage[index])}%)`;
+            row[header] = `${item.utilPercent}%`;
             break;
           case "reportSubmitted":
             row[header] = item.reportSubmitted;
@@ -604,8 +609,6 @@ const ProjectsTable = ({
   const [districtName, setDistrictName] = useState<string>();
   const [sectorName, setSectorName] = useState<string>();
   const [userName, setUserName] = useState<string>();
-  const [startDate, setStartDate] = useState<string>();
-  const [endDate, setEndDate] = useState<string>();
   const [reportSubmitted, setReportSubmitted] = useState<string>();
 
   const applyFilters = ({
@@ -808,7 +811,49 @@ const ProjectsTable = ({
                 <label htmlFor="districtName" className="form-label">
                   District Name
                 </label>
-                <select
+                <SearchableSingleSelect
+                  data={districts}
+                  value="districtName"
+                  label="districtName"
+                  name="districtName"
+                  onChange={(
+                    newValue: SingleValue<{ value: string; label: string }>,
+                    actionMeta: ActionMeta<{ value: string; label: string }>
+                  ) => {
+                    if (newValue) {
+                      const value = newValue.value;
+                      setDistrictName(value);
+                      setDropdownFilterValue((prev) => {
+                        if (value === "") {
+                          // Remove "District Name" from the filter
+                          return prev.filter(
+                            (item) => !item.startsWith("District Name:")
+                          );
+                        } else {
+                          // Add/Update "District Name" in the filter
+                          const updated = prev.filter(
+                            (item) => !item.startsWith("District Name:")
+                          );
+                          return [...updated, `District Name: ${value}`];
+                        }
+                      });
+                      setDistrictName(value);
+                      applyFilters({
+                        districtName: value,
+                        sectorName,
+                        userName,
+                        startDate: dateRangeState[0].startDate
+                          ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
+                          : "",
+                        endDate: dateRangeState[0].endDate
+                          ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
+                          : "",
+                        reportSubmitted,
+                      });
+                    }
+                  }}
+                />
+                {/* <select
                   className="w-100"
                   style={{
                     background: "rgba(16, 143, 168, .1)",
@@ -856,7 +901,7 @@ const ProjectsTable = ({
                       {district.districtName}
                     </option>
                   ))}
-                </select>
+                </select> */}
               </div>
             )}
             {keys.includes("visitStartDate") && (
@@ -1282,6 +1327,8 @@ const ProjectsTable = ({
                           ? "Date Range"
                           : k.toLowerCase() === "filegenrated"
                           ? "report generated"
+                          : k.toLowerCase() === "onePagerSubmitted"
+                          ? "issued report"
                           : formatKeyName(k)
                       }
                       handleSort={() => handleSort(`${k}`)}
@@ -1351,7 +1398,7 @@ const ProjectsTable = ({
                                     "short"
                                   )!
                                 )}
-                                <div className="text-center">TO</div>
+                                <div className="text-center">to</div>
                                 {addDayToFormattedDate(
                                   getFormattedDate(
                                     new Date(d.visitEndDate),
@@ -1429,7 +1476,7 @@ const ProjectsTable = ({
                           ) : key === "utilPercent" ? (
                             <>
                               <span className="text-danger">
-                                ({Math.round(utilizationPercentage[i])}%)
+                                {d.utilPercent}%
                               </span>
                             </>
                           ) : key === "completedDate" ? (
@@ -1445,8 +1492,8 @@ const ProjectsTable = ({
                   </tr>
                 ))}
                 {keys.includes("cost") && (
-                  <tr className="bg-color-sea-blue text-light">
-                    <td className="rounded-start text-center" colSpan={4}>
+                  <tr className="bg-color-sea-blue text-light text-center">
+                    <td className="rounded-start" colSpan={4}>
                       Total
                     </td>
                     <td className="text-nowrap">
@@ -1478,6 +1525,8 @@ const ProjectsTable = ({
                         )
                       )}
                     </td>
+                    <td></td>
+                    <td></td>
                   </tr>
                 )}
                 <tr>

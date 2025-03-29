@@ -10,6 +10,7 @@ import {
 } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import CarCard from "../Map/CarCard";
+import toast, { Toaster } from "react-hot-toast";
 
 export interface Tracking {
   ["GBB-062"]: {
@@ -47,11 +48,73 @@ interface Position {
 }
 
 const LiveCarTrackingMap = () => {
-  const [open, setOpen] = useState(false);
   const initialCenterPosition = {
     lat: 31.1704,
     lng: 72.7097,
   };
+
+  return (
+    <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
+      {initialCenterPosition && (
+        <div
+          style={{
+            width: "100%",
+            height: "750px",
+            border: 0,
+            borderRadius: "10px",
+          }}
+          className="shadow-sm mb-2"
+        >
+          <Map
+            mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
+            defaultZoom={17}
+            defaultCenter={initialCenterPosition}
+            gestureHandling={"greedy"}
+          >
+            {/* <AdvancedMarker
+              position={position}
+              onClick={() => {
+                setOpen(!open);
+                handleMarkerClick(position);
+              }}
+              clickable={true}
+            >
+              <div
+                style={{
+                  transform: `rotate(${rotationAngle}deg)`,
+                  transition: "transform 2s",
+                }}
+              >
+                <img
+                  src="/images/carTop2.png"
+                  alt="carTop2"
+                  style={{ width: "56px", height: "70px" }}
+                />
+              </div>
+            </AdvancedMarker> */}
+            {/* {open && (
+              <InfoWindow
+                position={position}
+                pixelOffset={[0, -70]}
+                onCloseClick={() => setOpen(false)}
+              >
+                {apiData && <CarCard apiData={apiData} />}
+              </InfoWindow>
+            )} */}
+            <MapWithMarkers />
+          </Map>
+        </div>
+      )}
+    </APIProvider>
+  );
+};
+
+const MapWithMarkers = () => {
+  const map = useMap();
+
+  const [open, setOpen] = useState(false);
+  const [hasCenteredMap, setHasCenteredMap] = useState(false); // To track map centering
+
   const [position, setPosition] = useState<Position>(); // Starting position (latitude, longitude)
   const [path, setPath] = useState<Position[]>([]); // Empty path initially
   const [direction, setDirection] = useState<string>("north"); // Empty path initially
@@ -60,6 +123,28 @@ const LiveCarTrackingMap = () => {
   const [arrayIndex, setArrayIndex] = useState(0);
 
   const [isError, setError] = useState(false);
+
+  const [followCar, setFollowCar] = useState(false); // Follow mode flag
+  const [initialCenterDone, setInitialCenterDone] = useState(false); // Initial centering flag
+
+  // Function to toggle follow mode
+  const toggleFollowMode = () => setFollowCar((prev) => !prev);
+
+  useEffect(() => {
+    if (map && position) {
+      // Initial centering only once
+      if (!initialCenterDone) {
+        map.setCenter(position);
+        map.setZoom(12);
+        setInitialCenterDone(true);
+      }
+
+      // Follow car if enabled
+      if (followCar) {
+        map.setCenter(position);
+      }
+    }
+  }, [map, position, followCar, initialCenterDone]);
 
   const getRotationAngle = (direction: string): number => {
     switch (direction?.toLocaleLowerCase()) {
@@ -91,64 +176,53 @@ const LiveCarTrackingMap = () => {
   };
 
   const moveCar = (from: Position, to: Position, duration: number) => {
-    let start = Date.now();
-    const step = () => {
-      const now = Date.now();
-      const elapsedTime = now - start;
-      const t = Math.min(elapsedTime / duration, 1); // Ensure `t` is between 0 and 1
+    const startTime = performance.now();
 
-      const newLat = lerp(from.lat, to.lat, t);
-      const newLng = lerp(from.lng, to.lng, t);
+    const step = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
 
+      const newLat = lerp(from.lat, to.lat, progress);
+      const newLng = lerp(from.lng, to.lng, progress);
       setPosition({ lat: newLat, lng: newLng });
 
-      if (t < 1) {
-        requestAnimationFrame(step); // Continue moving until `t` reaches 1
+      if (progress < 1) {
+        requestAnimationFrame(step);
       } else {
-        // Move to the next point after reaching the current destination
         if (arrayIndex < path.length - 1) {
           setArrayIndex((prev) => prev + 1);
         }
       }
     };
 
-    requestAnimationFrame(step); // Start the animation
+    requestAnimationFrame(step);
   };
 
   useEffect(() => {
-    // Function to fetch the latest coordinates from the API
+    if (!map) return;
+
     const fetchCoordinates = async () => {
       try {
-        if (!isError) {
-          const response = await fetch(trackingAPI); // Replace with your API endpoint
-          const data: Tracking = await response.json();
-          setAPIData(data);
-          // Get the coordinates from the response
-          const coordinatesList = data["GBB-062"]["coordnaties list"];
+        const response = await fetch(trackingAPI);
+        const data: Tracking = await response.json();
+        setAPIData(data);
+        const coordinatesList = data["GBB-062"]["coordnaties list"];
+        if (coordinatesList.length > 0) {
+          const latestCoordinates = {
+            lat: coordinatesList[coordinatesList.length - 1].lat,
+            lng: coordinatesList[coordinatesList.length - 1].lon,
+          };
+          const latestDirection =
+            coordinatesList[coordinatesList.length - 1].direction;
 
-          if (coordinatesList.length > 0) {
-            const latestCoordinates: Position = {
-              lat: coordinatesList[coordinatesList.length - 1].lat, // Get the last coordinate's latitude
-              lng: coordinatesList[coordinatesList.length - 1].lon, // Get the last coordinate's longitude
-            };
-            const latestDirection: string =
-              coordinatesList[coordinatesList.length - 1].direction;
-            // Update the path with the latest coordinates
-            if (
-              path.length === 0 ||
-              !path.some(
-                (coord) =>
-                  coord.lat === latestCoordinates.lat &&
-                  coord.lng === latestCoordinates.lng
-              )
-            ) {
-              setPath((prevPath) => [...prevPath, latestCoordinates]);
-              setDirection(latestDirection);
-
-              if (!position) {
-                setPosition(latestCoordinates);
-              }
-            }
+          if (
+            !path.length ||
+            path[path.length - 1]?.lat !== latestCoordinates.lat ||
+            path[path.length - 1]?.lng !== latestCoordinates.lng
+          ) {
+            setPath((prevPath) => [...prevPath, latestCoordinates]);
+            setDirection(latestDirection);
+            if (!position) setPosition(latestCoordinates);
           }
         }
       } catch (error) {
@@ -157,182 +231,124 @@ const LiveCarTrackingMap = () => {
       }
     };
 
-    // Fetch coordinates every 3 seconds
-    const interval = setInterval(() => {
-      fetchCoordinates();
-    }, 5000);
+    fetchCoordinates(); // Fetch initially
+    const interval = setInterval(fetchCoordinates, 5000);
 
-    // Clean up the interval on unmount
     return () => clearInterval(interval);
-  }, [path]);
+  }, [map]);
 
   useEffect(() => {
-    // Move the car if there are more points in the path
-    if (arrayIndex < path.length) {
-      const from = path[arrayIndex];
-      const to = path[arrayIndex + 1];
-
-      if (to) {
-        moveCar(from, to, duration);
-      }
+    if (isError) {
+      toast.error("Failed to fetch coordinates.");
     }
-  }, [arrayIndex, path]);
+  }, [isError]);
 
   useEffect(() => {
+    if (!map || arrayIndex >= path.length - 1) return;
+
+    const from = path[arrayIndex];
+    const to = path[arrayIndex + 1];
+
+    if (from && to) {
+      moveCar(from, to, duration);
+    }
+  }, [arrayIndex, path, map]);
+
+  useEffect(() => {
+    if (!map) return;
+
     const newAngle = getRotationAngle(direction);
 
-    // Only rotate if the new angle is different from the current angle
     if (Math.abs(newAngle - rotationAngle) > 1) {
-      // Calculate the shortest rotation direction
-      let angleDifference = (newAngle - rotationAngle + 360) % 360;
-      if (angleDifference > 180) {
-        angleDifference -= 360; // Rotate in the shorter direction
-      }
-
-      const stepDuration = 20; // Lower value means smoother and slower rotation
+      const stepDuration = 20;
       let animationFrameId: number;
 
       const step = () => {
         setRotationAngle((prevAngle) => {
-          // Calculate the next incremental rotation
-          const newRotation = prevAngle + angleDifference * 0.05; // Adjust 0.05 to control rotation speed
+          const angleDifference =
+            (newAngle - prevAngle + 360) % 360 > 180
+              ? ((newAngle - prevAngle + 360) % 360) - 360
+              : (newAngle - prevAngle + 360) % 360;
 
-          // Stop the rotation when it's close enough to the target
-          if (Math.abs(newRotation - newAngle) < 1) {
+          const nextRotation = prevAngle + angleDifference * 0.05;
+
+          if (Math.abs(nextRotation - newAngle) < 1) {
             cancelAnimationFrame(animationFrameId);
-            return newAngle; // Set to exact target angle when close
+            return newAngle;
           }
-
-          return newRotation; // Continue rotating
+          return nextRotation;
         });
 
         animationFrameId = requestAnimationFrame(step);
       };
 
-      // Start the animation
       animationFrameId = requestAnimationFrame(step);
 
-      // Cleanup to stop animation if component unmounts
       return () => cancelAnimationFrame(animationFrameId);
     }
-  }, [direction, rotationAngle]);
+  }, [direction, rotationAngle, map]);
 
-  const map = useMap();
-
-  const handleMarkerClick = (position: { lat: number; lng: number }) => {
-    if (map) {
-      map.setCenter(position); // Set the center to the clicked marker
-      map.setZoom(12); // Adjust zoom level
-    }
-  };
-
-  const MapWithMarkers = () => {
-    const map = useMap();
-
-    const handleMarkerClick = (position: { lat: number; lng: number }) => {
+  const handleMarkerClick = debounce(
+    (position: { lat: number; lng: number }) => {
       if (map) {
-        map.setCenter(position); // Set the center to the clicked marker
-        map.setZoom(12); // Adjust zoom level
+        map.setCenter(position);
+        map.setZoom(12);
       }
-    };
+    },
+    300
+  ); // Adjust debounce timing as needed
 
-    return (
-      <>
-        {position && (
-          <AdvancedMarker
-            key={0}
-            position={position}
-            onClick={() => {
-              setOpen(!open);
-              handleMarkerClick(position);
-            }}
-          >
-            <div
-              style={{
-                transform: `rotate(${rotationAngle}deg)`,
-                transition: "transform 2s",
-              }}
-            >
-              <img
-                src="/images/carTop2.png"
-                alt="carTop2"
-                style={{ width: "56px", height: "70px" }}
-              />
-            </div>
-          </AdvancedMarker>
-        )}
-        {open && (
-          <InfoWindow
-            position={position}
-            pixelOffset={[0, -70]}
-            onCloseClick={() => setOpen(false)}
-          >
-            {apiData && <CarCard apiData={apiData} />}
-          </InfoWindow>
-        )}
-      </>
-    );
-  };
+  // const handleMarkerClick = () => {
+  //   toggleFollowMode();
+  // };
+
+  // Debounce utility
+  function debounce(fn: Function, delay: number) {
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    return (...args: any[]) => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn(...args), delay);
+    };
+  }
 
   return (
-    <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
+    <>
+      <div>
+        <Toaster />
+      </div>
       {position && (
-        <div
-          style={{
-            width: "100%",
-            height: "750px",
-            border: 0,
-            borderRadius: "10px",
+        <AdvancedMarker
+          key={0}
+          position={position}
+          onClick={() => {
+            setOpen(!open);
+            handleMarkerClick(position);
           }}
-          className="shadow-sm mb-2"
         >
-          <Map
-            mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
-            defaultZoom={17}
-            center={{ lat: position.lat + 0.0015, lng: position.lng }}
-            gestureHandling={"greedy"}
+          <div
+            style={{
+              transform: `rotate(${rotationAngle}deg)`,
+              transition: "transform 2s",
+            }}
           >
-            <AdvancedMarker
-              position={position}
-              onClick={() => {
-                setOpen(!open);
-                handleMarkerClick(position);
-              }}
-              clickable={true}
-            >
-              <div
-                style={{
-                  transform: `rotate(${rotationAngle}deg)`,
-                  transition: "transform 2s",
-                }}
-              >
-                <img
-                  src="/images/carTop2.png"
-                  alt="carTop2"
-                  style={{ width: "56px", height: "70px" }}
-                />
-              </div>
-            </AdvancedMarker>
-            {open && (
-              <InfoWindow
-                position={position}
-                pixelOffset={[0, -70]}
-                onCloseClick={() => setOpen(false)}
-              >
-                {apiData && <CarCard apiData={apiData} />}
-              </InfoWindow>
-            )}
-            {/* <MapWithMarkers
-              position={position}
-              setOpen={setOpen}
-              rotationAngle={rotationAngle}
-              open={open}
-              apiData={apiData}
-            /> */}
-          </Map>
-        </div>
+            <img
+              src="/images/carTop2.png"
+              alt="carTop2"
+              style={{ width: "56px", height: "70px" }}
+            />
+          </div>
+        </AdvancedMarker>
       )}
-    </APIProvider>
+      {open && (
+        <InfoWindow
+          position={position}
+          pixelOffset={[0, -70]}
+          onCloseClick={() => setOpen(false)}
+        >
+          {apiData && <CarCard apiData={apiData} />}
+        </InfoWindow>
+      )}
+    </>
   );
 };
 

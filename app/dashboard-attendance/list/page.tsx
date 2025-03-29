@@ -1,4 +1,8 @@
-import List from "../components/List";
+import dynamic from "next/dynamic";
+
+const List = dynamic(() => import("../components/List"), {
+  ssr: false,
+});
 
 const AttendanceList = () => {
   return (

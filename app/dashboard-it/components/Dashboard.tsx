@@ -36,6 +36,8 @@ import ReportReview from "./ReportReview";
 import SimplePieChart from "./SimplePieChart";
 import VisitsPlan from "./VisitsPlan";
 import ReportAnalysis from "./ReportAnalysis";
+import Cookies from "js-cookie";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -74,6 +76,7 @@ export interface MainDashboard {
   unapproved: number;
   dropped: number;
   umbralla: number;
+  utilization20t080: number;
   a0to200: number;
   a200to400: number;
   a400to800: number;
@@ -90,6 +93,7 @@ export interface FilterData {
 
 const Dashboard = () => {
   const [data, setData] = useState<MainDashboard>();
+  const [role, setRole] = useState<string>();
   const [pageLoaded, setPageLoaded] = useState<boolean>(false);
   const dispatch = useDispatch();
   // useAuthorization("dashboard");
@@ -110,6 +114,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     setPageLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    const userRole = Cookies.get("role");
+    if (userRole) setRole(userRole);
   }, []);
 
   const handleButtonClick = (content: string, tutorialLink: string) => {
@@ -245,6 +254,7 @@ const Dashboard = () => {
           "pnDReleases",
           "utilization",
           "utilPercent",
+          role !== "Ministers" && "visitCount",
         ].includes(key)
       )
       .map((key) => key as keyof ProjectsList);
@@ -259,12 +269,12 @@ const Dashboard = () => {
           "projectName",
           "sectorName",
           "districtName",
-          "visitCount",
+          role !== "Ministers" && "visitCount",
           "userName",
           "reportCompletion",
           "visitStartDate",
           "completedDate",
-          "deadline",
+          role !== "Ministers" && "deadline",
           "fileGenrated",
         ].includes(key)
       )
@@ -285,7 +295,7 @@ const Dashboard = () => {
           "reportCompletion",
           "visitStartDate",
           "completedDate",
-          "deadline",
+          role !== "Ministers" && "deadline",
           "reportSubmitted",
           "onePagerSubmitted",
         ].includes(key)
@@ -297,19 +307,41 @@ const Dashboard = () => {
   const [hoveredButton, setHoveredButton] = useState(-1);
 
   const [utilizationData, setUtilizationData] = useState<ProjectsList[]>([]);
+  const [openUtilizationData, setOpenUtilizationData] = useState<
+    ProjectsList[]
+  >([]);
 
   useEffect(() => {
     getProjectsList("TotalProject");
   }, []);
 
+  // useEffect(() => {
+  //   if (projectsData) {
+  //     const filteredProjects = projectsData?.filter((project) => {
+  //       const utilizationPercentage =
+  //         ((project.expUpToJune + project.utilization) / project.cost) * 100;
+  //       return utilizationPercentage >= 20 && utilizationPercentage <= 80;
+  //     });
+  //     setUtilizationData(filteredProjects);
+  //   }
+  // }, [projectsData]);
   useEffect(() => {
     if (projectsData) {
-      const filteredProjects = projectsData?.filter((project) => {
-        const utilizationPercentage =
-          ((project.expUpToJune + project.utilization) / project.cost) * 100;
-        return utilizationPercentage >= 20 && utilizationPercentage <= 80;
-      });
-      setUtilizationData(filteredProjects);
+      const updatedProjects = projectsData.map((project) => ({
+        ...project,
+        utilPercent: Math.round(
+          ((project.expUpToJune + project.utilization) / project.cost) * 100
+        ),
+      }));
+
+      setOpenUtilizationData(updatedProjects); // Store filtered projects with utilPercent
+
+      // Now apply the filter based on computed utilPercent
+      const filteredProjects = updatedProjects.filter(
+        (project) => project.utilPercent >= 20 && project.utilPercent <= 80
+      );
+
+      setUtilizationData(filteredProjects); // Store filtered projects with utilPercent
     }
   }, [projectsData]);
 
@@ -365,7 +397,7 @@ const Dashboard = () => {
                             ? "CM Initiatives"
                             : "ADP Projects"
                         }
-                        projectsData={projectsData}
+                        projectsData={openUtilizationData}
                         setProjectsData={setProjectsData}
                         allowLink={false}
                       />
@@ -711,74 +743,79 @@ const Dashboard = () => {
               adpFilters={adpFilters}
               activeFilter={activeFilter}
             />
-            <div
-              className={`col mb-2 shadow-sm fs14px ${lexend.className}`}
-              style={{
-                background: "#C6D9F1",
-                borderRadius: "10px",
-                padding: "10px",
-              }}
-            >
-              <CustomModal
-                size="xl"
-                modalId="pieBarChart"
-                HeaderRightPos={20}
-                HeaderTopPos={5}
-                button={
-                  <Button
-                    className="btn fs18px fw-normal text-white w-100"
-                    style={{
-                      background: "rgba(12, 140, 233, 0.2)",
-                      borderRadius: "10px",
-                      border: "1px solid rgba(12, 140, 233, 0.4)",
-                    }}
-                    onClick={() => getProjectsList("BarPie")}
-                  >
-                    <Image
-                      src="/icons/barPie.svg"
-                      alt="barPie"
-                      width={44}
-                      height={44}
-                    />{" "}
-                    Financial Analysis
-                  </Button>
-                }
-                body={
-                  <div className="row d-flex m-0">
-                    {projectsData && projectsData.length > 0 && pageLoaded && (
-                      <>
-                        <div className="col mb-4">
-                          <DistributedColumnChart
-                            data={projectsData[0]}
-                            activeFilter={activeFilter}
-                          />
-                        </div>
-                        <div className="col mb-4">
-                          <SimplePieChart
-                            data={{
-                              totalRevenueCost:
-                                projectsData[0].totalRevenueCost,
-                              totalCapitalCost:
-                                projectsData[0].totalCapitalCost,
-                            }}
-                            activeFilter={activeFilter}
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                }
-              />
-            </div>
-            <div
-              className={`col mb-2 shadow-sm fs14px p-0 ${lexend.className}`}
-              style={{
-                background:
-                  "linear-gradient(to right, #C6D9F1,#C6D9F1 , #E3F1C6,#E3F1C6)",
-                borderRadius: "10px",
-              }}
-            >
-              {/* <div className="row d-flex m-0">
+            {role !== "Ministers" && (
+              <div
+                className={`col mb-2 shadow-sm fs14px ${lexend.className}`}
+                style={{
+                  background: "#C6D9F1",
+                  borderRadius: "10px",
+                  padding: "10px",
+                }}
+              >
+                <CustomModal
+                  size="xl"
+                  modalId="pieBarChart"
+                  HeaderRightPos={20}
+                  HeaderTopPos={5}
+                  button={
+                    <Button
+                      className="btn fs18px fw-normal text-white w-100"
+                      style={{
+                        background: "rgba(12, 140, 233, 0.2)",
+                        borderRadius: "10px",
+                        border: "1px solid rgba(12, 140, 233, 0.4)",
+                      }}
+                      onClick={() => getProjectsList("BarPie")}
+                    >
+                      <Image
+                        src="/icons/barPie.svg"
+                        alt="barPie"
+                        width={44}
+                        height={44}
+                      />{" "}
+                      Financial Analysis
+                    </Button>
+                  }
+                  body={
+                    <div className="row d-flex m-0">
+                      {projectsData &&
+                        projectsData.length > 0 &&
+                        pageLoaded && (
+                          <>
+                            <div className="col mb-4">
+                              <DistributedColumnChart
+                                data={projectsData[0]}
+                                activeFilter={activeFilter}
+                              />
+                            </div>
+                            <div className="col mb-4">
+                              <SimplePieChart
+                                data={{
+                                  totalRevenueCost:
+                                    projectsData[0].totalRevenueCost,
+                                  totalCapitalCost:
+                                    projectsData[0].totalCapitalCost,
+                                }}
+                                activeFilter={activeFilter}
+                              />
+                            </div>
+                          </>
+                        )}
+                    </div>
+                  }
+                />
+              </div>
+            )}
+            {role !== "Ministers" && (
+              <div
+                className={`col mb-2 shadow-sm fs14px p-0 ${lexend.className}`}
+                style={{
+                  background:
+                    "linear-gradient(to right, #C6D9F1,#C6D9F1 , #E3F1C6,#E3F1C6)",
+                  borderRadius: "10px",
+                }}
+              >
+                {/* <div className="row d-flex m-0">
                 {hoveredButton === -1 || hoveredButton === 0 ? (
                   <div
                     className="col p-0"
@@ -871,126 +908,127 @@ const Dashboard = () => {
                 )}
               </div> */}
 
-              <div className="row d-flex m-0">
-                {/* First Item */}
-                <AnimatePresence>
-                  {(hoveredButton === -1 || hoveredButton === 0) && (
-                    <motion.div
-                      className="p-0"
-                      onMouseEnter={() => setHoveredButton(0)}
-                      onMouseLeave={() => setHoveredButton(-1)}
-                      initial={{ flex: 1, opacity: 0 }}
-                      animate={{
-                        flex: hoveredButton === 0 ? 3 : 1,
-                        opacity: 1,
-                      }}
-                      exit={{ opacity: 0 }}
-                      transition={{
-                        duration: 0.5,
-                        ease: "easeInOut",
-                      }}
-                      style={{ overflow: "hidden" }}
-                    >
-                      <Link
-                        href="/vehicle-tracking"
-                        className="row d-flex flex-nowrap m-0 justify-content-center btn w-100 fw-normal fs14px"
-                        style={{
-                          borderRadius: "8px",
-                          background: "#C6D9F1",
+                <div className="row d-flex m-0">
+                  {/* First Item */}
+                  <AnimatePresence>
+                    {(hoveredButton === -1 || hoveredButton === 0) && (
+                      <motion.div
+                        className="p-0"
+                        onMouseEnter={() => setHoveredButton(0)}
+                        onMouseLeave={() => setHoveredButton(-1)}
+                        initial={{ flex: 1, opacity: 0 }}
+                        animate={{
+                          flex: hoveredButton === 0 ? 3 : 1,
+                          opacity: 1,
+                        }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                          duration: 0.5,
+                          ease: "easeInOut",
+                        }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <Link
+                          href="/vehicle-tracking"
+                          className="row d-flex flex-nowrap m-0 justify-content-center btn w-100 fw-normal fs14px"
+                          style={{
+                            borderRadius: "8px",
+                            background: "#C6D9F1",
+                          }}
+                        >
+                          <div className="col-auto p-0 pe-1 my-auto">
+                            <Image
+                              src={carOutline}
+                              alt="carOutline"
+                              width={24}
+                              height={24}
+                            />
+                          </div>
+                          <div className="col-auto p-0">
+                            Vehicle
+                            <br />
+                            Tracking
+                          </div>
+                        </Link>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Second Item */}
+                  <AnimatePresence>
+                    {(hoveredButton === -1 || hoveredButton === 1) && (
+                      <motion.div
+                        className="p-0"
+                        onMouseEnter={() => setHoveredButton(1)}
+                        onMouseLeave={() => setHoveredButton(-1)}
+                        initial={{ flex: 1, opacity: 0 }}
+                        animate={{
+                          flex: hoveredButton === 1 ? 3 : 1,
+                          opacity: 1,
+                        }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                          duration: 0.5,
+                          ease: "easeInOut",
+                        }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <Link
+                          href="/staff-tracking"
+                          className="row d-flex flex-nowrap m-0 justify-content-center btn w-100 fw-normal fs14px"
+                          style={{
+                            borderRadius: "8px",
+                            background: "#E3F1C6",
+                          }}
+                        >
+                          <div className="col-auto p-0 pe-1 my-auto">
+                            <Image
+                              src={staffTracking2}
+                              alt="staffTracking2"
+                              width={24}
+                              height={24}
+                            />
+                          </div>
+                          <div className="col-auto p-0">
+                            Staff
+                            <br />
+                            Tracking
+                          </div>
+                        </Link>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Third Item */}
+                  <AnimatePresence>
+                    {(hoveredButton === -1 || hoveredButton === 2) && (
+                      <motion.div
+                        className="p-0"
+                        style={{ zIndex: 2 }}
+                        onMouseEnter={() => setHoveredButton(2)}
+                        onMouseLeave={() => setHoveredButton(-1)}
+                        initial={{ flex: 1, opacity: 0 }}
+                        animate={{
+                          flex: hoveredButton === 2 ? 3 : 1,
+                          opacity: 1,
+                        }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                          duration: 0.5,
+                          ease: "easeInOut",
                         }}
                       >
-                        <div className="col-auto p-0 pe-1 my-auto">
-                          <Image
-                            src={carOutline}
-                            alt="carOutline"
-                            width={24}
-                            height={24}
-                          />
-                        </div>
-                        <div className="col-auto p-0">
-                          Vehicle
-                          <br />
-                          Tracking
-                        </div>
-                      </Link>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Second Item */}
-                <AnimatePresence>
-                  {(hoveredButton === -1 || hoveredButton === 1) && (
-                    <motion.div
-                      className="p-0"
-                      onMouseEnter={() => setHoveredButton(1)}
-                      onMouseLeave={() => setHoveredButton(-1)}
-                      initial={{ flex: 1, opacity: 0 }}
-                      animate={{
-                        flex: hoveredButton === 1 ? 3 : 1,
-                        opacity: 1,
-                      }}
-                      exit={{ opacity: 0 }}
-                      transition={{
-                        duration: 0.5,
-                        ease: "easeInOut",
-                      }}
-                      style={{ overflow: "hidden" }}
-                    >
-                      <Link
-                        href="/staff-tracking"
-                        className="row d-flex flex-nowrap m-0 justify-content-center btn w-100 fw-normal fs14px"
-                        style={{
-                          borderRadius: "8px",
-                          background: "#E3F1C6",
-                        }}
-                      >
-                        <div className="col-auto p-0 pe-1 my-auto">
-                          <Image
-                            src={staffTracking2}
-                            alt="staffTracking2"
-                            width={24}
-                            height={24}
-                          />
-                        </div>
-                        <div className="col-auto p-0">
-                          Staff
-                          <br />
-                          Tracking
-                        </div>
-                      </Link>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Third Item */}
-                <AnimatePresence>
-                  {(hoveredButton === -1 || hoveredButton === 2) && (
-                    <motion.div
-                      className="p-0"
-                      style={{ zIndex: 2 }}
-                      onMouseEnter={() => setHoveredButton(2)}
-                      onMouseLeave={() => setHoveredButton(-1)}
-                      initial={{ flex: 1, opacity: 0 }}
-                      animate={{
-                        flex: hoveredButton === 2 ? 3 : 1,
-                        opacity: 1,
-                      }}
-                      exit={{ opacity: 0 }}
-                      transition={{
-                        duration: 0.5,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      <VisitsPlan
-                        getProjectsList={getProjectsList}
-                        projectsData={projectsData ? projectsData : []}
-                        setProjectsData={setProjectsData}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                        <VisitsPlan
+                          getProjectsList={getProjectsList}
+                          projectsData={projectsData ? projectsData : []}
+                          setProjectsData={setProjectsData}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
-            </div>
+            )}
             <div
               className={`col mb-2 shadow-sm fs14px ${lexend.className}`}
               style={{
@@ -1007,7 +1045,7 @@ const Dashboard = () => {
                     button={
                       <Button
                         onClick={() => getProjectsList("TotalProject")}
-                        className="row d-flex m-0 justify-content-center btn w-100 text-white text-nowrap fw-normal fs12px py-3 px-0"
+                        className="row d-flex m-0 justify-content-center align-items-center btn w-100 text-white text-nowrap fw-normal fs12px py-3 px-0 position-relative"
                         style={{
                           borderRadius: "8px",
                           background: "#1E6BDD",
@@ -1030,8 +1068,8 @@ const Dashboard = () => {
                               {data ? (
                                 <AnimatedCounter
                                   from={0}
-                                  // to={data.totalProjects}
-                                  to={utilizationData?.length}
+                                  to={data.utilization20t080}
+                                  // to={utilizationData?.length}
                                 />
                               ) : (
                                 0
@@ -1039,6 +1077,40 @@ const Dashboard = () => {
                             </span>
                           </p>
                         </div>
+                        {role === "Super Admin" ||
+                        role === "Deputy Director" ||
+                        role === "Director" ? (
+                          <OverlayTrigger
+                            placement="top"
+                            overlay={
+                              <Tooltip id={`tooltip-top`}>
+                                Utilization vs Schemes Visited by DGME Team
+                              </Tooltip>
+                            }
+                          >
+                            <span
+                              className="col-auto position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger fs12px"
+                              style={{ zIndex: 1 }}
+                            >
+                              {data && (
+                                <AnimatedCounter
+                                  from={0}
+                                  to={
+                                    data.utilization20t080 -
+                                    utilizationData.filter(
+                                      (data) => data.visitCount > 0
+                                    ).length
+                                  }
+                                />
+                              )}
+                              <span className="visually-hidden">
+                                unread messages
+                              </span>
+                            </span>
+                          </OverlayTrigger>
+                        ) : (
+                          ""
+                        )}
                       </Button>
                     }
                     body={
@@ -1060,313 +1132,319 @@ const Dashboard = () => {
                     }
                   />
                 </div>
-                <div className="col-auto p-1">
-                  <CustomModal
-                    isFullscreen={true}
-                    modalId="reportAnalysis"
-                    HeaderRightPos={50}
-                    HeaderTopPos={20}
-                    button={
-                      <Button
-                        className="row d-flex flex-nowrap justify-content-center m-0 btn w-100 text-white fw-normal fs12px py-3 px-0"
-                        style={{
-                          borderRadius: "8px",
-                          background: "#1E6BDD",
-                        }}
-                      >
-                        <div className="col-auto px-1">
-                          <Image
-                            src={reportAnalysis}
-                            alt="reportAnalysis"
-                            width={32}
-                            height={32}
-                          />
-                        </div>
-                        <div className="col-auto px-1">
-                          Report
-                          <br />
-                          Analysis
-                        </div>
-                      </Button>
-                    }
-                    body={
-                      <>
-                        <div
-                          className="container-fluid border-0 p-1"
+                {role !== "Ministers" && (
+                  <div className="col-auto p-1">
+                    <CustomModal
+                      isFullscreen={true}
+                      modalId="reportAnalysis"
+                      HeaderRightPos={50}
+                      HeaderTopPos={20}
+                      button={
+                        <Button
+                          className="row d-flex flex-nowrap justify-content-center m-0 btn w-100 text-white fw-normal fs12px py-3 px-0"
                           style={{
-                            height: "100%",
-                            overflow: "scroll",
+                            borderRadius: "8px",
+                            background: "#1E6BDD",
                           }}
                         >
-                          <ReportAnalysis />
-                        </div>
-                      </>
-                    }
-                  />
-                </div>
+                          <div className="col-auto px-1">
+                            <Image
+                              src={reportAnalysis}
+                              alt="reportAnalysis"
+                              width={32}
+                              height={32}
+                            />
+                          </div>
+                          <div className="col-auto px-1">
+                            Report
+                            <br />
+                            Analysis
+                          </div>
+                        </Button>
+                      }
+                      body={
+                        <>
+                          <div
+                            className="container-fluid border-0 p-1"
+                            style={{
+                              height: "100%",
+                              overflow: "scroll",
+                            }}
+                          >
+                            <ReportAnalysis />
+                          </div>
+                        </>
+                      }
+                    />
+                  </div>
+                )}
               </div>
             </div>
-            <div
-              className="col mb-2 shadow-sm fs14px p-2"
-              style={{
-                background: "#C6D9F1",
-                borderRadius: "10px",
-                color: "#334155",
-              }}
-            >
-              <CustomModal
-                size="xl"
-                modalId="approvedCost"
-                button={
-                  <Button
-                    className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
-                    style={{ background: "rgba(235, 239, 253, 1)" }}
-                  >
-                    <div className="row d-flex m-0">
-                      <div className="col text-start fw-5">Approved Cost</div>{" "}
-                      <div className="col fw-normal text-end pe-3">
-                        {data ? formatAmountWithCommas(data?.approvedCost) : 0}{" "}
-                        M
-                      </div>
-                    </div>
-                  </Button>
-                }
-                body={
-                  <div
-                    className={`container-fluid p-4 ${montserrat.className}`}
-                    style={{
-                      borderRadius: "20px",
-                      background: "rgba(255, 255, 255,.75)",
-                    }}
-                  >
-                    <div className="row d-flex justify-content-center m-0">
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={divideCircle}
-                            alt="divideCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              7409
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Total Scheme
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={originalAllocationCircle}
-                            alt="originalAllocationCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              842.00 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Original Allocation
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={revisedAllocationCircle}
-                            alt="revisedAllocationCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              842.00 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Revised Allocation
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={pndReleaseCircle}
-                            alt="pndReleaseCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              514.64 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              P&D Release
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={controllingReleaseCircle}
-                            alt="controllingReleaseCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              498.07 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Controlling Release
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={spendingReleaseCircle}
-                            alt="spendingReleaseCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              472.76 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Spending Release
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-auto mb-4">
-                        <div
-                          className="col shadow d-flex bg-white "
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={utilizationCircle}
-                            alt="utilizationCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              249.86 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Utilization
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                }
-              />
-
+            {role !== "Ministers" && (
               <div
-                className="col p-2 rounded-2 mb-2"
-                style={{ background: "rgba(235, 239, 253, 1)" }}
+                className="col mb-2 shadow-sm fs14px p-2"
+                style={{
+                  background: "#C6D9F1",
+                  borderRadius: "10px",
+                  color: "#334155",
+                }}
               >
-                <div className="row d-flex m-0">
-                  <div className="col fw-5 text-start">Expenditure</div>
-                  <div className="col fw-normal text-end pe-3">
-                    {data ? formatAmountWithCommas(data?.expenditure) : 0} M
+                <CustomModal
+                  size="xl"
+                  modalId="approvedCost"
+                  button={
+                    <Button
+                      className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
+                      style={{ background: "rgba(235, 239, 253, 1)" }}
+                    >
+                      <div className="row d-flex m-0">
+                        <div className="col text-start fw-5">Approved Cost</div>{" "}
+                        <div className="col fw-normal text-end pe-3">
+                          {data
+                            ? formatAmountWithCommas(data?.approvedCost)
+                            : 0}{" "}
+                          M
+                        </div>
+                      </div>
+                    </Button>
+                  }
+                  body={
+                    <div
+                      className={`container-fluid p-4 ${montserrat.className}`}
+                      style={{
+                        borderRadius: "20px",
+                        background: "rgba(255, 255, 255,.75)",
+                      }}
+                    >
+                      <div className="row d-flex justify-content-center m-0">
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={divideCircle}
+                              alt="divideCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                7409
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Total Scheme
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={originalAllocationCircle}
+                              alt="originalAllocationCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                842.00 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Original Allocation
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={revisedAllocationCircle}
+                              alt="revisedAllocationCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                842.00 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Revised Allocation
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={pndReleaseCircle}
+                              alt="pndReleaseCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                514.64 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                P&D Release
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={controllingReleaseCircle}
+                              alt="controllingReleaseCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                498.07 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Controlling Release
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={spendingReleaseCircle}
+                              alt="spendingReleaseCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                472.76 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Spending Release
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-auto mb-4">
+                          <div
+                            className="col shadow d-flex bg-white "
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={utilizationCircle}
+                              alt="utilizationCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                249.86 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Utilization
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                />
+
+                <div
+                  className="col p-2 rounded-2 mb-2"
+                  style={{ background: "rgba(235, 239, 253, 1)" }}
+                >
+                  <div className="row d-flex m-0">
+                    <div className="col fw-5 text-start">Expenditure</div>
+                    <div className="col fw-normal text-end pe-3">
+                      {data ? formatAmountWithCommas(data?.expenditure) : 0} M
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             <div
               className="col mb-2 shadow-sm fs14px"
               style={{
                 background: "#C6D9F1",
                 borderRadius: "10px",
-                padding: "25px 25px 25px 25px",
+                padding: "15px 15px 15px 15px",
               }}
             >
               <p
@@ -1502,7 +1580,7 @@ const Dashboard = () => {
               style={{
                 background: "#C6D9F1",
                 borderRadius: "10px",
-                padding: "20px 35px 15px 35px ",
+                padding: "15px 15px 15px 15px ",
                 color: "#334155",
               }}
             >

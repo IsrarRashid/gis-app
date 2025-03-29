@@ -17,6 +17,7 @@ interface Props {
   isGrouped?: boolean;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  showValueInDecimal?: boolean;
 }
 
 const Menu = ({
@@ -34,6 +35,7 @@ const Menu = ({
   showArrow = false,
   textWrap = true,
   isGrouped = false,
+  showValueInDecimal = false,
 }: Props) => {
   const [randomValue1, setRandomValue1] = useState(0);
   const [randomValue2, setRandomValue2] = useState(0);
@@ -122,7 +124,11 @@ const Menu = ({
             className="col-auto text-white fw-normal text-wrap text-break px-0"
             style={{ fontSize: `${isGrouped ? "1.3rem" : "2.5rem"}` }}
           >
-            <AnimatedCounter from={0} to={value} />
+            <AnimatedCounter
+              from={0}
+              to={value}
+              showValueInDecimal={showValueInDecimal}
+            />
             {showPercentageSign && "%"}
           </div>
         ) : (
@@ -130,7 +136,11 @@ const Menu = ({
             className="col-auto text-white fw-bold px-0 text-wrap"
             style={{ fontSize: "2.5rem" }}
           >
-            <AnimatedCounter from={0} to={value} />
+            <AnimatedCounter
+              from={0}
+              to={value}
+              showValueInDecimal={showValueInDecimal}
+            />
             {showPercentageSign && "%"}
           </div>
         )}

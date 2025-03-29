@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "node server.js",
+    "start": "next start",
     "lint": "next lint",
     "export": "next export"
   },
@@ -15,7 +15,6 @@
     "@react-google-maps/api": "^2.20.3",
     "@react-pdf/renderer": "^4.0.0",
     "@reduxjs/toolkit": "^2.2.7",
-    "@types/cookie": "^0.6.0",
     "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.13",
     "@vis.gl/react-google-maps": "^1.4.0",
@@ -23,8 +22,6 @@
     "apexcharts": "^3.53.0",
     "axios": "^1.7.5",
     "bootstrap": "^5.0.1",
-    "cookie": "^0.6.0",
-    "cookies": "^0.9.1",
     "date-fns": "^4.1.0",
     "easymde": "^2.18.0",
     "fast-sort": "^3.4.1",

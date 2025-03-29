@@ -1,4 +1,8 @@
-import VehicleTracking from "./components/VehicleTracking";
+import dynamic from "next/dynamic";
+
+const VehicleTracking = dynamic(() => import("./components/VehicleTracking"), {
+  ssr: false,
+});
 
 const VehicleTrackingPage = () => {
   return (

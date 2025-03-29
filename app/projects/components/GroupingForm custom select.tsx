@@ -4,7 +4,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import React, { FormEvent, useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 export interface GroupOption {
   id: number;
@@ -224,7 +224,6 @@ const GroupingForm: React.FC<GroupingFormProps> = ({
             </div>
           </Modal.Body>
         </Modal>
-        <ToastContainer />
       </div>
     </>
   );

@@ -15,7 +15,7 @@ import { sort } from "fast-sort";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import calender from "../../../public/icons/calendar.svg";
 import cancel from "../../../public/icons/cancel.svg";
 import clock from "../../../public/icons/clock.svg";
@@ -316,8 +316,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             </tr>
           </tbody>
         </table>
-
-        <ToastContainer />
       </div>
     </>
   );

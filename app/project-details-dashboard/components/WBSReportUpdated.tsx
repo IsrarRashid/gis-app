@@ -22,7 +22,8 @@ const WBSReportUpdated = ({ majorDeliverables }: Props) => {
         style={{ background: "#C6D9F1", borderRadius: "17px" }}
       >
         <p className="m-0 fw-bold fs26px ms-3 mt-2 text-center">
-          Work Breakdown Structure
+          {majorDeliverables.attributes[0].values[0].value} (
+          {majorDeliverables.attributes[1].values[0].value}%)
         </p>
         {majorDeliverables?.group?.length > 0 ? (
           <WBSGroupFlow majorDeliverables={majorDeliverables} />

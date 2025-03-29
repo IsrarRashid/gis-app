@@ -101,8 +101,15 @@ const Header = ({ data }: Props) => {
                       Monitoring Reports
                     </p>
                     <p className="m-0 fw-normal fs18px text-wrap">
-                      {data.reports && data.reports.length}st Monitoring Report
-                      {data.reports.length > 1 && "s"}
+                      {data.reportsCount}
+                      {data.reportsCount === 1
+                        ? "st"
+                        : data.reportsCount === 2
+                        ? "nd"
+                        : data.reportsCount === 3
+                        ? "rd"
+                        : "th"}{" "}
+                      Monitoring Report
                     </p>
                   </div>
                 </>

@@ -9,7 +9,7 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import Form from "./Form";
 // import GroupingForm from "./GroupingForm";
 import Loader from "@/app/components/Loader";
@@ -56,14 +56,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
     // const lowercasedFilter = searchTerm.toLowerCase();
 
     const filtered = data.filter((item) =>
-      [
-        item.id.toString(),
-        item.userName,
-        item.fullName,
-        item.designation,
-        item.email,
-        item.phoneNumber,
-      ]
+      [item.userName, item.fullName, item.designation, item.email]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
         .some((field) => field.includes(e.target.value.toLowerCase()))
@@ -277,7 +270,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
-        <ToastContainer />
       </div>
     </>
   );

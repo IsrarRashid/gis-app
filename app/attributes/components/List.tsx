@@ -10,7 +10,7 @@ import { getFormattedDate } from "@/app/utils";
 import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import useAttributes, { Attribute } from "../../hooks/useAttributes";
 import Form from "./Form";
 
@@ -45,8 +45,22 @@ const List = ({ refresh, setRefresh }: Props) => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     // const lowercasedFilter = searchTerm.toLowerCase();
 
-    const filtered = data.filter((item) =>
-      [item.attributeId.toString(), item.label, item.attributeCode]
+    const filtered = [...(data || [])].reverse().filter((item) =>
+      [
+        item.attributeId.toString(),
+        item.label,
+        item.attributeCode,
+        item.attributeDataType,
+        item.validationRegx,
+        item.placeholder,
+        item.attributeType,
+        item.unit,
+        item.errorMessage,
+        item.verificationType,
+        item.remarks,
+        item.attributeCode,
+        item.evaluationFormula,
+      ]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
         .some((field) => field.includes(e.target.value.toLowerCase()))
@@ -93,10 +107,9 @@ const List = ({ refresh, setRefresh }: Props) => {
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
   // Paginate data to display only the current page's rows
-  const paginatedData = (searchTerm ? filteredData : data).slice(
-    (currentPage - 1) * rows,
-    currentPage * rows
-  );
+  const paginatedData = (
+    searchTerm ? filteredData : [...(data || [])].reverse()
+  ).slice((currentPage - 1) * rows, currentPage * rows);
 
   const handleDelete = async (id: number) => {
     try {
@@ -312,7 +325,6 @@ const List = ({ refresh, setRefresh }: Props) => {
             </tr>
           </tbody>
         </table>
-        <ToastContainer />
       </div>
     </>
   );

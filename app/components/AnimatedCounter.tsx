@@ -11,9 +11,15 @@ interface Props {
   from: number;
   to: number;
   animationOptions?: KeyframeOptions;
+  showValueInDecimal?: boolean;
 }
 
-const AnimatedCounter = ({ from, to, animationOptions }: Props) => {
+const AnimatedCounter = ({
+  from,
+  to,
+  animationOptions,
+  showValueInDecimal = false,
+}: Props) => {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
   useIsomorphicLayoutEffect(() => {
@@ -34,7 +40,9 @@ const AnimatedCounter = ({ from, to, animationOptions }: Props) => {
       ease: "easeOut",
       ...animationOptions,
       onUpdate(value) {
-        element.textContent = value ? value?.toFixed(0) : "0";
+        element.textContent = value
+          ? value?.toFixed(showValueInDecimal ? 2 : 0)
+          : "0";
       },
     });
     return () => {

@@ -1,4 +1,8 @@
-import Vehicles from "./components/Vehicles";
+import dynamic from "next/dynamic";
+
+const Vehicles = dynamic(() => import("./components/Vehicles"), {
+  ssr: false,
+});
 
 const VehiclesPage = () => {
   return (

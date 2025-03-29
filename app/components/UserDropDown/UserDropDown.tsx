@@ -96,7 +96,7 @@ const UserDropDown = () => {
         console.error("Submission error:", err);
       }
     };
-    if (userId) handleSubmit(userId);
+    if (userId && role?.includes("director")) handleSubmit(userId);
   }, [userId]);
 
   return (

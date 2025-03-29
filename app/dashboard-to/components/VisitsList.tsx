@@ -1,5 +1,6 @@
 "use client";
 import { getUserProjectsAPI, visitAPI } from "@/app/APIs";
+import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
@@ -7,23 +8,19 @@ import TableHeading from "@/app/components/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import useSectors from "@/app/hooks/useSectors";
 import useSuperGroups from "@/app/hooks/useSuperGroups";
-import useVisitsNew, { VisitNew } from "@/app/hooks/useVisitsNew";
+import useVisits, { Visit } from "@/app/hooks/useVisits";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import { getName } from "@/app/utils";
 import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
 import Image from "next/image";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import calender from "../../../public/icons/calendar.svg";
 import cancel from "../../../public/icons/cancel.svg";
 import clock from "../../../public/icons/clock.svg";
 import complete from "../../../public/icons/complete.svg";
-import AssignUserForm from "./AssignUserForm";
 import Form from "./Form";
 import GroupingForm from "./GroupingForm";
-import DeleteModal from "@/app/components/DeleteModal";
-import useVisits, { Visit } from "@/app/hooks/useVisits";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -316,7 +313,6 @@ const VisitsList = () => {
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
-        <ToastContainer />
       </div>
     </>
   );

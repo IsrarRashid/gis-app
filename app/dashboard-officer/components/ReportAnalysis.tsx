@@ -1,4 +1,8 @@
-import { mainDashboardAPI, staffTrackingAPI } from "@/app/APIs";
+import {
+  generateReportPPTAPI,
+  mainDashboardAPI,
+  staffTrackingAPI,
+} from "@/app/APIs";
 import Button from "@/app/components/Button";
 import Spinner from "@/app/components/Spinner";
 import useAuthentication from "@/app/hooks/useAuthentication";
@@ -20,6 +24,9 @@ import { data, tabs } from "./reportAnalysisData";
 import * as XLSX from "xlsx";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import { downloadReportAnalysisToExcel } from "@/app/utils";
+import CustomModal from "@/app/components/CustomModal";
+import PPTSlideGenerator from "./PPTSlideGenerator";
+import TimeSpentOnProjectSiteFilterMenu from "./TimeSpentOnProjectSiteFilterMenu";
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 
@@ -47,6 +54,7 @@ interface StaffTrackingData {
 const ReportAnalysis = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(1);
   const [projectsData, setProjectsData] = useState<ProjectsList[]>();
+  const [filteredData, setFilteredData] = useState<ProjectsList[]>();
 
   const cmInitiativeFilters = [
     {
@@ -84,20 +92,16 @@ const ReportAnalysis = () => {
     }
   };
 
-  useEffect(() => {
-    getProjectsList("BeingMonitored");
-  }, []);
-
   const fetchedIds = new Set(); // Tracks already fetched visitId-userId combinations
 
   useEffect(() => {
-    if (projectsData) {
+    if (filteredData) {
       const fetchPromises = []; // Collect promises for batching
-      for (let i = 0; i < projectsData.length; i++) {
+      for (let i = 0; i < filteredData.length; i++) {
         const userId = users.find(
-          (user) => user.fullName === projectsData[i].userName
+          (user) => user.fullName === filteredData[i].userName
         )?.id;
-        const visitId = projectsData[i].visitId;
+        const visitId = filteredData[i].visitId;
 
         if (userId && visitId) {
           const fetchKey = `${userId}-${visitId}`;
@@ -160,7 +164,7 @@ const ReportAnalysis = () => {
         })
         .catch((err) => console.error("Error fetching recording data:", err));
     }
-  }, [projectsData]);
+  }, [filteredData]);
 
   const fetchRecordingData = async (
     recordingTrackingRequestBody: TrackingRequestData
@@ -351,8 +355,8 @@ const ReportAnalysis = () => {
 
   const exportTimeSpentonProjectSiteToExcel = () => {
     // Prepare data for export
-    if (projectsData) {
-      const data = projectsData.map((project, i) => {
+    if (filteredData) {
+      const data = filteredData.map((project, i) => {
         const visitData = latLngsOfVisits.find(
           (visit) => visit?.visit?.visitID === project.visitId
         );
@@ -464,6 +468,16 @@ const ReportAnalysis = () => {
                 {tab.label}
               </Button>
             ))}
+            <TimeSpentOnProjectSiteFilterMenu
+              getProjectsList={getProjectsList}
+              selectedIndex={selectedIndex}
+              setSelectedIndex={setSelectedIndex}
+              projectsData={projectsData}
+              setProjectsData={setProjectsData}
+              filteredData={filteredData}
+              setFilteredData={setFilteredData}
+            />
+            <PPTSlideGenerator />
           </div>
           {selectedIndex === 14 ? (
             <div className="col mb-3 text-end">
@@ -1930,7 +1944,7 @@ const ReportAnalysis = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {projectsData?.map((d, i) => (
+                  {filteredData?.map((d, i) => (
                     <tr key={i} className="fw-normal bg-light text-center">
                       <td>{i + 1}</td>
                       <td>{d.id}</td>

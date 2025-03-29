@@ -7,7 +7,7 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import more from "../../../public/icons/more.svg";
 
 interface Props {
@@ -24,10 +24,13 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     id: 0,
     name: "",
     parentId: 0,
+    parentName: "",
     description: "",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     sortId: 0,
+    group_type: 0,
+    group_nature: 0,
   });
   const [show, setShow] = useState(false);
   const modalId = `formModal-${id}`;
@@ -51,11 +54,14 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         setFormData({
           id: itemData.id,
           parentId: itemData.parentId,
+          parentName: itemData.parentName,
           name: itemData.name,
           description: itemData.description,
           sortId: itemData.sortId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          group_type: itemData.group_type,
+          group_nature: itemData.group_nature,
         });
       } catch (err) {
         console.log((err as AxiosError).message);
@@ -98,10 +104,13 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               id: 0,
               name: "",
               parentId: 0,
+              parentName: "",
               description: "",
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
               sortId: 0,
+              group_type: 0,
+              group_nature: 0,
             });
             notifyCreate(created);
             console.log("response", response);
@@ -288,7 +297,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           </div>
         </Modal.Body>
       </Modal>
-      <ToastContainer />
     </div>
   );
 };

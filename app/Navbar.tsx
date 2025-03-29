@@ -10,6 +10,7 @@ import Button from "./components/Button";
 import GISMenu from "./components/GISMenu";
 import UserDropDown from "./components/UserDropDown/UserDropDown";
 import { RootState } from "./store";
+import Image from "next/image";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -20,12 +21,19 @@ const Navbar = () => {
   const [userEmail, setUserEmail] = useState("");
   const [userName, setUserName] = useState("");
   const router = useRouter();
+  const [role, setRole] = useState<string>();
+
   const currentContent = useSelector(
     (state: RootState) => state.content.currentContent
   );
   const currentTutorial = useSelector(
     (state: RootState) => state.tutorial.currentTutorial
   );
+
+  useEffect(() => {
+    const userRole = Cookies.get("role");
+    if (userRole) setRole(userRole);
+  }, []);
 
   useEffect(() => {
     const email = Cookies.get("email") || "";
@@ -73,11 +81,12 @@ const Navbar = () => {
     >
       <div className="container-fluid">
         <Link className="navbar-brand" href="/">
-          <img
+          <Image
             src="/icons/logoNew.svg"
-            className="img-fluid"
+            className="img-fluid object-contain"
             alt="logoNew"
-            style={{ width: "64px", height: "64px" }}
+            width={64}
+            height={64}
           />
         </Link>
         <Button
@@ -119,42 +128,44 @@ const Navbar = () => {
           </ul>
 
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li className="nav-item p-1 me-2 m-auto">
-              <Link href={currentTutorial} target="_blank">
-                <div
-                  style={{
-                    position: "relative",
-                    display: "inline-block",
-                    width: "fit-content",
-                    height: "fit-content",
-                  }}
-                  onMouseEnter={() => setEnter(true)}
-                  onMouseLeave={() => setEnter(false)}
-                >
-                  {/* Background div */}
-                  <FaPlay
-                    size={16}
-                    color={`${isEnter ? "white" : "rgba(255,255,255,0)"}`}
+            {role !== "Ministers" && (
+              <li className="nav-item p-1 me-2 m-auto">
+                <Link href={currentTutorial} target="_blank">
+                  <div
                     style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      width: "10px",
-                      height: "10px",
-                      transform: "translate(-50%, -50%)",
-                      zIndex: 0, // Make sure it's behind the icon
-                      transition: "color .3s",
+                      position: "relative",
+                      display: "inline-block",
+                      width: "fit-content",
+                      height: "fit-content",
                     }}
-                  />
-                  {/* YouTube Icon */}
-                  <FaYoutube
-                    color={`${isEnter ? "red" : "white"}`}
-                    size={40}
-                    style={{ transition: "color .3s" }}
-                  />
-                </div>
-              </Link>
-            </li>
+                    onMouseEnter={() => setEnter(true)}
+                    onMouseLeave={() => setEnter(false)}
+                  >
+                    {/* Background div */}
+                    <FaPlay
+                      size={16}
+                      color={`${isEnter ? "white" : "rgba(255,255,255,0)"}`}
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        width: "10px",
+                        height: "10px",
+                        transform: "translate(-50%, -50%)",
+                        zIndex: 0, // Make sure it's behind the icon
+                        transition: "color .3s",
+                      }}
+                    />
+                    {/* YouTube Icon */}
+                    <FaYoutube
+                      color={`${isEnter ? "red" : "white"}`}
+                      size={40}
+                      style={{ transition: "color .3s" }}
+                    />
+                  </div>
+                </Link>
+              </li>
+            )}
             <li className="nav-item p-1 me-2">
               <Link href="https://smdp.punjab.gov.pk/" target="_blank">
                 <Button

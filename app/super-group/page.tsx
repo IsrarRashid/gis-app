@@ -1,4 +1,8 @@
-import SuperGroup from "./components/SuperGroup";
+import dynamic from "next/dynamic";
+
+const SuperGroup = dynamic(() => import("./components/SuperGroup"), {
+  ssr: false,
+});
 
 const SuperGroupPage = () => {
   return (

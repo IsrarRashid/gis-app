@@ -425,7 +425,6 @@ const ProjectsList = ({
                     </div>
                   </div>
                 </div>
-                {/* <ToastContainer /> */}
               </div>
             </>
           )}

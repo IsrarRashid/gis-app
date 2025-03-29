@@ -1,6 +1,8 @@
 import ReactFlow, { Controls } from "reactflow";
 import "reactflow/dist/style.css";
 import { Groups } from "../ProjectDetailsDashboard";
+import { FaImage } from "react-icons/fa";
+import CustomModal from "@/app/components/CustomModal";
 
 interface Props {
   majorDeliverables: Groups;
@@ -131,45 +133,119 @@ const WBSGroupFlow = ({ majorDeliverables }: Props) => {
           type: "default",
           data: {
             label: (
-              <div
-                className="col shadow px-3"
-                style={{
-                  background: "rgba(12, 140, 233, 0.2)",
-                  borderTopRightRadius: "50px",
-                  borderBottomRightRadius: "50px",
-                  border: "1px solid rgba(12, 140, 233, 0.4)",
-                }}
-              >
-                <div className="col p-2">
-                  <p className="fs17px fw-bold m-0 text-wrap text-center text-break">
-                    {attribute.label}
-                  </p>
-                </div>
-                <div className="row d-flex m-0 ">
-                  <div className="col p-0">
-                    <p className="fs24px fw-bold m-0 mt-3 text-end">
-                      {attribute.values[0]?.weightage}%
-                    </p>
-                  </div>
-                  <div className="col pb-2">
-                    <div
-                      className="rounded-circle fw-bold fs20px text-white text-center ms-2 me-2 my-auto text-wrap text-break"
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        background:
-                          "linear-gradient(to bottom right, #0C8CE9, #074F83)",
-                      }}
-                    >
-                      <p className="py-4">
-                        {attribute?.values[0]?.value &&
-                          Math.round(parseFloat(attribute.values[0]?.value))}
-                        %
+              <>
+                {attribute?.values[0]?.verificatioContentPath &&
+                attribute?.values[0]?.verificatioContentPath.length > 0 ? (
+                  <CustomModal
+                    HeaderRightPos={0}
+                    HeaderTopPos={0}
+                    size="lg"
+                    button={
+                      <div
+                        className="col shadow px-3"
+                        style={{
+                          background: "rgba(12, 140, 233, 0.2)",
+                          borderTopRightRadius: "50px",
+                          borderBottomRightRadius: "50px",
+                          border: "1px solid rgba(12, 140, 233, 0.4)",
+                        }}
+                      >
+                        <div className="col p-2">
+                          <p className="fs17px fw-bold m-0 text-wrap text-center text-break">
+                            {attribute.label}
+                          </p>
+                        </div>
+                        <div className="row d-flex m-0 ">
+                          <div className="col p-0">
+                            <p className="fs24px fw-bold m-0 mt-3 text-end">
+                              {attribute.values[0]?.weightage}%
+                            </p>
+                          </div>
+                          <div className="col pb-2">
+                            <div
+                              className="position-relative rounded-circle fw-bold fs20px text-white text-center ms-2 me-2 my-auto text-wrap text-break"
+                              style={{
+                                width: "80px",
+                                height: "80px",
+                                background:
+                                  "linear-gradient(to bottom right, #0C8CE9, #074F83)",
+                              }}
+                            >
+                              <p className="py-4">
+                                {attribute?.values[0]?.value &&
+                                  Math.round(
+                                    parseFloat(attribute.values[0]?.value)
+                                  )}
+                                %
+                              </p>
+                              <span className="position-absolute top-0 start-100 translate-middle p-2 rounded-circle">
+                                <FaImage size={25} className="color-sea-blue" />
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                    body={
+                      <div className="col text-center bg-white p-3 rounded-3">
+                        <p className="mb-0 fs-4 fw-bold text-start">{g.name}</p>
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_BACKEND_API}${attribute?.values[0]?.verificatioContentPath}`}
+                          className="img-fluid rounded-3 w-100"
+                          style={{
+                            objectFit: "contain",
+                          }}
+                          alt="img"
+                        />
+                        <p className="mb-0 fs-4 fw-normal">{attribute.label}</p>
+                      </div>
+                    }
+                    modalId={`modal-id:${attribute.label}`}
+                  />
+                ) : (
+                  <div
+                    className="col shadow px-3"
+                    style={{
+                      background: "rgba(12, 140, 233, 0.2)",
+                      borderTopRightRadius: "50px",
+                      borderBottomRightRadius: "50px",
+                      border: "1px solid rgba(12, 140, 233, 0.4)",
+                    }}
+                  >
+                    <div className="col p-2">
+                      <p className="fs17px fw-bold m-0 text-wrap text-center text-break">
+                        {attribute.label}
                       </p>
                     </div>
+                    <div className="row d-flex m-0 ">
+                      <div className="col p-0">
+                        <p className="fs24px fw-bold m-0 mt-3 text-end">
+                          {attribute.values[0]?.weightage}%
+                        </p>
+                      </div>
+                      <div className="col pb-2">
+                        <div
+                          className="position-relative rounded-circle fw-bold fs20px text-white text-center ms-2 me-2 my-auto text-wrap text-break"
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            background:
+                              "linear-gradient(to bottom right, #0C8CE9, #074F83)",
+                          }}
+                        >
+                          <p className="py-4">
+                            {attribute?.values[0]?.value &&
+                              Math.round(
+                                parseFloat(attribute.values[0]?.value)
+                              )}
+                            %
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                )}
+              </>
             ),
           },
           position: {

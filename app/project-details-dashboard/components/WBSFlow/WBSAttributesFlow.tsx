@@ -1,6 +1,8 @@
 import ReactFlow, { Controls } from "reactflow";
 import "reactflow/dist/style.css";
 import { Groups } from "../ProjectDetailsDashboard";
+import CustomModal from "@/app/components/CustomModal";
+import { FaImage } from "react-icons/fa";
 
 interface Props {
   majorDeliverables: Groups;
@@ -97,6 +99,39 @@ const WBSAttributesFlow = ({ majorDeliverables }: Props) => {
                         Math.round(parseFloat(attribute?.values[0]?.value))}
                       %
                     </p>
+                    {attribute?.values[0]?.verificatioContentPath &&
+                      attribute?.values[0]?.verificatioContentPath.length >
+                        0 && (
+                        <span className="position-absolute top-0 start-100 translate-middle p-2 rounded-circle">
+                          <CustomModal
+                            HeaderRightPos={0}
+                            HeaderTopPos={0}
+                            size="lg"
+                            button={
+                              <FaImage size={25} className="color-sea-blue" />
+                            }
+                            body={
+                              <div className="col text-center bg-white p-3 rounded-3">
+                                {/* <p className="mb-0 fs-4 fw-bold text-start">
+                                    {g.name}
+                                  </p> */}
+                                <img
+                                  src={`${process.env.NEXT_PUBLIC_BACKEND_API}${attribute?.values[0]?.verificatioContentPath}`}
+                                  className="img-fluid rounded-3 w-100"
+                                  style={{
+                                    objectFit: "contain",
+                                  }}
+                                  alt="img"
+                                />
+                                <p className="mb-0 fs-4 fw-normal">
+                                  {attribute.label}
+                                </p>
+                              </div>
+                            }
+                            modalId={`modal-id:${attribute.label}`}
+                          />
+                        </span>
+                      )}
                   </div>
                 </div>
               </div>

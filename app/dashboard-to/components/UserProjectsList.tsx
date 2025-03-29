@@ -14,7 +14,7 @@ import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import calender from "../../../public/icons/calendar.svg";
 import cancel from "../../../public/icons/cancel.svg";
 import clock from "../../../public/icons/clock.svg";
@@ -334,7 +334,6 @@ const UserProjectsList = ({
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
-        <ToastContainer />
       </div>
     </>
   );

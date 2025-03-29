@@ -24,6 +24,7 @@ import MonitoringRatingIndex from "./MonitoringRatingIndex";
 // import WBSReportUpdated from "./WBSReportUpdated";
 import dynamic from "next/dynamic";
 import useAuthorization from "@/app/hooks/useAuthorization";
+import WBSSummary from "./WBSFlow/WBSSummary";
 
 const DistributedColumnChart = dynamic(
   () => import("./DistributedColumnChart"),
@@ -183,11 +184,10 @@ export interface SingleProjectDashboard {
   vehicalTrackings: VehicleTrackings[];
   staffTrackings: StaffTrackings[];
   accumulativePC1Cost: number;
-  reports: [
-    {
-      reportPath: string;
-    }
-  ];
+  reports: {
+    reportPath: string;
+  }[];
+  reportsCount: number;
 }
 
 // export interface SingleProjectDashboard {
@@ -272,6 +272,15 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
   const [cpi, setCpi] = useState<number>(0);
   const [spi, setSpi] = useState<number>(0);
 
+  const PLANNED_PHYSICAL_PROGRESS = "planned physical progress";
+  const ACTUAL_PHYSICAL_PROGRESS = "actual physical progress";
+  const PLANNED_VS_ACTUAL_PHYSICAL_PROGRESS =
+    "planned physical progress\n vs actual physical progress";
+
+  const ACTUAL_FINANCIAL_PROGRESS = "actual financial progress";
+  const ACTUAL_PHYSICAL_VS_ACTUAL_FINANCIAL_PROGRESS =
+    "actual physical progress vs actual financial progress";
+
   const getCPIAndSPI = () => {
     if (data) {
       const spi: string | undefined = data?.groups
@@ -329,7 +338,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
         ?.attributes.filter(
           (attribute) =>
             attribute.label.toLowerCase() ===
-            "physical progress vs planned progress"
+            PLANNED_VS_ACTUAL_PHYSICAL_PROGRESS
         )[0];
 
       if (physicalProgressVsPlannedProgress?.values[0]?.value) {
@@ -345,7 +354,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
         ?.attributes.filter(
           (attribute) =>
             attribute.label.toLowerCase() ===
-            "achieved progress vs financial progress"
+            ACTUAL_PHYSICAL_VS_ACTUAL_FINANCIAL_PROGRESS
         )[0];
 
       if (achievedProgressVsFinancialProgress) {
@@ -362,6 +371,41 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
     console.log("check visit", visitId);
   }, [id, visitId]);
 
+  useEffect(() => {
+    if (data) {
+      const filteredAttributes = data.groups.find((group) =>
+        group.name?.toLowerCase().includes("progress analysis")
+      )?.attributes[5];
+
+      console.log("Filtered attributes: ", filteredAttributes);
+      console.log(
+        "lowercase attributes:",
+        filteredAttributes?.label.toLowerCase()
+      );
+      console.log(
+        "lowercase attributes trim:",
+        filteredAttributes?.label.trim().toLowerCase()
+      );
+      console.log(
+        "decimal value",
+        parseFloat(filteredAttributes?.values[0]?.value!)
+      );
+    }
+  }, [data]);
+
+  // useEffect(() => {
+  //   if (data) {
+  //     const wbsData = data.groups.filter((group) =>
+  //       group.name.toLowerCase().includes("work breakdown structure")
+  //     );
+
+  //     const filteredAttributes = data.groups.find((group) =>
+  //       group.name?.toLowerCase().includes("progress analysis")
+  //     )?.attributes[5];
+  //   }
+  // }, [data]);
+
+  const [showAllWbs, setShowAllWbs] = useState(false);
   return (
     <div
       className={`container-fluid p-1 mb-4 ${lexend.className}`}
@@ -410,26 +454,26 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                     ?.attributes.filter(
                       (attribute) =>
                         attribute.hidden === 0 &&
-                        attribute.label.toLowerCase() !==
-                          "financial progress" &&
-                        attribute.label.toLowerCase() !==
-                          "achieved progress vs financial progress"
+                        [
+                          PLANNED_PHYSICAL_PROGRESS,
+                          ACTUAL_PHYSICAL_PROGRESS,
+                          PLANNED_VS_ACTUAL_PHYSICAL_PROGRESS,
+                        ].includes(attribute.label.toLowerCase())
                     )
                     .map((attribute: any) => (
                       <Menu
+                        showValueInDecimal={true}
                         key={attribute.attributeId}
                         outline="1px solid rgba(232, 192, 15, 0.4)"
                         background="rgba(12, 140, 233,.5)"
                         // icon="/icons/archery.svg"
-                        value={Math.round(
-                          parseFloat(attribute.values[0]?.value)
-                        )}
+                        value={parseFloat(attribute.values[0]?.value)}
                         label={
                           attribute.label.toLowerCase() ===
-                          "physical progress vs planned progress"
+                          PLANNED_VS_ACTUAL_PHYSICAL_PROGRESS
                             ? parseFloat(attribute.values[0]?.value) <= 0
-                              ? "Lag in Physical Progress"
-                              : "Lead in Physical Progress"
+                              ? "Lead in Physical Progress"
+                              : "Lag in Physical Progress"
                             : attribute.label
                         }
                         showTides={true}
@@ -447,23 +491,22 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                     ?.attributes.filter(
                       (attribute) =>
                         attribute.hidden === 0 &&
-                        attribute.label.toLowerCase() !== "planned progress" &&
-                        attribute.label.toLowerCase() !== "achieved progress" &&
-                        attribute.label.toLowerCase() !==
-                          "physical progress vs planned progress"
+                        [
+                          ACTUAL_FINANCIAL_PROGRESS,
+                          ACTUAL_PHYSICAL_VS_ACTUAL_FINANCIAL_PROGRESS,
+                        ].includes(attribute.label.toLowerCase())
                     )
                     .map((attribute) => (
                       <Menu
+                        showValueInDecimal={true}
                         key={attribute.attributeId}
                         outline="1px solid rgba(232, 192, 15, 0.4)"
                         background="rgba(240, 175, 25,1)"
                         // icon="/icons/archery.svg"
-                        value={Math.round(
-                          parseFloat(attribute.values[0]?.value)
-                        )}
+                        value={parseFloat(attribute.values[0]?.value)}
                         label={
                           attribute.label.toLowerCase() ===
-                          "achieved progress vs financial progress"
+                          ACTUAL_PHYSICAL_VS_ACTUAL_FINANCIAL_PROGRESS
                             ? parseFloat(attribute.values[0]?.value) <= 0
                               ? "Lag in Financial Progress"
                               : "Lead in Financial Progress"
@@ -491,8 +534,8 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                         </div>
                         <div className="col ps-1">
                           {physicalVsPlanned && physicalVsPlanned <= 0
-                            ? "Lag in Achieved Physical Progress V/S Planned Physical Progress"
-                            : "Ahead in Achieved Physical Progress V/S Planned Physical Progress"}
+                            ? "Lag in Planned Physical Progress V/S Achieved Physical Progress"
+                            : "Behind in Planned Physical Progress V/S Achieved Physical Progress"}
                         </div>
                       </div>
                     </li>
@@ -735,7 +778,52 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
               )}
             </div>
           </div>
-          {data.groups && (
+          <div className="col">
+            {data.groups && (
+              <WBSSummary
+                progressAnalysis={
+                  data.groups &&
+                  data.groups.find((group) =>
+                    group.name.toLowerCase().includes("progress analysis")
+                  )!
+                }
+                majorDeliverables={
+                  data.groups &&
+                  data.groups.filter((group) =>
+                    group.name
+                      .toLowerCase()
+                      .includes("work breakdown structure")
+                  )[0]
+                }
+              />
+            )}
+          </div>
+          <div className="text-end p-3 pt-5">
+            <Button
+              className="btn btn-info fs-3"
+              onClick={() => setShowAllWbs(!showAllWbs)}
+            >
+              {showAllWbs ? "Hide All WBS" : "Show All WBS"}
+            </Button>
+          </div>
+          {showAllWbs && (
+            <div className="col">
+              {data.groups &&
+                data.groups
+                  .filter((group) =>
+                    group.name
+                      .toLowerCase()
+                      .includes("work breakdown structure")
+                  )
+                  .map((group) => (
+                    <WBSReportUpdated
+                      key={group.id}
+                      majorDeliverables={group}
+                    />
+                  ))}
+            </div>
+          )}
+          {/* {data.groups && (
             <WBSReportUpdated
               majorDeliverables={
                 data.groups.find((group) =>
@@ -743,7 +831,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                 )!
               }
             />
-          )}
+          )} */}
           <VehicleTracking data={data.vehicalTrackings} />
           <div
             className="row mb-3"

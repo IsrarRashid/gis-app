@@ -21,6 +21,7 @@ export default function Home() {
   const handleButtonClick = (content: string) => {
     dispatch(setContent(content));
   };
+
   const router = useRouter();
   const [role, setRole] = useState("");
 

@@ -15,7 +15,7 @@ import { getFormattedDate } from "@/app/utils";
 import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import Form from "./Form";
 import GroupingForm from "./GroupingForm";
 
@@ -55,8 +55,8 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   // Handle search logic
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     // const lowercasedFilter = searchTerm.toLowerCase();
-    const filtered = data.filter((item) =>
-      [item.id.toString(), item.name]
+    const filtered = [...(data || [])].reverse().filter((item) =>
+      [item.id.toString(), item.name, item.parentName]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
         .some((field) => field.includes(e.target.value.toLowerCase()))
@@ -150,10 +150,9 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   };
 
   // Paginate data to display only the current page's rows
-  const paginatedData = (searchTerm ? filteredData : data).slice(
-    (currentPage - 1) * rows,
-    currentPage * rows
-  );
+  const paginatedData = (
+    searchTerm ? filteredData : [...(data || [])].reverse()
+  ).slice((currentPage - 1) * rows, currentPage * rows);
 
   const handleFirstPage = () => {
     setCurrentPage(1);
@@ -261,8 +260,8 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 handleSort={() => handleSort("description")}
               />
               <TableHeading
-                name="parent sector"
-                handleSort={() => handleSort("parentId")}
+                name="parent name"
+                handleSort={() => handleSort("parentName")}
               />
               <TableHeading
                 name="sort id"
@@ -296,7 +295,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 <td>{d.id}</td>
                 <td>{d.name}</td>
                 <td>{d.description}</td>
-                <td>{getParentSector(d.parentId, data)}</td>
+                <td>{d.parentName}</td>
                 <td>{d.sortId}</td>
                 <td>
                   {d.createdAt &&
@@ -334,7 +333,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
-        <ToastContainer />
       </div>
     </>
   );

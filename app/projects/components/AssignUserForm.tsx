@@ -8,7 +8,7 @@ import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import Select, { ActionMeta, MultiValue } from "react-select";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import user3Black from "../../../public/icons/user3Black.svg";
 import { UserOption } from "./ProjectsList";
 
@@ -191,7 +191,6 @@ const AssignUserForm = ({ id, options }: Props) => {
             </div>
           </Modal.Body>
         </Modal>
-        <ToastContainer />
       </div>
     </>
   );

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import Select, { ActionMeta, SingleValue } from "react-select";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import rolesBlack from "../../../public/icons/rolesBlack.svg";
 import { Option } from "./List";
 interface Props {
@@ -194,7 +194,6 @@ const GroupingForm = ({ id, options, userName }: Props) => {
             </div>
           </Modal.Body>
         </Modal>
-        <ToastContainer />
       </div>
     </>
   );

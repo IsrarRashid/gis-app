@@ -90,10 +90,11 @@ const SectorForm = ({
       const response = await apiClient({
         method: method,
         url: method === "POST" ? api : `${api}/${id}`,
-        data: formData,
+        data: modifiedFormData,
       });
       console.log("Response:", response);
-      setData((prevData) => [...prevData, response.data.data]);
+      setRefresh((prev) => !prev);
+      // setData((prevData) => [...prevData, response.data.data]);
       toast.success(method === "POST" ? createdMessage : updatedMessage);
       handleClose();
     } catch (err) {

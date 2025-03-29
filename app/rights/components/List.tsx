@@ -11,7 +11,7 @@ import { getFormattedDate } from "@/app/utils";
 import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import Form from "./Form";
 
 const dmSans = DM_Sans({
@@ -205,7 +205,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
-        <ToastContainer />
       </div>
     </>
   );

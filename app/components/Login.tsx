@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useDispatch } from "react-redux";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import eye from "../../public/icons/eye.svg";
 import logoNew from "../../public/icons/logoNew.svg";
 import passwordGrey from "../../public/icons/passwordGrey.svg";
@@ -285,7 +285,6 @@ const Login = () => {
             </form>
           </div>
         </div>
-        <ToastContainer />
       </div>
     </>
   );

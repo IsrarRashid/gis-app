@@ -38,6 +38,6 @@ export const tourPlanAPI = `/api/TourPlan`;
 export const visitNewAPI = `/api/ProjectUserAssigning/GetNewAssignedProjects`;
 export const feedbackAPI = `/api/FeedBack`;
 export const reportsHistoryAPI = `/api/ReportsHistory`;
-// Attendance Dashboard API
 export const dashboardAttendanceAPI = `/Dashboard`;
 export const staffAttendanceAPI = `/api/StaffAttendance`;
+export const generateReportPPTAPI = `/api/ReportGenerate/GeneratePowerPoint`;

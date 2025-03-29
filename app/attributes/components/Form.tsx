@@ -6,7 +6,7 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import more from "../../../public/icons/more.svg";
 
 interface Form {
@@ -1065,7 +1065,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             </div>
           </div>
         </Modal.Body>
-        <ToastContainer />
       </Modal>
     </>
   );

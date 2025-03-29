@@ -1,32 +1,19 @@
 "use client";
-import totalEmployees from "@/public/images/attendance/totalEmployees.svg";
-import persent from "@/public/images/attendance/present.svg";
-import lateArival from "@/public/images/attendance/lateArival.svg";
-import onLeave from "@/public/images/attendance/onLeave.svg";
-import onVisit from "@/public/images/attendance/onVisit.svg";
-import others from "@/public/images/attendance/others.svg";
-import absent from "@/public/images/attendance/absent.svg";
-import leftEarly from "@/public/images/attendance/leftEarly.svg";
-import wave1Blue from "@/public/images/attendance/wave1Blue.png";
-import wave2Blue from "@/public/images/attendance/wave2Blue.png";
-import { motion } from "framer-motion";
-import Image from "next/image";
-// import "./Dashboard.css";
-import { HiUsers } from "react-icons/hi";
+import { dashboardAttendanceAPI } from "@/app/APIs";
+import Loader from "@/app/components/Loader";
+import apiClient from "@/app/services/api-client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { BsFileEarmarkCheckFill } from "react-icons/bs";
 import { FaCompass } from "react-icons/fa";
 import {
   FaPersonWalkingDashedLineArrowRight,
   FaUserXmark,
 } from "react-icons/fa6";
+import { HiUsers } from "react-icons/hi";
 import { TbFileArrowRight, TbWorldSearch } from "react-icons/tb";
 import { TfiMoreAlt } from "react-icons/tfi";
-import { dashboardAttendanceAPI } from "@/app/APIs";
-import Link from "next/link";
 import WaveAnimation from "../WaveAnimation";
-import { ReactNode, useEffect, useState } from "react";
-import apiClient from "@/app/services/api-client";
-import Loader from "@/app/components/Loader";
 import styles from "./AttendanceHome.module.css";
 
 interface DashboardAttendance {

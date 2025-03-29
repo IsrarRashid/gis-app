@@ -4,9 +4,9 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "110.39.184.210",
-        port: "154",
-        pathname: "/upload/**",
+        hostname: "103.111.161.112",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
@@ -25,6 +25,14 @@ const nextConfig = {
     });
 
     return config;
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [{ key: "referrer-policy", value: "no-referrer" }],
+      },
+    ];
   },
 };
 

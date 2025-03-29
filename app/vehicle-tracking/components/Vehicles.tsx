@@ -32,7 +32,7 @@ const Vehicles = () => {
   const [data, setData] = useState<AvailableVehicles[]>();
   const [filteredData, setFilteredData] = useState<AvailableVehicles[]>();
   const [refresh, setRefresh] = useState(false);
-  const { data: vehicles } = useVehicle({ refresh });
+  // const { data: vehicles } = useVehicle({ refresh });
 
   const items2 = [
     {

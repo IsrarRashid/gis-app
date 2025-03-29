@@ -1,4 +1,11 @@
-import AttendanceHome from "./components/AttendanceHome/AttendanceHome";
+import dynamic from "next/dynamic";
+
+const AttendanceHome = dynamic(
+  () => import("./components/AttendanceHome/AttendanceHome"),
+  {
+    ssr: false,
+  }
+);
 
 const DashboardAttendancePage = () => {
   return (

@@ -192,7 +192,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         className="form-select form-select-sm color-light-dark"
                       >
                         <option value="0">None</option>
-                        {data?.map((d) => (
+                        {[...(data || [])].reverse().map((d) => (
                           <option key={d.id} value={d.id}>
                             {d.name}
                           </option>

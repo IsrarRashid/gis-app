@@ -87,6 +87,7 @@ const VisitsPlan = ({
   return (
     <>
       <CustomModal
+        HeaderTopPos={0}
         size="xl"
         modalId="visitsPlan"
         button={
@@ -177,7 +178,7 @@ const VisitsPlan = ({
                             <tr className="fs14px">
                               <th className="border-0">&nbsp;</th>
                               <th
-                                colSpan={2}
+                                colSpan={3}
                                 className="text-center border-0 fw-normal"
                               >
                                 <div className="border">&nbsp;</div>
@@ -210,19 +211,22 @@ const VisitsPlan = ({
                                 </div>
                               </td>
                               <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
+                                Total
+                              </td>
+                              <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
                                 Completed
                               </td>
                               <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
-                                Pending
+                                Scheduled
                               </td>
-                              <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
+                              <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold text-nowrap">
                                 On-Time
                               </td>
                               <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
                                 Late
                               </td>
                               <td className="bg-color-sea-blue border-0 text-white rounded-pill rounded-start text-center fs18px fw-bold">
-                                Reports Generated
+                                Reports Issued
                               </td>
                             </tr>
                           </thead>
@@ -243,6 +247,8 @@ const VisitsPlan = ({
                                     }}
                                   >
                                     <CustomModal
+                                      HeaderTopPos={0}
+                                      HeaderRightPos={10}
                                       isFullscreen={true}
                                       size="xl"
                                       modalId={`${j}"Projects"`}
@@ -295,6 +301,16 @@ const VisitsPlan = ({
                                                 searchTermDefault={
                                                   visit.officerName
                                                 }
+                                                // defaultFilters={{
+                                                //   districtName: "",
+                                                //   sectorName: "",
+                                                //   userName: visit.officerName,
+                                                //   startDate:
+                                                //     d.nameOfVisit.split(" ")[2], // Start date for  range
+                                                //   endDate:
+                                                //     d.nameOfVisit.split(" ")[4], // End date for  range
+                                                //   reportSubmitted: "",
+                                                // }}
                                               />
                                             ) : (
                                               <Loader />
@@ -303,6 +319,22 @@ const VisitsPlan = ({
                                         </>
                                       }
                                     />
+                                  </div>
+                                </td>
+                                <td
+                                  style={{
+                                    // background: "rgba(241, 241, 241, 0.88)",
+                                    color: "#414651",
+                                  }}
+                                  className="border-0 text-center fs14px fw-normal px-0 py-1"
+                                >
+                                  <div
+                                    style={{
+                                      background: "rgba(241, 241, 241, 0.88)",
+                                      padding: "10px 0px 19px 0px",
+                                    }}
+                                  >
+                                    {visit.totalVisits}
                                   </div>
                                 </td>
                                 <td

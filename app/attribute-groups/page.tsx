@@ -1,4 +1,8 @@
-import AttributeGroups from "./components/AttributeGroups";
+import dynamic from "next/dynamic";
+
+const AttributeGroups = dynamic(() => import("./components/AttributeGroups"), {
+  ssr: false,
+});
 
 const AttributeGroupsPage = () => {
   return (
