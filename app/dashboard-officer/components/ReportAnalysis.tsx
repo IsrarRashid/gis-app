@@ -1,8 +1,4 @@
-import {
-  generateReportPPTAPI,
-  mainDashboardAPI,
-  staffTrackingAPI,
-} from "@/app/APIs";
+import { mainDashboardAPI, staffTrackingAPI } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import Spinner from "@/app/components/Spinner";
 import useAuthentication from "@/app/hooks/useAuthentication";
@@ -24,7 +20,6 @@ import { data, tabs } from "./reportAnalysisData";
 import * as XLSX from "xlsx";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import { downloadReportAnalysisToExcel } from "@/app/utils";
-import CustomModal from "@/app/components/CustomModal";
 import PPTSlideGenerator from "./PPTSlideGenerator";
 import TimeSpentOnProjectSiteFilterMenu from "./TimeSpentOnProjectSiteFilterMenu";
 
@@ -355,8 +350,8 @@ const ReportAnalysis = () => {
 
   const exportTimeSpentonProjectSiteToExcel = () => {
     // Prepare data for export
-    if (filteredData) {
-      const data = filteredData.map((project, i) => {
+    if (projectsData) {
+      const data = projectsData.map((project, i) => {
         const visitData = latLngsOfVisits.find(
           (visit) => visit?.visit?.visitID === project.visitId
         );

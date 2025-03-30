@@ -76,6 +76,7 @@ export interface MainDashboard {
   unapproved: number;
   dropped: number;
   umbralla: number;
+  single: number;
   utilization20t080: number;
   a0to200: number;
   a200to400: number;
@@ -1573,6 +1574,88 @@ const Dashboard = () => {
                   </>
                 }
               />
+              <div className="row m-0" style={{ gap: 10 }}>
+                <CustomModal
+                  isFullscreen={true}
+                  size="xl"
+                  modalId="Umbrella"
+                  button={
+                    <Button
+                      onClick={() => getProjectsList("umbralla")}
+                      className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
+                      style={{ background: "rgba(235, 239, 253, 1)" }}
+                    >
+                      <div className="row d-flex m-0">
+                        <div className="col fw-5 text-start">Umbrella</div>
+                        <div className="col fw-normal text-end pe-3 text-secondary">
+                          {data ? (
+                            <AnimatedCounter from={0} to={data.umbralla} />
+                          ) : (
+                            0
+                          )}
+                        </div>
+                      </div>
+                    </Button>
+                  }
+                  body={
+                    <>
+                      <div className="container-fluid border-0 p-1">
+                        {projectsData && filteredCMADPKeys ? (
+                          <ProjectsTable
+                            keys={filteredCMADPKeys}
+                            label="Umbrella Projects"
+                            projectsData={projectsData}
+                            setProjectsData={setProjectsData}
+                            allowLink={false}
+                          />
+                        ) : (
+                          <Loader />
+                        )}
+                      </div>
+                    </>
+                  }
+                />
+                <CustomModal
+                  isFullscreen={true}
+                  size="xl"
+                  modalId="single"
+                  button={
+                    <Button
+                      onClick={() => getProjectsList("single")}
+                      className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
+                      style={{ background: "rgba(235, 239, 253, 1)" }}
+                    >
+                      <div className="row d-flex m-0">
+                        <div className="col fw-5 text-start">Single</div>
+                        <div className="col fw-normal text-end pe-3 text-secondary">
+                          {data ? (
+                            <AnimatedCounter from={0} to={data.single} />
+                          ) : (
+                            0
+                          )}
+                        </div>
+                      </div>
+                    </Button>
+                  }
+                  body={
+                    <>
+                      <div className="container-fluid border-0 p-1">
+                        {projectsData && filteredCMADPKeys ? (
+                          <ProjectsTable
+                            keys={filteredCMADPKeys}
+                            label="Single Projects"
+                            projectsData={projectsData}
+                            setProjectsData={setProjectsData}
+                            allowLink={false}
+                          />
+                        ) : (
+                          <Loader />
+                        )}
+                      </div>
+                    </>
+                  }
+                />
+              </div>
             </div>
 
             <div

@@ -23,9 +23,6 @@ const Navbar = () => {
   const router = useRouter();
   const [role, setRole] = useState<string>();
 
-  const currentContent = useSelector(
-    (state: RootState) => state.content.currentContent
-  );
   const currentTutorial = useSelector(
     (state: RootState) => state.tutorial.currentTutorial
   );
@@ -82,9 +79,10 @@ const Navbar = () => {
       <div className="container-fluid">
         <Link className="navbar-brand" href="/">
           <Image
-            src="/icons/logoNew.svg"
+            src="/images/logoNew.png"
             className="img-fluid object-contain"
             alt="logoNew"
+            style={{ filter: "drop-shadow(0px 0px .75px green)" }}
             width={64}
             height={64}
           />

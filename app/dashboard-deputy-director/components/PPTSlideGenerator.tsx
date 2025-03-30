@@ -1,6 +1,6 @@
 "use client";
 
-import { generateReportPPTAPI } from "@/app/APIs";
+import { generateReportAPI } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import Spinner from "@/app/components/Spinner";
@@ -8,7 +8,7 @@ import apiClient, {
   AxiosError,
   ErrorResponse,
 } from "@/app/services/api-client";
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const PPTSlideGenerator = () => {
@@ -17,17 +17,78 @@ const PPTSlideGenerator = () => {
   const [slidePath, setSlidePath] = useState<string>("");
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [isSubmitted, setSubmitted] = useState<boolean>(false);
+  const [priority, setPriority] = useState<number[]>([]);
+  const [sectorNames, setSectorNames] = useState<string[]>([]);
+  const [sectors, setSectors] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
+
+  const handlePriorityChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+
+    setPriority((prev) =>
+      e.target.checked ? [...prev, value] : prev.filter((v) => v !== value)
+    );
+  };
+
+  const handleSectorChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    setSectors((prev) => {
+      const updatedSectors = e.target.checked
+        ? [...prev, value] // Add sector
+        : prev.filter((v) => v !== value); // Remove sector
+
+      setSelectAll(updatedSectors.length === sectorNames.length); // Update "Select All" state
+      return updatedSectors;
+    });
+  };
+
+  const handleSelectAllChange = () => {
+    if (selectAll) {
+      setSectors([]); // Unselect all
+    } else {
+      setSectors([...sectorNames]); // Select all
+    }
+    setSelectAll(!selectAll); // Toggle state
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("fromDate", new Date(fromDate).toLocaleDateString("en-US"));
-    console.log("toDate", new Date(toDate).toLocaleDateString("en-US"));
+
+    if (priority.length <= 0) {
+      toast.error("Please Select Atleast one Priority!");
+      return;
+    }
+    if (fromDate.length <= 0) {
+      toast.error("Please select 'From Date'!");
+      return;
+    }
+    if (toDate.length <= 0) {
+      toast.error("Please select 'To Date'!");
+      return;
+    }
+    if (sectors.length <= 0) {
+      toast.error("Please select Atleast one Sector!");
+      return;
+    }
+    console.log("fromDate", new Date(fromDate).toISOString().split("T")[0]);
+    console.log("toDate", new Date(toDate).toISOString().split("T")[0]);
+    console.log("response object", {
+      priority,
+      toDate: new Date(toDate).toISOString().split("T")[0],
+      fromDate: new Date(fromDate).toISOString().split("T")[0],
+      sector: sectors,
+    });
     try {
       setSubmitting(true);
       const response = await apiClient.post(
-        `${generateReportPPTAPI}?from=${new Date(fromDate).toLocaleDateString(
-          "en-US"
-        )}&to=${new Date(toDate).toLocaleDateString("en-US")}`
+        `${generateReportAPI}/GeneratePowerPoint`,
+        {
+          pirority: priority,
+          to: new Date(toDate).toISOString().split("T")[0],
+          from: new Date(fromDate).toISOString().split("T")[0],
+          sector: sectors,
+        }
       );
 
       console.log(response);
@@ -46,6 +107,48 @@ const PPTSlideGenerator = () => {
     }
   };
 
+  const getSectors = async () => {
+    if (priority.length <= 0) {
+      toast.info("Please Select Atleast one Priority!");
+      return;
+    }
+    if (fromDate.length <= 0) {
+      toast.info("Please select 'From Date'!");
+      return;
+    }
+    if (toDate.length <= 0) {
+      toast.info("Please select 'To Date'!");
+      return;
+    }
+    try {
+      const response = await apiClient.post(
+        `${generateReportAPI}/GetSectorAsync`,
+        {
+          pirority: priority,
+          to: new Date(toDate).toISOString().split("T")[0],
+          from: new Date(fromDate).toISOString().split("T")[0],
+          sector: [],
+        }
+      );
+
+      console.log(response);
+      setSectorNames(response.data.data);
+      toast.success("Sectors Obtained Successfully");
+    } catch (err) {
+      setSectorNames([]);
+      console.error("Submission error:", err);
+      toast.error(
+        (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
+          (err as AxiosError<ErrorResponse>).message
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (priority.length > 0 || fromDate.length > 0 || toDate.length > 0)
+      getSectors();
+  }, [priority, fromDate, toDate]);
+
   useEffect(() => {
     if (isSubmitting) setSubmitting(false);
   }, [isSubmitted]);
@@ -62,9 +165,18 @@ const PPTSlideGenerator = () => {
       HeaderRightPos={0}
       size="lg"
       modalId="ppt-modal"
-      buttonColumn="col-auto"
       button={
         <Button
+          onClick={() => {
+            setFromDate("");
+            setToDate("");
+            setSlidePath("");
+            setSubmitting(false);
+            setSubmitted(false);
+            setPriority([]);
+            setSectorNames([]);
+            setSectors([]);
+          }}
           className={`btn col-auto py-2 shadow-none mb-2 me-2 text-light`}
           style={{
             background: `#fcb103`,
@@ -80,6 +192,55 @@ const PPTSlideGenerator = () => {
       body={
         <div className="bg-white rounded-3 p-4">
           <h3 className="fw-bold text-center">Generate PPT Slide</h3>
+          <div className="col">
+            <div className="d-flex m-0">
+              <div className="col p-2">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    value="0"
+                    onChange={handlePriorityChange}
+                    checked={priority.includes(0)}
+                    id="averageCheck"
+                  />
+                  <label className="form-check-label" htmlFor="averageCheck">
+                    Average
+                  </label>
+                </div>
+              </div>
+              <div className="col p-2">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    value="1"
+                    onChange={handlePriorityChange}
+                    checked={priority.includes(1)}
+                    id="mediumCheck"
+                  />
+                  <label className="form-check-label" htmlFor="mediumCheck">
+                    Medium
+                  </label>
+                </div>
+              </div>
+              <div className="col p-2">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    value="2"
+                    onChange={handlePriorityChange}
+                    checked={priority.includes(2)}
+                    id="criticalCheck"
+                  />
+                  <label className="form-check-label" htmlFor="criticalCheck">
+                    Critical
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
           <form onSubmit={handleSubmit}>
             <div className="d-flex">
               <div className="col mb-3 p-2">
@@ -108,14 +269,76 @@ const PPTSlideGenerator = () => {
                 />
               </div>
             </div>
-            <div className="text-center">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="btn btn-primary"
-              >
-                Generate {isSubmitting && <Spinner />}
-              </button>
+            {priority.length > 0 && sectorNames.length > 0 && (
+              <div className="col">
+                <div className="row justify-content-between m-0">
+                  <div className="col-auto">
+                    <h3 className="fw-bold m-0">Sectors</h3>
+                  </div>
+                  <div className="col-auto">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        onChange={handleSelectAllChange}
+                        checked={selectAll}
+                        id="select-all"
+                      />
+                      <label className="form-check-label" htmlFor="select-all">
+                        Select All
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div className="d-flex flex-wrap m-0">
+                  {sectorNames?.map((sector, i) => (
+                    <div key={i} className="col-auto p-2">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value={sector}
+                          onChange={handleSectorChange}
+                          checked={sectors.includes(sector)}
+                          id={sector}
+                        />
+                        <label className="form-check-label" htmlFor={sector}>
+                          {sector}
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="row m-0 justify-content-center">
+              <div className="col-auto">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn bg-color-sea-blue text-white"
+                >
+                  Generate {isSubmitting && <Spinner />}
+                </Button>
+              </div>
+              <div className="col-auto">
+                <Button
+                  type="button"
+                  className="btn btn-warning text-white"
+                  onClick={() => {
+                    setFromDate("");
+                    setToDate("");
+                    setSlidePath("");
+                    setSubmitting(false);
+                    setSubmitted(false);
+                    setPriority([]);
+                    setSectorNames([]);
+                    setSectors([]);
+                  }}
+                >
+                  Reset
+                </Button>
+              </div>
             </div>
           </form>
         </div>

@@ -61,6 +61,7 @@ const DistrictCard = ({ data }: Props) => {
           <ProgressBar
             variant="success"
             now={data.good}
+            max={1}
             key={1}
             label={`Good`}
             className="bg-white text-dark"
@@ -68,6 +69,7 @@ const DistrictCard = ({ data }: Props) => {
           <ProgressBar
             variant="warning"
             now={data.average}
+            max={1}
             key={2}
             label={`Average`}
             className="bg-white text-dark"
@@ -75,6 +77,7 @@ const DistrictCard = ({ data }: Props) => {
           <ProgressBar
             variant="danger"
             now={data.crtical}
+            max={1}
             key={3}
             label={`Critical`}
             className="bg-white text-dark"
@@ -85,6 +88,7 @@ const DistrictCard = ({ data }: Props) => {
           <ProgressBar
             variant="success"
             now={data.good}
+            max={1}
             key={4}
             className="rounded-pill"
             label={`${data.good}`}
@@ -95,6 +99,7 @@ const DistrictCard = ({ data }: Props) => {
           <ProgressBar
             variant="warning"
             now={data.average}
+            max={1}
             key={5}
             className="rounded-pill"
             label={`${data.average}`}
@@ -105,6 +110,7 @@ const DistrictCard = ({ data }: Props) => {
           <ProgressBar
             variant="danger"
             now={data.crtical}
+            max={1}
             key={6}
             className="rounded-pill"
             label={`${data.crtical}`}

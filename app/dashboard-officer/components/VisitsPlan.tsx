@@ -87,7 +87,6 @@ const VisitsPlan = ({
   return (
     <>
       <CustomModal
-        HeaderTopPos={0}
         size="xl"
         modalId="visitsPlan"
         button={
@@ -177,8 +176,9 @@ const VisitsPlan = ({
                           <thead>
                             <tr className="fs14px">
                               <th className="border-0">&nbsp;</th>
+                              <th className="border-0">&nbsp;</th>
                               <th
-                                colSpan={3}
+                                colSpan={2}
                                 className="text-center border-0 fw-normal"
                               >
                                 <div className="border">&nbsp;</div>
@@ -189,13 +189,13 @@ const VisitsPlan = ({
                                 </div>
                               </th>
                               <th
-                                colSpan={2}
+                                colSpan={4}
                                 className="text-center border-0 fw-normal"
                               >
                                 <div className="border">&nbsp;</div>
                                 <div style={{ marginTop: "-34px" }}>
                                   <span className="bg-white fw-bold">
-                                    Reports Submitted
+                                    Reports
                                   </span>
                                 </div>
                               </th>
@@ -214,10 +214,13 @@ const VisitsPlan = ({
                                 Total
                               </td>
                               <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
+                                Scheduled
+                              </td>
+                              <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
                                 Completed
                               </td>
                               <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
-                                Scheduled
+                                Submitted
                               </td>
                               <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold text-nowrap">
                                 On-Time
@@ -225,7 +228,7 @@ const VisitsPlan = ({
                               <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
                                 Late
                               </td>
-                              <td className="bg-color-sea-blue border-0 text-white rounded-pill rounded-start text-center fs18px fw-bold">
+                              <td className="bg-color-sea-blue border-0 text-white rounded-pill rounded-start text-nowrap text-center fs18px fw-bold">
                                 Reports Issued
                               </td>
                             </tr>
@@ -247,8 +250,7 @@ const VisitsPlan = ({
                                     }}
                                   >
                                     <CustomModal
-                                      HeaderTopPos={0}
-                                      HeaderRightPos={10}
+                                      HeaderTopPos={100}
                                       isFullscreen={true}
                                       size="xl"
                                       modalId={`${j}"Projects"`}
@@ -270,6 +272,7 @@ const VisitsPlan = ({
                                               "short"
                                             )!
                                           )}
+                                          <br />
                                           To:
                                           {addDayToFormattedDate(
                                             getFormattedDate(
@@ -301,16 +304,6 @@ const VisitsPlan = ({
                                                 searchTermDefault={
                                                   visit.officerName
                                                 }
-                                                // defaultFilters={{
-                                                //   districtName: "",
-                                                //   sectorName: "",
-                                                //   userName: visit.officerName,
-                                                //   startDate:
-                                                //     d.nameOfVisit.split(" ")[2], // Start date for  range
-                                                //   endDate:
-                                                //     d.nameOfVisit.split(" ")[4], // End date for  range
-                                                //   reportSubmitted: "",
-                                                // }}
                                               />
                                             ) : (
                                               <Loader />
@@ -350,6 +343,22 @@ const VisitsPlan = ({
                                       padding: "10px 0px 19px 0px",
                                     }}
                                   >
+                                    {visit.pendingVisits}
+                                  </div>
+                                </td>
+                                <td
+                                  style={{
+                                    // background: "rgba(241, 241, 241, 0.88)",
+                                    color: "#414651",
+                                  }}
+                                  className="border-0 text-center fs14px fw-normal px-0 py-1"
+                                >
+                                  <div
+                                    style={{
+                                      background: "rgba(241, 241, 241, 0.88)",
+                                      padding: "10px 0px 19px 0px",
+                                    }}
+                                  >
                                     {visit.completeVisits}
                                   </div>
                                 </td>
@@ -366,7 +375,7 @@ const VisitsPlan = ({
                                       padding: "10px 0px 19px 0px",
                                     }}
                                   >
-                                    {visit.pendingVisits}
+                                    pending
                                   </div>
                                 </td>
                                 <td
