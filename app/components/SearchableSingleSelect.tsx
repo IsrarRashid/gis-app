@@ -23,10 +23,14 @@ const SearchableSingleSelect = ({
   name,
   onChange,
 }: Props) => {
-  const options: Option[] = data.map((d: any) => ({
-    value: d[value],
-    label: d[label],
-  }));
+  const defaultOption = { value: "", label: "Select" };
+  const options: Option[] = [
+    defaultOption,
+    ...data.map((d: any) => ({
+      value: d[value],
+      label: d[label],
+    })),
+  ];
 
   return (
     <Select
@@ -35,6 +39,7 @@ const SearchableSingleSelect = ({
       defaultValue={options[0]}
       isSearchable={true}
       name={name}
+      isClearable={true}
       options={options}
       onChange={onChange}
     />
