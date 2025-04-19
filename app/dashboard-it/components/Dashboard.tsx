@@ -359,9 +359,7 @@ const Dashboard = () => {
     >
       <>
         {isLoading && <Loader />}
-        <div
-          className={`row d-flex justify-content-between ${lexend.className} ps-2 flex-wrap m-0`}
-        >
+        <div className={`row ${lexend.className} ps-2 m-0`}>
           <>
             <CustomModal
               isFullscreen={true}

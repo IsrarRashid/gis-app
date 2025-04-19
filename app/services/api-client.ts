@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 const token = Cookies.get("token");
 
 export interface ErrorResponse {
+  responseCode: number;
   responseMessage: string;
 }
 

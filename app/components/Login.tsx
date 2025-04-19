@@ -3,7 +3,6 @@ import Cookies from "js-cookie";
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import eye from "../../public/icons/eye.svg";
 import logoNew from "../../public/icons/logoNew.svg";
@@ -12,8 +11,20 @@ import userGrey from "../../public/icons/userGrey.svg";
 import verticalLineGrey from "../../public/icons/verticalLineGrey.svg";
 import bgVideoNew from "../../public/video/bgVideoNew.mp4";
 import { loginAPI } from "../APIs";
-import apiClient, { AxiosError } from "../services/api-client";
+import apiClient, { AxiosError, ErrorResponse } from "../services/api-client";
 import Button from "./Button";
+import Spinner from "./Spinner";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import ErrorMessage from "./ErrorMessage";
+
+const schema = z.object({
+  username: z.string().min(1, { message: "Please add Username!" }),
+  password: z.string().min(1, { message: "Please add Password!" }),
+});
+
+export type Login = z.infer<typeof schema>; // this interface is for form data
 
 export interface UserData {
   id: number;
@@ -22,6 +33,8 @@ export interface UserData {
 }
 
 interface Props {
+  responseCode: number;
+  responseMessage: string;
   data: {
     token: string;
     expiration: string;
@@ -33,12 +46,14 @@ interface Props {
 
 const Login = () => {
   // const [userName, setUserName] = useState("super_admin");
-  // const [password, setPassword] = useState("Dgme@786");
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
+  // const [password, setPassword] = useState("Rtmes@1122");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Login>({ resolver: zodResolver(schema) });
   const [buttonType, setButtonType] = useState(true);
-
-  const dispatch = useDispatch();
+  const [isSubmitting, setSubmitting] = useState(false);
 
   const createdMessage = "Logged In Successfully!";
   const errorMessage = "Username or Password is not Correct!";
@@ -46,63 +61,73 @@ const Login = () => {
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
 
-  const handleSumbit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = async (formData: Login) => {
+    console.log("Form Data:", formData);
     try {
-      const response = await apiClient.post<Props>(loginAPI, {
-        userName,
-        password,
-      });
-      console.log("user logged in successfully", response);
-      // console.log("token: ", response.data.data.token);
-      // const expires = new Date(new Date().getTime() + 5 * 60 * 1000); // 5 minutes from now
-      if (Cookies.get("token")) Cookies.remove("token");
-      if (Cookies.get("email")) Cookies.remove("email");
-      if (Cookies.get("userName")) Cookies.remove("userName");
-      if (Cookies.get("userId")) Cookies.remove("userId");
-      if (Cookies.get("role")) Cookies.remove("role");
-      if (Cookies.get("rights")) Cookies.remove("rights");
+      setSubmitting(true);
+      const response = await apiClient.post<Props>(loginAPI, formData);
 
-      Cookies.set("token", response.data.data.token, {
-        expires: new Date(response.data.data.expiration),
-      });
-      Cookies.set("userName", response.data.data.userData.userName, {
-        expires: new Date(response.data.data.expiration),
-      });
-      Cookies.set("userId", response.data.data.userData.id.toString(), {
-        expires: new Date(response.data.data.expiration),
-      });
-      Cookies.set("email", response.data.data.userData.email, {
-        expires: new Date(response.data.data.expiration),
-      });
-      console.log("role", response.data.data.role);
-      if (response.data.data.role.length > 0) {
-        Cookies.set("role", response.data.data.role[0], {
+      if (response.data.responseCode === 200) {
+        console.log("responseCode", response.data.responseCode);
+        console.log("responseMessage", response.data.responseMessage);
+        console.log("user logged in successfully", response);
+        // console.log("token: ", response.data.data.token);
+        // const expires = new Date(new Date().getTime() + 5 * 60 * 1000); // 5 minutes from now
+        if (Cookies.get("token")) Cookies.remove("token");
+        if (Cookies.get("email")) Cookies.remove("email");
+        if (Cookies.get("userName")) Cookies.remove("userName");
+        if (Cookies.get("userId")) Cookies.remove("userId");
+        if (Cookies.get("role")) Cookies.remove("role");
+        if (Cookies.get("rights")) Cookies.remove("rights");
+
+        Cookies.set("token", response.data.data.token, {
           expires: new Date(response.data.data.expiration),
         });
-      }
-      console.log(
-        "rights",
-        response.data.data.rights.map((rights) => rights.rightName)
-      );
-      if (response.data.data.rights.length > 0) {
-        Cookies.set(
-          "rights",
-          JSON.stringify(
-            response.data.data.rights.map((rights) => rights.rightName)
-          ),
-          {
+        Cookies.set("userName", response.data.data.userData.userName, {
+          expires: new Date(response.data.data.expiration),
+        });
+        Cookies.set("userId", response.data.data.userData.id.toString(), {
+          expires: new Date(response.data.data.expiration),
+        });
+        Cookies.set("email", response.data.data.userData.email, {
+          expires: new Date(response.data.data.expiration),
+        });
+        console.log("role", response.data.data.role);
+        if (response.data.data.role.length > 0) {
+          Cookies.set("role", response.data.data.role[0], {
             expires: new Date(response.data.data.expiration),
-          }
+          });
+        }
+        console.log(
+          "rights",
+          response.data.data.rights.map((rights) => rights.rightName)
         );
-      }
+        if (response.data.data.rights.length > 0) {
+          Cookies.set(
+            "rights",
+            JSON.stringify(
+              response.data.data.rights.map((rights) => rights.rightName)
+            ),
+            {
+              expires: new Date(response.data.data.expiration),
+            }
+          );
+        }
 
-      // localStorage.setItem("token", response.data.data.token);
-      window.location.href = "/";
-      notifyCreate(createdMessage);
+        window.location.href = "/";
+        notifyCreate(createdMessage);
+      } else {
+        notifyError(response.data.responseMessage);
+      }
     } catch (err) {
-      console.log((err as AxiosError).message);
-      notifyError((err as AxiosError).message);
+      setSubmitting(false);
+      console.log(err);
+      notifyError(
+        (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
+          errorMessage
+      );
+    } finally {
+      setSubmitting(false); // Always run after try/catch
     }
   };
 
@@ -173,13 +198,13 @@ const Login = () => {
                 </h3>
               </div>
             </div>
-            <form onSubmit={handleSumbit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="row d-flex justify-content-center mb-3">
                 <div className="col-9">
                   <label htmlFor="username" className="form-label text-white">
                     User ID
                   </label>
-                  <div className="input-group mb-3">
+                  <div className="input-group mb-1">
                     <span
                       className="input-group-text pe-0 bg-white border-0"
                       id="basic-addon1"
@@ -201,13 +226,15 @@ const Login = () => {
                       />
                     </span>
                     <input
+                      {...register("username")}
                       type="text"
                       className="form-control border-0 bg-white"
                       id="username"
-                      value={userName}
-                      onChange={(e) => setUserName(e.target.value)}
                     />
                   </div>
+                  {errors.username && (
+                    <ErrorMessage>{errors.username.message}</ErrorMessage>
+                  )}
                 </div>
               </div>
               <div className="row d-flex justify-content-center">
@@ -215,7 +242,7 @@ const Login = () => {
                   <label htmlFor="password" className="form-label text-white">
                     Password
                   </label>
-                  <div className="input-group mb-3">
+                  <div className="input-group mb-1">
                     <span
                       className="input-group-text pe-0 bg-white border-0"
                       id="basic-addon1"
@@ -234,11 +261,10 @@ const Login = () => {
                       />
                     </span>
                     <input
+                      {...register("password")}
                       type={buttonType === true ? "password" : "text"}
                       className="form-control border-0"
                       id="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <span
                       className="input-group-text bg-white border-0"
@@ -253,6 +279,9 @@ const Login = () => {
                       </Button>
                     </span>
                   </div>
+                  {errors.password && (
+                    <ErrorMessage>{errors.password.message}</ErrorMessage>
+                  )}
                 </div>
               </div>
               <div className="row d-flex justify-content-center mb-4 ">
@@ -272,13 +301,17 @@ const Login = () => {
                     type="submit"
                     style={{
                       borderRadius: "6px",
-                      background:
-                        "linear-gradient(to right, #0C8CE9 , #13629B)",
+                      background: `${
+                        isSubmitting
+                          ? "linear-gradient(to right, #8cbbde , #6e8799)"
+                          : "linear-gradient(to right, #0C8CE9 , #13629B)"
+                      }`,
                       letterSpacing: 1,
                     }}
                     className="btn shadow text-white w-100 mb-3 pt-3 pb-3 fw-bold"
+                    disabled={isSubmitting}
                   >
-                    LOGIN
+                    LOGIN {isSubmitting && <Spinner color="text-light" />}
                   </Button>
                 </div>
               </div>

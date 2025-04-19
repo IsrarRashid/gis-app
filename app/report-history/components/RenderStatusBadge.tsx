@@ -1,81 +1,108 @@
 import { GoCheckCircleFill, GoXCircleFill } from "react-icons/go";
 import {
-  ASSISTANT_DIRECTOR_ISSUED_ID,
-  ASSISTANT_DIRECTOR_RESUBMITTED_ID,
-  ASSISTANT_DIRECTOR_SUBMITTED_ID,
-  DEPUTY_DIRECTOR_APPROVED_AND_ALLOW_ISSUE_ID,
-  DEPUTY_DIRECTOR_APPROVED_ID,
-  DEPUTY_DIRECTOR_REFERBACK_ID,
-  DIRECTOR_APPROVED_ID,
-  DIRECTOR_REFERBACK_ID,
+  ISSUED_By_AD,
+  RESUBMITTED_BY_AD,
+  SUBMITTED_BY_AD_TO_DD,
+  REVIEWED_AND_FORWARD_BY_DD_TO_D,
+  DD_REFERBACK_ID,
+  REVIEWED_AND_FORWARD_BY_D_TO_DG,
+  D_REFERBACK_ID,
+  APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE,
+  APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE,
+  REVIEWED_AND_APPROVED_BY_DG_TO_D,
+  DG_REFERBACK_ID,
 } from "./List";
 
 const RenderStatusBadge = ({ status }: { status: number }) => {
   return (
     <>
-      {status === ASSISTANT_DIRECTOR_SUBMITTED_ID ? (
+      {status === SUBMITTED_BY_AD_TO_DD ? (
         <p
           className="py-2 mb-0 px-3 rounded-pill"
           style={{ background: "#E3F0E7" }}
         >
           <GoCheckCircleFill className="bg-white text-success rounded-circle mb-1" />{" "}
-          Submitted by Assistant Director (BS-17)
+          SUBMITTED_BY_AD_TO_DD
         </p>
-      ) : status === DEPUTY_DIRECTOR_APPROVED_ID ? (
+      ) : status === REVIEWED_AND_FORWARD_BY_DD_TO_D ? (
         <p
           className="py-2 mb-0 px-3 rounded-pill"
           style={{ background: "#E3F0E7" }}
         >
           <GoCheckCircleFill className="bg-white text-success rounded-circle mb-1" />{" "}
-          Approved by Deputy Director (BS-18)
+          REVIEWED_AND_FORWARD_BY_DD_TO_D
         </p>
-      ) : status === DIRECTOR_APPROVED_ID ? (
+      ) : status === REVIEWED_AND_FORWARD_BY_D_TO_DG ? (
         <p
           className="py-2 mb-0 px-3 rounded-pill"
           style={{ background: "#E3F0E7" }}
         >
           <GoCheckCircleFill className="bg-white text-success rounded-circle mb-1" />{" "}
-          Approved by Director (BS-19)
+          REVIEWED_AND_FORWARD_BY_D_TO_DG
         </p>
-      ) : status === DEPUTY_DIRECTOR_APPROVED_AND_ALLOW_ISSUE_ID ? (
+      ) : status === REVIEWED_AND_APPROVED_BY_DG_TO_D ? (
         <p
           className="py-2 mb-0 px-3 rounded-pill"
           style={{ background: "#E3F0E7" }}
         >
           <GoCheckCircleFill className="bg-white text-success rounded-circle mb-1" />{" "}
-          Approved and Issued by Deputy Director (BS-18)
+          REVIEWED_AND_APPROVED_BY_DG_TO_D
         </p>
-      ) : status === ASSISTANT_DIRECTOR_ISSUED_ID ? (
+      ) : status === APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE ? (
         <p
           className="py-2 mb-0 px-3 rounded-pill"
           style={{ background: "#E3F0E7" }}
         >
           <GoCheckCircleFill className="bg-white text-success rounded-circle mb-1" />{" "}
-          Issued by Assistant Director (BS-17)
+          APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
         </p>
-      ) : status === DEPUTY_DIRECTOR_REFERBACK_ID ? (
+      ) : status === APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE ? (
+        <p
+          className="py-2 mb-0 px-3 rounded-pill"
+          style={{ background: "#E3F0E7" }}
+        >
+          <GoCheckCircleFill className="bg-white text-success rounded-circle mb-1" />{" "}
+          APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE
+        </p>
+      ) : status === ISSUED_By_AD ? (
+        <p
+          className="py-2 mb-0 px-3 rounded-pill"
+          style={{ background: "#E3F0E7" }}
+        >
+          <GoCheckCircleFill className="bg-white text-success rounded-circle mb-1" />{" "}
+          ISSUED_By_AD
+        </p>
+      ) : status === DD_REFERBACK_ID ? (
         <p
           className="py-2 mb-0 px-3 rounded-pill"
           style={{ background: "#E3F0E7" }}
         >
           <GoXCircleFill className="bg-white text-danger rounded-circle mb-1" />{" "}
-          Referback by Deputy Director (BS-18)
+          DD_REFERBACK_ID
         </p>
-      ) : status === DIRECTOR_REFERBACK_ID ? (
+      ) : status === D_REFERBACK_ID ? (
         <p
           className="py-2 mb-0 px-3 rounded-pill"
           style={{ background: "#E3F0E7" }}
         >
           <GoXCircleFill className="bg-white text-danger rounded-circle mb-1" />{" "}
-          Referback by Director (BS-19)
+          D_REFERBACK_ID
         </p>
-      ) : status === ASSISTANT_DIRECTOR_RESUBMITTED_ID ? (
+      ) : status === DG_REFERBACK_ID ? (
         <p
           className="py-2 mb-0 px-3 rounded-pill"
           style={{ background: "#E3F0E7" }}
         >
           <GoXCircleFill className="bg-white text-danger rounded-circle mb-1" />{" "}
-          Resubmitted by Assistant Director (BS-17)
+          DG_REFERBACK_ID
+        </p>
+      ) : status === RESUBMITTED_BY_AD ? (
+        <p
+          className="py-2 mb-0 px-3 rounded-pill"
+          style={{ background: "#E3F0E7" }}
+        >
+          <GoXCircleFill className="bg-white text-danger rounded-circle mb-1" />{" "}
+          RESUBMITTED_BY_AD
         </p>
       ) : (
         ""

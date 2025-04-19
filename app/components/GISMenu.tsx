@@ -50,32 +50,39 @@ const GISMenu = () => {
 
   const data = [
     {
-      name: "DG Dashboard",
+      name: "Main Dashboard",
       nameId: "dashboard",
       link: "/dashboard",
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
     },
     {
+      name: "DG Dashboard",
+      nameId: "dashboard-dg",
+      link: "/dashboard-dg",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #3e86d6 , #235aa6)",
+    },
+    {
       name: "Attendance Dashboard",
       nameId: "dashboard-attendance",
       link: "/dashboard-attendance",
       icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+      backgroundColor: "linear-gradient(to bottom right, #43abd1 , #2680ad)",
     },
     {
       name: "Director Dashboard",
       nameId: "dashboard-director",
       link: "/dashboard-director",
       icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+      backgroundColor: "linear-gradient(to bottom right, #4364d9 , #211fab)",
     },
     {
       name: "Deputy Director Dashboard",
       nameId: "dashboard-deputy-director",
       link: "/dashboard-deputy-director",
       icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+      backgroundColor: "linear-gradient(to bottom right, #3d76d1 , #217a9c)",
     },
     // {
     //   name: "Officer Dashboard",
@@ -96,7 +103,7 @@ const GISMenu = () => {
       nameId: "dashboard-to",
       link: "/dashboard-to",
       icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+      backgroundColor: "linear-gradient(to bottom right, #3c74c2 , #2352a6)",
     },
 
     // {
@@ -195,7 +202,7 @@ const GISMenu = () => {
       nameId: "drivers",
       link: "/drivers",
       icon: driver,
-      backgroundColor: "linear-gradient(to bottom right, #a2a828 , #b93ae7)",
+      backgroundColor: "linear-gradient(to bottom right, #db4444 , #ad2323)",
     },
     {
       name: "Visit Plans",

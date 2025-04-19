@@ -24,6 +24,7 @@ interface VisitsPlan {
       fromDate: string;
       toDate: string;
       totalVisits: number;
+      submitted: number;
       completeVisits: number;
       pendingVisits: number;
       onTimeSubmitted: number;
@@ -83,6 +84,43 @@ const VisitsPlan = ({
         ].includes(key)
       )
       .map((key) => key as keyof ProjectsList);
+
+  const filterProjectsData = (
+    fromdate: string,
+    todate: string,
+    data: ProjectsList[]
+  ) => {
+    return !fromdate && !todate
+      ? data // Show all data if no date is selected
+      : data.filter((d) => {
+          const visitFromDate = new Date(d.visitStartDate)
+            .toISOString()
+            .split("T")[0];
+          const visitToDate = new Date(d.visitEndDate)
+            .toISOString()
+            .split("T")[0];
+          const startDate = fromdate
+            ? new Date(fromdate).toISOString().split("T")[0]
+            : null;
+          const endDate = todate
+            ? new Date(todate).toISOString().split("T")[0]
+            : null;
+
+          console.log("visitFromDate", visitFromDate);
+          console.log("visitToDate", visitToDate);
+          console.log("startDate", startDate);
+          console.log("endDate", endDate);
+          if (startDate && endDate) {
+            return startDate >= visitFromDate && endDate <= visitToDate;
+          } else if (startDate) {
+            return startDate >= visitFromDate;
+          } else if (endDate) {
+            return endDate <= visitToDate;
+          }
+
+          return true;
+        });
+  };
 
   return (
     <>
@@ -250,7 +288,8 @@ const VisitsPlan = ({
                                     }}
                                   >
                                     <CustomModal
-                                      HeaderTopPos={100}
+                                      HeaderTopPos={0}
+                                      HeaderRightPos={20}
                                       isFullscreen={true}
                                       size="xl"
                                       modalId={`${j}"Projects"`}
@@ -296,14 +335,31 @@ const VisitsPlan = ({
                                             {projectsData && filteredKeys ? (
                                               <ProjectsTable
                                                 label="Being Monitored Projects"
-                                                projectsData={projectsData}
+                                                projectsData={projectsData.filter(
+                                                  (project) =>
+                                                    project.userName ===
+                                                      visit.officerName &&
+                                                    new Date(
+                                                      project.visitStartDate
+                                                    ) >=
+                                                      new Date(
+                                                        d.nameOfVisit.split(
+                                                          " "
+                                                        )[2]
+                                                      ) &&
+                                                    new Date(
+                                                      project.visitEndDate
+                                                    ) <=
+                                                      new Date(
+                                                        d.nameOfVisit.split(
+                                                          " "
+                                                        )[4]
+                                                      )
+                                                )}
                                                 setProjectsData={
                                                   setProjectsData
                                                 }
                                                 keys={filteredKeys}
-                                                searchTermDefault={
-                                                  visit.officerName
-                                                }
                                               />
                                             ) : (
                                               <Loader />
@@ -375,7 +431,7 @@ const VisitsPlan = ({
                                       padding: "10px 0px 19px 0px",
                                     }}
                                   >
-                                    pending
+                                    {visit?.submitted || 0}
                                   </div>
                                 </td>
                                 <td

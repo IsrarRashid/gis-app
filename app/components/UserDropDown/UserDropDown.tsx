@@ -96,7 +96,7 @@ const UserDropDown = () => {
         console.error("Submission error:", err);
       }
     };
-    if (userId && role?.includes("director")) handleSubmit(userId);
+    if (userId && role === "director") handleSubmit(userId);
   }, [userId]);
 
   return (
@@ -133,7 +133,7 @@ const UserDropDown = () => {
             <Image src={downArrowBold} alt="downArrowBold" />
           </div>
         </div>
-        {role?.includes("director") && (
+        {role === "director" && (
           <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
             {data && data.length > 0
               ? data.filter((d) => d.status === 0).length
@@ -168,7 +168,7 @@ const UserDropDown = () => {
             </p>
           </div>
         </div>
-        {role?.includes("director") && (
+        {role === "director" && (
           <Link href="/feedback" target="_blank" className="fw-normal">
             <div className="position-relative">
               <Image
@@ -187,7 +187,7 @@ const UserDropDown = () => {
             </div>
           </Link>
         )}
-        <Link href="" className="fw-normal">
+        {/* <Link href="" className="fw-normal">
           <Image
             src={settingBlack}
             alt="settingBlack"
@@ -196,7 +196,7 @@ const UserDropDown = () => {
             className="me-2 mb-1"
           />
           Settings
-        </Link>
+        </Link> */}
         <div className="pt-0 pb-0 ps-3 pe-3">
           <div className="dropdown-divider m-0"></div>
         </div>

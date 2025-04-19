@@ -56,8 +56,8 @@ const DashboardTO = () => {
   const [data, setData] = useState<Feedback[]>();
   const [userId, setUserId] = useState<number>();
   const { data: users } = useAuthentication({ refresh });
-  const [singleProjectData, setSingleProjectData] =
-    useState<SingleProjectLessData>();
+  // const [singleProjectData, setSingleProjectData] =
+  //   useState<SingleProjectLessData>();
   const dispatch = useDispatch();
 
   useEffect(() => {

@@ -79,7 +79,7 @@ const Navbar = () => {
       <div className="container-fluid">
         <Link className="navbar-brand" href="/">
           <Image
-            src="/images/logoNew.png"
+            src="/icons/logoNew1.svg"
             className="img-fluid object-contain"
             alt="logoNew"
             style={{ filter: "drop-shadow(0px 0px .75px green)" }}

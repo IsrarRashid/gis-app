@@ -20,8 +20,8 @@ import { data, tabs } from "./reportAnalysisData";
 import * as XLSX from "xlsx";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import { downloadReportAnalysisToExcel } from "@/app/utils";
-import PPTSlideGenerator from "./PPTSlideGenerator";
 import TimeSpentOnProjectSiteFilterMenu from "./TimeSpentOnProjectSiteFilterMenu";
+import PPTSlideGenerator from "./PPTSlideGenerator/PPTSlideGenerator";
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 

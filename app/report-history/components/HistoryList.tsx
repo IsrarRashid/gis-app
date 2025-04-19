@@ -5,14 +5,14 @@ import Link from "next/link";
 import { useState } from "react";
 import { Accordion } from "react-bootstrap";
 import ReactMarkDown from "react-markdown";
-import { ReportHistory } from "./List";
+import { ReportHistory } from "./ReportNoting";
 
 const HistoryList = ({ data }: { data: ReportHistory[] }) => {
   const [refresh, setRefresh] = useState(false);
   const { data: users } = useReportHistoryUser({ refresh });
 
   return (
-    <div className="mb-2">
+    <div className="mb-2 p-2">
       <Accordion flush>
         <Accordion.Item eventKey="reportHistory">
           <Accordion.Header>Report History List</Accordion.Header>

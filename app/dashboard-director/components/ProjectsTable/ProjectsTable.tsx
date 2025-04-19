@@ -97,8 +97,6 @@ interface Props {
   label: string;
   keys: (keyof ProjectsList)[];
   allowLink?: boolean;
-  searchTermDefault?: string;
-  defaultFilters?: DefaultFilter;
 }
 
 const ProjectsTable = ({
@@ -107,8 +105,6 @@ const ProjectsTable = ({
   label,
   keys,
   allowLink = true,
-  searchTermDefault,
-  defaultFilters,
 }: Props) => {
   const [refresh, setRefresh] = useState(false);
   const { data: districts } = useDistrict({ refresh });
@@ -120,18 +116,8 @@ const ProjectsTable = ({
 
   // State for filtered data
   const [filteredData, setFilteredData] = useState<ProjectsList[]>([]);
+  const [paginatedData, setPaginatedData] = useState<ProjectsList[]>([]);
   const [dropdownFilterValue, setDropdownFilterValue] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (searchTermDefault) {
-      setSearchTerm(searchTermDefault);
-      handleSearch(searchTermDefault);
-    }
-    // if (defaultFilters) {
-    //   applyFilters(defaultFilters);
-    //   console.log("defaultFilters",defaultFilters)
-    // }
-  }, []);
 
   // Handle search logic
   const handleSearch = (value: string) => {
@@ -234,12 +220,18 @@ const ProjectsTable = ({
   // }, [projectsData]);
 
   // Paginate data to display only the current page's rows
-  const paginatedData =
-    projectsData &&
-    (searchTerm || dropdownFilterValue.length > 0
-      ? filteredData
-      : projectsData
-    ).slice((currentPage - 1) * rows, currentPage * rows);
+  useEffect(() => {
+    console.log("projectsDataX:", projectsData);
+    if (projectsData) {
+      const paginatedData = (
+        searchTerm || dropdownFilterValue.length > 0
+          ? filteredData
+          : projectsData
+      ).slice((currentPage - 1) * rows, currentPage * rows);
+
+      setPaginatedData(paginatedData);
+    }
+  }, [projectsData, searchTerm, dropdownFilterValue]);
 
   // const handleProjectSubmit = async (projectId: number, visitId: number) => {
   //   try {

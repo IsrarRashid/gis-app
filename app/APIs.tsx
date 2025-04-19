@@ -40,4 +40,4 @@ export const feedbackAPI = `/api/FeedBack`;
 export const reportsHistoryAPI = `/api/ReportsHistory`;
 export const dashboardAttendanceAPI = `/Dashboard`;
 export const staffAttendanceAPI = `/api/StaffAttendance`;
-export const generateReportAPI = `/api/ReportGenerate/GeneratePowerPoint`;
+export const generateReportAPI = `/api/ReportGenerate`;

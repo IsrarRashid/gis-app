@@ -116,7 +116,7 @@ const MonitoringReportConverted = () => {
 
         <Text style={styles.textCenter}>September 2023</Text>
 
-        <Image src={Picture1Base64} style={styles.image} />
+        <img src={Picture1Base64} style={styles.image} alt="pic" />
 
         {/* <Image src={Picture2} style={{ width: "20%", alignSelf: "center" }} /> */}
 

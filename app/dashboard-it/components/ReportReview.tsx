@@ -4,13 +4,12 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import apiClient from "@/app/services/api-client";
 import { reportsHistoryAPI } from "@/app/APIs";
-import { ReportHistory } from "@/app/report-history/components/List";
+import { SubmittedReport } from "@/app/report-history/components/List";
 
 const ReportReview = () => {
-  const [data, setData] = useState<ReportHistory[]>();
+  const [data, setData] = useState<SubmittedReport[]>();
   const [role, setRole] = useState<string>();
   const [userId, setUserId] = useState<number>();
-  const [refresh, setRefresh] = useState<boolean>();
 
   useEffect(() => {
     const userId = Cookies.get("userId");
@@ -31,11 +30,11 @@ const ReportReview = () => {
       }
     };
     if (userId) handleSubmit(userId);
-  }, [userId, refresh]);
+  }, [userId]);
 
   return (
     <>
-      {role && role.toLowerCase().includes("director") && (
+      {role && data && role.toLowerCase().includes("director") && (
         <Link
           href="/report-history"
           target="_blank"
@@ -45,14 +44,19 @@ const ReportReview = () => {
             background="rgba(12, 233, 167, 0.2)"
             outline="1px solid rgba(12, 233, 174, 0.4)"
             icon="/icons/reportReview.svg"
-            value={data ? data?.length : 0}
+            value={data.length || 0}
             label="Report Review"
             showTides={true}
             showArrow={true}
             textWrap={false}
           />
           <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {data ? data?.length : 0}
+            {role.toLowerCase() === "deputy director" &&
+              data.filter((d) => d.lastStatus === 0).length}
+            {role.toLowerCase() === "director" &&
+              data.filter((d) => d.lastStatus === 1).length}
+            {role.toLowerCase() === "director general" &&
+              data.filter((d) => d.lastStatus === 2).length}
           </span>
         </Link>
       )}

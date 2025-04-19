@@ -102,6 +102,7 @@ export const config = {
     "/visits-new",
     "/dashboard-director",
     "/dashboard-deputy-director",
+    "/dashboard-dg",
     "/dashboard-officer",
     "/dashboard-it",
     "/dashboard-to",

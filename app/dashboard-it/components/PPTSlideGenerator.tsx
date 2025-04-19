@@ -10,6 +10,7 @@ import apiClient, {
 } from "@/app/services/api-client";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import DragableTable from "./PPTSlideGenerator/DragableTable";
 
 const PPTSlideGenerator = () => {
   const [fromDate, setFromDate] = useState<string>("");
@@ -20,6 +21,9 @@ const PPTSlideGenerator = () => {
   const [priority, setPriority] = useState<number[]>([]);
   const [sectorNames, setSectorNames] = useState<string[]>([]);
   const [sectors, setSectors] = useState<string[]>([]);
+  const [sectorsDragable, setSectorsDragable] = useState([
+    { id: 0, label: "" },
+  ]);
   const [selectAll, setSelectAll] = useState(false);
 
   const handlePriorityChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -120,6 +124,12 @@ const PPTSlideGenerator = () => {
       toast.info("Please select 'To Date'!");
       return;
     }
+    console.log("sectors async data: ", {
+      pirority: priority,
+      to: new Date(toDate).toISOString().split("T")[0],
+      from: new Date(fromDate).toISOString().split("T")[0],
+      sector: [""],
+    });
     try {
       const response = await apiClient.post(
         `${generateReportAPI}/GetSectorAsync`,
@@ -127,7 +137,7 @@ const PPTSlideGenerator = () => {
           pirority: priority,
           to: new Date(toDate).toISOString().split("T")[0],
           from: new Date(fromDate).toISOString().split("T")[0],
-          sector: [],
+          sector: [""],
         }
       );
 
@@ -309,6 +319,7 @@ const PPTSlideGenerator = () => {
                     </div>
                   ))}
                 </div>
+                <DragableTable sectors={sectors} />
               </div>
             )}
             <div className="row m-0 justify-content-center">
