@@ -1,5 +1,4 @@
 "use client";
-import useAuthorization from "@/app/hooks/useAuthorization";
 import { useEffect, useState } from "react";
 import List from "./List";
 

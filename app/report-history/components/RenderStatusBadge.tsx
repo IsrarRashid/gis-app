@@ -1,7 +1,7 @@
 import { GoCheckCircleFill, GoXCircleFill } from "react-icons/go";
 import {
   ISSUED_By_AD,
-  RESUBMITTED_BY_AD,
+  RESUBMITTED_BY_AD_TO_DD,
   SUBMITTED_BY_AD_TO_DD,
   REVIEWED_AND_FORWARD_BY_DD_TO_D,
   DD_REFERBACK_ID,
@@ -96,13 +96,13 @@ const RenderStatusBadge = ({ status }: { status: number }) => {
           <GoXCircleFill className="bg-white text-danger rounded-circle mb-1" />{" "}
           DG_REFERBACK_ID
         </p>
-      ) : status === RESUBMITTED_BY_AD ? (
+      ) : status === RESUBMITTED_BY_AD_TO_DD ? (
         <p
           className="py-2 mb-0 px-3 rounded-pill"
           style={{ background: "#E3F0E7" }}
         >
           <GoXCircleFill className="bg-white text-danger rounded-circle mb-1" />{" "}
-          RESUBMITTED_BY_AD
+          RESUBMITTED_BY_AD_TO_DD
         </p>
       ) : (
         ""

@@ -20,13 +20,16 @@ import {
   APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE,
   D_REFERBACK_ID,
   DD_REFERBACK_ID,
+  DDM_USER_ID,
   DG_REFERBACK_ID,
+  DG_USER_ID,
   REVIEWED_AND_APPROVED_BY_DG_TO_D,
   REVIEWED_AND_FORWARD_BY_D_TO_DG,
   REVIEWED_AND_FORWARD_BY_DD_TO_D,
   SUBMITTED_BY_AD_TO_DD,
-  SubmittedReport,
-} from "./List";
+} from "../statuses";
+import { SubmittedReport } from "../list/components/List";
+
 import PdfIframe from "./pdf/PdfIframe";
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
@@ -86,7 +89,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
   const { data: officers } = useOfficers({ refresh });
   const [reportsHistory, setReportsHistory] = useState<ReportHistory[]>();
   const [isSubmitting, setSubmitting] = useState(false);
-
+  console.log("all officers", users);
   const submittedTo = watch("submittedTo");
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -104,13 +107,20 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
         APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
     ) {
       setValue("submittedTo", data.intiallyUserId);
-    } else {
-      if (!submittedTo) {
-        const defaultOfficer = officers.find(
-          (officer) => officer.id === data.submittedFrom
-        )?.id;
-        if (defaultOfficer) setValue("submittedTo", defaultOfficer);
-      }
+    } else if (
+      role === "deputy director" &&
+      reportsHistory &&
+      reportsHistory[reportsHistory?.length - 1].status === D_REFERBACK_ID
+    ) {
+      setReferback(true);
+      setValue("submittedTo", data.intiallyUserId);
+    } else if (
+      role === "director" &&
+      reportsHistory &&
+      reportsHistory[reportsHistory?.length - 1].status === DG_REFERBACK_ID
+    ) {
+      setReferback(true);
+      setValue("submittedTo", DDM_USER_ID);
     }
   }, [
     data.submittedFrom,
@@ -120,6 +130,31 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
     role,
     reportsHistory,
   ]);
+
+  // useEffect(() => {
+  //   if (
+  //     role === "deputy director" &&
+  //     reportsHistory &&
+  //     reportsHistory[reportsHistory?.length - 1].status ===
+  //       APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
+  //   ) {
+  //     setValue("submittedTo", data.intiallyUserId);
+  //   } else {
+  //     if (!submittedTo) {
+  //       const defaultOfficer = officers.find(
+  //         (officer) => officer.id === data.submittedFrom
+  //       )?.id;
+  //       if (defaultOfficer) setValue("submittedTo", defaultOfficer);
+  //     }
+  //   }
+  // }, [
+  //   data.submittedFrom,
+  //   officers,
+  //   setValue,
+  //   submittedTo,
+  //   role,
+  //   reportsHistory,
+  // ]);
 
   // function getNextStatus({
   //   role,
@@ -213,6 +248,10 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
               isReferback
             ? D_REFERBACK_ID
             : role === "director" &&
+              data.lastStatus === DG_REFERBACK_ID &&
+              isReferback
+            ? D_REFERBACK_ID
+            : role === "director" &&
               data.lastStatus === REVIEWED_AND_APPROVED_BY_DG_TO_D
             ? APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
             : role === "director general" &&
@@ -256,6 +295,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
         setRefresh((prev) => !prev);
       } catch (err) {
         setSubmitting(false);
+        console.log("err", err);
         console.error((err as AxiosError).message);
         toast.error("An unexpected error occured.");
       }
@@ -439,6 +479,9 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                     (role === "director" &&
                       reportsHistory[reportsHistory?.length - 1].status ===
                         REVIEWED_AND_APPROVED_BY_DG_TO_D) ||
+                    (role === "director" &&
+                      reportsHistory[reportsHistory?.length - 1].status ===
+                        DG_REFERBACK_ID) ||
                     (role === "director general" &&
                       reportsHistory[reportsHistory?.length - 1].status ===
                         REVIEWED_AND_FORWARD_BY_D_TO_DG) ? (
@@ -508,18 +551,21 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                       htmlFor="reject"
                                     >
                                       Referback:{" "}
-                                      {role === "deputy director"
-                                        ? reportsHistory[
+                                      {role === "deputy director" &&
+                                      reportsHistory[reportsHistory?.length - 1]
+                                        .status === D_REFERBACK_ID
+                                        ? users.find(
+                                            (user) =>
+                                              user.id === data.intiallyUserId
+                                          )?.fullName
+                                        : role === "director" &&
+                                          reportsHistory[
                                             reportsHistory?.length - 1
-                                          ].status === D_REFERBACK_ID
-                                          ? users.find(
-                                              (user) =>
-                                                user.id === data.intiallyUserId
-                                            )?.fullName
-                                          : users.find(
-                                              (user) =>
-                                                user.id === data.submittedFrom
-                                            )?.fullName
+                                          ].status === DG_REFERBACK_ID
+                                        ? officers.find(
+                                            (officer) =>
+                                              officer.id === DDM_USER_ID
+                                          )?.fullName
                                         : users.find(
                                             (user) =>
                                               user.id === data.submittedFrom
@@ -530,8 +576,9 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                               )}
                             {role === "director" &&
                               reportsHistory[reportsHistory?.length - 1]
-                                .status !==
-                                REVIEWED_AND_APPROVED_BY_DG_TO_D && (
+                                .status !== REVIEWED_AND_APPROVED_BY_DG_TO_D &&
+                              reportsHistory[reportsHistory?.length - 1]
+                                .status !== DG_REFERBACK_ID && (
                                 <div className="col">
                                   <div className="form-check">
                                     <input
@@ -540,20 +587,22 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                       id="mark"
                                       checked={isMarked}
                                       onChange={() => {
-                                        setMarked(!isMarked);
+                                        const newValue = !isMarked;
+                                        setMarked(newValue);
                                         setReferback(false);
-                                        role === "director" &&
-                                          setValue(
-                                            "submittedTo",
-                                            officers[4]?.id //director general-id
-                                          );
+                                        if (newValue) {
+                                          setValue("submittedTo", DG_USER_ID); //director general-id
+                                        } else {
+                                          setValue("submittedTo", undefined); //director general-id
+                                        }
                                       }}
                                     />
                                     <label
                                       className="form-check-label"
                                       htmlFor="mark"
                                     >
-                                      Mark To: {officers[4]?.fullName}
+                                      {/* Mark To: {officers[4]?.fullName} */}
+                                      Mark To: DIRECTOR GENERAL
                                     </label>
                                   </div>
                                 </div>
@@ -634,15 +683,21 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                 {role === "deputy director" && (
                                   <div className="col-auto">
                                     <Button
-                                      disabled={isSubmitting}
+                                      disabled={isSubmitting || !submittedTo}
                                       type="submit"
                                       className="btn rounded-pill fs18px fw-normal px-3"
                                       style={{
-                                        background: "rgba(0, 57, 206,.05)",
-                                        color: "#0039CE",
+                                        background: `${
+                                          submittedTo
+                                            ? "rgba(0, 57, 206,.05)"
+                                            : "rgba(201, 201, 201,.5)"
+                                        }`,
+                                        color: `${
+                                          submittedTo ? "#0039CE" : "#454545"
+                                        }`,
                                       }}
                                     >
-                                      Approved & Mark To{" "}
+                                      Reviewed & Forward To{" "}
                                       {isSubmitting && <Spinner />}
                                     </Button>
                                   </div>
@@ -651,12 +706,18 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                   role === "director general") && (
                                   <div className="col-auto">
                                     <Button
-                                      disabled={isSubmitting}
+                                      disabled={isSubmitting || !submittedTo}
                                       type="submit"
                                       className="btn rounded-pill fs18px fw-normal px-3"
                                       style={{
-                                        background: "rgba(0, 57, 206,.05)",
-                                        color: "#0039CE",
+                                        background: `${
+                                          submittedTo
+                                            ? "rgba(0, 57, 206,.05)"
+                                            : "rgba(201, 201, 201,.5)"
+                                        }`,
+                                        color: `${
+                                          submittedTo ? "#0039CE" : "#454545"
+                                        }`,
                                       }}
                                     >
                                       {isMarked ? "For Approval" : "Approved"}{" "}

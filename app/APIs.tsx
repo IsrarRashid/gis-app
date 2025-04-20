@@ -27,6 +27,7 @@ export const getAssignedUsersToProjectAPI = `/api/ProjectUserAssigning/UsersMapT
 export const getUserProjectsAPI = `/api/ProjectUserAssigning/GetUserAssingedProjects`;
 export const visitAPI = `/api/Visits`;
 export const trackingAPI = `https://webtrack.itecknologi.com/fleet/api/Directorate/reporting.php`;
+export const VEHICLE_TRACKING_RECORDING_API = `https://webtrack.itecknologi.com/fleet/api/Directorate/track.php?starttime=2025-03-20%2000:00:00&endtime=2025-03-24%2023:59:59&v_ids=GBB-062,GBE-154,GBE-165`;
 export const coordinatesAPI = `/api/Coordinates`;
 export const districtAPI = `/api/District`;
 export const mainDashboardAPI = `/api/MainDashboard`;

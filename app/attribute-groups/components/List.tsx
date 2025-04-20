@@ -1,6 +1,5 @@
 "use client";
 import { attributeGroupsAPI } from "@/app/APIs";
-import Button from "@/app/components/Button";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
@@ -13,16 +12,11 @@ import useAttributes from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getFormattedDate } from "@/app/utils";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
 import GroupingForm from "./GroupingForm";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: "400",
-});
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -64,22 +58,10 @@ const List = ({ refresh, setRefresh }: ListProps) => {
     setFilteredData(filtered);
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm !== "") {
-      // handleSearch();
-    }
-  };
-
   // Update searchTerm and clear search if empty
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     handleSearch(e);
-  };
-
-  const getParentSector = (parsentSectorId: number, data: AttributeGroup[]) => {
-    const sector = data.find((sector) => sector.id === parsentSectorId);
-    return sector?.name;
   };
 
   // for sorting
@@ -121,104 +103,10 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
-  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRows(parseInt(e?.target.value, 10));
-    setCurrentPage(1);
-  };
-
-  // Determine the data to display for the current page
-  const indexOfLastRow = currentPage * rows;
-  const indexOfFirstRow = indexOfLastRow - rows;
-  const currentData = data.slice(indexOfFirstRow, indexOfLastRow);
-
-  // for pagination buttons
-  const totalPages = Math.ceil(
-    (searchTerm ? filteredData : data).length / rows
-  );
-  // Handle previous page
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Handle next page
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
   // Paginate data to display only the current page's rows
   const paginatedData = (
     searchTerm ? filteredData : [...(data || [])].reverse()
   ).slice((currentPage - 1) * rows, currentPage * rows);
-
-  const handleFirstPage = () => {
-    setCurrentPage(1);
-  };
-
-  const handleLastPage = () => {
-    setCurrentPage(totalPages);
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    const maxPageNumbers = 5; // Maximum visible page numbers
-    const startPage = Math.max(1, currentPage - Math.floor(maxPageNumbers / 2));
-    const endPage = Math.min(totalPages, startPage + maxPageNumbers - 1);
-
-    if (startPage > 1) {
-      pageNumbers.push(
-        <Button
-          key="ellipsis-start"
-          className="btn bg-color-sea-green shadow me-2"
-          disabled
-          style={{ border: "1px solid #445E84" }}
-        >
-          ...
-        </Button>
-      );
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(
-        <Button
-          key={i}
-          className={`btn ${
-            i === currentPage
-              ? "bg-color-matte-light-blue text-dark"
-              : "bg-color-sea-green shadow text-white"
-          } me-2`}
-          onClick={() => handlePageChange(i)}
-          style={{
-            border: "1px solid #445E84",
-          }}
-        >
-          {i}
-        </Button>
-      );
-    }
-
-    if (endPage < totalPages) {
-      pageNumbers.push(
-        <Button
-          key="ellipsis-end"
-          className="btn bg-color-sea-green shadow me-2 text-white"
-          disabled
-          style={{ border: "1px solid #445E84" }}
-        >
-          ...
-        </Button>
-      );
-    }
-
-    return pageNumbers;
-  };
-
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
 
   return (
     <>

@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-const List = dynamic(() => import("./components/List"), {
+const List = dynamic(() => import("./list/components/List"), {
   ssr: false,
 });
 
