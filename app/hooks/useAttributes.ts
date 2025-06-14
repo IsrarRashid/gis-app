@@ -27,7 +27,10 @@ export interface Attribute {
   parentId: number;
   readOnly: number;
   evaluationFormulaWeightage: number;
+  smdpIdentifier: string;
   removeable: number;
+  isMaster: number;
+  priority: number;
   options?: [
     {
       value: string;
@@ -37,6 +40,7 @@ export interface Attribute {
       label: string;
       createdAt: string;
       updatedAt: string;
+      condition: string;
     }
   ];
 }

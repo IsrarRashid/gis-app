@@ -3,30 +3,18 @@ import { reportsHistoryAPI } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import apiClient from "@/app/services/api-client";
-import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
+import {
+  addDayToFormattedDate,
+  convertToLocaleTimeString,
+  getFormattedDate,
+} from "@/app/utils";
 import search3 from "@/public/icons/search3.svg";
 import Cookies from "js-cookie";
 import { Raleway } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReportNoting from "../../components/ReportNoting";
-import {
-  APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE,
-  D_REFERBACK_ID,
-  DD_REFERBACK_ID,
-  DDE_USER_ID,
-  DDM_USER_ID,
-  DE_USER_ID,
-  DG_REFERBACK_ID,
-  DG_USER_ID,
-  DM_USER_ID,
-  ISSUED_By_AD,
-  REVIEWED_AND_APPROVED_BY_DG_TO_D,
-  REVIEWED_AND_FORWARD_BY_D_TO_DG,
-  REVIEWED_AND_FORWARD_BY_DD_TO_D,
-  SUBMITTED_BY_AD_TO_DD,
-} from "../../statuses";
-import useBackground from "@/app/hooks/useBackground";
+import { APPROVED, ISSUED, REFERBACK, SUBMITTED } from "../../statuses";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -43,43 +31,33 @@ export interface SubmittedReport {
   gsNo: string;
   reportPath: string;
   status: number;
-  sDate: string;
   submittedDate: string;
   issuanceDate: string;
   reportType: number;
-  lastStatus: number;
   intiallyUserId: number;
   intiallyUser: string;
   intiallyDesignation: string;
 }
 
-// export interface StatusTab {
-//   label: string;
-//   status: number;
-//   submittedFrom: number;
-//   submittedTo: number;
-// }
-
 const List = () => {
   const [refresh, setRefresh] = useState(false);
   const [data, setData] = useState<SubmittedReport[]>([]);
-  const [tabCounts, setTabCounts] = useState<Record<number, number>>({});
 
   const [userId, setUserId] = useState<number>();
   const [role, setRole] = useState<string>();
-
-  useBackground("/images/bg2.png", true);
+  const [selectedTab, setSelectedTab] = useState<number>(0);
 
   useEffect(() => {
     const id = Cookies.get("userId");
     const role = Cookies.get("role");
-    if (id) setUserId(parseInt(id));
+
+    if (id) {
+      const convertedId = parseInt(id);
+      setUserId(convertedId);
+    }
     if (role) setRole(role.toLowerCase());
   }, []);
 
-  const [status, setStatus] = useState(0);
-
-  const [selectedButton, setSelectedButton] = useState(0);
   // State for filtered data
   const [filteredData, setFilteredData] = useState<SubmittedReport[]>([]);
 
@@ -90,7 +68,6 @@ const List = () => {
           `${reportsHistoryAPI}/GetSubmittedReports?submittedTo=${userId}`
         );
         setData(response.data.data);
-        calculateTabCounts(response.data.data);
         console.log("original data", response.data.data);
       } catch (err) {
         console.error("Submission error:", err);
@@ -99,453 +76,133 @@ const List = () => {
     if (userId) handleSubmit(userId);
   }, [userId, refresh]);
 
-  const calculateTabCounts = (data: SubmittedReport[]) => {
-    const counts: Record<number, number> = {};
-
-    tabs.forEach((tab) => {
-      const { status, reportSubmittedFrom, reportSubmittedTo } = tab;
-
-      let count = 0;
-
-      if (status === SUBMITTED_BY_AD_TO_DD && role === "deputy director") {
-        const filtered = data.filter(
-          (d) =>
-            d.submittedTo === configureDDId(userId) && d.lastStatus === status
-        );
-
-        const latestByProjectId = new Map();
-        filtered.forEach((item) => latestByProjectId.set(item.projectId, item));
-        count = latestByProjectId.size;
-      } else if (status === -99 && role === "deputy director") {
-        const filtered = data
-          .filter((d) => d.submittedTo === reportSubmittedTo)
-          .filter((d) => d.submittedFrom !== DM_USER_ID);
-
-        const latestByProjectId = new Map();
-        filtered.forEach((item) => latestByProjectId.set(item.projectId, item));
-        count = latestByProjectId.size;
-
-        // count = data
-        //   .filter((d) => d.submittedTo === reportSubmittedTo)
-        //   .filter((d) => d.submittedFrom !== DM_USER_ID).length;
-      } else if (status === -99) {
-        const filtered = data.filter(
-          (d) =>
-            d.submittedFrom === reportSubmittedFrom &&
-            d.submittedTo === reportSubmittedTo
-        );
-
-        const latestByProjectId = new Map();
-        filtered.forEach((item) => latestByProjectId.set(item.projectId, item));
-        count = latestByProjectId.size;
-
-        // count = data.filter(
-        //   (d) =>
-        //     d.submittedFrom === reportSubmittedFrom &&
-        //     d.submittedTo === reportSubmittedTo
-        // ).length;
-      } else if (status === DD_REFERBACK_ID) {
-        const filtered = data.filter(
-          (d) =>
-            d.submittedFrom === reportSubmittedFrom && d.lastStatus === status
-        );
-
-        const latestByProjectId = new Map();
-        filtered.forEach((item) => latestByProjectId.set(item.projectId, item));
-        count = latestByProjectId.size;
-
-        // count = data.filter(
-        //   (d) =>
-        //     d.submittedFrom === reportSubmittedFrom && d.lastStatus === status
-        // ).length;
-      } else if (status === ISSUED_By_AD) {
-        const filtered = data
-          .filter(
-            (d) =>
-              d.lastStatus === status && d.submittedFrom === reportSubmittedFrom
-          )
-          .filter((d) => d.submittedTo !== reportSubmittedTo);
-
-        const latestByProjectId = new Map();
-        filtered.forEach((item) => latestByProjectId.set(item.projectId, item));
-        count = latestByProjectId.size;
-
-        // count = data
-        //   .filter(
-        //     (d) =>
-        //       d.lastStatus === status && d.submittedFrom === reportSubmittedFrom
-        //   )
-        //   .filter((d) => d.submittedTo !== reportSubmittedTo).length;
-      } else {
-        const filtered = data.filter(
-          (d) =>
-            d.lastStatus === status &&
-            d.submittedFrom === reportSubmittedFrom &&
-            d.submittedTo === reportSubmittedTo
-        );
-
-        const latestByProjectId = new Map();
-        filtered.forEach((item) => latestByProjectId.set(item.projectId, item));
-        count = latestByProjectId.size;
-
-        // count = data.filter(
-        //   (d) =>
-        //     d.lastStatus === status &&
-        //     d.submittedFrom === reportSubmittedFrom &&
-        //     d.submittedTo === reportSubmittedTo
-        // ).length;
-      }
-
-      counts[status] = count;
-    });
-
-    setTabCounts(counts);
-  };
-
-  const getLatestUniqueProjects = (
-    data: SubmittedReport[] | undefined,
-    filterFn: (project: SubmittedReport) => boolean
-  ): SubmittedReport[] => {
-    if (!data) return [];
-
-    const filtered = data.filter(filterFn);
-    const latestByProjectId = new Map<string | number, SubmittedReport>();
-
-    filtered.forEach((item) => {
-      latestByProjectId.set(item.projectId, item);
-    });
-
-    return Array.from(latestByProjectId.values());
-  };
-
-  const configureDDId = (loggedInUserId: number | undefined) => {
-    return loggedInUserId === DDM_USER_ID ? DDM_USER_ID : DDE_USER_ID;
-  };
-
-  const configureDId = (loggedInUserId: number) => {
-    return loggedInUserId === DM_USER_ID ? DM_USER_ID : DE_USER_ID;
-  };
-
-  const handleFilterData = (
-    data: SubmittedReport[],
-    status: number,
-    submittedFrom: number,
-    submittedTo: number
-  ) => {
-    console.log(
-      "Data inside filterDataFn",
-      status,
-      submittedFrom,
-      submittedTo,
-      data
-    );
-    if (role === "deputy director" && status === SUBMITTED_BY_AD_TO_DD) {
-      setStatus(status);
-      const uniqueLatestProjects = getLatestUniqueProjects(
-        data,
-        (d) =>
-          d.submittedTo === configureDDId(userId) && d.lastStatus === status
-      );
-
-      setFilteredData(uniqueLatestProjects);
-      console.log("uniqueLatestProjects", uniqueLatestProjects);
-    } else if (status === -99 && role === "deputy director") {
-      setStatus(status);
-      const filteredProjects = data
-        ?.filter((d) => d.submittedTo === submittedTo)
-        .filter((d) => d.submittedFrom !== DM_USER_ID);
-
-      // Create a Map to store only the latest record for each projectId
-      const latestByProjectId = new Map();
-
-      // Traverse the array from start to end
-      filteredProjects.forEach((item) => {
-        // This will overwrite older records with the same projectId
-        latestByProjectId.set(item.projectId, item);
-      });
-
-      const uniqueLatestProjects = Array.from(latestByProjectId.values());
-      setFilteredData(uniqueLatestProjects);
-      console.log("uniqueLatestProjects", uniqueLatestProjects);
-    } else if (status === -99) {
-      setStatus(status);
-      const filteredProjects = data?.filter(
-        (d) =>
-          d.submittedFrom === submittedFrom && d.submittedTo === submittedTo
-      );
-
-      // Create a Map to store only the latest record for each projectId
-      const latestByProjectId = new Map();
-
-      // Traverse the array from start to end
-      filteredProjects.forEach((item) => {
-        // This will overwrite older records with the same projectId
-        latestByProjectId.set(item.projectId, item);
-      });
-
-      const uniqueLatestProjects = Array.from(latestByProjectId.values());
-      setFilteredData(uniqueLatestProjects);
-      console.log("uniqueLatestProjects", uniqueLatestProjects);
-    } else if (status === DD_REFERBACK_ID) {
-      setStatus(status);
-      const filteredProjects = data?.filter(
-        (d) => d.submittedFrom === submittedFrom && d.lastStatus === status
-      );
-
-      // Create a Map to store only the latest record for each projectId
-      const latestByProjectId = new Map();
-
-      // Traverse the array from start to end
-      filteredProjects.forEach((item) => {
-        // This will overwrite older records with the same projectId
-        latestByProjectId.set(item.projectId, item);
-      });
-
-      const uniqueLatestProjects = Array.from(latestByProjectId.values());
-      setFilteredData(uniqueLatestProjects);
-      console.log("uniqueLatestProjects", uniqueLatestProjects);
-    } else if (status === ISSUED_By_AD) {
-      setStatus(status);
-
-      const filteredProjects = data
-        ?.filter(
-          (d) => d.lastStatus === status && d.submittedFrom === submittedFrom
-        )
-        .filter((d) => d.submittedTo !== submittedTo);
-
-      // Create a Map to store only the latest record for each projectId
-      const latestByProjectId = new Map();
-
-      // Traverse the array from start to end
-      filteredProjects.forEach((item) => {
-        // This will overwrite older records with the same projectId
-        latestByProjectId.set(item.projectId, item);
-      });
-
-      const uniqueLatestProjects = Array.from(latestByProjectId.values());
-      setFilteredData(uniqueLatestProjects);
-      console.log("uniqueLatestProjects", uniqueLatestProjects);
-
-      // setFilteredData(
-      //   data
-      //     ?.filter(
-      //       (d) => d.lastStatus === status && d.submittedFrom === submittedFrom
-      //     )
-      //     .filter((d) => d.submittedTo !== submittedTo)
-      // );
-    } else if (role === "director general" && status === 6) {
-      setStatus(status);
-      setFilteredData(data?.filter((d) => d.lastStatus === status));
-    } else {
-      setStatus(status);
-      const filteredProjects = data?.filter(
-        (d) =>
-          d.lastStatus === status &&
-          d.submittedFrom === submittedFrom &&
-          d.submittedTo === submittedTo
-      );
-
-      // Create a Map to store only the latest record for each projectId
-      const latestByProjectId = new Map();
-
-      // Traverse the array from start to end
-      filteredProjects.forEach((item) => {
-        // This will overwrite older records with the same projectId
-        latestByProjectId.set(item.projectId, item);
-      });
-
-      const uniqueLatestProjects = Array.from(latestByProjectId.values());
-      setFilteredData(uniqueLatestProjects);
-      console.log("uniqueLatestProjects", uniqueLatestProjects);
-      //--------
-      // setFilteredData(
-      //   data?.filter(
-      //     (d) =>
-      //       d.lastStatus === status &&
-      //       d.submittedFrom === submittedFrom &&
-      //       d.submittedTo === submittedTo
-      //   )
-      // );
+  useEffect(() => {
+    if (data) {
+      setSelectedTab(0);
+      setFilteredData(data);
     }
-  };
-
-  // useEffect(() => {
-  //   console.log("filteredData", filteredData);
-  //   console.log("data", data);
-  // }, [filteredData]);
+  }, [data]);
 
   const tabs = [
-    {
-      label: "All",
-      status: -99,
-      reportSubmittedFrom:
-        role === "deputy director"
-          ? -99
-          : role === "director"
-          ? DDM_USER_ID
-          : role === "director general"
-          ? DM_USER_ID
-          : -99,
-      reportSubmittedTo:
-        role === "deputy director"
-          ? DDM_USER_ID
-          : role === "director"
-          ? DM_USER_ID
-          : role === "director general"
-          ? DG_USER_ID
-          : -99,
-      nextSubmittedTo:
-        role === "deputy director"
-          ? DM_USER_ID
-          : role === "director"
-          ? DG_USER_ID
-          : role === "director general"
-          ? DM_USER_ID
-          : -99,
-    },
+    // {
+    //   label: "All",
+    //   status: -99,
+    //   reportSubmittedFrom: userId,
+    //   reportSubmittedTo: userId,
+    //   direction: "both",
+    //   tabKey: `-99-both-${userId}-${userId}`,
+    // },
     {
       label: "SUBMITTED BY (AD)",
-      status: SUBMITTED_BY_AD_TO_DD,
+      status: SUBMITTED,
       role: "deputy director",
-      reportSubmittedFrom: -99,
-      reportSubmittedTo: userId === DDM_USER_ID ? DDM_USER_ID : DDE_USER_ID,
-      nextSubmittedTo: DM_USER_ID,
-    }, // FOR DD
-
+      reportSubmittedTo: userId,
+      direction: "to",
+      tabKey: `${SUBMITTED}-to-${userId}`,
+    },
     {
       label: "SUBMITTED BY (DD)",
-      status: REVIEWED_AND_FORWARD_BY_DD_TO_D,
+      status: SUBMITTED,
       role: "director",
-      reportSubmittedFrom: DDM_USER_ID,
-      reportSubmittedTo: DM_USER_ID,
-      nextSubmittedTo: DG_USER_ID,
-    }, // FOR D
+      reportSubmittedTo: userId,
+      direction: "from",
+      tabKey: `${SUBMITTED}-to-${userId}`,
+    },
     {
       label: "SUBMITTED TO (DIRECTOR)",
-      status: REVIEWED_AND_FORWARD_BY_DD_TO_D,
+      status: SUBMITTED,
       role: "deputy director",
-      reportSubmittedFrom: DDM_USER_ID,
-      reportSubmittedTo: DM_USER_ID,
-    }, // FOR DD
+      reportSubmittedFrom: userId,
+      direction: "from",
+      tabKey: `${SUBMITTED}-from-${userId}`,
+    },
     {
       label: "SUBMITTED TO (DG)",
-      status: REVIEWED_AND_FORWARD_BY_D_TO_DG,
+      status: SUBMITTED,
       role: "director",
-      reportSubmittedFrom: DM_USER_ID,
-      reportSubmittedTo: DG_USER_ID,
-    }, // FOR D
+      reportSubmittedFrom: userId,
+      direction: "to",
+      tabKey: `${SUBMITTED}-to-${userId}`,
+    },
     {
       label: "SUBMITTED BY (DIRECTOR)",
-      status: REVIEWED_AND_FORWARD_BY_D_TO_DG,
+      status: SUBMITTED,
       role: "director general",
-      reportSubmittedFrom: DM_USER_ID,
-      reportSubmittedTo: DG_USER_ID,
-      nextSubmittedTo: DM_USER_ID,
-    }, // FOR DG
+      reportSubmittedTo: userId,
+      direction: "from",
+      tabKey: `${SUBMITTED}-from-${userId}`,
+    },
     {
-      label: "SUBMITTED TO (DIRECTOR)",
-      status: REVIEWED_AND_APPROVED_BY_DG_TO_D,
+      label: "APPROVED AND MARK TO (DIRECTOR)",
+      status: APPROVED,
       role: "director general",
-      reportSubmittedFrom: DG_USER_ID,
-      reportSubmittedTo: DM_USER_ID,
-    }, // FOR D
+      reportSubmittedFrom: userId,
+      direction: "to",
+      tabKey: `${SUBMITTED}-to-${userId}`,
+    },
     {
       label: "APPROVED BY (DG)",
-      status: REVIEWED_AND_APPROVED_BY_DG_TO_D,
+      status: APPROVED,
       role: "director",
-      reportSubmittedFrom: DG_USER_ID,
-      reportSubmittedTo: DM_USER_ID,
-      nextSubmittedTo: DDM_USER_ID,
-    }, // FOR D
+      reportSubmittedTo: userId,
+      direction: "from",
+      tabKey: `${APPROVED}-from-${userId}`,
+    },
     {
       label: "APPROVED BY (DG)",
-      status: APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE,
+      status: APPROVED,
       role: "deputy director",
-      reportSubmittedFrom: DM_USER_ID,
-      reportSubmittedTo: DDM_USER_ID,
-      nextSubmittedTo: -99,
-    }, // FOR DD
+      reportSubmittedTo: userId,
+      direction: "from",
+      tabKey: `${APPROVED}-from-${userId}`,
+    },
     {
       label: "REFERBACK BY (DIRECTOR)",
-      status: D_REFERBACK_ID,
+      status: REFERBACK,
       role: "deputy director",
-      reportSubmittedFrom: DM_USER_ID,
-      reportSubmittedTo: DDM_USER_ID,
-    }, // FOR DD
+      reportSubmittedTo: userId,
+      direction: "to",
+      tabKey: `${REFERBACK}-to-${userId}`,
+    },
     {
       label: "REFERBACK TO (AD)",
-      status: DD_REFERBACK_ID,
+      status: REFERBACK,
       role: "deputy director",
-      reportSubmittedFrom: DDM_USER_ID,
-      reportSubmittedTo: -99,
-    }, // FOR DD
+      reportSubmittedFrom: userId,
+      direction: "from",
+      tabKey: `${REFERBACK}-from-${userId}`,
+    },
     {
       label: "REFERBACK BY (DG)",
-      status: DG_REFERBACK_ID,
+      status: REFERBACK,
       role: "director",
-      reportSubmittedFrom: DG_USER_ID,
-      reportSubmittedTo: DM_USER_ID,
-    }, // FOR D
+      reportSubmittedTo: userId,
+      direction: "from",
+      tabKey: `${REFERBACK}-from-${userId}`,
+    },
     {
       label: "REFERBACK TO (DD)",
-      status: D_REFERBACK_ID,
+      status: REFERBACK,
       role: "director",
-      reportSubmittedFrom: DM_USER_ID,
-      reportSubmittedTo: DDM_USER_ID,
-    }, // FOR D
+      reportSubmittedFrom: userId,
+      direction: "to",
+      tabKey: `${REFERBACK}-to-${userId}`,
+    },
     {
       label: "REFERBACK TO (DIRECTOR)",
-      status: DG_REFERBACK_ID,
+      status: REFERBACK,
       role: "director general",
-      reportSubmittedFrom: DG_USER_ID,
-      reportSubmittedTo: DM_USER_ID,
-    }, // FOR D
-    {
-      label: "ISSUED",
-      status: ISSUED_By_AD,
-      reportSubmittedFrom:
-        role === "deputy director"
-          ? DDM_USER_ID
-          : role === "director"
-          ? DM_USER_ID
-          : role === "director general"
-          ? DG_USER_ID
-          : -99,
-      reportSubmittedTo:
-        role === "deputy director"
-          ? DM_USER_ID
-          : role === "director"
-          ? DG_USER_ID
-          : role === "director general"
-          ? -99
-          : -99,
-    }, // FOR ALL
+      reportSubmittedFrom: userId,
+      direction: "to",
+      tabKey: `${REFERBACK}-to-${userId}`,
+    },
+    // {
+    //   label: "ISSUED",
+    //   status: ISSUED,
+    //   direction: undefined,
+    //   tabKey: `${ISSUED}`,
+    // },
   ];
-
-  useEffect(() => {
-    if (data && role && userId) {
-      const currentStatus =
-        role === "deputy director"
-          ? 0
-          : role === "director"
-          ? 1
-          : role === "director general"
-          ? 2
-          : -99;
-
-      const currentSubmittedFrom =
-        role === "deputy director"
-          ? DM_USER_ID
-          : role === "director"
-          ? DDM_USER_ID
-          : role === "director general"
-          ? DM_USER_ID
-          : -99;
-
-      setSelectedButton(currentStatus);
-      handleFilterData(data, currentStatus, currentSubmittedFrom, userId);
-    }
-  }, [data, role, userId]);
 
   return (
     <>
@@ -557,7 +214,6 @@ const List = () => {
               "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) , rgba(255, 255, 255, 0.08))",
             border: "1px solid rgba(255, 255, 255, 0.29)",
             borderRadius: "15px",
-            padding: "10px",
           }}
         >
           <div className="row d-flex justify-content-between m-0">
@@ -567,21 +223,6 @@ const List = () => {
 
             <div className="col-auto">
               <div className="row d-flex m-0 justify-content-end mb-3">
-                {/* <div className="col-auto text-start">
-                <select
-                  className="form-select w-100 rounded-pill bg-transparent px-3"
-                  style={{
-                    outline: "none",
-                    border: "1px solid rgba(38, 50, 56,.6)",
-                  }}
-                  aria-label="Officer Name"
-                  name="officerName"
-                >
-                  <option value="">Search By Officer&nbsp;&nbsp;⌵</option>
-                  <option value="">officer name</option>
-                  <option value="">officer name</option>
-                </select>
-              </div> */}
                 <div className="col">
                   <form onSubmit={(e) => e.preventDefault()}>
                     <div className="input-group">
@@ -620,6 +261,37 @@ const List = () => {
             <div className="row d-flex m-0 mb-3">
               <div className="col">
                 <div className="row d-flex m-0">
+                  <div className="col-auto">
+                    <Button
+                      className={`btn shadow-none rounded-0 fw-bold position-relative ${
+                        selectedTab === 0 ? "text-dark" : "text-secondary"
+                      }`}
+                      style={{
+                        borderBottom:
+                          selectedTab === 0 ? "3px solid #0c8ce9" : "",
+                      }}
+                      onClick={() => {
+                        setSelectedTab(0);
+                        setFilteredData(data);
+                      }}
+                    >
+                      All
+                      {data?.filter(
+                        (d) =>
+                          d.submittedTo === userId || d.submittedFrom === userId
+                      ).length > 0 && (
+                        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                          {
+                            data?.filter(
+                              (d) =>
+                                d.submittedTo === userId ||
+                                d.submittedFrom === userId
+                            ).length
+                          }
+                        </span>
+                      )}
+                    </Button>
+                  </div>
                   {tabs
                     .filter(
                       (tab) =>
@@ -627,41 +299,129 @@ const List = () => {
                         tab.status === 6 ||
                         tab.role === role
                     )
-                    .map((tab) => (
-                      <div key={tab.status} className="col-auto">
-                        <Button
-                          className={`btn shadow-none rounded-0 fw-bold position-relative ${
-                            selectedButton === tab.status
-                              ? "text-dark"
-                              : "text-secondary"
-                          }`}
-                          style={{
-                            borderBottom: `${
-                              selectedButton === tab.status
-                                ? "3px solid #0c8ce9"
-                                : ""
-                            }`,
-                          }}
-                          onClick={() => {
-                            setSelectedButton(tab.status);
-                            handleFilterData(
-                              data,
-                              tab.status,
-                              tab.reportSubmittedFrom,
-                              tab.reportSubmittedTo
-                            );
-                            console.log("tab click data", data);
-                          }}
-                        >
-                          {tab.label}
-                          {(tabCounts[tab.status] || 0) > 0 && (
-                            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                              {tabCounts[tab.status]}
-                            </span>
-                          )}
-                        </Button>
-                      </div>
-                    ))}
+                    .map((tab, i) => {
+                      const submittedId =
+                        tab.direction === "from"
+                          ? tab.reportSubmittedFrom
+                          : tab.reportSubmittedTo;
+
+                      return (
+                        <div key={i + 1} className="col-auto">
+                          <Button
+                            className={`btn shadow-none rounded-0 fw-bold position-relative ${
+                              selectedTab === i + 1
+                                ? "text-dark"
+                                : "text-secondary"
+                            }`}
+                            style={{
+                              borderBottom:
+                                selectedTab === i + 1
+                                  ? "3px solid #0c8ce9"
+                                  : "",
+                            }}
+                            onClick={() => {
+                              setSelectedTab(i + 1);
+                              if (tab.reportSubmittedFrom) {
+                                setFilteredData(
+                                  data.filter(
+                                    (d) =>
+                                      d.status === tab.status &&
+                                      d.submittedFrom ===
+                                        tab.reportSubmittedFrom
+                                  )
+                                );
+                                console.log(
+                                  "reportSubmittedFrom",
+                                  data.filter(
+                                    (d) =>
+                                      d.status === tab.status &&
+                                      d.submittedFrom ===
+                                        tab.reportSubmittedFrom
+                                  )
+                                );
+                              }
+                              if (tab.reportSubmittedTo) {
+                                setFilteredData(
+                                  data.filter(
+                                    (d) =>
+                                      d.status === tab.status &&
+                                      d.submittedTo === tab.reportSubmittedTo
+                                  )
+                                );
+                                console.log(
+                                  "reportSubmittedTo",
+                                  data.filter(
+                                    (d) =>
+                                      d.status === tab.status &&
+                                      d.submittedTo === tab.reportSubmittedTo
+                                  )
+                                );
+                              }
+                            }}
+                          >
+                            {tab.label}
+                            {(tab.reportSubmittedFrom
+                              ? data.filter(
+                                  (d) =>
+                                    d.status === tab.status &&
+                                    d.submittedFrom === tab.reportSubmittedFrom
+                                ).length
+                              : tab.reportSubmittedTo
+                              ? data.filter(
+                                  (d) =>
+                                    d.status === tab.status &&
+                                    d.submittedTo === tab.reportSubmittedTo
+                                ).length
+                              : 0) > 0 && (
+                              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {tab.reportSubmittedFrom
+                                  ? data.filter(
+                                      (d) =>
+                                        d.status === tab.status &&
+                                        d.submittedFrom ===
+                                          tab.reportSubmittedFrom
+                                    ).length
+                                  : tab.reportSubmittedTo
+                                  ? data.filter(
+                                      (d) =>
+                                        d.status === tab.status &&
+                                        d.submittedTo === tab.reportSubmittedTo
+                                    ).length
+                                  : 0}
+                              </span>
+                            )}
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  <div className="col-auto">
+                    <Button
+                      className={`btn shadow-none rounded-0 fw-bold position-relative ${
+                        selectedTab === tabs.length
+                          ? "text-dark"
+                          : "text-secondary"
+                      }`}
+                      style={{
+                        borderBottom:
+                          selectedTab === tabs.length
+                            ? "3px solid #0c8ce9"
+                            : "",
+                      }}
+                      onClick={() => {
+                        setSelectedTab(tabs.length);
+                        setFilteredData(
+                          data?.filter((d) => d.status === ISSUED)
+                        );
+                      }}
+                    >
+                      Issued
+                      {data?.filter((d) => d.status === ISSUED).length > 0 && (
+                        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                          {data?.filter((d) => d.status === ISSUED).length}
+                        </span>
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
               {/* <div className="col-lg-4 col-md-6 col-sm-12 text-auto">
@@ -703,23 +463,19 @@ const List = () => {
                 <div className="row m-0">
                   <div
                     className={`col-auto rounded-3 p-3 ${
-                      d.lastStatus === ISSUED_By_AD
+                      d.status === ISSUED
                         ? "bg-success text-light"
-                        : d.lastStatus === DD_REFERBACK_ID ||
-                          d.lastStatus === D_REFERBACK_ID ||
-                          d.lastStatus === DG_REFERBACK_ID
+                        : d.status === REFERBACK
                         ? "bg-danger text-light"
-                        : d.lastStatus === SUBMITTED_BY_AD_TO_DD ||
-                          d.lastStatus === REVIEWED_AND_FORWARD_BY_DD_TO_D ||
-                          d.lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG
+                        : d.status === SUBMITTED
                         ? "bg-warning text-dark"
                         : "bg-info text-dark"
                     }`}
                   >
-                    <p className="fw-5">
+                    <p className="fw-5 mb-0">
                       <span className="fw-bold">Sr#</span> {i + 1}
                     </p>
-                    <p className="fw-5">
+                    <p className="fw-5 mb-0">
                       <span className="fw-bold">GS No. </span>
                       {d.gsNo}
                     </p>
@@ -760,14 +516,19 @@ const List = () => {
                           style={{ color: "#263238", fontWeight: "500" }}
                         >
                           {addDayToFormattedDate(
-                            getFormattedDate(new Date(d.sDate), "short")!
+                            getFormattedDate(
+                              new Date(d.submittedDate),
+                              "short"
+                            )!
                           )}
                           <br />
-                          show time as well
+                          {convertToLocaleTimeString(
+                            new Date(d.submittedDate).toLocaleTimeString()
+                          )}
                         </p>
                       </div>
 
-                      {status === 6 && (
+                      {selectedTab === tabs.length && (
                         <div className="col">
                           <p
                             className="mb-0 mb-2 fs18px fw-bold me-3"
@@ -788,20 +549,7 @@ const List = () => {
                           </p>
                         </div>
                       )}
-                      {/* <div className="col-auto mb-2">
-                  <p
-                    className="mb-2 fs18px fw-bold"
-                    style={{ color: "#263238", fontWeight: "500" }}
-                  >
-                    Last Status
-                  </p>
-                  <p
-                    className="mb-0 fs14px"
-                    style={{ color: "#263238", fontWeight: "500" }}
-                  >
-                    <RenderStatusBadge status={d.lastStatus} />
-                  </p>
-                </div> */}
+
                       {/* hide comment button if status === 1 */}
                       <div className="col d-flex justify-content-end align-items-end">
                         <CustomModal
@@ -816,27 +564,12 @@ const List = () => {
                                 color: "#0039CE",
                               }}
                             >
-                              {(role === "deputy director" &&
-                                d.lastStatus === SUBMITTED_BY_AD_TO_DD) ||
-                              (role === "deputy director" &&
-                                d.lastStatus === D_REFERBACK_ID) ||
-                              (role === "deputy director" &&
-                                d.lastStatus ===
-                                  APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE) ||
-                              (role === "director" &&
-                                d.lastStatus ===
-                                  REVIEWED_AND_FORWARD_BY_DD_TO_D) ||
-                              (role === "director" &&
-                                d.lastStatus ===
-                                  REVIEWED_AND_APPROVED_BY_DG_TO_D) ||
-                              (role === "director" &&
-                                d.lastStatus === DG_REFERBACK_ID) ||
-                              (role === "director general" &&
-                                d.lastStatus ===
-                                  REVIEWED_AND_FORWARD_BY_D_TO_DG)
+                              {d.submittedTo === userId
                                 ? "Comment"
-                                : d.lastStatus === ISSUED_By_AD
+                                : d.status === ISSUED
                                 ? "Issued"
+                                : d.status === APPROVED
+                                ? "Approved"
                                 : "Submitted"}
                             </Button>
                           }

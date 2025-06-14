@@ -10,7 +10,6 @@ import CustomModal from "@/app/components/CustomModal";
 import { setContent } from "@/app/features/content/contentSlice";
 import { setTutorial } from "@/app/features/tutorial/tutorialSlice";
 import useAuthentication from "@/app/hooks/useAuthentication";
-import useAuthorization from "@/app/hooks/useAuthorization";
 import { Project } from "@/app/hooks/useProjects";
 import apiClient from "@/app/services/api-client";
 import { devMap, triggerEscapeKeyPress } from "@/app/utils";
@@ -241,19 +240,10 @@ const StaffTracking = () => {
   };
 
   useEffect(() => {
-    // Set the background for the body
-    document.body.style.background = "#CFE6F8";
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-
     handleButtonClick(
       "StaffTracking",
       "https://www.youtube.com/watch?v=L38gouuFtyo&ab_channel=DirectorateGeneralMonitoringandEvaluation"
     );
-    // Cleanup on unmount
-    return () => {
-      document.body.style.backgroundImage = "";
-    };
   }, []);
 
   const [position, setPosition] = useState<Position>(); // Starting position (latitude, longitude)
@@ -348,10 +338,10 @@ const StaffTracking = () => {
     }
   };
 
-  const handleProjectSubmit = async (id: number) => {
+  const handleProjectSubmit = async (projectId: number, userId: number) => {
     try {
       const response = await apiClient.get(
-        `${visitAPI}/GetVisitsByProjectId?ProjectId=${id}`
+        `${visitAPI}/GetVisitsByProjectId?ProjectId=${projectId}&userId=${userId}`
       );
       console.log("Response:", response);
       setUserVisits(response.data.data);
@@ -510,7 +500,10 @@ const StaffTracking = () => {
                             setUserVisits([]); // Set null if "Select" option is chosen
                           } else {
                             const selectedId = parseInt(selectedValue, 10);
-                            handleProjectSubmit(selectedId); // Call handleUserSubmit with the selected userId
+                            handleProjectSubmit(
+                              selectedId,
+                              recordingTrackingRequestBody.userId
+                            ); // Call handleUserSubmit with the selected userId
                           }
                         }}
                       >
@@ -518,7 +511,7 @@ const StaffTracking = () => {
                         {userProjects.length > 0 &&
                           userProjects.map((d) => (
                             <option key={d.id} value={d.id}>
-                              {d.name}
+                              {d.gsNo} {d.name}
                             </option>
                           ))}
                       </select>

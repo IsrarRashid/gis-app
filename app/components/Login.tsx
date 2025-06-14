@@ -5,7 +5,6 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { toast } from "react-toastify";
 import eye from "../../public/icons/eye.svg";
-import logoNew from "../../public/icons/logoNew.svg";
 import passwordGrey from "../../public/icons/passwordGrey.svg";
 import userGrey from "../../public/icons/userGrey.svg";
 import verticalLineGrey from "../../public/icons/verticalLineGrey.svg";
@@ -18,6 +17,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "./ErrorMessage";
+import { FaRegEye } from "react-icons/fa";
+import { TbEyeClosed } from "react-icons/tb";
 
 const schema = z.object({
   username: z.string().min(1, { message: "Please add Username!" }),
@@ -32,6 +33,12 @@ export interface UserData {
   email: string;
 }
 
+interface UserProfile {
+  department_Id: number;
+  firstName: string;
+  lastName: string;
+}
+
 interface Props {
   responseCode: number;
   responseMessage: string;
@@ -41,6 +48,7 @@ interface Props {
     role: [string];
     rights: { rightName: string }[];
     userData: UserData;
+    userProfile: UserProfile;
   };
 }
 
@@ -54,6 +62,7 @@ const Login = () => {
   } = useForm<Login>({ resolver: zodResolver(schema) });
   const [buttonType, setButtonType] = useState(true);
   const [isSubmitting, setSubmitting] = useState(false);
+  const [isCookiesSaved, setCookiesSaved] = useState(false);
 
   const createdMessage = "Logged In Successfully!";
   const errorMessage = "Username or Password is not Correct!";
@@ -73,45 +82,68 @@ const Login = () => {
         console.log("user logged in successfully", response);
         // console.log("token: ", response.data.data.token);
         // const expires = new Date(new Date().getTime() + 5 * 60 * 1000); // 5 minutes from now
-        if (Cookies.get("token")) Cookies.remove("token");
-        if (Cookies.get("email")) Cookies.remove("email");
-        if (Cookies.get("userName")) Cookies.remove("userName");
-        if (Cookies.get("userId")) Cookies.remove("userId");
-        if (Cookies.get("role")) Cookies.remove("role");
-        if (Cookies.get("rights")) Cookies.remove("rights");
-
-        Cookies.set("token", response.data.data.token, {
-          expires: new Date(response.data.data.expiration),
-        });
-        Cookies.set("userName", response.data.data.userData.userName, {
-          expires: new Date(response.data.data.expiration),
-        });
-        Cookies.set("userId", response.data.data.userData.id.toString(), {
-          expires: new Date(response.data.data.expiration),
-        });
-        Cookies.set("email", response.data.data.userData.email, {
-          expires: new Date(response.data.data.expiration),
-        });
-        console.log("role", response.data.data.role);
-        if (response.data.data.role.length > 0) {
-          Cookies.set("role", response.data.data.role[0], {
+        // if (Cookies.get("token")) Cookies.remove("token");
+        // if (Cookies.get("email")) Cookies.remove("email");
+        // if (Cookies.get("userName")) Cookies.remove("userName");
+        // if (Cookies.get("userId")) Cookies.remove("userId");
+        // if (Cookies.get("role")) Cookies.remove("role");
+        // if (Cookies.get("rights")) Cookies.remove("rights");
+        if (!isCookiesSaved) {
+          setCookiesSaved(true);
+          Cookies.set("token", response.data.data.token, {
             expires: new Date(response.data.data.expiration),
           });
-        }
-        console.log(
-          "rights",
-          response.data.data.rights.map((rights) => rights.rightName)
-        );
-        if (response.data.data.rights.length > 0) {
+          Cookies.set("userName", response.data.data.userData.userName, {
+            expires: new Date(response.data.data.expiration),
+          });
+          Cookies.set("userId", response.data.data.userData.id.toString(), {
+            expires: new Date(response.data.data.expiration),
+          });
+          Cookies.set("email", response.data.data.userData.email, {
+            expires: new Date(response.data.data.expiration),
+          });
           Cookies.set(
-            "rights",
-            JSON.stringify(
-              response.data.data.rights.map((rights) => rights.rightName)
-            ),
+            "departmentId",
+            response.data.data.userProfile.department_Id.toString(),
             {
               expires: new Date(response.data.data.expiration),
             }
           );
+          Cookies.set(
+            "deptUserFirstName",
+            response.data.data.userProfile.firstName,
+            {
+              expires: new Date(response.data.data.expiration),
+            }
+          );
+          Cookies.set(
+            "deptUserLastName",
+            response.data.data.userProfile.lastName,
+            {
+              expires: new Date(response.data.data.expiration),
+            }
+          );
+          console.log("role", response.data.data.role);
+          if (response.data.data.role.length > 0) {
+            Cookies.set("role", response.data.data.role[0], {
+              expires: new Date(response.data.data.expiration),
+            });
+          }
+          console.log(
+            "rights",
+            response.data.data.rights.map((rights) => rights.rightName)
+          );
+          if (response.data.data.rights.length > 0) {
+            Cookies.set(
+              "rights",
+              JSON.stringify(
+                response.data.data.rights.map((rights) => rights.rightName)
+              ),
+              {
+                expires: new Date(response.data.data.expiration),
+              }
+            );
+          }
         }
 
         window.location.href = "/";
@@ -169,45 +201,53 @@ const Login = () => {
       >
         <div className="row d-flex justify-content-center">
           <div
-            className="col-lg-5 col-md-8 col-sm-12 pt-3 ps-5 pe-5 pb-5"
+            className="col-xl-5 col-lg-7 col-md-8 col-sm-12 bg-blur-3"
             style={{
-              background: "rgba(209, 209, 209, 0.6)",
+              border: "1px solid rgba(255, 255, 255, 0.3)",
               position: "fixed",
-              padding: "10px",
+              padding: "60px 50px",
               borderRadius: "25px",
               top: "50%",
               left: "50%",
               transform: "translate(-50%,-50%)",
             }}
           >
-            <div className="row">
-              <div className="col text-center">
+            <div className="row m-0">
+              <div className="col text-center" style={{ marginBottom: "20px" }}>
                 <Image
-                  src={logoNew}
+                  src="/icons/logoNew1.svg"
                   className="img-fluid"
+                  style={{ filter: "drop-shadow(0px 0px .75px green)" }}
                   alt="logo"
-                  width={150}
-                  height={150}
+                  width={110}
+                  height={980}
                 />
               </div>
             </div>
-            <div className="row">
+            <div className="row m-0">
               <div className="col text-center">
-                <h3 className="text-white fw-bold">
+                <h3
+                  className="text-white fw-bold"
+                  style={{ marginBottom: "20px" }}
+                >
                   Directorate General Monitoring & Evaluation
                 </h3>
               </div>
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="row d-flex justify-content-center mb-3">
-                <div className="col-9">
-                  <label htmlFor="username" className="form-label text-white">
+              <div
+                className="row d-flex justify-content-center"
+                style={{ marginBottom: "20px" }}
+              >
+                <div className="col">
+                  {/* <label htmlFor="username" className="form-label text-white">
                     User ID
-                  </label>
+                  </label> */}
                   <div className="input-group mb-1">
-                    <span
-                      className="input-group-text pe-0 bg-white border-0"
+                    {/* <span
+                      className="input-group-text border-0"
                       id="basic-addon1"
+                      style={{ background: "rgba(255, 255, 255, 0.7)" }}
                     >
                       <Image
                         src={userGrey}
@@ -224,11 +264,15 @@ const Login = () => {
                         width={17}
                         height={17}
                       />
-                    </span>
+                    </span> */}
                     <input
                       {...register("username")}
                       type="text"
-                      className="form-control border-0 bg-white"
+                      className="form-control border-0 m-0 fs-6 login-input"
+                      placeholder="Enter User ID"
+                      style={{
+                        background: "rgba(255, 255, 255, 0.7)",
+                      }}
                       id="username"
                     />
                   </div>
@@ -237,15 +281,19 @@ const Login = () => {
                   )}
                 </div>
               </div>
-              <div className="row d-flex justify-content-center">
-                <div className="col-9">
-                  <label htmlFor="password" className="form-label text-white">
+              <div
+                className="row d-flex justify-content-center"
+                style={{ marginBottom: "20px" }}
+              >
+                <div className="col">
+                  {/* <label htmlFor="password" className="form-label text-white">
                     Password
-                  </label>
-                  <div className="input-group mb-1">
-                    <span
-                      className="input-group-text pe-0 bg-white border-0"
+                  </label> */}
+                  <div className="input-group mb-1 position-relative">
+                    {/* <span
+                      className="input-group-text border-0"
                       id="basic-addon1"
+                      style={{ background: "rgba(255, 255, 255, 0.7)" }}
                     >
                       <Image
                         src={passwordGrey}
@@ -259,44 +307,71 @@ const Login = () => {
                         width={17}
                         height={17}
                       />
-                    </span>
+                    </span> */}
                     <input
                       {...register("password")}
                       type={buttonType === true ? "password" : "text"}
-                      className="form-control border-0"
+                      className="form-control border-0 m-0 fs-6 login-input"
+                      style={{
+                        background: "rgba(255, 255, 255, 0.7)",
+                      }}
+                      placeholder="Enter your Password"
                       id="password"
                     />
-                    <span
-                      className="input-group-text bg-white border-0"
+                    <Button
+                      className="btn position-absolute rounded-3"
+                      style={{ top: 15, zIndex: 3, right: 5 }}
+                      type="button"
+                      onClick={() => setButtonType(!buttonType)}
+                    >
+                      {buttonType ? (
+                        <TbEyeClosed size={20} />
+                      ) : (
+                        <FaRegEye size={20} />
+                      )}
+                    </Button>
+                    {/* <div
+                      className="input-group-text border-0 m-0"
                       id="basic-addon1"
+                      style={{
+                        background: "rgba(255, 255, 255, 0.7)",
+                        borderTopRightRadius: "11.7px",
+                        borderBottomRightRadius: "11.7px",
+                      }}
                     >
                       <Button
-                        className="btn p-0"
+                        className="btn"
                         type="button"
                         onClick={() => setButtonType(!buttonType)}
                       >
-                        <Image src={eye} alt="eye" width={17} height={17} />
+                        {buttonType ? (
+                          <TbEyeClosed size={20} />
+                        ) : (
+                          <FaRegEye size={20} />
+                        )}
                       </Button>
-                    </span>
+                    </div> */}
                   </div>
                   {errors.password && (
                     <ErrorMessage>{errors.password.message}</ErrorMessage>
                   )}
                 </div>
               </div>
-              <div className="row d-flex justify-content-center mb-4 ">
-                <div className="col-9 text-end ">
-                  <Link
-                    className="text-decoration-none"
-                    href="/login"
-                    style={{ color: "#B1F6FF", fontSize: ".75rem" }}
-                  >
-                    Forgot Password?
-                  </Link>
-                </div>
+              <div className="form-check" style={{ marginBottom: "20px" }}>
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="rememberMe"
+                />
+                <label
+                  className="form-check-label text-white fs14px fw-5 "
+                  htmlFor="rememberMe"
+                >
+                  Remember Me
+                </label>
               </div>
-              <div className="row d-flex flex-colum justify-content-center mb-3">
-                <div className="col-9">
+              <div className="row d-flex flex-colum justify-content-center">
+                <div className="col">
                   <Button
                     type="submit"
                     style={{
@@ -307,8 +382,9 @@ const Login = () => {
                           : "linear-gradient(to right, #0C8CE9 , #13629B)"
                       }`,
                       letterSpacing: 1,
+                      padding: "20px 26px",
                     }}
-                    className="btn shadow text-white w-100 mb-3 pt-3 pb-3 fw-bold"
+                    className="btn shadow text-white w-100 fw-bold rounded-pill "
                     disabled={isSubmitting}
                   >
                     LOGIN {isSubmitting && <Spinner color="text-light" />}

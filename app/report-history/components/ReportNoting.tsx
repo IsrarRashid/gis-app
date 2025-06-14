@@ -15,19 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import HistoryList from "./HistoryList";
-import {
-  APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE,
-  APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE,
-  D_REFERBACK_ID,
-  DD_REFERBACK_ID,
-  DDM_USER_ID,
-  DG_REFERBACK_ID,
-  DG_USER_ID,
-  REVIEWED_AND_APPROVED_BY_DG_TO_D,
-  REVIEWED_AND_FORWARD_BY_D_TO_DG,
-  REVIEWED_AND_FORWARD_BY_DD_TO_D,
-  SUBMITTED_BY_AD_TO_DD,
-} from "../statuses";
+import { APPROVED, REFERBACK, SUBMITTED } from "../statuses";
 import { SubmittedReport } from "../list/components/List";
 
 import PdfIframe from "./pdf/PdfIframe";
@@ -49,7 +37,7 @@ const schema = z.object({
   reportPath: z.string().optional().default(""),
   lastStatus: z.number().optional().default(-1),
   status: z.number().optional().default(-1),
-  reportType: z.number().optional().default(-1),
+  reportType: z.number().optional().default(1),
   sDate: z.string().optional().default(new Date().toISOString()),
 });
 
@@ -103,25 +91,31 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
     if (
       role === "deputy director" &&
       reportsHistory &&
-      reportsHistory[reportsHistory?.length - 1].status ===
-        APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
+      reportsHistory[reportsHistory?.length - 1].status === APPROVED
     ) {
       setValue("submittedTo", data.intiallyUserId);
     } else if (
       role === "deputy director" &&
       reportsHistory &&
-      reportsHistory[reportsHistory?.length - 1].status === D_REFERBACK_ID
+      reportsHistory[reportsHistory?.length - 1].status === REFERBACK
     ) {
       setReferback(true);
       setValue("submittedTo", data.intiallyUserId);
     } else if (
       role === "director" &&
       reportsHistory &&
-      reportsHistory[reportsHistory?.length - 1].status === DG_REFERBACK_ID
+      reportsHistory[reportsHistory?.length - 1].status === REFERBACK
     ) {
       setReferback(true);
-      setValue("submittedTo", DDM_USER_ID);
+      // setValue(
+      //   "submittedTo",
+      //   officers?.find(
+      //     (officer) => officer.roleName?.toLowerCase() === "deputy director"
+      //   )?.id
+      // );
     }
+
+    console.log("submittedTo", submittedTo);
   }, [
     data.submittedFrom,
     officers,
@@ -130,91 +124,6 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
     role,
     reportsHistory,
   ]);
-
-  // useEffect(() => {
-  //   if (
-  //     role === "deputy director" &&
-  //     reportsHistory &&
-  //     reportsHistory[reportsHistory?.length - 1].status ===
-  //       APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
-  //   ) {
-  //     setValue("submittedTo", data.intiallyUserId);
-  //   } else {
-  //     if (!submittedTo) {
-  //       const defaultOfficer = officers.find(
-  //         (officer) => officer.id === data.submittedFrom
-  //       )?.id;
-  //       if (defaultOfficer) setValue("submittedTo", defaultOfficer);
-  //     }
-  //   }
-  // }, [
-  //   data.submittedFrom,
-  //   officers,
-  //   setValue,
-  //   submittedTo,
-  //   role,
-  //   reportsHistory,
-  // ]);
-
-  // function getNextStatus({
-  //   role,
-  //   lastStatus,
-  //   isRejected,
-  // }: {
-  //   role: string | undefined;
-  //   lastStatus: number;
-  //   isRejected: boolean;
-  // }): number {
-  //   const lowerRole = role?.toLowerCase();
-
-  //   if (lowerRole === "deputy director") {
-  //     if (lastStatus === SUBMITTED_BY_AD_TO_DD) {
-  //       return isRejected ? DD_REFERBACK_ID : REVIEWED_AND_FORWARD_BY_DD_TO_D;
-  //     }
-
-  //     if (lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG) {
-  //       return APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE;
-  //     }
-
-  //     if (lastStatus === D_REFERBACK_ID && isRejected) {
-  //       return DD_REFERBACK_ID;
-  //     }
-  //   }
-
-  //   if (lowerRole === "director") {
-  //     if (lastStatus === REVIEWED_AND_FORWARD_BY_DD_TO_D) {
-  //       return isRejected ? D_REFERBACK_ID : REVIEWED_AND_FORWARD_BY_D_TO_DG;
-  //     }
-
-  //     if (isRejected && lastStatus === D_REFERBACK_ID) {
-  //       return D_REFERBACK_ID;
-  //     }
-  //   }
-
-  //   if (lowerRole === "director general") {
-  //     if (lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG) {
-  //       return isRejected ? DG_REFERBACK_ID : REVIEWED_AND_APPROVED_BY_DG_TO_D;
-  //     }
-  //   }
-
-  //   // fallback if nothing matched
-  //   return DD_REFERBACK_ID;
-  // }
-
-  // const modifiedFormData = {
-  //   ...formData,
-  //   visitId: data.visitId,
-  //   projectId: data.projectId,
-  //   submittedFrom: userId,
-  //   submittedUser: data.submittedUser,
-  //   reportPath: data.reportPath,
-  //   status: getNextStatus({
-  //     role,
-  //     lastStatus: data.lastStatus,
-  //     isRejected,
-  //   }),
-  //   reportType: data.reportType,
-  // };
 
   const onSubmit = async (formData: ReportNoting) => {
     console.log(errors);
@@ -228,54 +137,44 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
         reportPath: data.reportPath,
         status:
           role === "deputy director" &&
-          data.lastStatus === SUBMITTED_BY_AD_TO_DD &&
+          data.status === SUBMITTED &&
           !isReferback
-            ? REVIEWED_AND_FORWARD_BY_DD_TO_D
+            ? SUBMITTED
             : role === "deputy director" &&
-              data.lastStatus === SUBMITTED_BY_AD_TO_DD &&
+              data.status === SUBMITTED &&
               isReferback
-            ? DD_REFERBACK_ID
-            : role === "deputy director" &&
-              data.lastStatus ===
-                APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
-            ? APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE
-            : role === "director" &&
-              data.lastStatus === REVIEWED_AND_FORWARD_BY_DD_TO_D &&
-              !isReferback
-            ? REVIEWED_AND_FORWARD_BY_D_TO_DG
-            : role === "director" &&
-              data.lastStatus === REVIEWED_AND_FORWARD_BY_DD_TO_D &&
-              isReferback
-            ? D_REFERBACK_ID
-            : role === "director" &&
-              data.lastStatus === DG_REFERBACK_ID &&
-              isReferback
-            ? D_REFERBACK_ID
-            : role === "director" &&
-              data.lastStatus === REVIEWED_AND_APPROVED_BY_DG_TO_D
-            ? APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
+            ? REFERBACK
+            : role === "deputy director" && data.status === APPROVED
+            ? APPROVED
+            : role === "director" && data.status === SUBMITTED && !isReferback
+            ? SUBMITTED
+            : role === "director" && data.status === SUBMITTED && isReferback
+            ? REFERBACK
+            : role === "director" && data.status === REFERBACK && isReferback
+            ? REFERBACK
+            : role === "director" && data.status === APPROVED
+            ? APPROVED
             : role === "director general" &&
-              data.lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG &&
+              data.status === SUBMITTED &&
               !isReferback
-            ? REVIEWED_AND_APPROVED_BY_DG_TO_D
+            ? APPROVED
             : role === "director general" &&
-              data.lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG &&
+              data.status === SUBMITTED &&
               isReferback
-            ? DG_REFERBACK_ID
+            ? REFERBACK
+            : role === "deputy director" && data.status === SUBMITTED
+            ? SUBMITTED
             : role === "deputy director" &&
-              data.lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG
-            ? APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE
-            : role === "deputy director" &&
-              data.lastStatus === D_REFERBACK_ID &&
+              data.status === REFERBACK &&
               isReferback
-            ? DD_REFERBACK_ID
+            ? REFERBACK
             : role === "deputy director" && isReferback
-            ? data.lastStatus === DD_REFERBACK_ID
+            ? REFERBACK
             : role === "director" && isReferback
-            ? data.lastStatus === D_REFERBACK_ID
+            ? REFERBACK
             : -999
-            ? APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE
-            : DD_REFERBACK_ID,
+            ? APPROVED
+            : REFERBACK,
         reportType: data.reportType,
       };
       console.log("modifiedFormData", modifiedFormData);
@@ -302,18 +201,6 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
     }
   };
 
-  // const handleMarkedReport = async (data: ReportHistory) => {
-  //   try {
-  //     const response = await apiClient.post(
-  //       `${reportsHistoryAPI}/MarkedReport`,
-  //       data
-  //     );
-  //     console.log("marked report: ", response.data.data);
-  //   } catch (err) {
-  //     console.error("Submission error:", err);
-  //   }
-  // };
-
   useEffect(() => {
     const getReportHistory = async (visitId: number, projectId: number) => {
       try {
@@ -328,6 +215,16 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
     console.log("visit id:", data.visitId, "project id", data.projectId);
     getReportHistory(data.visitId, data.projectId);
   }, [data]);
+
+  useEffect(() => {
+    if (reportsHistory) {
+      console.log("reportsHistory", reportsHistory);
+      console.log(
+        "test 1",
+        reportsHistory[reportsHistory?.length - 1].status === SUBMITTED
+      );
+    }
+  }, [reportsHistory]);
 
   const [isReferback, setReferback] = useState<boolean>(false);
   const [isMarked, setMarked] = useState<boolean>(false);
@@ -359,79 +256,11 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
         >
           {reportsHistory && (
             <div className="row d-flex m-0">
-              {/* <div className="col-lg-4 col-md-12 col-sm-12 mb-3">
-              <div
-                className="col p-4 me-1"
-                style={{
-                  background: "#FAFAFA",
-                  borderRadius: "12px",
-                }}
-              >
-                <div className="row d-flex m-0 mb-2">
-                  <div className="col text-end">
-                    <Link
-                      target="_blank"
-                      href={`${process.env.NEXT_PUBLIC_BACKEND_API}${data.reportPath}`}
-                      className="btn rounded-pill fs15px text-wrap"
-                      style={{ background: "#E4E4E4" }}
-                    >
-                      Veiw{" "}
-                      {data.reportType === ONE_PAGER_REPORT_ID
-                        ? "One Pager"
-                        : "Complete"}{" "}
-                      Report
-                    </Link>
-                  </div>
-                </div>
-                <h1
-                  className="fw-bold text-wrap text-break"
-                  style={{ fontSize: "36px" }}
-                >
-                  {
-                    users.find((user) => user.id === data.submittedFrom)
-                      ?.fullName
-                  }
-                </h1>
-                <p
-                  className="mb-2 fs18px fw-normal"
-                  style={{ color: "#1E1E1E", opacity: 0.8 }}
-                >
-                  {
-                    users.find((user) => user.id === data.submittedFrom)
-                      ?.designation
-                  }
-                </p>
-                <p
-                  className="mb-2 fs18px fw-normal"
-                  style={{ color: "#1E1E1E", opacity: 0.8 }}
-                >
-                  Marked To :{" "}
-                  {users.find((user) => user.id === data.submittedTo)?.fullName}
-                </p>
-                <hr className="mb-3" style={{ opacity: ".1" }} />
-                <div className="row d-flex m-0 mb-2">
-                  <div className="col">
-                    <p
-                      className="mb-1 fw-normal text-break"
-                      style={{ color: "#1E1E1E", opacity: 0.6 }}
-                    >
-                      Last modification:&nbsp;
-                      {addDayToFormattedDate(
-                        getFormattedDate(new Date(data.sDate), "short")!
-                      )}
-                    </p>
-                  </div>
-                </div>
-                <Button className="btn bg-color-sea-blue fs18px rounded-pill text-white w-100 py-3 mb-2 fw-bold">
-                  <IoArrowBack size={21} />
-                  &nbsp;&nbsp;&nbsp;Back
-                </Button>
-              </div>
-            </div> */}
               {viewPdf && (
                 <div className="col-lg-6 col-md-12 col-sm-12 mb-3">
                   {/* <PdfFileViewer /> */}
                   <PdfIframe
+                  key={data.reportPath}
                     reportPath={`${process.env.NEXT_PUBLIC_BACKEND_API}${data.reportPath}`}
                   />
                   {/* <EditPdfFileViewer
@@ -464,27 +293,14 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                   </p>
                   <hr style={{ opacity: ".1" }} />
                   <>
-                    {(role === "deputy director" &&
+                    {reportsHistory[reportsHistory?.length - 1].submittedTo ===
+                      userId &&
+                    (reportsHistory[reportsHistory?.length - 1].status ===
+                      SUBMITTED ||
                       reportsHistory[reportsHistory?.length - 1].status ===
-                        SUBMITTED_BY_AD_TO_DD) ||
-                    (role === "deputy director" &&
+                        REFERBACK ||
                       reportsHistory[reportsHistory?.length - 1].status ===
-                        D_REFERBACK_ID) ||
-                    (role === "deputy director" &&
-                      reportsHistory[reportsHistory?.length - 1].status ===
-                        APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE) ||
-                    (role === "director" &&
-                      reportsHistory[reportsHistory?.length - 1].status ===
-                        REVIEWED_AND_FORWARD_BY_DD_TO_D) ||
-                    (role === "director" &&
-                      reportsHistory[reportsHistory?.length - 1].status ===
-                        REVIEWED_AND_APPROVED_BY_DG_TO_D) ||
-                    (role === "director" &&
-                      reportsHistory[reportsHistory?.length - 1].status ===
-                        DG_REFERBACK_ID) ||
-                    (role === "director general" &&
-                      reportsHistory[reportsHistory?.length - 1].status ===
-                        REVIEWED_AND_FORWARD_BY_D_TO_DG) ? (
+                        APPROVED) ? (
                       <>
                         <p className="mb-1 fw-normal fs18px">
                           Description Level
@@ -510,17 +326,9 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                           </div>
 
                           <div className="row mx-0 mb-3">
-                            {(data.lastStatus ===
-                              REVIEWED_AND_FORWARD_BY_DD_TO_D ||
-                              REVIEWED_AND_FORWARD_BY_D_TO_DG ||
-                              data.lastStatus === DG_REFERBACK_ID) &&
-                              ((role === "director" &&
-                                data.lastStatus !==
-                                  REVIEWED_AND_APPROVED_BY_DG_TO_D) ||
-                                role === "director general" ||
-                                (role === "deputy director" &&
-                                  data.lastStatus !==
-                                    APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE)) && (
+                            {role !== "director" &&
+                              (data.status === SUBMITTED ||
+                                data.status === REFERBACK) && (
                                 <div className="col">
                                   <div className="form-check">
                                     <input
@@ -536,7 +344,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                               "submittedTo",
                                               reportsHistory[
                                                 reportsHistory?.length - 1
-                                              ].status === D_REFERBACK_ID
+                                              ].status === REFERBACK
                                                 ? data.intiallyUserId
                                                 : data.submittedFrom
                                             )
@@ -553,7 +361,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                       Referback:{" "}
                                       {role === "deputy director" &&
                                       reportsHistory[reportsHistory?.length - 1]
-                                        .status === D_REFERBACK_ID
+                                        .status === REFERBACK
                                         ? users.find(
                                             (user) =>
                                               user.id === data.intiallyUserId
@@ -561,10 +369,11 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                         : role === "director" &&
                                           reportsHistory[
                                             reportsHistory?.length - 1
-                                          ].status === DG_REFERBACK_ID
+                                          ].status === REFERBACK
                                         ? officers.find(
                                             (officer) =>
-                                              officer.id === DDM_USER_ID
+                                              officer.roleName?.toLowerCase() ===
+                                              "deputy director"
                                           )?.fullName
                                         : users.find(
                                             (user) =>
@@ -574,11 +383,48 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                   </div>
                                 </div>
                               )}
+                            {role === "director" && (
+                              <div className="mb-2">
+                                <select
+                                  value={submittedTo || ""}
+                                  onChange={(e) => {
+                                    handleSelectChange(e);
+                                    setReferback(true);
+                                    setMarked(false);
+                                  }}
+                                  className="form-select fs-6"
+                                  aria-label="Select Deputy Director"
+                                >
+                                  <option value="">
+                                    Select Deputy Director
+                                  </option>
+                                  {officers
+                                    .filter(
+                                      (officer) =>
+                                        officer.roleName?.toLowerCase() ===
+                                        "deputy director"
+                                    )
+                                    .map((officer) => (
+                                      <option
+                                        key={officer.id}
+                                        value={officer.id}
+                                      >
+                                        {officer.designation}
+                                      </option>
+                                    ))}
+                                </select>
+                                {errors.submittedTo && (
+                                  <p className="text-danger mt-1">
+                                    {errors.submittedTo.message}
+                                  </p>
+                                )}
+                              </div>
+                            )}
                             {role === "director" &&
                               reportsHistory[reportsHistory?.length - 1]
-                                .status !== REVIEWED_AND_APPROVED_BY_DG_TO_D &&
+                                .status !== APPROVED &&
                               reportsHistory[reportsHistory?.length - 1]
-                                .status !== DG_REFERBACK_ID && (
+                                .status !== REFERBACK && (
                                 <div className="col">
                                   <div className="form-check">
                                     <input
@@ -590,8 +436,16 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                         const newValue = !isMarked;
                                         setMarked(newValue);
                                         setReferback(false);
+                                        console.log(
+                                          "officer 47 index",
+                                          officers[47].designation
+                                        );
+
                                         if (newValue) {
-                                          setValue("submittedTo", DG_USER_ID); //director general-id
+                                          setValue(
+                                            "submittedTo",
+                                            officers[47].id
+                                          ); //director general-id
                                         } else {
                                           setValue("submittedTo", undefined); //director general-id
                                         }
@@ -613,19 +467,16 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                             <>
                               {(role === "deputy director" &&
                                 reportsHistory[reportsHistory?.length - 1]
-                                  .status === SUBMITTED_BY_AD_TO_DD) ||
+                                  .status === SUBMITTED) ||
                               (role === "director" &&
                                 reportsHistory[reportsHistory?.length - 1]
-                                  .status ===
-                                  REVIEWED_AND_FORWARD_BY_DD_TO_D) ||
+                                  .status === SUBMITTED) ||
                               (role === "director" &&
                                 reportsHistory[reportsHistory?.length - 1]
-                                  .status ===
-                                  REVIEWED_AND_APPROVED_BY_DG_TO_D) ||
+                                  .status === APPROVED) ||
                               (role === "director general" &&
                                 reportsHistory[reportsHistory?.length - 1]
-                                  .status ===
-                                  REVIEWED_AND_FORWARD_BY_D_TO_DG) ? (
+                                  .status === SUBMITTED) ? (
                                 <div className="mb-2">
                                   <select
                                     value={submittedTo || ""}
@@ -638,11 +489,11 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                         <option value="">
                                           Select Deputy Director
                                         </option>
-                                        <option value={officers[2]?.id}>
-                                          {officers[2]?.fullName}
+                                        <option value={officers[27]?.id}>
+                                          {officers[27]?.designation}
                                         </option>
-                                        <option value={officers[3]?.id}>
-                                          {officers[3]?.fullName}
+                                        <option value={officers[28]?.id}>
+                                          {officers[28]?.designation}
                                         </option>
                                       </>
                                     ) : (
@@ -650,11 +501,11 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                         <option value="">
                                           Select Director
                                         </option>
-                                        <option value={officers[0]?.id}>
-                                          {officers[0]?.fullName}
+                                        <option value={officers[25]?.id}>
+                                          {officers[25]?.designation}
                                         </option>
-                                        <option value={officers[1]?.id}>
-                                          {officers[1]?.fullName}
+                                        <option value={officers[26]?.id}>
+                                          {officers[26]?.designation}
                                         </option>
                                       </>
                                     )}
@@ -731,7 +582,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                             {isReferback && (
                               <div className="col-auto">
                                 <Button
-                                  disabled={isSubmitting}
+                                  disabled={isSubmitting || !submittedTo}
                                   className="btn rounded-pill fs18px fw-normal px-3"
                                   type="submit"
                                   style={{

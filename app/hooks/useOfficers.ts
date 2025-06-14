@@ -9,7 +9,7 @@ export interface Officer {
   picture: string;
   email: string;
   phoneNumber: string;
-  roleId: string;
+  roleName: string;
 }
 
 interface Props {

@@ -43,6 +43,18 @@ export const getFormattedDate = (
 const shortDate = getFormattedDate(new Date(), "short"); // Outputs: "Sep 10, 2024"
 const numericDate = getFormattedDate(new Date(), "numeric"); // Outputs: "10.9.2024"
 
+export const convertToLocaleTimeString = (time: string) => {
+  const [hours, minutes] = time.split(":");
+  const date = new Date();
+  date.setHours(parseInt(hours), parseInt(minutes));
+
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
 export const getName = (id: number, data: any) => {
   const record = data.find((item: any) => item.id === id);
   if (record?.name) return record?.name;
@@ -74,7 +86,7 @@ export function formatDateTime(dateTimeString: string, formatType: string) {
   }
 }
 
-export const devMap = false;
+export const devMap = true;
 
 // "yyyy-MM-dd" to the desired format "dd-MMM-yyyy"
 export function formatHHLStringDate(inputDate: string): string {
@@ -351,6 +363,7 @@ export interface SingleProjectLessData {
 }
 
 export const triggerEscapeKeyPress = () => {
+  if (typeof window === "undefined") return; // Prevents SSR crash
   const escapeEvent = new KeyboardEvent("keydown", {
     key: "Escape",
     keyCode: 27,
@@ -437,3 +450,45 @@ export const downloadReportAnalysisToExcel = (
   // Write workbook to file
   XLSX.writeFile(workbook, filename);
 };
+
+export const createdMessage = "Created Successfully";
+export const updatedMessage = "Updated Successfully";
+export const deleteMessage = "Deleted Successfully";
+
+export const displayStatusText = (statusId: number) => {
+  return statusId === 0
+    ? "SCHEDULED"
+    : statusId === 1
+    ? "COMPLETED"
+    : statusId === 2
+    ? "CANCELLED"
+    : statusId === 3
+    ? "SUBMITTED"
+    : statusId === 4
+    ? "APPROVED"
+    : statusId === 5
+    ? "REFERBACK"
+    : statusId === 6
+    ? "ISSUED"
+    : "";
+};
+
+export const isValidDate = (date: string) => {
+  const d = new Date(date);
+  return !isNaN(d.getTime());
+};
+
+export interface Option {
+  label: string;
+  value: string;
+}
+
+export interface StringOption {
+  label: string;
+  value: string;
+}
+
+export interface NumberOption {
+  label: string;
+  value: number;
+}

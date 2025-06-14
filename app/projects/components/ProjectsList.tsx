@@ -1,5 +1,5 @@
 "use client";
-import { projectAPI, smdpSyncApi } from "@/app/APIs";
+import { projectAPI, smdpSyncApi, TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
@@ -23,6 +23,8 @@ import AssignUserForm from "./AssignUserForm";
 import GroupingForm from "./GroupingForm";
 import SmdpAllProjectsSyncForm from "./SmdpAllProjectsSyncForm";
 import SmdpSyncForm from "./SmdpSyncForm";
+import Button from "@/app/components/Button";
+import { AiOutlinePlus } from "react-icons/ai";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -172,6 +174,19 @@ const ProjectsList = ({
     }
   };
 
+  const handleAddVisitPlan = async (projectId: number) => {
+    try {
+      const response = await apiClient.post(
+        `${TEMP_TOUR_PLAN_API}/add-tour-plan?projectid=${projectId}`
+      );
+      console.log(response);
+      notifyCreate(response.data?.message);
+    } catch (err) {
+      console.log(err);
+      notifyError((err as AxiosError).message);
+    }
+  };
+
   return (
     <>
       <>
@@ -247,10 +262,11 @@ const ProjectsList = ({
               {/* <th colSpan={1}>
                 <div className="text-center"></div>
               </th> */}
+              <th>ADD TO VISIT PLAN</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((d) => (
+            {paginatedData.map((d, i) => (
               <tr
                 className={dmSans.className}
                 style={{
@@ -319,6 +335,14 @@ const ProjectsList = ({
                 </td> */}
                 <td className="text-center">
                   <GroupingForm id={d.id} options={superGroups} />
+                </td>
+                <td className="text-center">
+                  <Button
+                    className="btn"
+                    onClick={() => handleAddVisitPlan(d.id)}
+                  >
+                    <AiOutlinePlus />
+                  </Button>
                 </td>
                 {/* <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />

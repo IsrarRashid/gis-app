@@ -230,19 +230,10 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
   };
 
   useEffect(() => {
-    // Set the background for the body
-    document.body.style.background = "#CFE6F8";
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-
     handleButtonClick(
       "projectDetailsDashboard",
       "https://www.youtube.com/watch?v=PDHSsWfMhNM&ab_channel=DirectorateGeneralMonitoringandEvaluation"
     );
-    // Cleanup on unmount
-    return () => {
-      document.body.style.backgroundImage = "";
-    };
   }, []);
 
   const handleSubmit = async (projectId: number, visitId: number) => {

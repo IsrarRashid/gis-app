@@ -27,7 +27,14 @@ const TimelineBothCustomAndGoogle = ({
   const position = { lat: 31.5638102, lng: 74.3245938 };
 
   return (
-    <div style={{ height: "50vh", width: "100%" }}>
+    <div
+      style={{
+        height: "50vh",
+        width: "100%",
+        borderRadius: "10px",
+        overflow: "hidden",
+      }}
+    >
       <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
         <Map
           defaultCenter={position}

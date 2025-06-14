@@ -1,10 +1,12 @@
 import Button from "@/app/components/Button";
-import useAuthentication from "@/app/hooks/useAuthentication";
-import useDistrict from "@/app/hooks/useDistrict";
-import useDriver from "@/app/hooks/useDriver";
-import useProjects from "@/app/hooks/useProjects";
-import useTourPlans from "@/app/hooks/useTourPlans";
-import useVehicle from "@/app/hooks/useVehicle";
+import useAuthentication, {
+  Authentication,
+} from "@/app/hooks/useAuthentication";
+import useDistrict, { District } from "@/app/hooks/useDistrict";
+import useDriver, { Driver } from "@/app/hooks/useDriver";
+import useProjects, { Project } from "@/app/hooks/useProjects";
+import useTourPlans, { TourPlan } from "@/app/hooks/useTourPlans";
+import useVehicle, { Vehicle } from "@/app/hooks/useVehicle";
 import useVisitsNew, { VisitNew } from "@/app/hooks/useVisitsNew";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,16 +60,29 @@ interface Props {
   id?: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   refresh: boolean;
+  visitsNew: VisitNew[];
+  drivers: Driver[];
+  vehicles: Vehicle[];
+  projects: Project[];
+  users: Authentication[];
+  visitPlans: TourPlan[];
+  districts: District[];
 }
 
-const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
-  const { data: visitsNew } = useVisitsNew({ refresh });
-  const { data: drivers, setError } = useDriver({ refresh });
-  const { data: vehicles } = useVehicle({ refresh });
-  const { data: projects } = useProjects({ refresh });
-  const { data: users } = useAuthentication({ refresh });
-  const { data: visitPlans } = useTourPlans({ refresh });
-  const { data: districts } = useDistrict({ refresh });
+const Form = ({
+  api,
+  method,
+  id,
+  setRefresh,
+  refresh,
+  visitsNew,
+  drivers,
+  vehicles,
+  projects,
+  users,
+  visitPlans,
+  districts,
+}: Props) => {
   const {
     register,
     handleSubmit,
@@ -76,10 +91,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     formState: { errors },
   } = useForm<Visit>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
-  console.log(errors);
   const modalId = `formModal-${id}`;
 
-  const createdMessage = "Created Successfully";
   const updatedMessage = "Visit Scheduled Successfully";
 
   const handleClose = () => {
@@ -227,6 +240,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Visit Plan Group
                       </label>
                       <select
+                        id="visitPlanGroup"
                         {...register("visitPlanGroup", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
                       >
@@ -246,6 +260,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Project ID
                       </label>
                       <select
+                        id="projectId"
                         disabled
                         {...register("projectId", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
@@ -265,6 +280,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Assigned To
                       </label>
                       <select
+                        id="assignedTo"
                         disabled
                         {...register("assignedTo", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
@@ -316,6 +332,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Vehicle ID
                       </label>
                       <select
+                        id="vehicleID"
                         {...register("vehicleID", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
                       >
@@ -340,6 +357,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Driver
                       </label>
                       <select
+                        id="driverID"
                         {...register("driverID", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
                       >

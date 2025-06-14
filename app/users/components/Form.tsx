@@ -1,5 +1,5 @@
 import Button from "@/app/components/Button";
-import useRoles from "@/app/hooks/useRoles";
+import { Role } from "@/app/hooks/useRoles";
 import apiClient, {
   AxiosError,
   ErrorResponse,
@@ -9,7 +9,7 @@ import Image from "next/image";
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
 
@@ -49,9 +49,10 @@ interface Props {
   id?: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   refresh: boolean;
+  roles: Role[];
 }
 
-const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
+const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
   const {
     register,
     handleSubmit,
@@ -59,8 +60,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     reset,
     formState: { errors },
   } = useForm<User>({ resolver: zodResolver(schema) });
-  const { data: rolesData } = useRoles();
-  console.log(errors);
   const modalId = `formModal-${id}`;
   const createdMessage = "Created Successfully";
   const updatedMessage = "Updated Successfully";
@@ -112,9 +111,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
       <Button
         type="button"
         className={`btn shadow ${
@@ -205,11 +201,12 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Role
                     </label>
                     <select
+                      id="roleID"
                       {...register("roleID", { valueAsNumber: true })}
                       className="form-select form-select-sm color-light-dark"
                     >
                       <option value="">None</option>
-                      {rolesData?.map((d) => (
+                      {roles?.map((d) => (
                         <option key={d.id} value={d.id}>
                           {d.name}
                         </option>

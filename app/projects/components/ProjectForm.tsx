@@ -206,6 +206,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Status
                     </label>
                     <select
+                      id="status"
                       {...register("status")}
                       className="form-select form-select-sm color-light-dark"
                     >
@@ -220,6 +221,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       Sector
                     </label>
                     <select
+                      id="sectorId"
                       {...register("sectorId", { valueAsNumber: true })}
                       className="form-select form-select-sm color-light-dark"
                     >

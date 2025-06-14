@@ -3,14 +3,16 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "103.111.161.112",
+        protocol: "https",
+        hostname: "rtmes-api-dgme.punjab.gov.pk",
         port: "",
+        // protocol: "http",
+        // hostname: "110.39.184.210",
+        // port: "154",
         pathname: "/**",
       },
     ],
   },
-
   webpack: (config) => {
     config.module.rules.push({
       test: /\.(mp4|webm|ogg)$/,

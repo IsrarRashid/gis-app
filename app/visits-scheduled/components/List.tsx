@@ -23,6 +23,14 @@ import cancel from "../../../public/icons/cancel.svg";
 import clock from "../../../public/icons/clock.svg";
 import complete from "../../../public/icons/complete.svg";
 import Form from "./Form";
+import {
+  APPROVED,
+  CANCELLED,
+  COMPLETED,
+  SCHEDULED,
+  SUBMITTED,
+} from "@/app/report-history/statuses";
+import DisplayStatusText from "@/app/components/DisplayStatusText";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -69,7 +77,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
       [
         item.id.toString(),
         item.projectId.toString(),
-        item.status,
         item.assignedTo.toString(),
         item.vehicleID.toString(),
         item.driverID.toString(),
@@ -451,58 +458,52 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                             <td>{getName(d.projectId, projects)}</td>
                             <td>{getName(d.assignedTo, users)}</td>
                             <td style={{ whiteSpace: "nowrap" }}>
-                              {d.status === "scheduled" ||
-                              d.status === "Scheduled" ? (
+                              {d.status === SCHEDULED ? (
                                 <Image
                                   src={calender}
                                   style={{ marginBottom: "3px" }}
                                   alt="calender"
                                 />
-                              ) : d.status === "not confirmed" ||
-                                d.status === "Not Confirmed" ||
-                                d.status === "pending" ||
-                                d.status === "Pending" ? (
+                              ) : d.status === SUBMITTED ? (
                                 <Image
                                   src={clock}
                                   style={{ marginBottom: "3px" }}
                                   alt="clock"
                                 />
-                              ) : d.status === "cancel" ||
-                                d.status === "Cancel" ? (
+                              ) : d.status === CANCELLED ? (
                                 <Image
                                   src={cancel}
                                   style={{ marginBottom: "3px" }}
                                   alt="cancel"
                                 />
-                              ) : d.status === "completed" ||
-                                d.status === "Completed" ? (
+                              ) : d.status === COMPLETED ? (
                                 <Image
                                   src={complete}
                                   style={{ marginBottom: "3px" }}
                                   alt="complete"
                                 />
-                              ) : d.status.startsWith("approved") ||
-                                d.status.startsWith("Approved") ? (
+                              ) : d.status === APPROVED ? (
                                 <Image
                                   src={complete}
                                   style={{ marginBottom: "3px" }}
                                   alt="complete"
-                                />
-                              ) : d.status === "active" ||
-                                d.status === "Active" ? (
-                                <Image
-                                  src={calender}
-                                  style={{ marginBottom: "3px" }}
-                                  alt="calender"
-                                />
-                              ) : d.status === "draft" ||
-                                d.status === "Draft" ? (
-                                <Image
-                                  src={clock}
-                                  style={{ marginBottom: "3px" }}
-                                  alt="clock"
                                 />
                               ) : (
+                                // : d.status === "active" ||
+                                //   d.status === "Active" ? (
+                                //   <Image
+                                //     src={calender}
+                                //     style={{ marginBottom: "3px" }}
+                                //     alt="calender"
+                                //   />
+                                // ) : d.status === "draft" ||
+                                //   d.status === "Draft" ? (
+                                //   <Image
+                                //     src={clock}
+                                //     style={{ marginBottom: "3px" }}
+                                //     alt="clock"
+                                //   />
+                                // )
                                 ""
                               )}
                               &nbsp;{d.status}
@@ -878,61 +879,56 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                             <td>{getName(d.projectId, projects)}</td>
                             <td>{getName(d.assignedTo, users)}</td>
                             <td style={{ whiteSpace: "nowrap" }}>
-                              {d.status === "scheduled" ||
-                              d.status === "Scheduled" ? (
+                              {d.status === SCHEDULED ? (
                                 <Image
                                   src={calender}
                                   style={{ marginBottom: "3px" }}
                                   alt="calender"
                                 />
-                              ) : d.status === "not confirmed" ||
-                                d.status === "Not Confirmed" ||
-                                d.status === "pending" ||
-                                d.status === "Pending" ? (
+                              ) : d.status === SUBMITTED ? (
                                 <Image
                                   src={clock}
                                   style={{ marginBottom: "3px" }}
                                   alt="clock"
                                 />
-                              ) : d.status === "cancel" ||
-                                d.status === "Cancel" ? (
+                              ) : d.status === CANCELLED ? (
                                 <Image
                                   src={cancel}
                                   style={{ marginBottom: "3px" }}
                                   alt="cancel"
                                 />
-                              ) : d.status === "completed" ||
-                                d.status === "Completed" ? (
+                              ) : d.status === COMPLETED ? (
                                 <Image
                                   src={complete}
                                   style={{ marginBottom: "3px" }}
                                   alt="complete"
                                 />
-                              ) : d.status.startsWith("approved") ||
-                                d.status.startsWith("Approved") ? (
+                              ) : d.status === APPROVED ? (
                                 <Image
                                   src={complete}
                                   style={{ marginBottom: "3px" }}
                                   alt="complete"
-                                />
-                              ) : d.status === "active" ||
-                                d.status === "Active" ? (
-                                <Image
-                                  src={calender}
-                                  style={{ marginBottom: "3px" }}
-                                  alt="calender"
-                                />
-                              ) : d.status === "draft" ||
-                                d.status === "Draft" ? (
-                                <Image
-                                  src={clock}
-                                  style={{ marginBottom: "3px" }}
-                                  alt="clock"
                                 />
                               ) : (
+                                // : d.status === "active" ||
+                                //   d.status === "Active" ? (
+                                //   <Image
+                                //     src={calender}
+                                //     style={{ marginBottom: "3px" }}
+                                //     alt="calender"
+                                //   />
+                                // ) : d.status === "draft" ||
+                                //   d.status === "Draft" ? (
+                                //   <Image
+                                //     src={clock}
+                                //     style={{ marginBottom: "3px" }}
+                                //     alt="clock"
+                                //   />
+                                // )
                                 ""
                               )}
-                              &nbsp;{d.status}
+                              &nbsp;
+                              <DisplayStatusText statusId={d.status} />
                             </td>
                             <td>{d.latitude}</td>
                             <td>{d.longitude}</td>

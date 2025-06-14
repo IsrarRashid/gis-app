@@ -29,6 +29,7 @@ interface Props {
   id?: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   refresh: boolean;
+  data: Sector[];
   setData: React.Dispatch<React.SetStateAction<Sector[]>>;
 }
 
@@ -39,8 +40,8 @@ const SectorForm = ({
   setRefresh,
   refresh,
   setData,
+  data,
 }: Props) => {
-  const { data } = useSectors();
   const {
     register,
     handleSubmit,
@@ -185,6 +186,7 @@ const SectorForm = ({
                       <select
                         {...register("parentId", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
+                        id="parentId"
                       >
                         <option value="0">None</option>
                         {data?.map((d) => (

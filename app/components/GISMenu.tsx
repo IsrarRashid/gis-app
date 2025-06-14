@@ -24,6 +24,7 @@ import truck from "../../public/icons/truck.svg";
 import user3White from "../../public/icons/user3White.svg";
 import visits from "../../public/icons/visits.svg";
 import Button from "./Button";
+import { motion } from "framer-motion";
 
 interface Data {
   name: string;
@@ -39,9 +40,9 @@ const GISMenu = () => {
   const handleShow = () => setShow(true);
 
   const [rights, setRights] = useState([]);
+  const [isHover, setHover] = useState(false);
 
   const router = useRouter();
-  const [role, setRole] = useState("");
 
   useEffect(() => {
     const rights = JSON.parse(Cookies.get("rights") || "[]");
@@ -218,6 +219,13 @@ const GISMenu = () => {
       icon: visits,
       backgroundColor: "linear-gradient(to bottom right, #28A811 , yellow)",
     },
+    {
+      name: "Departments",
+      nameId: "departments",
+      link: "/departments",
+      icon: visits,
+      backgroundColor: "linear-gradient(to bottom right, #d3db44 , #23ad91)",
+    },
     // {
     //   name: "Visits",
     //   nameId: "visits",
@@ -300,21 +308,32 @@ const GISMenu = () => {
             <div className="row d-flex justify-content-center p-4">
               {filteredMenu?.map((d) => (
                 <Link
-                  key={d.name.toString()}
                   href={d.link}
+                  key={d.name}
                   className="col text-center text-decoration-none mb-2"
                   onClick={() => setShow(!show)}
                 >
-                  <div
-                    className="col text-center"
-                    style={{
-                      backgroundImage: d.backgroundColor,
-                      borderRadius: "10px",
-                      padding: "40px 45px",
+                  <motion.div
+                    className="col"
+                    // style={{ borderRadius: "10px" }}
+                    whileTap={{ scale: 0.9 }}
+                    whileHover={{
+                      scale: 1.1,
+                      transition: { duration: 0.2 },
+                      // boxShadow: "0px 2.5px 3px .5px rgba(0, 0, 0, 0.6)",
                     }}
                   >
-                    <Image src={d.icon} alt={d.icon} width={40} height={40} />
-                  </div>
+                    <div
+                      className="col text-center"
+                      style={{
+                        backgroundImage: d.backgroundColor,
+                        borderRadius: "10px",
+                        padding: "40px 45px",
+                      }}
+                    >
+                      <Image src={d.icon} alt={d.icon} width={40} height={40} />
+                    </div>
+                  </motion.div>
                   <div
                     className="col text-center fw-bold mt-1 fs18px"
                     style={{ color: "#676767" }}

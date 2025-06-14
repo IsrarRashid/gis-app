@@ -1,5 +1,5 @@
 "use client";
-import { attributesAPI } from "@/app/APIs";
+import { attributesAPI, getProjectDetailKeysAPI } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
@@ -9,7 +9,7 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getFormattedDate } from "@/app/utils";
 import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useAttributes, { Attribute } from "../../hooks/useAttributes";
 import Form from "./Form";
@@ -125,6 +125,22 @@ const List = ({ refresh, setRefresh }: Props) => {
     }
   };
 
+  const [projectDetailKeys, setProjectDetailKeys] = useState<string[]>([]);
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const response = await apiClient.get(`${getProjectDetailKeysAPI}`);
+        const data = response.data.data; // Assuming this returns an array of group objects
+        setProjectDetailKeys(data);
+        console.log("projectDetailKeys", projectDetailKeys);
+      } catch (error) {
+        console.error("Error fetching selected groups:", error);
+      }
+    };
+
+    fetchDetails();
+  }, []);
+
   return (
     <>
       {/* {error && <p className="text-danger">{error}</p>} */}
@@ -142,6 +158,8 @@ const List = ({ refresh, setRefresh }: Props) => {
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
+              projectDetailKeys={projectDetailKeys}
+              data={data}
             />
           </div>
         }
@@ -231,21 +249,22 @@ const List = ({ refresh, setRefresh }: Props) => {
                 handleSort={() => handleSort("remarks")}
               />
               <TableHeading
+                name="removeable"
+                handleSort={() => handleSort("removeable")}
+              />
+              <TableHeading
                 name="options"
                 handleSort={() => handleSort("options")}
               />
               <TableHeading
-                name="created at"
-                handleSort={() => handleSort("createdAt")}
+                name="Master"
+                handleSort={() => handleSort("isMaster")}
               />
               <TableHeading
-                name="updated at"
-                handleSort={() => handleSort("updatedAt")}
+                name="priority"
+                handleSort={() => handleSort("priority")}
               />
-              <TableHeading
-                name="removeable"
-                handleSort={() => handleSort("removeable")}
-              />
+
               <th colSpan={2}></th>
             </tr>
           </thead>
@@ -289,13 +308,9 @@ const List = ({ refresh, setRefresh }: Props) => {
                   ))}
                 </td>
                 <td>
-                  {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "short")}
+                  {d.isMaster === 0 || d.isMaster === null ? "No" : "Yes"}
                 </td>
-                <td>
-                  {d.updatedAt &&
-                    getFormattedDate(new Date(d.updatedAt), "short")}
-                </td>
+                <td>{d.priority}</td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.attributeId} />
                 </td>
@@ -306,6 +321,8 @@ const List = ({ refresh, setRefresh }: Props) => {
                     id={d.attributeId}
                     setRefresh={setRefresh}
                     refresh={refresh}
+                    projectDetailKeys={projectDetailKeys}
+                    data={data}
                   />
                 </td>
               </tr>

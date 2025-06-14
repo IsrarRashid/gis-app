@@ -5,7 +5,7 @@ export interface Visit {
   id: number;
   projectId: number;
   assignedTo: number;
-  status: string;
+  status: number;
   latitude: string;
   longitude: string;
   vehicleID: number;

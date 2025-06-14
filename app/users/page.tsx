@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const Users = dynamic(() => import("./components/Users"), {
-  ssr: false,
-});
+import Users from "./components/Users";
 
 const UsersPage = () => {
   return (

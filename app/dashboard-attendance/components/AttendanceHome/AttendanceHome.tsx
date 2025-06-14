@@ -29,7 +29,7 @@ interface DashboardAttendance {
   };
 }
 
-const DashboardAttendance = () => {
+const AttendanceHome = () => {
   const [data, setData] = useState<DashboardAttendance>();
 
   useEffect(() => {
@@ -50,36 +50,24 @@ const DashboardAttendance = () => {
   // );
   // const attendanceData: DashboardAttendance = await res.json();
 
-  useEffect(() => {
-    // Set the background for the body
-    document.body.style.background = "#CFE6F8";
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-
-    // Cleanup on unmount
-    return () => {
-      document.body.style.backgroundImage = "";
-    };
-  }, []);
-
   return (
     <div
       className="container-fluid p-2 mb-4"
       style={{
-        backgroundImage:
-          "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6), rgba(255, 255, 255, 0.08))",
+        // backgroundImage:
+        //   "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6), rgba(255, 255, 255, 0.08))",
         border: "1px solid rgba(255, 255, 255, 0.6)",
-        padding: "10px",
         borderRadius: "10px",
+        height: "100%",
       }}
     >
       {data ? (
-        <div className="py-5">
-          <section className="mx-3 pt-2 pb-5 ">
+        <div>
+          <section className="mx-3 pb-4 pt-5">
             <h1 className="fw-bold">Welcome Admin !</h1>
             <p className="text-secondary fs-5 fw-normal">Dashboard</p>
           </section>
-          <section className="mx-3 pt-3 pb-5 ">
+          <section className="mx-3 pb-3">
             <div className="row">
               <div className="col-lg-3 col-md-4 col-sm-6 mb-4">
                 <div
@@ -351,4 +339,4 @@ const DashboardAttendance = () => {
   );
 };
 
-export default DashboardAttendance;
+export default AttendanceHome;

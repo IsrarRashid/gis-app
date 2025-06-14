@@ -36,21 +36,7 @@ export interface Feedback {
   resolvedDate: string;
 }
 
-const DashboardTO = () => {
-  // useAuthorization("feedback");
-
-  useEffect(() => {
-    // Set the background for the body
-    document.body.style.background = "#CFE6F8";
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-
-    // Cleanup on unmount
-    return () => {
-      document.body.style.backgroundImage = "";
-    };
-  }, []);
-
+const Feedback = () => {
   const [selectedButton, setSelectedButton] = useState(2);
   const [refresh, setRefresh] = useState(false);
   const [data, setData] = useState<Feedback[]>();
@@ -532,4 +518,4 @@ const DashboardTO = () => {
   );
 };
 
-export default DashboardTO;
+export default Feedback;

@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const StaffTracking = dynamic(() => import("./components/StaffTracking"), {
-  ssr: false,
-});
+import StaffTracking from "./components/StaffTracking";
 
 const StaffTrackingPage = () => {
   return (

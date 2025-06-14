@@ -139,7 +139,14 @@ const MyMap = ({ data }: Props) => {
   return (
     <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
       {initialPosition && (
-        <div style={{ width: "100%", height: "500px" }}>
+        <div
+          style={{
+            width: "100%",
+            height: "500px",
+            borderRadius: "10px",
+            overflow: "hidden",
+          }}
+        >
           <Map
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_Reduce_ID}
             mapTypeId="hybrid"

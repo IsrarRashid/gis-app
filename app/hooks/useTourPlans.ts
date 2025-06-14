@@ -1,5 +1,6 @@
 import { tourPlanAPI } from "../APIs";
 import useData from "./useData";
+import Cookies from "js-cookie";
 
 export interface TourPlan {
   id: number;
@@ -17,7 +18,13 @@ interface Props {
   refresh?: boolean;
 }
 
-const useTourPlans = ({ refresh = false }: Props = {}) =>
-  useData<TourPlan>({ refresh, endpoint: tourPlanAPI });
+const useTourPlans = ({ refresh = false }: Props = {}) => {
+  const departmentId = Cookies.get("departmentId");
+
+  return useData<TourPlan>({
+    refresh,
+    endpoint: tourPlanAPI + `?departmentId=${departmentId}`,
+  });
+};
 
 export default useTourPlans;

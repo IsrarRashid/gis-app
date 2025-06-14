@@ -2,6 +2,8 @@ import { useEffect } from "react";
 
 const useBackground = (background: string, isImage: boolean = false) => {
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     if (isImage) {
       document.body.style.backgroundImage = `url('${background}')`;
       document.body.style.backgroundSize = "cover";

@@ -1,31 +1,9 @@
 "use client";
-import { setContent } from "@/app/features/content/contentSlice";
-import useAuthorization from "@/app/hooks/useAuthorization";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
 import List from "./List";
 
 const Users = () => {
   const [refresh, setRefresh] = useState(false);
-  const dispatch = useDispatch();
-  // useAuthorization("users");
-
-  const handleButtonClick = (content: string) => {
-    dispatch(setContent(content));
-  };
-
-  useEffect(() => {
-    // Set the background for the body
-    document.body.style.backgroundImage = `url('/images/bg2.png')`;
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-
-    handleButtonClick("users");
-    // Cleanup on unmount
-    return () => {
-      document.body.style.backgroundImage = "";
-    };
-  }, []);
 
   return (
     <>

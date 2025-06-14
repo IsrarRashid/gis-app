@@ -14,8 +14,8 @@ const useData = <T>({ refresh = false, endpoint }: Props) => {
   const notifyError = (message: string) => toast.error(message);
 
   useEffect(() => {
+    const controller = new AbortController();
     const loadItems = async () => {
-      const controller = new AbortController();
       setLoading(true);
       try {
         const response = await apiClient.get(endpoint, {
@@ -30,10 +30,9 @@ const useData = <T>({ refresh = false, endpoint }: Props) => {
         // notifyError((err as AxiosError).message);
         setLoading(false);
       }
-
-      return () => controller.abort();
     };
     loadItems();
+    return () => controller.abort();
   }, [refresh, endpoint]);
 
   return { data, setData, error, setError, isLoading, setLoading };

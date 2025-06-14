@@ -8,6 +8,7 @@ import useSectors from "@/app/hooks/useSectors";
 import useUsers from "@/app/hooks/useUsers";
 import {
   addDayToFormattedDate,
+  displayStatusText,
   exportToPDF,
   formatAmountWithCommas,
   getFormattedDate,
@@ -24,7 +25,6 @@ import { Accordion } from "react-bootstrap";
 import { DateRange, RangeKeyDict } from "react-date-range";
 import "react-date-range/dist/styles.css"; // Main style file
 import "react-date-range/dist/theme/default.css"; // Theme CSS
-import { Toaster } from "react-hot-toast";
 import { FaRegClock, FaSearch, FaUser } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import {
@@ -34,9 +34,8 @@ import {
   MdNavigateNext,
   MdOutlineDateRange,
 } from "react-icons/md";
+import Select, { ActionMeta, SingleValue, StylesConfig } from "react-select";
 import styles from "./ProjectsTable.module.css";
-import Select, { ActionMeta, SingleValue } from "react-select";
-import SearchableSingleSelect from "@/app/components/SearchableSingleSelect";
 
 // Define the type of the range state
 interface RangeType {
@@ -67,8 +66,7 @@ export interface ProjectsList {
   completedDate: string;
   deadline: string;
   submittedDate: string;
-  issuedDate: string;
-  status: string;
+  statusDate: string;
   cost: number;
   revisedAllocation: number;
   pnDReleases: number;
@@ -78,8 +76,7 @@ export interface ProjectsList {
   expUpToJune: number;
   totalRevenueCost: number;
   totalCapitalCost: number;
-  reportSubmitted: string;
-  onePagerSubmitted: string;
+  reportStatus: number;
 }
 
 interface DefaultFilter {
@@ -88,7 +85,7 @@ interface DefaultFilter {
   userName: string;
   startDate: string; // Start date for  range
   endDate: string; // End date for  range
-  reportSubmitted: string;
+  reportStatus: string;
 }
 
 interface Props {
@@ -97,6 +94,16 @@ interface Props {
   label: string;
   keys: (keyof ProjectsList)[];
   allowLink?: boolean;
+}
+
+interface Option {
+  label: string;
+  value: string;
+}
+
+interface NumberOption {
+  label: string;
+  value: number;
 }
 
 const ProjectsTable = ({
@@ -110,6 +117,176 @@ const ProjectsTable = ({
   const { data: districts } = useDistrict({ refresh });
   const { data: sectors } = useSectors({ refresh });
   const { data: users } = useUsers({ refresh });
+
+  const customStyles: StylesConfig<Option, false> = {
+    control: (base) => ({
+      ...base,
+      fontSize: "14px",
+      backgroundColor: "rgba(16, 143, 168, .1)",
+    }),
+    menu: (base) => ({
+      ...base,
+      zIndex: 9999,
+    }),
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 9999,
+    }),
+    option: (base, state) => ({
+      ...base,
+      // backgroundColor: state.isFocused ? "#f0f0f0" : "white",
+      // color: "#333",
+      fontSize: "14px",
+    }),
+  };
+
+  const defaultOption = { value: "", label: "Select" };
+
+  const districtOptions = districts.map((district) => {
+    return {
+      value: district.districtName,
+      label: district.districtName,
+    };
+  });
+
+  const handleDistrictChange = (selectedOption: SingleValue<Option>) => {
+    setDistrictName(selectedOption?.value);
+    setDropdownFilterValue((prev) => {
+      if (selectedOption?.value === "") {
+        // Remove "District Name" from the filter
+        return prev.filter((item) => !item.startsWith("District Name:"));
+      } else {
+        // Add/Update "District Name" in the filter
+        const updated = prev.filter(
+          (item) => !item.startsWith("District Name:")
+        );
+        return [...updated, `District Name: ${selectedOption?.value}`];
+      }
+    });
+    applyFilters({
+      districtName: selectedOption?.value,
+      sectorName,
+      userName,
+      startDate: dateRangeState[0].startDate
+        ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
+        : "",
+      endDate: dateRangeState[0].endDate
+        ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
+        : "",
+      reportStatus: reportStatus,
+    });
+    console.log(`Option selected:`, selectedOption);
+  };
+
+  const sectorOptions = sectors.map((sector) => {
+    return {
+      value: sector.name,
+      label: sector.name,
+    };
+  });
+
+  const handleSectorChange = (selectedOption: SingleValue<Option>) => {
+    setSectorName(selectedOption?.value);
+    setDropdownFilterValue((prev) => {
+      if (selectedOption?.value === "") {
+        // Remove "Sector Name" from the filter
+        return prev.filter((item) => !item.startsWith("Sector Name:"));
+      } else {
+        // Add/Update "Sector Name" in the filter
+        const updated = prev.filter((item) => !item.startsWith("Sector Name:"));
+        return [...updated, `Sector Name: ${selectedOption?.value}`];
+      }
+    });
+    applyFilters({
+      districtName,
+      sectorName: selectedOption?.value,
+      userName,
+      startDate: dateRangeState[0].startDate
+        ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
+        : "",
+      endDate: dateRangeState[0].endDate
+        ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
+        : "",
+      reportStatus: reportStatus,
+    });
+    console.log(`Option selected:`, selectedOption);
+  };
+
+  const userOptions = users.map((user) => {
+    return {
+      value: user.name,
+      label: user.name,
+    };
+  });
+
+  const handleUserChange = (selectedOption: SingleValue<Option>) => {
+    setUserName(selectedOption?.value);
+    setDropdownFilterValue((prev) => {
+      if (selectedOption?.value === "") {
+        // Remove "User Name" from the filter
+        return prev.filter((item) => !item.startsWith("User Name:"));
+      } else {
+        // Add/Update "User Name" in the filter
+        const updated = prev.filter((item) => !item.startsWith("User Name:"));
+        return [...updated, `User Name: ${selectedOption?.value}`];
+      }
+    });
+    applyFilters({
+      districtName,
+      sectorName,
+      userName: selectedOption?.value,
+      startDate: dateRangeState[0].startDate
+        ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
+        : "",
+      endDate: dateRangeState[0].endDate
+        ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
+        : "",
+      reportStatus: reportStatus,
+    });
+    console.log(`Option selected:`, selectedOption);
+  };
+
+  const defaultNumberOption = { value: "-1", label: "Select" };
+
+  const reportStatusOptions = [
+    { value: "0", label: "SCHEDULED" },
+    { value: "1", label: "COMPLETED" },
+    { value: "2", label: "CANCELLED" },
+    { value: "3", label: "SUBMITTED" },
+    { value: "4", label: "APPROVED" },
+    { value: "5", label: "REFERBACK" },
+    { value: "6", label: "ISSUED" },
+  ];
+
+  const handleReportStatusChange = (selectedOption: SingleValue<Option>) => {
+    const value = Number(selectedOption?.value);
+    setReportStatus(value);
+    setDropdownFilterValue((prev) => {
+      if (value === -1) {
+        // Remove "Report Status" from the filter
+        return prev.filter((item) => !item.startsWith("Report Status:"));
+      } else {
+        // Add/Update "Report Status" in the filter
+        const updated = prev.filter(
+          (item) => !item.startsWith("Report Status:")
+        );
+        return [...updated, `Report Status: ${value}`];
+      }
+    });
+    applyFilters({
+      districtName,
+      sectorName,
+      userName,
+      startDate: dateRangeState[0].startDate
+        ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
+        : "",
+      endDate: dateRangeState[0].endDate
+        ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
+        : "",
+      reportStatus: value,
+    });
+    console.log(`Option selected:`, selectedOption);
+  };
 
   // State for search input
   const [searchTerm, setSearchTerm] = useState("");
@@ -231,7 +408,14 @@ const ProjectsTable = ({
 
       setPaginatedData(paginatedData);
     }
-  }, [projectsData, searchTerm, dropdownFilterValue]);
+  }, [
+    projectsData,
+    searchTerm,
+    dropdownFilterValue,
+    filteredData,
+    currentPage,
+    rows,
+  ]);
 
   // const handleProjectSubmit = async (projectId: number, visitId: number) => {
   //   try {
@@ -329,8 +513,7 @@ const ProjectsTable = ({
     pnDReleases: "PN D RELEASES (M)",
     utilization: "EXPENDITURE + UTILIZATION (M)",
     utilPercent: "UTIL. PERCENT",
-    reportSubmitted: "REPORT SUBMITTED",
-    onePagerSubmitted: "ISSUED REPORT",
+    reportStatus: "REPORT STATUS",
     // Add other mappings as needed
   };
 
@@ -407,11 +590,11 @@ const ProjectsTable = ({
             }`;
           break;
         case "completedDate":
-          row[key] =
-            data.completedDate &&
-            `${addDayToFormattedDate(
-              getFormattedDate(new Date(data.completedDate), "short")!
-            )}`;
+          row[key] = data.completedDate
+            ? `${addDayToFormattedDate(
+                getFormattedDate(new Date(data.completedDate), "short")!
+              )}`
+            : "NA";
           break;
         case "utilization":
           row[key] = `${data.utilization + data.expUpToJune}`;
@@ -420,7 +603,24 @@ const ProjectsTable = ({
           row[key] = `${data.utilPercent}%`;
           break;
         case "deadline":
-          row[key] = deadlineColumnValue(data.submittedDate, data.deadline);
+          if (data.submittedDate && data.deadline) {
+            row[key] = deadlineColumnValue(data.submittedDate, data.deadline);
+          } else if (data.deadline) {
+            row[key] = getTimeLeft(data.deadline).replace("-", "");
+          } else {
+            row[key] = "NA";
+          }
+
+          break;
+        case "reportStatus":
+          row[key] = displayStatusText(data.reportStatus);
+          break;
+        case "statusDate":
+          row[key] = data.statusDate
+            ? `${addDayToFormattedDate(
+                getFormattedDate(new Date(data.statusDate), "short")!
+              )}`
+            : "NA";
           break;
         default:
           row[key] = data[key]; // Handle any additional keys dynamically
@@ -432,8 +632,8 @@ const ProjectsTable = ({
 
   // Export to Excel function
   const exportToExcel = () => {
-    const headers = ["srNo", ...keys].map(formatKeyName); // Rename headers dynamically
-
+    const headers = ["srNo", ...keys]; // Rename headers dynamically
+    const displayHeaders = headers.map(formatKeyName);
     const data = (
       searchTerm || dropdownFilterValue.length > 0 ? filteredData : projectsData
     ).map((item: any, index) => {
@@ -447,28 +647,32 @@ const ProjectsTable = ({
 
         switch (key) {
           case "srNo":
-            row[header] = index + 1;
+            row[formatKeyName(header)] = index + 1;
             break;
           case "gSno":
-            row[header] = item.gSno;
+            row[formatKeyName(header)] = item.gSno;
             break;
           case "projectName":
-            row[header] = item.projectName;
+            row[formatKeyName(header)] = item.projectName;
             break;
           case "districtName":
-            row[header] = item.districtName;
+            row[formatKeyName(header)] = item.districtName;
             break;
           case "sectorName":
-            row[header] = item.sectorName;
+            row[formatKeyName(header)] = item.sectorName;
             break;
           case "userName":
-            row[header] = `${item.userName} (${item.designation})`;
+            row[
+              formatKeyName(header)
+            ] = `${item.userName} (${item.designation})`;
             break;
           case "reportCompletion":
-            row[header] = `${Math.round(item.reportCompletion)}%`;
+            row[formatKeyName(header)] = `${Math.round(
+              item.reportCompletion
+            )}%`;
             break;
           case "visitStartDate":
-            row[header] =
+            row[formatKeyName(header)] =
               item.visitStartDate &&
               `${addDayToFormattedDate(
                 getFormattedDate(new Date(item.visitStartDate), "short")!
@@ -480,45 +684,60 @@ const ProjectsTable = ({
               }`;
             break;
           case "completedDate":
-            row[header] =
-              item.completedDate &&
-              `${addDayToFormattedDate(
-                getFormattedDate(new Date(item.completedDate), "short")!
-              )}`;
+            row[formatKeyName(header)] = item.completedDate
+              ? `${addDayToFormattedDate(
+                  getFormattedDate(new Date(item.completedDate), "short")!
+                )}`
+              : "NA";
             break;
           case "deadline":
-            row[header] = deadlineColumnValue(
-              item.submittedDate,
-              item.deadline
-            );
+            if (item.deadline && item.submittedDate) {
+              row[formatKeyName(header)] = deadlineColumnValue(
+                item.submittedDate,
+                item.deadline
+              );
+            } else if (item.deadline) {
+              row[formatKeyName(header)] = getTimeLeft(item.deadline).replace(
+                "-",
+                ""
+              );
+            } else {
+              row[formatKeyName(header)] = "NA";
+            }
             break;
           case "visitCount":
-            row[header] = item.visitCount;
+            row[formatKeyName(header)] = item.visitCount;
             break;
           case "cost":
-            row[header] = item.cost;
+            row[formatKeyName(header)] = item.cost;
             break;
           case "revisedAllocation":
-            row[header] = item.revisedAllocation;
+            row[formatKeyName(header)] = item.revisedAllocation;
             break;
           case "pnDReleases":
-            row[header] = item.pnDReleases;
+            row[formatKeyName(header)] = item.pnDReleases;
             break;
           case "utilization":
-            row[header] = `${item.utilization + item.expUpToJune}`;
+            row[formatKeyName(header)] = `${
+              item.utilization + item.expUpToJune
+            }`;
             break;
           case "utilPercent":
-            row[header] = `${item.utilPercent}%`;
+            row[formatKeyName(header)] = `${item.utilPercent}%`;
             break;
-          case "reportSubmitted":
-            row[header] = item.reportSubmitted;
+          case "reportStatus":
+            row[formatKeyName(header)] = displayStatusText(item.reportStatus);
             break;
-          case "onePagerSubmitted":
-            row[header] = item.onePagerSubmitted;
+          case "statusDate":
+            row[formatKeyName(header)] = item.statusDate
+              ? `${addDayToFormattedDate(
+                  getFormattedDate(new Date(item.statusDate), "short")!
+                )}`
+              : "NA";
             break;
 
           default:
-            row[header] = item[formatKeyName(key)] || ""; // Handle any additional keys dynamically
+            row[formatKeyName(header)] = item[formatKeyName(key)] || ""; // Handle any additional keys dynamically
         }
       });
 
@@ -527,7 +746,7 @@ const ProjectsTable = ({
 
     exportDataToExcel(
       data,
-      headers,
+      displayHeaders,
       `${label} ${getFormattedDate(new Date(), "short")}.xlsx`
     );
   };
@@ -601,7 +820,7 @@ const ProjectsTable = ({
   const [districtName, setDistrictName] = useState<string>();
   const [sectorName, setSectorName] = useState<string>();
   const [userName, setUserName] = useState<string>();
-  const [reportSubmitted, setReportSubmitted] = useState<string>();
+  const [reportStatus, setReportStatus] = useState<number>();
 
   const applyFilters = ({
     districtName = "",
@@ -609,14 +828,25 @@ const ProjectsTable = ({
     userName = "",
     startDate = "", // Start date for  range
     endDate = "", // End date for  range
-    reportSubmitted = "",
+    reportStatus = -1,
   }) => {
     let filtered = projectsData;
+    console.log("data on filter is applyed", filtered);
+    console.log("selected districtName", districtName);
+    console.log(
+      "filter data against districtName",
+      filtered.filter(
+        (project) =>
+          project.districtName &&
+          project.districtName.toLowerCase() === districtName.toLowerCase()
+      )
+    );
 
     // Filter by district name
     if (districtName) {
       filtered = filtered.filter(
         (project) =>
+          project.districtName &&
           project.districtName.toLowerCase() === districtName.toLowerCase()
       );
     }
@@ -625,20 +855,24 @@ const ProjectsTable = ({
     if (sectorName) {
       filtered = filtered.filter(
         (project) =>
+          project.sectorName &&
           project.sectorName.toLowerCase() === sectorName.toLowerCase()
       );
     }
 
     // Filter by userName
     if (userName) {
-      filtered = filtered.filter((project) =>
-        project.userName.toLowerCase().includes(userName.toLowerCase())
+      filtered = filtered.filter(
+        (project) =>
+          project.userName &&
+          project.userName.toLowerCase().includes(userName.toLowerCase())
       );
     }
 
     // Filter by date range
     if (startDate && endDate) {
       filtered = filtered.filter((project) => {
+        if (!project.visitStartDate) return false;
         const projectDate = new Date(project.visitStartDate); // Ensure project date is a Date object
         const start = new Date(startDate); // Parse start date
         const end = new Date(endDate); // Parse end date
@@ -649,16 +883,21 @@ const ProjectsTable = ({
     }
 
     // Filter by report submitted
-    if (reportSubmitted) {
-      filtered = filtered.filter((project) =>
-        project.reportSubmitted
-          .toLowerCase()
-          .includes(reportSubmitted.toLowerCase())
+    if (
+      reportStatus &&
+      reportStatus !== null &&
+      reportStatus !== undefined &&
+      reportStatus !== -1
+    ) {
+      filtered = filtered.filter(
+        (project) => project.reportStatus === reportStatus
       );
     }
 
     // Update the filtered data state
     setFilteredData(filtered);
+    console.log("filtered select Data,", filtered);
+    console.log("dropdownFilterValue", dropdownFilterValue);
   };
 
   const [dateRangeState, setDateRangeState] = useState<RangeType[]>([
@@ -686,8 +925,9 @@ const ProjectsTable = ({
       userName,
       startDate: updatedSelection.startDate.toISOString().split("T")[0],
       endDate: updatedSelection.endDate.toISOString().split("T")[0],
-      reportSubmitted,
+      reportStatus: reportStatus,
     });
+
     setDropdownFilterValue((prev) => {
       if (selection.startDate!.toString() === "") {
         // Remove "Start Date" from the filter
@@ -740,112 +980,82 @@ const ProjectsTable = ({
   };
 
   return (
-    <>
-      <div>
-        <Toaster />
-      </div>
-      <div className="d-flex">
-        <div
-          className={`${styles.sidenav} ${isExpanded ? styles.expanded : ""}`}
-        >
-          <ul className="list-group p-0">
-            <li className="list-group-item border-0 bg-transparent">
-              <Button
-                className="btn mb-5 p-0"
-                onClick={toggleSidenav}
-                aria-label="Toggle navigation"
-              >
-                <Image
-                  src="/icons/collapseArrow.svg"
-                  alt="collapseArrow"
-                  width={20}
-                  height={20}
+    <div className="d-flex">
+      <div className={`${styles.sidenav} ${isExpanded ? styles.expanded : ""}`}>
+        <ul className="list-group p-0">
+          <li className="list-group-item border-0 bg-transparent">
+            <Button
+              className="btn mb-5 p-0"
+              onClick={toggleSidenav}
+              aria-label="Toggle navigation"
+            >
+              <Image
+                src="/icons/collapseArrow.svg"
+                alt="collapseArrow"
+                width={20}
+                height={20}
+                style={{
+                  transform: `${
+                    isExpanded ? "rotate(180deg)" : "rotate(0deg)"
+                  }`,
+                  transition: "transform .3s",
+                }}
+              />
+            </Button>
+          </li>
+        </ul>
+
+        <div className={`col p-2 ${!isExpanded && "d-none"}`}>
+          <div className="col mb-3">
+            <form onSubmit={(e) => e.preventDefault()}>
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control border-0 rounded-pill rounded-end"
                   style={{
-                    transform: `${
-                      isExpanded ? "rotate(180deg)" : "rotate(0deg)"
-                    }`,
-                    transition: "transform .3s",
+                    background: "rgba(16, 143, 168, .1)",
+                    outline: "none",
+                    border: "1px solid #D0D5DD",
                   }}
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={handleChange}
+                  disabled={dropdownFilterValue.length > 0 ? true : false}
                 />
-              </Button>
-            </li>
-          </ul>
+                <button
+                  className="btn rounded-start rounded-pill bg-color-sea-green text-white"
+                  type="submit"
+                >
+                  <IoSearch className="mb-1" style={{ color: "#fff" }} />
+                </button>
+              </div>
+            </form>
+          </div>
 
-          <div className={`col p-2 ${!isExpanded && "d-none"}`}>
-            <div className="col mb-3">
-              <form onSubmit={(e) => e.preventDefault()}>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control border-0 rounded-pill rounded-end"
-                    style={{
-                      background: "rgba(16, 143, 168, .1)",
-                      outline: "none",
-                      border: "1px solid #D0D5DD",
-                    }}
-                    placeholder="Search"
-                    value={searchTerm}
-                    onChange={handleChange}
-                    disabled={dropdownFilterValue.length > 0 ? true : false}
-                  />
-                  <button
-                    className="btn rounded-start rounded-pill bg-color-sea-green text-white"
-                    type="submit"
-                  >
-                    <IoSearch className="mb-1" style={{ color: "#fff" }} />
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {keys.includes("districtName") && (
-              <div className="col mb-3 text-start">
-                <label htmlFor="districtName" className="form-label">
-                  District Name
-                </label>
-                <SearchableSingleSelect
-                  data={districts}
-                  value="districtName"
-                  label="districtName"
-                  name="districtName"
-                  onChange={(
-                    newValue: SingleValue<{ value: string; label: string }>,
-                    actionMeta: ActionMeta<{ value: string; label: string }>
-                  ) => {
-                    if (newValue) {
-                      const value = newValue.value;
-                      setDistrictName(value);
-                      setDropdownFilterValue((prev) => {
-                        if (value === "") {
-                          // Remove "District Name" from the filter
-                          return prev.filter(
-                            (item) => !item.startsWith("District Name:")
-                          );
-                        } else {
-                          // Add/Update "District Name" in the filter
-                          const updated = prev.filter(
-                            (item) => !item.startsWith("District Name:")
-                          );
-                          return [...updated, `District Name: ${value}`];
-                        }
-                      });
-                      setDistrictName(value);
-                      applyFilters({
-                        districtName: value,
-                        sectorName,
-                        userName,
-                        startDate: dateRangeState[0].startDate
-                          ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
-                          : "",
-                        endDate: dateRangeState[0].endDate
-                          ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
-                          : "",
-                        reportSubmitted,
-                      });
-                    }
-                  }}
-                />
-                {/* <select
+          {keys.includes("districtName") && (
+            <div className="col mb-3 text-start">
+              <label htmlFor="districtName" className="form-label">
+                District Name
+              </label>
+              <Select
+                options={[defaultOption, ...districtOptions]}
+                name="districtName"
+                id="districtName"
+                isClearable
+                isSearchable
+                styles={customStyles}
+                menuPlacement="auto"
+                menuPosition="absolute"
+                menuPortalTarget={document.body}
+                onChange={(
+                  newValue: SingleValue<{ value: string; label: string }>
+                ) => {
+                  if (newValue) {
+                    handleDistrictChange(newValue);
+                  }
+                }}
+              />
+              {/* <select
                   className="w-100"
                   style={{
                     background: "rgba(16, 143, 168, .1)",
@@ -882,7 +1092,7 @@ const ProjectsTable = ({
                       endDate: dateRangeState[0].endDate
                         ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
                         : "",
-                      reportSubmitted,
+                      reportStatus,
                     });
                   }}
                   disabled={searchTerm ? true : false}
@@ -894,347 +1104,407 @@ const ProjectsTable = ({
                     </option>
                   ))}
                 </select> */}
-              </div>
-            )}
-            {keys.includes("visitStartDate") && (
-              <div
-                className="col mb-3 text-start"
-                style={{ pointerEvents: `${searchTerm ? "none" : "auto"}` }}
+            </div>
+          )}
+          {keys.includes("visitStartDate") && (
+            <div
+              className="col mb-3 text-start"
+              style={{ pointerEvents: `${searchTerm ? "none" : "auto"}` }}
+            >
+              <label className="form-label">Date Range</label>
+              <Accordion>
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header id="dateFilterSideNavAccordian">
+                    Select
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <div className="col mb-3 text-start">
+                      <DateRange
+                        ranges={dateRangeState}
+                        onChange={handleSelect}
+                        moveRangeOnFirstSelection={false}
+                        maxDate={new Date()} // Restrict future dates
+                        dateDisplayFormat="dd/MM/yyyy"
+                        // className={styles.customDateRange}
+                      />
+                      <p>
+                        Selected Range:{" "}
+                        {dateRangeState[0].startDate
+                          ? format(dateRangeState[0].startDate, "dd/MM/yyyy")
+                          : "No start date"}{" "}
+                        to{" "}
+                        {dateRangeState[0].endDate
+                          ? format(dateRangeState[0].endDate, "dd/MM/yyyy")
+                          : "No end date"}
+                      </p>
+                      <button
+                        onClick={() => {
+                          setDropdownFilterValue((prev) => {
+                            return prev.filter(
+                              (item) =>
+                                !item.startsWith("Start Date:") &&
+                                !item.startsWith("End Date:")
+                            );
+                          });
+                          setDateRangeState([
+                            {
+                              startDate: undefined,
+                              endDate: undefined,
+                              key: "selection",
+                            },
+                          ]);
+                          applyFilters({
+                            districtName,
+                            sectorName,
+                            userName,
+                            startDate: "",
+                            endDate: "",
+                            reportStatus: reportStatus,
+                          });
+                        }}
+                        style={{
+                          padding: "10px 15px",
+                          background: "#ff5c5c",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Clear Dates
+                      </button>
+                    </div>
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </div>
+          )}
+          {keys.includes("sectorName") && (
+            <div className="col mb-3 text-start">
+              <label htmlFor="sectorName" className="form-label">
+                Sector Name
+              </label>
+              <Select
+                options={[defaultOption, ...sectorOptions]}
+                name="sectorName"
+                id="sectorName"
+                isClearable
+                isSearchable
+                menuPlacement="auto"
+                menuPosition="absolute"
+                menuPortalTarget={document.body}
+                styles={customStyles}
+                onChange={(
+                  newValue: SingleValue<{ value: string; label: string }>
+                ) => {
+                  if (newValue) {
+                    handleSectorChange(newValue);
+                  }
+                }}
+              />
+              {/* <select
+                id="sectorName"
+                className="w-100"
+                style={{
+                  background: "rgba(16, 143, 168, .1)",
+                  outline: "none",
+                  border: "1px solid #D0D5DD",
+                }}
+                aria-label="Sector Name"
+                name="sectorName"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSectorName(value);
+                  setDropdownFilterValue((prev) => {
+                    if (value === "") {
+                      // Remove "Sector Name" from the filter
+                      return prev.filter(
+                        (item) => !item.startsWith("Sector Name:")
+                      );
+                    } else {
+                      // Add/Update "Sector Name" in the filter
+                      const updated = prev.filter(
+                        (item) => !item.startsWith("Sector Name:")
+                      );
+                      return [...updated, `Sector Name: ${value}`];
+                    }
+                  });
+                  applyFilters({
+                    districtName,
+                    sectorName: e.target.value,
+                    userName,
+                    startDate: dateRangeState[0].startDate
+                      ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
+                      : "",
+                    endDate: dateRangeState[0].endDate
+                      ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
+                      : "",
+                    reportStatus: reportStatus,
+                  });
+                }}
+                disabled={searchTerm ? true : false}
               >
-                <label htmlFor="userName" className="form-label">
-                  Date Range
-                </label>
-                <Accordion>
-                  <Accordion.Item eventKey="0">
-                    <Accordion.Header id="dateFilterSideNavAccordian">
-                      Select
-                    </Accordion.Header>
-                    <Accordion.Body>
-                      <div className="col mb-3 text-start">
-                        <DateRange
-                          ranges={dateRangeState}
-                          onChange={handleSelect}
-                          moveRangeOnFirstSelection={false}
-                          maxDate={new Date()} // Restrict future dates
-                          dateDisplayFormat="dd/MM/yyyy"
-                          // className={styles.customDateRange}
-                        />
-                        <p>
-                          Selected Range:{" "}
-                          {dateRangeState[0].startDate
-                            ? format(dateRangeState[0].startDate, "dd/MM/yyyy")
-                            : "No start date"}{" "}
-                          to{" "}
-                          {dateRangeState[0].endDate
-                            ? format(dateRangeState[0].endDate, "dd/MM/yyyy")
-                            : "No end date"}
-                        </p>
-                        <button
-                          onClick={() => {
-                            setDropdownFilterValue((prev) => {
-                              return prev.filter(
-                                (item) =>
-                                  !item.startsWith("Start Date:") &&
-                                  !item.startsWith("End Date:")
-                              );
-                            });
-                            setDateRangeState([
-                              {
-                                startDate: undefined,
-                                endDate: undefined,
-                                key: "selection",
-                              },
-                            ]);
-                            applyFilters({
-                              districtName,
-                              sectorName,
-                              userName,
-                              startDate: "",
-                              endDate: "",
-                              reportSubmitted,
-                            });
-                          }}
-                          style={{
-                            padding: "10px 15px",
-                            background: "#ff5c5c",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "5px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          Clear Dates
-                        </button>
-                      </div>
-                    </Accordion.Body>
-                  </Accordion.Item>
-                </Accordion>
-              </div>
-            )}
-            {keys.includes("sectorName") && (
-              <div className="col mb-3 text-start">
-                <label htmlFor="sectorName" className="form-label">
-                  Sector Name
-                </label>
-                <select
-                  className="w-100"
-                  style={{
-                    background: "rgba(16, 143, 168, .1)",
-                    outline: "none",
-                    border: "1px solid #D0D5DD",
-                  }}
-                  aria-label="Sector Name"
-                  name="sectorName"
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setSectorName(value);
-                    setDropdownFilterValue((prev) => {
-                      if (value === "") {
-                        // Remove "Sector Name" from the filter
-                        return prev.filter(
-                          (item) => !item.startsWith("Sector Name:")
-                        );
-                      } else {
-                        // Add/Update "Sector Name" in the filter
-                        const updated = prev.filter(
-                          (item) => !item.startsWith("Sector Name:")
-                        );
-                        return [...updated, `Sector Name: ${value}`];
-                      }
-                    });
-                    applyFilters({
-                      districtName,
-                      sectorName: e.target.value,
-                      userName,
-                      startDate: dateRangeState[0].startDate
-                        ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
-                        : "",
-                      endDate: dateRangeState[0].endDate
-                        ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
-                        : "",
-                      reportSubmitted,
-                    });
-                  }}
-                  disabled={searchTerm ? true : false}
-                >
-                  <option value="">Select</option>
-                  {sectors.map((sector) => (
-                    <option key={sector.id} value={sector.name}>
-                      {sector.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            {keys.includes("userName") && (
-              <div className="col mb-3 text-start">
-                <label htmlFor="userName" className="form-label">
-                  UserName
-                </label>
-                <select
-                  className="w-100"
-                  style={{
-                    background: "rgba(16, 143, 168, .1)",
-                    outline: "none",
-                    border: "1px solid #D0D5DD",
-                  }}
-                  aria-label="UserName"
-                  name="userName"
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setUserName(value);
-                    setDropdownFilterValue((prev) => {
-                      if (value === "") {
-                        // Remove "User Name" from the filter
-                        return prev.filter(
-                          (item) => !item.startsWith("User Name:")
-                        );
-                      } else {
-                        // Add/Update "User Name" in the filter
-                        const updated = prev.filter(
-                          (item) => !item.startsWith("User Name:")
-                        );
-                        return [...updated, `User Name: ${value}`];
-                      }
-                    });
-                    applyFilters({
-                      districtName,
-                      sectorName,
-                      userName: e.target.value,
-                      startDate: dateRangeState[0].startDate
-                        ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
-                        : "",
-                      endDate: dateRangeState[0].endDate
-                        ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
-                        : "",
-                      reportSubmitted,
-                    });
-                  }}
-                  disabled={searchTerm ? true : false}
-                >
-                  <option value="">Select</option>
-                  {users.map((user) => (
-                    <option key={user.user_Id} value={user.name}>
-                      {user.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            {keys.includes("deadline") && (
-              <div className="col mb-3 text-start">
-                <label htmlFor="reportSubmitted" className="form-label">
-                  Submitted Report
-                </label>
-                <select
-                  className="w-100"
-                  style={{
-                    background: "rgba(16, 143, 168, .1)",
-                    outline: "none",
-                    border: "1px solid #D0D5DD",
-                  }}
-                  aria-label="Submitted Report"
-                  name="reportSubmitted"
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setReportSubmitted(value);
-                    setDropdownFilterValue((prev) => {
-                      if (value === "") {
-                        // Remove "Report Submitted" from the filter
-                        return prev.filter(
-                          (item) => !item.startsWith("Report Submitted:")
-                        );
-                      } else {
-                        // Add/Update "Report Submitted" in the filter
-                        const updated = prev.filter(
-                          (item) => !item.startsWith("Report Submitted:")
-                        );
-                        return [...updated, `Report Submitted: ${value}`];
-                      }
-                    });
-                    applyFilters({
-                      districtName,
-                      sectorName,
-                      userName,
-                      startDate: dateRangeState[0].startDate
-                        ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
-                        : "",
-                      endDate: dateRangeState[0].endDate
-                        ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
-                        : "",
-                      reportSubmitted: e.target.value,
-                    });
-                  }}
-                  disabled={searchTerm ? true : false}
-                >
-                  <option value="">Select</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">NO</option>
-                </select>
-              </div>
-            )}
-          </div>
-          <div className={`col p-0 ${isExpanded && "d-none"}`}>
-            <ul className="list-group p-0">
+                <option value="">Select</option>
+                {sectors.map((sector) => (
+                  <option key={sector.id} value={sector.name}>
+                    {sector.name}
+                  </option>
+                ))}
+              </select> */}
+            </div>
+          )}
+          {keys.includes("userName") && (
+            <div className="col mb-3 text-start">
+              <label htmlFor="userName" className="form-label">
+                UserName
+              </label>
+              <Select
+                options={[defaultOption, ...userOptions]}
+                name="userName"
+                id="userName"
+                isClearable
+                isSearchable
+                menuPlacement="auto"
+                menuPosition="absolute"
+                menuPortalTarget={document.body}
+                styles={customStyles}
+                onChange={(
+                  newValue: SingleValue<{ value: string; label: string }>
+                ) => {
+                  if (newValue) {
+                    handleUserChange(newValue);
+                  }
+                }}
+              />
+              {/* <select
+                id="userName"
+                className="w-100"
+                style={{
+                  background: "rgba(16, 143, 168, .1)",
+                  outline: "none",
+                  border: "1px solid #D0D5DD",
+                }}
+                aria-label="UserName"
+                name="userName"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setUserName(value);
+                  setDropdownFilterValue((prev) => {
+                    if (value === "") {
+                      // Remove "User Name" from the filter
+                      return prev.filter(
+                        (item) => !item.startsWith("User Name:")
+                      );
+                    } else {
+                      // Add/Update "User Name" in the filter
+                      const updated = prev.filter(
+                        (item) => !item.startsWith("User Name:")
+                      );
+                      return [...updated, `User Name: ${value}`];
+                    }
+                  });
+                  applyFilters({
+                    districtName,
+                    sectorName,
+                    userName: e.target.value,
+                    startDate: dateRangeState[0].startDate
+                      ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
+                      : "",
+                    endDate: dateRangeState[0].endDate
+                      ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
+                      : "",
+                    reportStatus: reportStatus,
+                  });
+                }}
+                disabled={searchTerm ? true : false}
+              >
+                <option value="">Select</option>
+                {users.map((user) => (
+                  <option key={user.user_Id} value={user.name}>
+                    {user.name}
+                  </option>
+                ))}
+              </select> */}
+            </div>
+          )}
+          {keys.includes("deadline") && (
+            <div className="col mb-3 text-start">
+              <label htmlFor="reportStatus" className="form-label">
+                Report Status
+              </label>
+              <Select
+                options={[defaultNumberOption, ...reportStatusOptions]}
+                name="reportStatus"
+                id="reportStatus"
+                isClearable
+                isSearchable
+                menuPlacement="auto"
+                menuPosition="absolute"
+                menuPortalTarget={document.body}
+                styles={customStyles}
+                onChange={(
+                  newValue: SingleValue<{ value: string; label: string }>
+                ) => {
+                  if (newValue) {
+                    handleReportStatusChange(newValue);
+                  }
+                }}
+              />
+              {/* <select
+                id="reportStatus"
+                className="w-100"
+                style={{
+                  background: "rgba(16, 143, 168, .1)",
+                  outline: "none",
+                  border: "1px solid #D0D5DD",
+                }}
+                aria-label="Report Status"
+                name="reportStatus"
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  setReportStatus(value);
+                  setDropdownFilterValue((prev) => {
+                    if (value === -1) {
+                      // Remove "Report Status" from the filter
+                      return prev.filter(
+                        (item) => !item.startsWith("Report Status:")
+                      );
+                    } else {
+                      // Add/Update "Report Status" in the filter
+                      const updated = prev.filter(
+                        (item) => !item.startsWith("Report Status:")
+                      );
+                      return [...updated, `Report Status: ${value}`];
+                    }
+                  });
+                  applyFilters({
+                    districtName,
+                    sectorName,
+                    userName,
+                    startDate: dateRangeState[0].startDate
+                      ? format(dateRangeState[0].startDate, "yyyy-MM-dd")
+                      : "",
+                    endDate: dateRangeState[0].endDate
+                      ? format(dateRangeState[0].endDate, "yyyy-MM-dd")
+                      : "",
+                    reportStatus: Number(e.target.value),
+                  });
+                }}
+                disabled={searchTerm ? true : false}
+              >
+                <option value="-1">Select</option>
+                <option value="0">SCHEDULED</option>
+                <option value="1">COMPLETED</option>
+                <option value="2">CANCELLED</option>
+                <option value="3">SUBMITTED</option>
+                <option value="4">APPROVED</option>
+                <option value="5">REFERBACK</option>
+                <option value="6">ISSUED</option>
+              </select> */}
+            </div>
+          )}
+        </div>
+        <div className={`col p-0 ${isExpanded && "d-none"}`}>
+          <ul className="list-group p-0">
+            <li
+              className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+              onClick={toggleSidenav}
+            >
+              <FaSearch className="img-fluid" />
+            </li>
+            {keys.includes("districtName") && (
               <li
                 className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
                 onClick={toggleSidenav}
               >
-                <FaSearch className="img-fluid" />
+                <Image
+                  className="img-fluid"
+                  src="/icons/districtBlack.svg"
+                  alt="districtBlack"
+                  width={20}
+                  height={20}
+                />
               </li>
-              {keys.includes("districtName") && (
-                <li
-                  className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
-                  onClick={toggleSidenav}
-                >
-                  <Image
-                    className="img-fluid"
-                    src="/icons/districtBlack.svg"
-                    alt="districtBlack"
-                    width={20}
-                    height={20}
-                  />
-                </li>
-              )}
-              {keys.includes("visitStartDate") && (
-                <li
-                  className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
-                  onClick={toggleSidenav}
-                >
-                  <MdOutlineDateRange className="img-fluid" />
-                </li>
-              )}
-              {keys.includes("sectorName") && (
-                <li
-                  className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
-                  onClick={toggleSidenav}
-                >
-                  <FaRegClock className="img-fluid" />
-                </li>
-              )}
-              {keys.includes("userName") && (
-                <li
-                  className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
-                  onClick={toggleSidenav}
-                >
-                  <FaUser className="img-fluid" />
-                </li>
-              )}
-              {keys.includes("deadline") && (
-                <li
-                  className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
-                  onClick={toggleSidenav}
-                >
-                  <Image
-                    className="img-fluid"
-                    src="/icons/submittedReport.svg"
-                    alt="dates"
-                    width={20}
-                    height={20}
-                  />
-                </li>
-              )}
-            </ul>
-          </div>
+            )}
+            {keys.includes("visitStartDate") && (
+              <li
+                className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+                onClick={toggleSidenav}
+              >
+                <MdOutlineDateRange className="img-fluid" />
+              </li>
+            )}
+            {keys.includes("sectorName") && (
+              <li
+                className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+                onClick={toggleSidenav}
+              >
+                <FaRegClock className="img-fluid" />
+              </li>
+            )}
+            {keys.includes("userName") && (
+              <li
+                className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+                onClick={toggleSidenav}
+              >
+                <FaUser className="img-fluid" />
+              </li>
+            )}
+            {keys.includes("deadline") && (
+              <li
+                className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+                onClick={toggleSidenav}
+              >
+                <Image
+                  className="img-fluid"
+                  src="/icons/submittedReport.svg"
+                  alt="dates"
+                  width={20}
+                  height={20}
+                />
+              </li>
+            )}
+          </ul>
         </div>
-        <div
-          className={`${styles.mainContent} ${
-            isExpanded ? styles.shiftRight : ""
-          } flex-grow-1 p-3 pt-0 border border-white table-responsive`}
-          style={{
-            borderRadius: "10px",
-            background: "#CFE6F8",
-            marginTop: "0px",
-          }}
-        >
-          <div style={{ height: "96vh", overflow: "scroll" }}>
-            <table
-              id="my-table"
-              className="table table-hover mb-5 "
-              style={{
-                border: ".41px solid rgba(159, 159, 159, 0.75) !important",
-              }}
-            >
-              <thead>
-                <tr>
-                  <th
-                    colSpan={keys?.length}
-                    className="p-0 text-center text-white rounded bg-color-sea-blue"
-                  >
-                    <div className="row d-flex m-0">
-                      <div className="col m-auto text-start">
-                        {/* <ImCross /> */}
-                      </div>
-                      <div className="col" style={{ marginTop: "10px" }}>
-                        <p
-                          className="m-0 fs12px fw-bold"
-                          style={{ letterSpacing: 1 }}
-                        >
-                          List of {label}
-                        </p>
-                      </div>
-                      <div className="col d-flex justify-content-end mt-1 mb-1">
-                        {/* <Dropdown>
+      </div>
+      <div
+        className={`${styles.mainContent} ${
+          isExpanded ? styles.shiftRight : ""
+        } flex-grow-1 p-3 pt-0 border border-white table-responsive`}
+        style={{
+          borderRadius: "10px",
+          background: "#CFE6F8",
+          marginTop: "0px",
+        }}
+      >
+        <div style={{ height: "96vh" }}>
+          <table
+            id="my-table"
+            className="table table-hover mb-5 "
+            style={{
+              border: ".41px solid rgba(159, 159, 159, 0.75) !important",
+            }}
+          >
+            <thead>
+              <tr>
+                <th
+                  colSpan={keys?.length}
+                  className="p-0 text-center text-white rounded bg-color-sea-blue"
+                >
+                  <div className="row d-flex m-0">
+                    <div className="col m-auto text-start">
+                      {/* <ImCross /> */}
+                    </div>
+                    <div className="col" style={{ marginTop: "10px" }}>
+                      <p
+                        className="m-0 fs12px fw-bold"
+                        style={{ letterSpacing: 1 }}
+                      >
+                        List of {label}
+                      </p>
+                    </div>
+                    <div className="col d-flex justify-content-end mt-1 mb-1">
+                      {/* <Dropdown>
                         <Dropdown.Toggle variant="light" id="dropdown-basic">
                           Downloads&nbsp;
                           <Image
@@ -1270,63 +1540,63 @@ const ProjectsTable = ({
                           </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown> */}
-                        <DownloadDropDown
-                          onClickPdf={() =>
-                            tableRows &&
-                            exportToPDF(columns, tableRows, new Date(), label)
-                          }
-                          onClickExcel={exportToExcel}
-                        />
-                      </div>
+                      <DownloadDropDown
+                        onClickPdf={() =>
+                          tableRows &&
+                          exportToPDF(columns, tableRows, new Date(), label)
+                        }
+                        onClickExcel={exportToExcel}
+                      />
                     </div>
-                  </th>
-                </tr>
-                <tr>
-                  <th colSpan={keys?.length} className="p-0">
-                    <div className="row m-0 d-flex justify-content-between p-3">
-                      <div className="col-lg-6 col-md-5 col-sm-12">
-                        <p>
-                          Showing:{" "}
-                          <span className="fw-bold">
-                            {searchTerm || dropdownFilterValue.length > 0
-                              ? `${filteredData.length}/${filteredData.length}`
-                              : projectsData?.length}{" "}
-                            {label}
-                          </span>
-                        </p>
-                      </div>
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                <th colSpan={keys?.length} className="p-0">
+                  <div className="row m-0 d-flex justify-content-between p-3">
+                    <div className="col-lg-6 col-md-5 col-sm-12">
+                      <p>
+                        Showing:{" "}
+                        <span className="fw-bold">
+                          {searchTerm || dropdownFilterValue.length > 0
+                            ? `${filteredData.length}/${filteredData.length}`
+                            : projectsData?.length}{" "}
+                          {label}
+                        </span>
+                      </p>
                     </div>
-                  </th>
-                </tr>
-                <tr
-                  className={`color-dark-blue cursor-pointer text-center ${inter.className}`}
-                  style={{
-                    border: ".41px solid rgba(159, 159, 159, 0.75) !important",
-                    fontSize: ".85rem",
-                  }}
-                >
-                  {keys.map((k, i) => (
-                    <TableHeading
-                      key={k + i}
-                      name={
-                        k.toLowerCase() === "id"
-                          ? "ID"
-                          : k.toLowerCase() === "gSno"
-                          ? "GS NO."
-                          : k.toLowerCase() === "visitcount"
-                          ? "no. of visits"
-                          : k.toLowerCase() === "visitstartdate"
-                          ? "Date Range"
-                          : k.toLowerCase() === "filegenrated"
-                          ? "report generated"
-                          : k.toLowerCase() === "onePagerSubmitted"
-                          ? "issued report"
-                          : formatKeyName(k)
-                      }
-                      handleSort={() => handleSort(`${k}`)}
-                    />
-                  ))}
-                  {/* <TableHeading
+                  </div>
+                </th>
+              </tr>
+              <tr
+                className={`color-dark-blue cursor-pointer text-center ${inter.className}`}
+                style={{
+                  border: ".41px solid rgba(159, 159, 159, 0.75) !important",
+                  fontSize: ".85rem",
+                }}
+              >
+                {keys.map((k, i) => (
+                  <TableHeading
+                    key={k + i}
+                    name={
+                      k.toLowerCase() === "id"
+                        ? "ID"
+                        : k.toLowerCase() === "gSno"
+                        ? "GS NO."
+                        : k.toLowerCase() === "visitcount"
+                        ? "no. of visits"
+                        : k.toLowerCase() === "visitstartdate"
+                        ? "Date Range"
+                        : k.toLowerCase() === "filegenrated"
+                        ? "report generated"
+                        : k.toLowerCase() === "statusDate"
+                        ? "status Date"
+                        : formatKeyName(k)
+                    }
+                    handleSort={() => handleSort(`${k}`)}
+                  />
+                ))}
+                {/* <TableHeading
                   name="project Name"
                   handleSort={() => handleSort("projectName")}
                 />
@@ -1366,258 +1636,278 @@ const ProjectsTable = ({
                   name="report generated"
                   handleSort={() => handleSort("fileGenrated")}
                 /> */}
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedData?.map((d, i) => (
-                  <tr
-                    key={i}
-                    className={`fs13px text-center ${dmSans.className}`}
-                    style={{
-                      border: ".41px solid rgba(81,81,81,0.20) !important",
-                    }}
-                  >
-                    {keys.map((key) => {
-                      if (key === "visitStartDate") {
-                        // Handle visitStartDate and visitEndDate together
-                        return (
-                          <td key="visitDates">
-                            {d.visitStartDate && d.visitEndDate ? (
-                              <>
-                                {addDayToFormattedDate(
-                                  getFormattedDate(
-                                    new Date(d.visitStartDate),
-                                    "short"
-                                  )!
-                                )}
-                                <div className="text-center">to</div>
-                                {addDayToFormattedDate(
-                                  getFormattedDate(
-                                    new Date(d.visitEndDate),
-                                    "short"
-                                  )!
-                                )}
-                              </>
-                            ) : d.visitStartDate ? (
-                              addDayToFormattedDate(
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedData?.map((d, i) => (
+                <tr
+                  key={i}
+                  className={`fs13px text-center ${dmSans.className}`}
+                  style={{
+                    border: ".41px solid rgba(81,81,81,0.20) !important",
+                  }}
+                >
+                  {keys.map((key) => {
+                    if (key === "visitStartDate") {
+                      // Handle visitStartDate and visitEndDate together
+                      return (
+                        <td key="visitDates">
+                          {d.visitStartDate && d.visitEndDate ? (
+                            <>
+                              {addDayToFormattedDate(
                                 getFormattedDate(
                                   new Date(d.visitStartDate),
                                   "short"
                                 )!
-                              )
-                            ) : (
-                              ""
-                            )}
-                          </td>
-                        );
-                      }
-                      if (key === "deadline") {
-                        const submittedTime = new Date(d.submittedDate);
-                        const deadlineTime = new Date(d.deadline);
+                              )}
+                              <div className="text-center">to</div>
+                              {addDayToFormattedDate(
+                                getFormattedDate(
+                                  new Date(d.visitEndDate),
+                                  "short"
+                                )!
+                              )}
+                            </>
+                          ) : d.visitStartDate ? (
+                            addDayToFormattedDate(
+                              getFormattedDate(
+                                new Date(d.visitStartDate),
+                                "short"
+                              )!
+                            )
+                          ) : (
+                            "NA"
+                          )}
+                        </td>
+                      );
+                    }
+                    if (key === "deadline") {
+                      const submittedTime = new Date(d.submittedDate);
+                      const deadlineTime = new Date(d.deadline);
 
-                        return (
-                          <td key="deadline">
-                            {d.deadline && d.submittedDate ? (
-                              <>
-                                <div
-                                  className={`text-center ${
-                                    submittedTime <= deadlineTime
-                                      ? "text-success"
-                                      : "text-danger"
-                                  }`}
-                                >
-                                  {deadlineColumnValue(
-                                    d.submittedDate,
-                                    d.deadline
-                                  )}
-                                </div>
-                              </>
-                            ) : (
-                              <span
-                                className={`text-wrap ${
-                                  getTimeLeft(d.deadline).includes("-")
-                                    ? "text-danger"
-                                    : ""
+                      return (
+                        <td key="deadline">
+                          {d.deadline && d.submittedDate ? (
+                            <>
+                              <div
+                                className={`text-center ${
+                                  submittedTime <= deadlineTime
+                                    ? "text-success"
+                                    : "text-danger"
                                 }`}
                               >
-                                {getTimeLeft(d.deadline).replace("-", "")}
-                              </span>
-                            )}
-                          </td>
-                        );
-                      }
-                      // For other keys
-                      return (
-                        <td key={key}>
-                          {key === "projectName" && allowLink ? (
-                            <Link
-                              target="_blank"
-                              href={`/project-details-dashboard/${d.id}/${d.visitId}`}
-                              className="text-start color-sea-blue"
-                            >
-                              {d[key]}
-                            </Link>
-                          ) : key === "reportCompletion" ? (
-                            <ProjectReportOverviewModal
-                              value={d[key]}
-                              id={d.id}
-                              visitId={d.visitId}
-                            />
-                          ) : key === "utilization" ? (
-                            <>{d.utilization + d.expUpToJune}</>
-                          ) : key === "utilPercent" ? (
-                            <>
-                              <span className="text-danger">
-                                {d.utilPercent}%
-                              </span>
+                                {deadlineColumnValue(
+                                  d.submittedDate,
+                                  d.deadline
+                                )}
+                              </div>
                             </>
-                          ) : key === "completedDate" ? (
+                          ) : d.deadline ? (
+                            <span
+                              className={`text-wrap ${
+                                getTimeLeft(d.deadline).includes("-")
+                                  ? "text-danger"
+                                  : ""
+                              }`}
+                            >
+                              {getTimeLeft(d.deadline).replace("-", "")}
+                            </span>
+                          ) : (
+                            "NA"
+                          )}
+                        </td>
+                      );
+                    }
+                    // For other keys
+                    return (
+                      <td key={key}>
+                        {key === "projectName" &&
+                        allowLink &&
+                        d.reportStatus !== 0 &&
+                        d.reportStatus !== 1 &&
+                        d.reportStatus !== 2 ? (
+                          <Link
+                            target="_blank"
+                            href={`/project-details-dashboard/${d.id}/${d.visitId}`}
+                            className="text-start color-sea-blue"
+                          >
+                            {d[key]}
+                          </Link>
+                        ) : key === "reportCompletion" ? (
+                          <ProjectReportOverviewModal
+                            value={d[key]}
+                            id={d.id}
+                            visitId={d.visitId}
+                          />
+                        ) : key === "utilization" ? (
+                          <>{d.utilization + d.expUpToJune}</>
+                        ) : key === "utilPercent" ? (
+                          <>
+                            <span className="text-danger">
+                              {d.utilPercent}%
+                            </span>
+                          </>
+                        ) : key === "completedDate" ? (
+                          d[key] ? (
                             addDayToFormattedDate(
                               getFormattedDate(new Date(d[key]), "short")!
                             )
                           ) : (
-                            d[key]
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-                {keys.includes("cost") && (
-                  <tr className="bg-color-sea-blue text-light text-center">
-                    <td className="rounded-start" colSpan={4}>
-                      Total
-                    </td>
-                    <td className="text-nowrap">
-                      {formatAmountWithCommas(
-                        projectsData.reduce((sum, d) => sum + (d.cost || 0), 0)
-                      )}
-                    </td>
-                    <td className="text-nowrap">
-                      {formatAmountWithCommas(
-                        projectsData.reduce(
-                          (sum, d) => sum + (d.revisedAllocation || 0),
-                          0
-                        )
-                      )}
-                    </td>
-                    <td className="text-nowrap">
-                      {formatAmountWithCommas(
-                        projectsData.reduce(
-                          (sum, d) => sum + (d.pnDReleases || 0),
-                          0
-                        )
-                      )}
-                    </td>
-                    <td className="rounded-end text-nowrap">
-                      {formatAmountWithCommas(
-                        projectsData.reduce(
-                          (sum, d) => sum + (d.utilization || 0),
-                          0
-                        )
-                      )}
-                    </td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                )}
-                <tr>
-                  <td colSpan={keys.length} className="p-0">
-                    <div className="row d-flex mb-3 m-0">
-                      <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
-                        {indexOfFirstRow + 1} -{" "}
-                        {Math.min(indexOfLastRow, projectsData.length)} of{" "}
-                        {projectsData.length}
-                      </div>
-                      <div className="col-lg-6 col-md-9 col-sm-12">
-                        <div className="row d-flex m-0 me-2 justify-content-end align-items-center">
-                          <div className="col-lg-2 col-md-1 col"></div>
-                          <div className="col-lg-5 col-md-4 col text-end">
-                            <label
-                              htmlFor="rowPerPage"
-                              className="form-label mt-2"
-                            >
-                              Rows Per Page:
-                            </label>
-                          </div>
-                          <div className="col-lg-1 col-md-3 col text-start p-0">
-                            <select
-                              className="rounded bg-color-sea-green text-white shadow p-2"
-                              style={{
-                                color: "#fff",
-                                border: "1px solid #445E84",
-                                outline: "none",
-                              }}
-                              aria-label="Rows per page"
-                              name="rowPerPage"
-                              value={rows}
-                              onChange={handleRowsPerPage}
-                            >
-                              {[10, 20, 30, 40, 50].map((num) => (
-                                <option key={num} value={num}>
-                                  &nbsp;{num}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
+                            "NA"
+                          )
+                        ) : key === "statusDate" ? (
+                          d[key] ? (
+                            addDayToFormattedDate(
+                              getFormattedDate(new Date(d[key]), "short")!
+                            )
+                          ) : (
+                            "NA"
+                          )
+                        ) : key === "reportStatus" ? (
+                          <>{displayStatusText(d[key])}</>
+                        ) : (
+                          d[key]
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+              {keys.includes("cost") && (
+                <tr className="bg-color-sea-blue text-light text-center">
+                  <td className="rounded-start" colSpan={4}>
+                    Total
+                  </td>
+                  <td className="text-nowrap">
+                    {formatAmountWithCommas(
+                      projectsData.reduce((sum, d) => sum + (d.cost || 0), 0)
+                    )}
+                  </td>
+                  <td className="text-nowrap">
+                    {formatAmountWithCommas(
+                      projectsData.reduce(
+                        (sum, d) => sum + (d.revisedAllocation || 0),
+                        0
+                      )
+                    )}
+                  </td>
+                  <td className="text-nowrap">
+                    {formatAmountWithCommas(
+                      projectsData.reduce(
+                        (sum, d) => sum + (d.pnDReleases || 0),
+                        0
+                      )
+                    )}
+                  </td>
+                  <td className="rounded-end text-nowrap">
+                    {formatAmountWithCommas(
+                      projectsData.reduce(
+                        (sum, d) => sum + (d.utilization || 0),
+                        0
+                      )
+                    )}
+                  </td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              )}
+              <tr>
+                <td colSpan={keys.length} className="p-0">
+                  <div className="row d-flex mb-3 m-0">
+                    <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
+                      {indexOfFirstRow + 1} -{" "}
+                      {Math.min(indexOfLastRow, projectsData.length)} of{" "}
+                      {projectsData.length}
+                    </div>
+                    <div className="col-lg-6 col-md-9 col-sm-12">
+                      <div className="row d-flex m-0 me-2 justify-content-end align-items-center">
+                        <div className="col-lg-2 col-md-1 col"></div>
+                        <div className="col-lg-5 col-md-4 col text-end">
+                          <label
+                            htmlFor="rowPerPage"
+                            className="form-label mt-2"
+                          >
+                            Rows Per Page:
+                          </label>
+                        </div>
+                        <div className="col-lg-1 col-md-3 col text-start p-0">
+                          <select
+                            className="rounded bg-color-sea-green text-white shadow p-2"
+                            style={{
+                              color: "#fff",
+                              border: "1px solid #445E84",
+                              outline: "none",
+                            }}
+                            aria-label="Rows per page"
+                            name="rowPerPage"
+                            id="rowPerPage"
+                            value={rows}
+                            onChange={handleRowsPerPage}
+                          >
+                            {[10, 20, 30, 40, 50].map((num) => (
+                              <option key={num} value={num}>
+                                &nbsp;{num}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                     </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan={keys?.length} className="p-0">
-                    <div className="col text-center mt-2">
-                      <Button
-                        className="btn bg-color-sea-green shadow me-2 text-white"
-                        onClick={handleFirstPage}
-                        disabled={currentPage === 1}
-                        style={{
-                          border: "1px solid #445E84",
-                        }}
-                      >
-                        <MdFirstPage size={20} />
-                      </Button>
-                      <Button
-                        className="btn bg-color-sea-green shadow me-2 text-white"
-                        onClick={handlePreviousPage}
-                        disabled={currentPage === 1}
-                        style={{
-                          border: "1px solid #445E84",
-                        }}
-                      >
-                        <MdNavigateBefore size={20} />
-                      </Button>
-                      {renderPageNumbers()}
-                      <Button
-                        className="btn bg-color-sea-green shadow me-2 text-white"
-                        onClick={handleNextPage}
-                        disabled={currentPage === totalPages}
-                        style={{
-                          border: "1px solid #445E84",
-                        }}
-                      >
-                        <MdNavigateNext size={20} />
-                      </Button>
-                      <Button
-                        className="btn bg-color-sea-green shadow text-white"
-                        onClick={handleLastPage}
-                        disabled={currentPage === totalPages}
-                        style={{
-                          border: "1px solid #445E84",
-                        }}
-                      >
-                        <MdLastPage size={20} />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={keys?.length} className="p-0">
+                  <div className="col text-center mt-2">
+                    <Button
+                      className="btn bg-color-sea-green shadow me-2 text-white"
+                      onClick={handleFirstPage}
+                      disabled={currentPage === 1}
+                      style={{
+                        border: "1px solid #445E84",
+                      }}
+                    >
+                      <MdFirstPage size={20} />
+                    </Button>
+                    <Button
+                      className="btn bg-color-sea-green shadow me-2 text-white"
+                      onClick={handlePreviousPage}
+                      disabled={currentPage === 1}
+                      style={{
+                        border: "1px solid #445E84",
+                      }}
+                    >
+                      <MdNavigateBefore size={20} />
+                    </Button>
+                    {renderPageNumbers()}
+                    <Button
+                      className="btn bg-color-sea-green shadow me-2 text-white"
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPages}
+                      style={{
+                        border: "1px solid #445E84",
+                      }}
+                    >
+                      <MdNavigateNext size={20} />
+                    </Button>
+                    <Button
+                      className="btn bg-color-sea-green shadow text-white"
+                      onClick={handleLastPage}
+                      disabled={currentPage === totalPages}
+                      style={{
+                        border: "1px solid #445E84",
+                      }}
+                    >
+                      <MdLastPage size={20} />
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

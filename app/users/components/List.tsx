@@ -17,6 +17,7 @@ import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
 import useRoles from "@/app/hooks/useRoles";
 import GroupingForm from "./GroupingForm";
+import Image from "next/image";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -36,7 +37,7 @@ export interface Option {
 }
 
 const List = ({ refresh, setRefresh }: ListProps) => {
-  const { data, setData, setError, error, isLoading } = useAuthentication({
+  const { data, setData, setError, isLoading } = useAuthentication({
     refresh,
   });
   const { data: roles } = useRoles({ refresh });
@@ -152,6 +153,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
+              roles={roles}
             />
           </div>
         }
@@ -217,14 +219,14 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                       href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
                       target="_blank"
                     >
-                      <img
-                        className="img-fluid rounded-circle shadow-sm"
+                      <Image
+                        className="rounded-circle shadow-sm"
                         style={{
-                          width: "50px",
-                          height: "50px",
                           objectFit: "cover",
                           objectPosition: "center top",
                         }}
+                        width={70}
+                        height={70}
                         src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
                         alt="picture"
                       />

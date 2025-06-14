@@ -1,7 +1,5 @@
-import { getProjectDetailKeysAPI } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import useAttributes from "@/app/hooks/useAttributes";
-import useProjects from "@/app/hooks/useProjects";
+import useAttributes, { Attribute } from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
@@ -10,7 +8,7 @@ import { toast } from "react-toastify";
 import more from "../../../public/icons/more.svg";
 
 interface Form {
-  attributeId: 0;
+  attributeId: number;
   attributeDataType: string;
   multiselect: number;
   label: string;
@@ -37,6 +35,8 @@ interface Form {
   smdpIdentifier: string;
   evaluationFormulaWeightage: number;
   removeable: number;
+  isMaster: number;
+  priority: number;
 }
 
 interface Option {
@@ -45,6 +45,7 @@ interface Option {
   sortId: number;
   isActive: number;
   label: string;
+  condition: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -55,17 +56,26 @@ interface Props {
   id?: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   refresh: boolean;
+  projectDetailKeys: string[];
+  data: Attribute[];
 }
 
-const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
-  const { data, setError } = useAttributes({ refresh });
-  const { data: projects } = useProjects({ refresh });
+const Form = ({
+  api,
+  method,
+  id,
+  setRefresh,
+  refresh,
+  projectDetailKeys,
+  data,
+}: Props) => {
   const [isRequired, setRequired] = useState(false);
   const [isMultiSelect, setMultiSelect] = useState(false);
   const [isStatus, setStatus] = useState(false);
   const [isHidden, setHidden] = useState(false);
   const [isReadOnly, setReadOnly] = useState(false);
   const [isRemoveable, setRemoveable] = useState(false);
+  const [isMaster, setMaster] = useState(false);
   const [activeStates, setActiveStates] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -80,21 +90,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
   const handleDeleteOption = (index: number) => {
     setOptionsData((prevData) => prevData.filter((_, i) => i !== index));
   };
-  const [projectDetailKeys, setProjectDetailKeys] = useState([]);
-  useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        const response = await apiClient.get(`${getProjectDetailKeysAPI}`);
-        const data = response.data.data; // Assuming this returns an array of group objects
-        setProjectDetailKeys(data);
-        console.log("projectDetailKeys", projectDetailKeys);
-      } catch (error) {
-        console.error("Error fetching selected groups:", error);
-      }
-    };
-
-    fetchDetails();
-  }, []);
 
   const [formData, setFormData] = useState<Form>({
     attributeId: 0,
@@ -124,6 +119,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     smdpIdentifier: "",
     evaluationFormulaWeightage: 0,
     removeable: 0,
+    isMaster: 0,
+    priority: 0,
   });
 
   const [optionsData, setOptionsData] = useState<Option[]>([
@@ -132,6 +129,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       value: "",
       sortId: 0,
       isActive: 0,
+      condition: "",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       label: "",
@@ -187,6 +185,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           smdpIdentifier: itemData.smdpIdentifier,
           evaluationFormulaWeightage: itemData.evaluationFormulaWeightage,
           removeable: itemData.removeable,
+          isMaster: itemData.isMaster,
+          priority: itemData.priority,
         });
         setOptionsData(
           itemData.options || [
@@ -198,6 +198,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
               label: "",
+              condition: "",
             },
           ]
         );
@@ -214,6 +215,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         setHidden(itemData.hidden === 1 ? true : false);
         setReadOnly(itemData.readOnly === 1 ? true : false);
         setRemoveable(itemData.removeable === 1 ? true : false);
+        setMaster(itemData.isMaster === 1 ? true : false);
       } catch (error) {
         console.log(error);
       }
@@ -266,6 +268,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         sortId: 0,
         isActive: 0,
         label: "",
+        condition: "",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -285,6 +288,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       hidden: isHidden ? 1 : 0,
       readOnly: isReadOnly ? 1 : 0,
       removeable: isRemoveable ? 1 : 0,
+      isMaster: isMaster ? 1 : 0,
     });
   }, [
     isRequired,
@@ -293,6 +297,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     isHidden,
     isReadOnly,
     isRemoveable,
+    isMaster,
     formData.attributeType,
   ]);
 
@@ -327,6 +332,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             hidden: isHidden ? 1 : 0,
             readOnly: isReadOnly ? 1 : 0,
             removeable: isRemoveable ? 1 : 0,
+            isMaster: isMaster ? 1 : 0,
             attributeCode:
               formData.attributeCode === "" ? null : formData.attributeCode, // Change 0 to null
             validationRegx:
@@ -397,6 +403,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
               smdpIdentifier: "",
               evaluationFormulaWeightage: 0,
               removeable: 0,
+              isMaster: 0,
+              priority: 0,
             });
             setOptionsData([
               {
@@ -404,6 +412,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                 value: "",
                 sortId: 0,
                 isActive: 0,
+                condition: "",
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
                 label: "",
@@ -416,6 +425,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             setHidden(false);
             setReadOnly(false);
             setRemoveable(false);
+            setMaster(false);
             console.log("Submit Response:", response.data);
             setRefresh((prev) => !prev);
           } else {
@@ -441,7 +451,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         } catch (err) {
           console.log((err as AxiosError).message);
           // notifyError((err as AxiosError).message);
-          setError((err as AxiosError).message);
+          // setError((err as AxiosError).message);
         }
     }
   };
@@ -502,8 +512,8 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                 className="ps-lg-4 pe-lg-4 ps-md-4 pe-md-4"
                 onSubmit={handleSubmit}
               >
-                <div className="row d-flex justify-content-between mb-3">
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                <div className="row d-flex justify-content-between align-items-center mb-3">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label htmlFor="label" className="form-label text-white">
                       Label
                     </label>
@@ -517,7 +527,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Label"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
                       htmlFor="placeholder"
                       className="form-label text-white"
@@ -534,7 +544,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Placeholder"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
                       htmlFor="attributeDataType"
                       className="form-label text-white"
@@ -545,6 +555,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       className="form-select form-select-sm color-light-dark"
                       aria-label="Default select example"
                       name="attributeDataType"
+                      id="attributeDataType"
                       onChange={handleChange}
                       value={formData.attributeDataType}
                     >
@@ -553,7 +564,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       <option value="date">Date</option>
                     </select>
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
                       htmlFor="attributeType"
                       className="form-label text-white"
@@ -564,6 +575,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       className="form-select form-select-sm color-light-dark"
                       aria-label="Default select example"
                       name="attributeType"
+                      id="attributeType"
                       onChange={handleChange}
                       value={formData.attributeType}
                     >
@@ -579,7 +591,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       <option value="formula">Formula</option>
                     </select>
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label htmlFor="unit" className="form-label text-white">
                       Unit
                     </label>
@@ -593,7 +605,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Unit"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
                       htmlFor="validationRegx"
                       className="form-label text-white"
@@ -610,7 +622,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Validation Regx"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label htmlFor="sortId" className="form-label text-white">
                       Sort Id
                     </label>
@@ -624,7 +636,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Sort Id"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
                       htmlFor="verificationType"
                       className="form-label text-white"
@@ -635,6 +647,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       className="form-select form-select-sm color-light-dark"
                       aria-label="Default select example"
                       name="verificationType"
+                      id="verificationType"
                       onChange={handleChange}
                       value={formData.verificationType}
                     >
@@ -643,7 +656,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       <option value="video">Video</option>
                     </select>
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
                       htmlFor="smdpIdentifier"
                       className="form-label text-white"
@@ -654,6 +667,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       className="form-select form-select-sm color-light-dark"
                       aria-label="Default select example"
                       name="smdpIdentifier"
+                      id="smdpIdentifier"
                       onChange={handleChange}
                       value={formData.smdpIdentifier}
                     >
@@ -665,7 +679,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       ))}
                     </select>
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
                       htmlFor="errorMessage"
                       className="form-label text-white"
@@ -682,7 +696,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Error Message"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label htmlFor="remarks" className="form-label text-white">
                       Remarks
                     </label>
@@ -696,7 +710,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Remarks"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
                       htmlFor="attributeCode"
                       className="form-label text-white"
@@ -713,120 +727,134 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       placeholder="Enter Attribute Code"
                     />
                   </div>
-                </div>
-                {formData.attributeType === "slider" && (
-                  <div className="row d-flex justify-content-between mb-3">
-                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                      <label htmlFor="min" className="form-label text-white">
-                        Min
-                      </label>
-                      <input
-                        type="number"
-                        className="form-control form-control-sm color-light-dark"
-                        id="min"
-                        name="min"
-                        value={formData.min}
-                        onChange={handleChange}
-                        placeholder="Enter Min value"
-                      />
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                      <label htmlFor="max" className="form-label text-white">
-                        Max
-                      </label>
-                      <input
-                        type="number"
-                        className="form-control form-control-sm color-light-dark"
-                        id="max"
-                        name="max"
-                        value={formData.max}
-                        onChange={handleChange}
-                        placeholder="Enter Max value"
-                      />
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                      <label
-                        htmlFor="weightage"
-                        className="form-label text-white"
-                      >
-                        Weightage
-                      </label>
-                      <input
-                        type="number"
-                        className="form-control form-control-sm color-light-dark"
-                        id="weightage"
-                        name="weightage"
-                        value={formData.weightage}
-                        onChange={handleChange}
-                        placeholder="Enter Weightage"
-                      />
-                    </div>
+                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                    <label htmlFor="priority" className="form-label text-white">
+                      Priority
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control form-control-sm color-light-dark"
+                      id="priority"
+                      name="priority"
+                      value={formData.priority}
+                      onChange={handleChange}
+                      placeholder="Enter Priority"
+                    />
                   </div>
-                )}
-                {formData.attributeType === "formula" && (
-                  <div className="row d-flex justify-content-start mb-3">
-                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                      <label
-                        htmlFor="evaluationFormula"
-                        className="form-label text-white"
-                      >
-                        Evaluation Formula
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm color-light-dark"
-                        id="evaluationFormula"
-                        name="evaluationFormula"
-                        value={formData.evaluationFormula}
-                        onChange={handleChange}
-                        placeholder="Enter Evaluation Formula"
-                      />
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 text-start">
-                      <label
-                        htmlFor="searchAttributeCodes"
-                        className="form-label text-white"
-                      >
-                        Search Attribute Codes
-                      </label>
-                      <select
-                        className="form-select form-select-sm color-light-dark"
-                        aria-label="Default select example"
-                        name="searchAttributeCodes"
-                        onChange={handleDatalistSelect}
-                      >
-                        {data.map((d) => (
-                          <>
-                            {d.attributeCode && (
-                              <option key={d.label} value={d.attributeCode}>
+                  {formData.attributeType === "slider" && (
+                    <>
+                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                        <label htmlFor="min" className="form-label text-white">
+                          Min
+                        </label>
+                        <input
+                          type="number"
+                          className="form-control form-control-sm color-light-dark"
+                          id="min"
+                          name="min"
+                          value={formData.min}
+                          onChange={handleChange}
+                          placeholder="Enter Min value"
+                        />
+                      </div>
+                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                        <label htmlFor="max" className="form-label text-white">
+                          Max
+                        </label>
+                        <input
+                          type="number"
+                          className="form-control form-control-sm color-light-dark"
+                          id="max"
+                          name="max"
+                          value={formData.max}
+                          onChange={handleChange}
+                          placeholder="Enter Max value"
+                        />
+                      </div>
+                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                        <label
+                          htmlFor="weightage"
+                          className="form-label text-white"
+                        >
+                          Weightage
+                        </label>
+                        <input
+                          type="number"
+                          className="form-control form-control-sm color-light-dark"
+                          id="weightage"
+                          name="weightage"
+                          value={formData.weightage}
+                          onChange={handleChange}
+                          placeholder="Enter Weightage"
+                        />
+                      </div>
+                    </>
+                  )}
+                  {formData.attributeType === "formula" && (
+                    <>
+                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                        <label
+                          htmlFor="evaluationFormula"
+                          className="form-label text-white"
+                        >
+                          Evaluation Formula
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm color-light-dark"
+                          id="evaluationFormula"
+                          name="evaluationFormula"
+                          value={formData.evaluationFormula}
+                          onChange={handleChange}
+                          placeholder="Enter Evaluation Formula"
+                        />
+                      </div>
+                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mb-3">
+                        <label
+                          htmlFor="searchAttributeCodes"
+                          className="form-label text-white"
+                        >
+                          Search Attribute Codes
+                        </label>
+                        <select
+                          className="form-select form-select-sm color-light-dark"
+                          aria-label="Default select example"
+                          name="searchAttributeCodes"
+                          id="searchAttributeCodes"
+                          onChange={handleDatalistSelect}
+                        >
+                          <option value="">Select</option>
+                          {data
+                            .filter((d) => d.attributeCode)
+                            .map((d, i) => (
+                              <option key={i} value={d.attributeCode}>
                                 {d.label}
                               </option>
-                            )}
-                          </>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                      <label
-                        htmlFor="evaluationFormulaWeightage"
-                        className="form-label text-white"
-                      >
-                        Evaluation Formula Weightage
-                      </label>
-                      <input
-                        type="number"
-                        className="form-control form-control-sm color-light-dark"
-                        id="evaluationFormulaWeightage"
-                        name="evaluationFormulaWeightage"
-                        value={formData.evaluationFormulaWeightage}
-                        onChange={handleChange}
-                        placeholder="Enter Evaluation Formula Weightage"
-                      />
-                    </div>
-                  </div>
-                )}
-                <div className="row d-flex justify-content-start mb-3">
-                  <div className="col-lg-2 col-md-4 col-sm-12 text-start">
+                            ))}
+                        </select>
+                      </div>
+                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                        <label
+                          htmlFor="evaluationFormulaWeightage"
+                          className="form-label text-white"
+                        >
+                          Evaluation Formula Weightage
+                        </label>
+                        <input
+                          type="number"
+                          className="form-control form-control-sm color-light-dark"
+                          id="evaluationFormulaWeightage"
+                          name="evaluationFormulaWeightage"
+                          value={formData.evaluationFormulaWeightage}
+                          onChange={handleChange}
+                          placeholder="Enter Evaluation Formula Weightage"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+                <div className="row d-flex justify-content-start align-items-center mb-3">
+                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
                     <div className="form-check form-switch">
                       <label
                         className="form-check-label text-white"
@@ -844,7 +872,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       />
                     </div>
                   </div>
-                  <div className="col-lg-2 col-md-4 col-sm-12 text-start">
+                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
                     <div className="form-check form-switch">
                       <label
                         className="form-check-label text-white"
@@ -862,7 +890,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       />
                     </div>
                   </div>
-                  <div className="col-lg-2 col-md-4 col-sm-12 text-start">
+                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
                     <div className="form-check form-switch">
                       <label
                         className="form-check-label text-white"
@@ -880,7 +908,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       />
                     </div>
                   </div>
-                  <div className="col-lg-2 col-md-4 col-sm-12 text-start">
+                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
                     <div className="form-check form-switch">
                       <label
                         className="form-check-label text-white"
@@ -898,7 +926,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       />
                     </div>
                   </div>
-                  <div className="col-lg-2 col-md-4 col-sm-12 text-start">
+                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
                     <div className="form-check form-switch">
                       <label
                         className="form-check-label text-white"
@@ -916,7 +944,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       />
                     </div>
                   </div>
-                  <div className="col-lg-2 col-md-4 col-sm-12 text-start">
+                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
                     <div className="form-check form-switch">
                       <label
                         className="form-check-label text-white"
@@ -934,16 +962,36 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                       />
                     </div>
                   </div>
+                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
+                    <div className="form-check form-switch">
+                      <label
+                        className="form-check-label text-white"
+                        htmlFor="master"
+                      >
+                        Is Master
+                      </label>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="master"
+                        name="master"
+                        checked={isMaster}
+                        onChange={() => setMaster(!isMaster)}
+                      />
+                    </div>
+                  </div>
                 </div>
                 {formData.attributeType === "radio" ||
                 formData.attributeType === "select" ||
                 formData.attributeType === "checkbox" ? (
                   <>
-                    <div className="row d-flex justify-content-between mb-3">
-                      <div className="col-lg-10 col-md-6 col-sm-4 my-auto">
-                        <h5 className="m-0 text-white">Attribute Options</h5>
+                    <div className="row d-flex justify-content-between align-items-center mb-3">
+                      <div className="col-auto my-auto">
+                        <h5 className="m-0 text-white mb-1">
+                          Attribute Options
+                        </h5>
                       </div>
-                      <div className="col-lg-2 col-md-6 col-sm-4">
+                      <div className="col-auto">
                         <Button
                           className="btn text-white"
                           style={{
@@ -962,9 +1010,9 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     {optionsData.map((option, index) => (
                       <div
                         key={index}
-                        className="row d-flex justify-content-between mb-3"
+                        className="row d-flex justify-content-end align-items-center mb-3"
                       >
-                        <div className="col-lg-3 col-md-6 col-sm-12 mb-3 text-start">
+                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3 text-start">
                           <label
                             htmlFor={`value-${index}`}
                             className="form-label text-white"
@@ -981,7 +1029,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                             placeholder="Enter Value"
                           />
                         </div>
-                        <div className="col-lg-3 col-md-6 col-sm-12 mb-3 text-start">
+                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3 text-start">
                           <label
                             htmlFor={`label-${index}`}
                             className="form-label text-white"
@@ -998,7 +1046,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                             placeholder="Enter Label"
                           />
                         </div>
-                        <div className="col-lg-2 col-md-6 col-sm-12 mb-3 text-start">
+                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3 text-start">
                           <label
                             htmlFor="sortId"
                             className="form-label text-white"
@@ -1015,7 +1063,24 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                             placeholder="Enter sortId value"
                           />
                         </div>
-                        <div className="col-lg-2 col-md-4 col-sm-12 text-start">
+                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3 text-start">
+                          <label
+                            htmlFor={`condition-${index}`}
+                            className="form-label text-white"
+                          >
+                            condition
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control form-control-sm color-light-dark"
+                            id={`condition-${index}`}
+                            name="condition"
+                            value={option.condition}
+                            onChange={(e) => handleOptionChange(index, e)}
+                            placeholder="Enter Condition"
+                          />
+                        </div>
+                        <div className="col-auto text-start">
                           <div className="form-check form-switch">
                             <label
                               className="form-check-label text-white"
@@ -1033,7 +1098,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                             />
                           </div>
                         </div>
-                        <div className="col-lg-2 col-md-6 col-sm-4 mx-auto">
+                        <div className="col-auto">
                           <Button
                             className="btn btn-danger text-white w-100"
                             type="button"

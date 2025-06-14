@@ -1,6 +1,4 @@
-import dynamic from "next/dynamic";
-
-const Attributes = dynamic(() => import("./components/Attributes"), { ssr: false });
+import Attributes from "./components/Attributes";
 
 const AttributesPage = () => {
   return (

@@ -56,7 +56,7 @@ const Menu = ({
         borderRadius: "10px",
         overflow: "hidden",
         position: "relative",
-        transition: "background .4s, outline .4s",
+        transition: "all .4s",
       }}
     >
       {showTides && (
@@ -65,7 +65,7 @@ const Menu = ({
             initial={{ x: -200, y: 200 }} // Start from Y position (dynamic)
             animate={{ x: 0, y: randomValue1 }} // Move to Y = 0 (top)
             transition={{ duration: 3, ease: "easeInOut" }} // Control duration and easing
-            style={{ position: "absolute", zIndex: -1, left: -50, right: 0 }}
+            style={{ position: "absolute", zIndex: 1, left: -50, right: 0 }}
           >
             <img
               src={tideOneImage}
@@ -78,7 +78,7 @@ const Menu = ({
             initial={{ x: 200, y: 200 }} // Start from Y position (dynamic)
             animate={{ x: -200, y: randomValue2 }} // Move to Y = 0 (top)
             transition={{ duration: 2, ease: "easeInOut" }} // Control duration and easing
-            style={{ position: "absolute", zIndex: -2, left: -30, right: 0 }}
+            style={{ position: "absolute", zIndex: 0, left: -35, right: 0 }}
           >
             <img
               src={tideTwoImage}
@@ -102,9 +102,10 @@ const Menu = ({
         </div>
       )}
       <div
-        className={`row d-flex flex-wrap justify-content-center align-items-center m-0 ${
+        className={`row d-flex flex-wrap justify-content-center align-items-center m-0 position-relative ${
           showArrow && "mt-2"
         }`}
+        style={{ zIndex: 2 }}
       >
         {icon && (
           <div className="col-auto text-lg-end text-md-center text-center px-0">
@@ -145,7 +146,10 @@ const Menu = ({
           </div>
         )}
       </div>
-      <div className="col-auto text-center text-white px-2">
+      <div
+        className="col-auto text-center text-white px-2 position-relative"
+        style={{ zIndex: 2 }}
+      >
         {textWrap ? (
           <p className={`${isGrouped ? "fs-6" : "fs17px"} fw-normal mb-2`}>
             {label}

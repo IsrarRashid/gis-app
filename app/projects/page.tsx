@@ -1,9 +1,6 @@
 // import DownloadPDFTest from "./components/DownloadPDFTest";
-import dynamic from "next/dynamic";
 
-const Projects = dynamic(() => import("./components/Projects"), {
-  ssr: false,
-});
+import Projects from "./components/Projects";
 
 const ProjectPage = () => {
   return (

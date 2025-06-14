@@ -29,6 +29,7 @@ const TableHeader = ({
 
   // Handle clicks outside the input field
   useEffect(() => {
+    if (typeof window === "undefined") return; // Prevents SSR crash
     const handleClickOutside = (event: MouseEvent) => {
       if (
         inputRef.current &&
@@ -79,21 +80,25 @@ const TableHeader = ({
         <div className="col-lg-4 col-md-6 col-sm-12">
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="input-group">
-              {isInputFocused && (
-                <span
-                  className="rounded-end rounded-pill border-0"
-                  style={{
-                    boxSizing: "border-box",
-                    background: "rgba(16, 143, 168, 0.1)",
-                    padding: "7.5px 0px 7.5px 10px",
-                    boxShadow: isInputFocused
-                      ? "0 -2px 0 #108fa8, -2px 0 0 #108fa8, 0 2px 0 #108fa8"
-                      : "none", // Top, left, bottom only
-                  }}
-                >
-                  <IoSearch />
-                </span>
-              )}
+              <span
+                className="rounded-end rounded-pill border-0"
+                style={{
+                  opacity: isInputFocused ? 1 : 0,
+                  visibility: isInputFocused ? "visible" : "hidden",
+                  transform: isInputFocused
+                    ? "translateX(0)"
+                    : "translateX(40px)",
+                  boxSizing: "border-box",
+                  background: "rgba(16, 143, 168, 0.1)",
+                  padding: "7.5px 0px 7.5px 10px",
+                  boxShadow: isInputFocused
+                    ? "0 -2px 0 #108fa8, -2px 0 0 #108fa8, 0 2px 0 #108fa8"
+                    : "none", // Top, left, bottom only
+                  transition: "all .3s",
+                }}
+              >
+                <IoSearch />
+              </span>
               <input
                 type="text"
                 className={`form-control border-0 ${
@@ -106,12 +111,14 @@ const TableHeader = ({
                     ? "0 -2px 0 #108fa8, 2px 0 0 #108fa8, 0 2px 0 #108fa8"
                     : "none", // Top, left, bottom only
                   outline: "none",
+                  transition: "all .2s",
                 }}
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
                 placeholder="Search"
                 value={searchTerm}
                 onChange={handleChange}
+                id="search"
               />
               <button
                 className="btn rounded-start rounded-pill bg-color-sea-green text-white border-0 m-0"
@@ -120,6 +127,7 @@ const TableHeader = ({
                   boxShadow: isInputFocused
                     ? "0 -2px 0 #108fa8, -2px 0 0 #108fa8, 0 2px 0 #108fa8"
                     : "none", // Top, left, bottom only
+                  transition: "all .3s",
                 }}
               >
                 <IoSearch className="my-auto" style={{ color: "#fff" }} />

@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const SmdpSync = dynamic(() => import("./components/SmdpSync"), {
-  ssr: false,
-});
+import SmdpSync from "./components/SmdpSync";
 
 const SmdpSyncPage = () => {
   return (

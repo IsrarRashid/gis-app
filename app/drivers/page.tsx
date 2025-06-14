@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const Drivers = dynamic(() => import("./components/Drivers"), {
-  ssr: false,
-});
+import Drivers from "./components/Drivers";
 
 const DriversPage = () => {
   return (

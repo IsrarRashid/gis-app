@@ -1,23 +1,9 @@
 "use client";
-import useAuthorization from "@/app/hooks/useAuthorization";
 import { useEffect, useState } from "react";
 import List from "./List";
 
 const Drivers = () => {
   const [refresh, setRefresh] = useState(false);
-  // useAuthorization("drivers");
-
-  useEffect(() => {
-    // Set the background for the body
-    document.body.style.backgroundImage = `url('/images/bg2.png')`;
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-
-    // Cleanup on unmount
-    return () => {
-      document.body.style.backgroundImage = "";
-    };
-  }, []);
 
   return (
     <div
@@ -25,7 +11,6 @@ const Drivers = () => {
       style={{
         background: "rgba(209, 209, 209, 0.4)",
         border: "1px solid #ededed",
-        padding: "10px",
         borderRadius: "15px",
       }}
     >

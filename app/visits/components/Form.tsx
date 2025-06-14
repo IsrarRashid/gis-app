@@ -206,6 +206,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Project ID
                       </label>
                       <select
+                        id="projectId"
                         disabled
                         {...register("projectId", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
@@ -225,6 +226,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Assigned To
                       </label>
                       <select
+                        id="assignedTo"
                         disabled
                         {...register("assignedTo", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
@@ -241,6 +243,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Status
                       </label>
                       <select
+                        id="status"
                         disabled
                         {...register("status")}
                         className="form-select form-select-sm color-light-dark"
@@ -291,6 +294,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Vehicle ID
                       </label>
                       <select
+                        id="vehicleID"
                         {...register("vehicleID", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
                       >
@@ -315,6 +319,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Driver
                       </label>
                       <select
+                        id="driverID"
                         {...register("driverID", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
                       >

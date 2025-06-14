@@ -1,3 +1,4 @@
+"use client";
 import { ReactNode, useState } from "react";
 import { Modal } from "react-bootstrap";
 
@@ -5,7 +6,7 @@ interface Props {
   button: ReactNode;
   body: ReactNode;
   modalId: string;
-  size?: "sm" | "lg" | "xl";
+  size?: "sm" | "lg" | "xl" | undefined;
   isFullscreen?: true | false;
   allowOpen?: true | false;
   HeaderRightPos?: number;

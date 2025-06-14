@@ -2,46 +2,65 @@
 import Select, { ActionMeta, SingleValue } from "react-select";
 
 interface Option {
-  value: string;
+  value: string | number;
   label: string;
 }
 
-interface Props {
-  data: any[];
-  value: string;
-  label: string;
+interface Props<T extends Record<string, string | number>> {
+  data: T[];
+  value: Option | null;
+  label: keyof T;
+  valueKey: keyof T;
   name: string;
-  onChange:
-    | ((newValue: SingleValue<Option>, actionMeta: ActionMeta<Option>) => void)
-    | undefined;
+  id: string;
+  onChange: (
+    newValue: SingleValue<Option>,
+    actionMeta: ActionMeta<Option>
+  ) => void | undefined;
+  isClearable?: boolean;
 }
 
-const SearchableSingleSelect = ({
+const SearchableSingleSelect = <T extends Record<string, string | number>>({
   data,
   value,
   label,
   name,
+  id,
   onChange,
-}: Props) => {
+  valueKey,
+  isClearable = true,
+}: Props<T>) => {
   const defaultOption = { value: "", label: "Select" };
+
   const options: Option[] = [
     defaultOption,
-    ...data.map((d: any) => ({
-      value: d[value],
-      label: d[label],
+    ...data.map((d) => ({
+      value: d[valueKey],
+      label: String(d[label]),
     })),
   ];
 
   return (
     <Select
+      id={id}
+      name={name}
+      options={options}
+      value={value}
+      isSearchable={true}
+      isClearable={isClearable}
+      defaultValue={defaultOption}
+      onChange={onChange}
       className="basic-single"
       classNamePrefix="select"
-      defaultValue={options[0]}
-      isSearchable={true}
-      name={name}
-      isClearable={true}
-      options={options}
-      onChange={onChange}
+      menuPlacement="auto"
+      menuPosition="absolute"
+      menuPortalTarget={document.body}
+      styles={{
+        menu: (provided) => ({
+          ...provided,
+          zIndex: 9999,
+        }),
+      }}
     />
   );
 };

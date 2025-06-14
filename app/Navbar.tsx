@@ -2,7 +2,6 @@
 import Cookies from "js-cookie";
 import { Lexend } from "next/font/google";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaPlay, FaYoutube } from "react-icons/fa";
 import { useSelector } from "react-redux";
@@ -18,9 +17,6 @@ const lexend = Lexend({
 });
 
 const Navbar = () => {
-  const [userEmail, setUserEmail] = useState("");
-  const [userName, setUserName] = useState("");
-  const router = useRouter();
   const [role, setRole] = useState<string>();
 
   const currentTutorial = useSelector(
@@ -32,45 +28,7 @@ const Navbar = () => {
     if (userRole) setRole(userRole);
   }, []);
 
-  useEffect(() => {
-    const email = Cookies.get("email") || "";
-    const userName = Cookies.get("userName") || "";
-    setUserEmail(email);
-    setUserName(userName);
-  }, [router]);
-
-  const handleLogout = () => {
-    Cookies.remove("token");
-    Cookies.remove("email");
-    Cookies.remove("userName");
-    Cookies.remove("role");
-    Cookies.remove("rights");
-  };
-
-  const [currentTime, setCurrentTime] = useState("");
   const [isEnter, setEnter] = useState(false);
-
-  useEffect(() => {
-    // Function to format the time
-    const formatTime = (date: Date) => {
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
-      const isPM = hours >= 12;
-      const formattedHours = hours % 12 || 12; // Convert to 12-hour format
-      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-      const ampm = isPM ? "PM" : "AM";
-      return `${formattedHours}:${formattedMinutes} ${ampm}`;
-    };
-
-    // Update time every second
-    const interval = setInterval(() => {
-      const now = new Date();
-      setCurrentTime(formatTime(now));
-    }, 1000);
-
-    // Clear interval on component unmount
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <nav

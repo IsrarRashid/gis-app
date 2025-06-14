@@ -1,15 +1,7 @@
-import dynamic from "next/dynamic";
-
-const Dashboard = dynamic(() => import("./components/Dashboard"), {
-  ssr: false,
-});
+import Dashboard from "./components/Dashboard";
 
 const DashboardPage = () => {
-  return (
-    <div className="p-3">
-      <Dashboard />
-    </div>
-  );
+  return <Dashboard />;
 };
 
 export default DashboardPage;

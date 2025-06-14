@@ -1,12 +1,14 @@
 import { getUserProjectsAPI } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import ErrorMessage from "@/app/components/ErrorMessage";
-import useAuthentication from "@/app/hooks/useAuthentication";
-import useDistrict from "@/app/hooks/useDistrict";
-import useDriver from "@/app/hooks/useDriver";
+import useAuthentication, {
+  Authentication,
+} from "@/app/hooks/useAuthentication";
+import useDistrict, { District } from "@/app/hooks/useDistrict";
+import useDriver, { Driver } from "@/app/hooks/useDriver";
 import { Project } from "@/app/hooks/useProjects";
-import useTourPlans from "@/app/hooks/useTourPlans";
-import useVehicle from "@/app/hooks/useVehicle";
+import useTourPlans, { TourPlan } from "@/app/hooks/useTourPlans";
+import useVehicle, { Vehicle } from "@/app/hooks/useVehicle";
 import useVisits from "@/app/hooks/useVisits";
 import apiClient, {
   AxiosError,
@@ -21,12 +23,13 @@ import toast, { Toaster } from "react-hot-toast";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
 import Select from "react-select";
+import { COMPLETED, SCHEDULED } from "@/app/report-history/statuses";
 
 const schema = z.object({
   id: z.number().optional().default(0),
   projectId: z.number({ invalid_type_error: "Please add Project!" }),
   assignedTo: z.number({ invalid_type_error: "Please add User!" }),
-  status: z.string().min(1, { message: "Please add Status!" }),
+  status: z.number({ invalid_type_error: "Please add Status!" }),
   latitude: z.string().min(1, { message: "Please add Latitude!" }),
   longitude: z.string().min(1, { message: "Please add Longitude!" }),
   vehicleID: z.number({ invalid_type_error: "Please add Vehicle!" }),
@@ -62,28 +65,38 @@ interface Props {
   id?: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   refresh: boolean;
+  visits: Visit[];
+  drivers: Driver[];
+  vehicles: Vehicle[];
+  users: Authentication[];
+  visitPlans: TourPlan[];
+  districts: District[];
 }
 
-const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
-  const { data: visits } = useVisits({ refresh });
-  const { data: drivers, setError } = useDriver({ refresh });
-  const { data: vehicles } = useVehicle({ refresh });
-  const { data: users } = useAuthentication({ refresh });
-  const { data: visitPlans } = useTourPlans({ refresh });
-  const { data: districts } = useDistrict({ refresh });
+const Form = ({
+  api,
+  method,
+  id,
+  setRefresh,
+  refresh,
+  visits,
+  drivers,
+  vehicles,
+  users,
+  visitPlans,
+  districts,
+}: Props) => {
   const {
     register,
     handleSubmit,
     setValue,
     reset,
-    control,
     formState: { errors },
   } = useForm<Visit>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
   const [selectedDistrictId, setSelectedDistrictId] = useState<number>();
   const [userProjects, setUserProjects] = useState<Project[]>([]);
 
-  console.log(errors);
   const modalId = `formModal-${id}`;
 
   const createdMessage = "Created Successfully";
@@ -99,7 +112,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     const itemData: Visit | undefined = visits.find(
       (itemData: any) => itemData.id === id
     );
-    console.log("itemDataV: ", itemData);
     if (itemData) {
       setValue("visitPlanGroup", itemData.visitPlanGroup);
       setValue("assignedTo", itemData.assignedTo);
@@ -392,12 +404,12 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Status
                       </label>
                       <select
-                        {...register("status")}
+                        {...register("status", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
                       >
                         <option value="">Select</option>
-                        <option value="scheduled">Scheduled</option>
-                        <option value="scheduled">Completed</option>
+                        <option value={SCHEDULED}>Scheduled</option>
+                        <option value={COMPLETED}>Completed</option>
                       </select>
                     </div>
                     <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start mb-3">

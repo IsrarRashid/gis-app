@@ -165,6 +165,7 @@ const FilterModal = ({
                           {d.label}
                         </label>
                         <select
+                        id={d.label}
                           ref={(el) => {
                             selectRefs.current[i] = el;
                           }} // Type-safe ref assignment

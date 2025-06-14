@@ -335,23 +335,13 @@ const EmployeeProfilePage = ({ params }: Props) => {
   };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        backgroundImage: "url('/images/bg2.png')",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        padding: "10px",
-      }}
-    >
+    <>
       {isLoading && <Loader />}
       <div
         className="container p-3 mt-3 mb-4"
         style={{
           background: "rgba(209, 209, 209, 0.4)",
           border: "1px solid #dbdbdb",
-          padding: "10px",
           borderRadius: "15px",
         }}
       >
@@ -662,7 +652,7 @@ const EmployeeProfilePage = ({ params }: Props) => {
           </section>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

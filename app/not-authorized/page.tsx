@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const NotAuthorized = dynamic(() => import("./components/NotAuthorized"), {
-  ssr: false,
-});
+import NotAuthorized from "./components/NotAuthorized";
 
 const NotAuthorizedPage = () => {
   return <NotAuthorized />;

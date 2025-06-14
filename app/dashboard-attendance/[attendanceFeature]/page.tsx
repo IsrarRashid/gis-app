@@ -1,14 +1,10 @@
 "use client";
-import { FaDownload, FaSearch } from "react-icons/fa";
-import DetailsList from "../components/DetailsList";
-import { useEffect, useState } from "react";
-import apiClient from "@/app/services/api-client";
-import DashboardAttendance from "../components/AttendanceHome/AttendanceHome";
 import Loader from "@/app/components/Loader";
+import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/TableHeading";
-import Pagination from "@/app/components/Table/Pagination";
-import { sort } from "fast-sort";
+import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
+import apiClient from "@/app/services/api-client";
 import {
   addDayToFormattedDate,
   addSpaceToCamelCase,
@@ -17,10 +13,11 @@ import {
   getFormattedDate,
   getTimeLeft,
 } from "@/app/utils";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import { exportDataToExcel } from "@/app/utils/exportToExcel";
+import { sort } from "fast-sort";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface Props {
   params: { attendanceFeature: string };
@@ -327,183 +324,171 @@ const AttendanceDetailsPage = ({ params }: Props) => {
       {isLoading && <Loader />}
       {data && (
         <div
+          className="container p-3 mt-3 mb-4"
           style={{
-            width: "100%",
-            height: "100%",
-            backgroundImage: "url('/images/bg2.png')",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-            padding: "10px",
+            background: "rgba(209, 209, 209, 0.4)",
+            border: "1px solid #dbdbdb",
+            borderRadius: "15px",
           }}
         >
-          <div
-            className="container p-3 mt-3 mb-4"
-            style={{
-              background: "rgba(209, 209, 209, 0.4)",
-              border: "1px solid #dbdbdb",
-              padding: "10px",
-              borderRadius: "15px",
-            }}
-          >
-            <div>
-              <TableHeader
-                heading={heading}
-                searchTerm={searchTerm}
-                filteredData={filteredData}
-                data={data}
-                handleChange={handleChange}
-                form={
-                  <div className="col-auto" style={{ zIndex: 3 }}>
-                    <DownloadDropDown
-                      onClickPdf={() =>
-                        tableRows &&
-                        exportToPDF(columns, tableRows, new Date(), label)
-                      }
-                    />
-                  </div>
-                }
-              />
-              <section className="mx-5 pt-2 pb-2">
-                <div className="row d-flex justify-content-between">
-                  <div className="col-lg-3 col-md-9 col-sm-12 mt-2 table-responsive overflow-hidden">
-                    <label htmlFor="date" className="form-label">
-                      Select Date
-                    </label>
-                    <input
-                      id="date"
-                      type="date"
-                      style={{
-                        background: "rgba(16, 143, 168, .1)",
-                        outline: "none",
-                        border: "1px solid #D0D5DD",
-                      }}
-                      onChange={(e) => {
-                        handleSubmit(new Date(e.target.value).toISOString());
-                      }}
-                      className="form-control py-2 input_shadow"
-                      aria-label="Select Date"
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section className="mx-5 mt-2">
-                <div className="table-responsive">
-                  <table className="table">
-                    <thead className="border-gradient">
-                      <tr className="color-dark-blue cursor-pointer">
-                        <TableHeading
-                          name="sr"
-                          handleSort={() => handleSort("userId")}
-                        />
-                        <TableHeading
-                          name="name"
-                          handleSort={() => handleSort("employeeName")}
-                        />
-                        <TableHeading
-                          name="in time"
-                          handleSort={() => handleSort("punchInTime")}
-                        />
-                        <TableHeading
-                          name="punch in"
-                          handleSort={() => handleSort("punchInStatus")}
-                        />
-                        <TableHeading
-                          name="out time"
-                          handleSort={() => handleSort("punchOutTime")}
-                        />
-                        <TableHeading
-                          name="punch out"
-                          handleSort={() => handleSort("punchOutStatus")}
-                        />
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data ? (
-                        paginatedData?.map((attendance, index) => (
-                          <tr key={index}>
-                            <td>{attendance.userId}</td>
-                            <td>
-                              <p
-                                className="fs-6 p-0 m-0 fw-normal"
-                                style={{ whiteSpace: "nowrap" }}
-                              >
-                                <Link
-                                  target="_blank"
-                                  className="color-sea-blue"
-                                  href={`${currentPath}/${attendance.userId}`}
-                                >
-                                  {attendance.employeeName}
-                                </Link>
-                              </p>
-                              <p className="p-0 m-0">
-                                {attendance.employeeDesignation}
-                              </p>
-                            </td>
-                            <td>{attendance.punchInTime}</td>
-                            <td>{attendance.punchInStatus}</td>
-                            <td>{attendance.punchOutTime}</td>
-                            <td>{attendance.punchOutStatus}</td>
-                            <td>
-                              <div className="dropdown">
-                                <span
-                                  className="dots"
-                                  role="button"
-                                  id={`dropdownMenuButton${index}`}
-                                  data-bs-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  {/* Three vertical dots */}
-                                  <div className="dot"></div>
-                                  <div className="dot"></div>
-                                  <div className="dot"></div>
-                                </span>
-                                <ul
-                                  className="dropdown-menu"
-                                  aria-labelledby={`dropdownMenuButton${index}`}
-                                >
-                                  <li>
-                                    <a className="dropdown-item" href="#">
-                                      Add Leave
-                                    </a>
-                                  </li>
-                                  <li>
-                                    <a className="dropdown-item" href="#">
-                                      Add Visit
-                                    </a>
-                                  </li>
-                                  <li>
-                                    <a className="dropdown-item" href="#">
-                                      Others
-                                    </a>
-                                  </li>
-                                </ul>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan={7} className="text-center">
-                            No attendance data available
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                  <Pagination
-                    searchTerm={searchTerm}
-                    filteredData={filteredData}
-                    data={data}
-                    rows={rows}
-                    setRows={setRows}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
+          <div>
+            <TableHeader
+              heading={heading}
+              searchTerm={searchTerm}
+              filteredData={filteredData}
+              data={data}
+              handleChange={handleChange}
+              form={
+                <div className="col-auto" style={{ zIndex: 3 }}>
+                  <DownloadDropDown
+                    onClickPdf={() =>
+                      tableRows &&
+                      exportToPDF(columns, tableRows, new Date(), label)
+                    }
                   />
                 </div>
-              </section>
-            </div>
+              }
+            />
+            <section className="mx-5 pt-2 pb-2">
+              <div className="row d-flex justify-content-between">
+                <div className="col-lg-3 col-md-9 col-sm-12 mt-2 table-responsive overflow-hidden">
+                  <label htmlFor="date" className="form-label">
+                    Select Date
+                  </label>
+                  <input
+                    id="date"
+                    type="date"
+                    style={{
+                      background: "rgba(16, 143, 168, .1)",
+                      outline: "none",
+                      border: "1px solid #D0D5DD",
+                    }}
+                    onChange={(e) => {
+                      handleSubmit(new Date(e.target.value).toISOString());
+                    }}
+                    className="form-control py-2 input_shadow"
+                    aria-label="Select Date"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section className="mx-5 mt-2">
+              <div className="table-responsive">
+                <table className="table">
+                  <thead className="border-gradient">
+                    <tr className="color-dark-blue cursor-pointer">
+                      <TableHeading
+                        name="sr"
+                        handleSort={() => handleSort("userId")}
+                      />
+                      <TableHeading
+                        name="name"
+                        handleSort={() => handleSort("employeeName")}
+                      />
+                      <TableHeading
+                        name="in time"
+                        handleSort={() => handleSort("punchInTime")}
+                      />
+                      <TableHeading
+                        name="punch in"
+                        handleSort={() => handleSort("punchInStatus")}
+                      />
+                      <TableHeading
+                        name="out time"
+                        handleSort={() => handleSort("punchOutTime")}
+                      />
+                      <TableHeading
+                        name="punch out"
+                        handleSort={() => handleSort("punchOutStatus")}
+                      />
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data ? (
+                      paginatedData?.map((attendance, index) => (
+                        <tr key={index}>
+                          <td>{attendance.userId}</td>
+                          <td>
+                            <p
+                              className="fs-6 p-0 m-0 fw-normal"
+                              style={{ whiteSpace: "nowrap" }}
+                            >
+                              <Link
+                                target="_blank"
+                                className="color-sea-blue"
+                                href={`${currentPath}/${attendance.userId}`}
+                              >
+                                {attendance.employeeName}
+                              </Link>
+                            </p>
+                            <p className="p-0 m-0">
+                              {attendance.employeeDesignation}
+                            </p>
+                          </td>
+                          <td>{attendance.punchInTime}</td>
+                          <td>{attendance.punchInStatus}</td>
+                          <td>{attendance.punchOutTime}</td>
+                          <td>{attendance.punchOutStatus}</td>
+                          <td>
+                            <div className="dropdown">
+                              <span
+                                className="dots"
+                                role="button"
+                                id={`dropdownMenuButton${index}`}
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                              >
+                                {/* Three vertical dots */}
+                                <div className="dot"></div>
+                                <div className="dot"></div>
+                                <div className="dot"></div>
+                              </span>
+                              <ul
+                                className="dropdown-menu"
+                                aria-labelledby={`dropdownMenuButton${index}`}
+                              >
+                                <li>
+                                  <a className="dropdown-item" href="#">
+                                    Add Leave
+                                  </a>
+                                </li>
+                                <li>
+                                  <a className="dropdown-item" href="#">
+                                    Add Visit
+                                  </a>
+                                </li>
+                                <li>
+                                  <a className="dropdown-item" href="#">
+                                    Others
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={7} className="text-center">
+                          No attendance data available
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+                <Pagination
+                  searchTerm={searchTerm}
+                  filteredData={filteredData}
+                  data={data}
+                  rows={rows}
+                  setRows={setRows}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                />
+              </div>
+            </section>
           </div>
         </div>
       )}

@@ -42,7 +42,7 @@ const Button = ({
   return (
     <motion.button
       whileTap={{ scale: 0.9, opacity: 1 }}
-      whileHover={{ opacity: 0.9 }}
+      whileHover={{ opacity: 0.9, transition: { duration: 0.3 } }}
       type={type}
       style={style}
       className={className}

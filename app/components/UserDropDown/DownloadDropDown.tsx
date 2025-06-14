@@ -18,6 +18,7 @@ const DownloadDropDown = ({ onClickPdf, onClickExcel }: Props) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (typeof window === "undefined") return; // Prevents SSR crash
     const handleOutsideClick = (event: MouseEvent) => {
       if (
         dropdownRef.current &&

@@ -4,7 +4,6 @@ import Modal from "react-bootstrap/Modal";
 import more from "../../../public/icons/more.svg";
 // import { ToastContainer, toast } from "react-toastify";
 import Button from "@/app/components/Button";
-import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -31,10 +30,10 @@ interface Props {
   id?: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   refresh: boolean;
+  data: AttributeGroup[];
 }
 
-const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
-  const { data, setError } = useAttributeGroups({ refresh });
+const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
   const {
     register,
     handleSubmit,
@@ -75,7 +74,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         setGroupNature(itemData.group_nature === 1 ? true : false);
       } catch (err) {
         console.log((err as AxiosError).message);
-        setError((err as AxiosError).message);
+        // setError((err as AxiosError).message);
       }
     }
   };
@@ -188,6 +187,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         Parent Attribute Group
                       </label>
                       <select
+                        id="parentId"
                         {...register("parentId", { valueAsNumber: true })}
                         className="form-select form-select-sm color-light-dark"
                       >

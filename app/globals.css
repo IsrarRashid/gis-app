@@ -44,6 +44,11 @@
 .color-light-dark {
   color: #7e7e7e !important;
 }
+
+.color-dark-gray {
+  color: #344054 !important;
+}
+
 .bg-silver {
   background: #d9d9d9 !important;
 }
@@ -51,6 +56,11 @@
 .custom-modal .modal-content {
   background: rgba(255, 255, 255, 0) !important;
   border: none;
+}
+
+.new-custom-modal .modal-content {
+  border-radius: 12px !important;
+  /* background: rgba(255, 255, 255, 0) !important; */
 }
 
 .custom-backdrop {
@@ -67,6 +77,30 @@
   background-color: rgba(255, 255, 255, 0.5);
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
+}
+
+.bg-blur-3 {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(93, 211, 255, 0.05),
+    rgba(94, 204, 255, 0.05),
+    rgba(94, 192, 255, 0.05),
+    rgba(94, 195, 255, 0.05)
+  );
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+}
+
+.bg-blur-2 {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(93, 211, 255, 0.12),
+    rgba(94, 204, 255, 0.12),
+    rgba(94, 192, 255, 0.12),
+    rgba(94, 195, 255, 0.12)
+  );
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -115,7 +149,7 @@ textarea {
 }
 select {
   font-size: 0.8rem !important;
-  padding: 9px !important;
+  padding: 10px !important;
   border-radius: 5px;
 }
 
@@ -129,6 +163,10 @@ select {
 
 .fs22px {
   font-size: 1.375rem !important;
+}
+
+.fs21px {
+  font-size: 1.313rem !important;
 }
 
 .fs20px {
@@ -181,6 +219,15 @@ select {
 
 .fw-5 {
   font-weight: 500;
+}
+
+.fw-6 {
+  font-weight: 600;
+}
+
+.login-input {
+  padding: 20px !important;
+  border-radius: 11.7px !important;
 }
 
 .whiteSpaceNoWrap {

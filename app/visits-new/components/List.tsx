@@ -5,10 +5,6 @@ import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/TableHeading";
-import useAuthentication from "@/app/hooks/useAuthentication";
-import useDriver from "@/app/hooks/useDriver";
-import useProjects from "@/app/hooks/useProjects";
-import useVehicle from "@/app/hooks/useVehicle";
 import useVisitsNew, { VisitNew } from "@/app/hooks/useVisitsNew";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { sort } from "fast-sort";
@@ -21,6 +17,12 @@ import cancel from "../../../public/icons/cancel.svg";
 import clock from "../../../public/icons/clock.svg";
 import complete from "../../../public/icons/complete.svg";
 import Form from "./Form";
+import useDriver from "@/app/hooks/useDriver";
+import useVehicle from "@/app/hooks/useVehicle";
+import useProjects from "@/app/hooks/useProjects";
+import useAuthentication from "@/app/hooks/useAuthentication";
+import useTourPlans from "@/app/hooks/useTourPlans";
+import useDistrict from "@/app/hooks/useDistrict";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,12 +37,15 @@ export interface Option {
 }
 
 const List = ({ refresh, setRefresh }: ListProps) => {
-  const { data, isLoading, setLoading, setData } = useVisitsNew({ refresh });
+  const { data, isLoading, setData } = useVisitsNew({ refresh });
 
+  const { data: drivers } = useDriver({ refresh });
+  const { data: vehicles } = useVehicle({ refresh });
   const { data: projects } = useProjects({ refresh });
   const { data: users } = useAuthentication({ refresh });
-  const { data: vehicles } = useVehicle({ refresh });
-  const { data: drivers } = useDriver({ refresh });
+  const { data: visitPlans } = useTourPlans({ refresh });
+  const { data: districts } = useDistrict({ refresh });
+
   const deleteMessage = "Deleted Successfully!";
 
   const notifyCreate = (message: string) => toast.success(message);
@@ -221,13 +226,13 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((d) => (
+            {paginatedData.map((d, i) => (
               <tr
                 style={{
                   border: ".41px solid rgba(81,81,81,0.20) !important",
                   fontSize: ".85rem",
                 }}
-                key={d.id}
+                key={i}
               >
                 <td>{d.id}</td>
                 <td>{d.gsNo}</td>
@@ -297,6 +302,13 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                     id={d.id}
                     setRefresh={setRefresh}
                     refresh={refresh}
+                    drivers={drivers}
+                    vehicles={vehicles}
+                    projects={projects}
+                    users={users}
+                    visitPlans={visitPlans}
+                    districts={districts}
+                    visitsNew={data}
                   />
                 </td>
               </tr>

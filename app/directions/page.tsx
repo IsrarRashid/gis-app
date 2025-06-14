@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const DirectionsTest = dynamic(() => import("./components/DirectionsTest"), {
-  ssr: false,
-});
+import DirectionsTest from "./components/DirectionsTest";
 
 const DirectionsIntro = () => {
   return <DirectionsTest />;

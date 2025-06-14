@@ -22,6 +22,7 @@ import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import { downloadReportAnalysisToExcel } from "@/app/utils";
 import TimeSpentOnProjectSiteFilterMenu from "./TimeSpentOnProjectSiteFilterMenu";
 import PPTSlideGenerator from "./PPTSlideGenerator/PPTSlideGenerator";
+import MasterReport from "./MasterReport";
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 
@@ -473,6 +474,7 @@ const ReportAnalysis = () => {
               setFilteredData={setFilteredData}
             />
             <PPTSlideGenerator />
+            <MasterReport />
           </div>
           {selectedIndex === 14 ? (
             <div className="col mb-3 text-end">

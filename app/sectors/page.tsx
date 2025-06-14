@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const Sectors = dynamic(() => import("./components/Sectors"), {
-  ssr: false,
-});
+import Sectors from "./components/Sectors";
 
 const SectorsPage = () => {
   return (

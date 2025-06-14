@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import apiClient from "@/app/services/api-client";
 import { reportsHistoryAPI } from "@/app/APIs";
-import { SubmittedReport } from "@/app/report-history/components/List";
+import { SubmittedReport } from "@/app/report-history/list/components/List";
 
 const ReportReview = () => {
   const [data, setData] = useState<SubmittedReport[]>();
@@ -17,6 +17,13 @@ const ReportReview = () => {
     if (role) setRole(role);
     if (userId) setUserId(parseInt(userId));
   }, []);
+
+  useEffect(() => {
+    if (role) {
+      console.log("role:", role);
+      console.log("role check", role.toLowerCase().includes("director"));
+    }
+  }, [role]);
 
   useEffect(() => {
     const handleSubmit = async (userId: number) => {
@@ -32,9 +39,26 @@ const ReportReview = () => {
     if (userId) handleSubmit(userId);
   }, [userId]);
 
+  useEffect(() => {
+    if (data) {
+      console.log(
+        "report review count",
+        data?.filter(
+          (d) => d.submittedTo === userId || d.submittedFrom === userId
+        ).length
+      );
+      console.log(
+        "report review data",
+        data?.filter(
+          (d) => d.submittedTo === userId || d.submittedFrom === userId
+        )
+      );
+    }
+  }, [data]);
+
   return (
     <>
-      {role && data && role.toLowerCase().includes("director") && (
+      {role && userId && data && role.toLowerCase().includes("director") && (
         <Link
           href="/report-history"
           target="_blank"
@@ -44,19 +68,18 @@ const ReportReview = () => {
             background="rgba(12, 233, 167, 0.2)"
             outline="1px solid rgba(12, 233, 174, 0.4)"
             icon="/icons/reportReview.svg"
-            value={data.length || 0}
+            value={
+              data?.filter(
+                (d) => d.submittedTo === userId || d.submittedFrom === userId
+              ).length || 0
+            }
             label="Report Review"
             showTides={true}
             showArrow={true}
             textWrap={false}
           />
           <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {role.toLowerCase() === "deputy director" &&
-              data.filter((d) => d.lastStatus === 0).length}
-            {role.toLowerCase() === "director" &&
-              data.filter((d) => d.lastStatus === 1).length}
-            {role.toLowerCase() === "director general" &&
-              data.filter((d) => d.lastStatus === 2).length}
+            {data?.filter((d) => d.submittedTo === userId).length}
           </span>
         </Link>
       )}

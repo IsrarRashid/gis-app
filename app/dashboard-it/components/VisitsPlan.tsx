@@ -10,6 +10,8 @@ import { Accordion } from "react-bootstrap";
 import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
 import visitPlan from "@/public/icons/visitPlan.svg";
 import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
+import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
+import { exportDataToExcel } from "@/app/utils/exportToExcel";
 
 interface VisitsPlan {
   nameOfVisit: string;
@@ -122,6 +124,45 @@ const VisitsPlan = ({
         });
   };
 
+  // Export to Excel function
+  const exportToExcel = (plan: VisitsPlan) => {
+    const headers = [
+      "Sr No.",
+      "Officer Name",
+      "Designation",
+      "From Date",
+      "To Date",
+      "Total Visits",
+      "Pending Visits",
+      "Complete Visits",
+      "Submitted",
+      "On Time Submitted",
+      "Late Submitted",
+      "Issued Report",
+    ];
+
+    const data = plan.detailOfEachVisit.map((visit, index) => ({
+      "Sr No.": index + 1,
+      "Officer Name": visit.officerName,
+      Designation: visit.designation,
+      "From Date": visit.fromDate,
+      "To Date": visit.toDate,
+      "Total Visits": visit.totalVisits,
+      Submitted: visit.submitted,
+      "Complete Visits": visit.completeVisits,
+      "Pending Visits": visit.pendingVisits,
+      "On Time Submitted": visit.onTimeSubmitted,
+      "Late Submitted": visit.lateSubmitted,
+      "Issued Report": visit.issuedReport,
+    }));
+
+    exportDataToExcel(
+      data,
+      headers,
+      `${plan.nameOfVisit} ${getFormattedDate(new Date(), "short")}.xlsx`
+    );
+  };
+
   return (
     <>
       <CustomModal
@@ -210,284 +251,291 @@ const VisitsPlan = ({
                           overflow: "scroll",
                         }}
                       >
-                        <table className="table table-hover text-center">
-                          <thead>
-                            <tr className="fs14px">
-                              <th className="border-0">&nbsp;</th>
-                              <th className="border-0">&nbsp;</th>
-                              <th
-                                colSpan={2}
-                                className="text-center border-0 fw-normal"
-                              >
-                                <div className="border">&nbsp;</div>
-                                <div style={{ marginTop: "-34px" }}>
-                                  <span className="bg-white fw-bold">
-                                    Visits
-                                  </span>
-                                </div>
-                              </th>
-                              <th
-                                colSpan={4}
-                                className="text-center border-0 fw-normal"
-                              >
-                                <div className="border">&nbsp;</div>
-                                <div style={{ marginTop: "-34px" }}>
-                                  <span className="bg-white fw-bold">
-                                    Reports
-                                  </span>
-                                </div>
-                              </th>
-                              <th className="border-0">&nbsp;</th>
-                            </tr>
-                            <tr>
-                              <td className="bg-color-sea-blue rounded-pill rounded-end p-0 border-0 text-center">
-                                <div
-                                  style={{ background: "#0468C8" }}
-                                  className="p-0 rounded-pill text-white py-2 fs18px fw-bold text-center"
+                        <div className="text-end">
+                          <DownloadDropDown
+                            onClickExcel={() => exportToExcel(d)}
+                          />
+                        </div>
+                        <div className="table-responsive">
+                          <table className="table table-hover text-center">
+                            <thead>
+                              <tr className="fs14px">
+                                <th className="border-0">&nbsp;</th>
+                                <th className="border-0">&nbsp;</th>
+                                <th
+                                  colSpan={2}
+                                  className="text-center border-0 fw-normal"
                                 >
-                                  Name
-                                </div>
-                              </td>
-                              <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
-                                Total
-                              </td>
-                              <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
-                                Scheduled
-                              </td>
-                              <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
-                                Completed
-                              </td>
-                              <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
-                                Submitted
-                              </td>
-                              <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold text-nowrap">
-                                On-Time
-                              </td>
-                              <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
-                                Late
-                              </td>
-                              <td className="bg-color-sea-blue border-0 text-white rounded-pill rounded-start text-nowrap text-center fs18px fw-bold">
-                                Reports Issued
-                              </td>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {d.detailOfEachVisit.map((visit, j) => (
-                              <tr key={j}>
-                                <td
-                                  style={{
-                                    // background: "rgba(241, 241, 241, 0.88)",
-                                    color: "#414651",
-                                  }}
-                                  className="rounded-pill rounded-end border-0 fs14px fw-bold px-0 py-1"
+                                  <div className="border">&nbsp;</div>
+                                  <div style={{ marginTop: "-34px" }}>
+                                    <span className="bg-white fw-bold">
+                                      Visits
+                                    </span>
+                                  </div>
+                                </th>
+                                <th
+                                  colSpan={4}
+                                  className="text-center border-0 fw-normal"
                                 >
+                                  <div className="border">&nbsp;</div>
+                                  <div style={{ marginTop: "-34px" }}>
+                                    <span className="bg-white fw-bold">
+                                      Reports
+                                    </span>
+                                  </div>
+                                </th>
+                                <th className="border-0">&nbsp;</th>
+                              </tr>
+                              <tr>
+                                <td className="bg-color-sea-blue rounded-pill rounded-end p-0 border-0 text-center">
                                   <div
-                                    className="rounded-pill rounded-end "
-                                    style={{
-                                      background: "rgba(241, 241, 241, 0.88)",
-                                    }}
+                                    style={{ background: "#0468C8" }}
+                                    className="p-0 rounded-pill text-white py-2 fs18px fw-bold text-center"
                                   >
-                                    <CustomModal
-                                      HeaderTopPos={0}
-                                      HeaderRightPos={20}
-                                      isFullscreen={true}
-                                      size="xl"
-                                      modalId={`${j}"Projects"`}
-                                      button={
-                                        <Button
-                                          className="btn p-0 pe-1 shadow-none w-100"
-                                          onClick={() =>
-                                            getProjectsList("BeingMonitored")
-                                          }
-                                        >
-                                          {visit.officerName}
-                                          <br />
-                                          {visit.designation}
-                                          <br />
-                                          From:{" "}
-                                          {addDayToFormattedDate(
-                                            getFormattedDate(
-                                              new Date(visit.fromDate),
-                                              "short"
-                                            )!
-                                          )}
-                                          <br />
-                                          To:
-                                          {addDayToFormattedDate(
-                                            getFormattedDate(
-                                              new Date(visit.toDate),
-                                              "short"
-                                            )!
-                                          )}
-                                        </Button>
-                                      }
-                                      body={
-                                        <>
-                                          <div
-                                            className="container-fluid border border-white p-3"
-                                            style={{
-                                              borderRadius: "20px",
-                                              background: "#CFE6F8",
-                                              height: "100%",
-                                              overflow: "scroll",
-                                            }}
-                                          >
-                                            {projectsData && filteredKeys ? (
-                                              <ProjectsTable
-                                                label="Being Monitored Projects"
-                                                projectsData={projectsData.filter(
-                                                  (project) =>
-                                                    project.userName ===
-                                                      visit.officerName &&
-                                                    new Date(
-                                                      project.visitStartDate
-                                                    ) >=
-                                                      new Date(
-                                                        d.nameOfVisit.split(
-                                                          " "
-                                                        )[2]
-                                                      ) &&
-                                                    new Date(
-                                                      project.visitEndDate
-                                                    ) <=
-                                                      new Date(
-                                                        d.nameOfVisit.split(
-                                                          " "
-                                                        )[4]
-                                                      )
-                                                )}
-                                                setProjectsData={
-                                                  setProjectsData
-                                                }
-                                                keys={filteredKeys}
-                                              />
-                                            ) : (
-                                              <Loader />
-                                            )}
-                                          </div>
-                                        </>
-                                      }
-                                    />
+                                    Name
                                   </div>
                                 </td>
-                                <td
-                                  style={{
-                                    // background: "rgba(241, 241, 241, 0.88)",
-                                    color: "#414651",
-                                  }}
-                                  className="border-0 text-center fs14px fw-normal px-0 py-1"
-                                >
-                                  <div
-                                    style={{
-                                      background: "rgba(241, 241, 241, 0.88)",
-                                      padding: "10px 0px 19px 0px",
-                                    }}
-                                  >
-                                    {visit.totalVisits}
-                                  </div>
+                                <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
+                                  Total
                                 </td>
-                                <td
-                                  style={{
-                                    // background: "rgba(241, 241, 241, 0.88)",
-                                    color: "#414651",
-                                  }}
-                                  className="border-0 text-center fs14px fw-normal px-0 py-1"
-                                >
-                                  <div
-                                    style={{
-                                      background: "rgba(241, 241, 241, 0.88)",
-                                      padding: "10px 0px 19px 0px",
-                                    }}
-                                  >
-                                    {visit.pendingVisits}
-                                  </div>
+                                <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
+                                  Scheduled
                                 </td>
-                                <td
-                                  style={{
-                                    // background: "rgba(241, 241, 241, 0.88)",
-                                    color: "#414651",
-                                  }}
-                                  className="border-0 text-center fs14px fw-normal px-0 py-1"
-                                >
-                                  <div
-                                    style={{
-                                      background: "rgba(241, 241, 241, 0.88)",
-                                      padding: "10px 0px 19px 0px",
-                                    }}
-                                  >
-                                    {visit.completeVisits}
-                                  </div>
+                                <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
+                                  Completed
                                 </td>
-                                <td
-                                  style={{
-                                    // background: "rgba(241, 241, 241, 0.88)",
-                                    color: "#414651",
-                                  }}
-                                  className="border-0 text-center fs14px fw-normal px-0 py-1"
-                                >
-                                  <div
-                                    style={{
-                                      background: "rgba(241, 241, 241, 0.88)",
-                                      padding: "10px 0px 19px 0px",
-                                    }}
-                                  >
-                                    {visit?.submitted || 0}
-                                  </div>
+                                <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
+                                  Submitted
                                 </td>
-                                <td
-                                  style={{
-                                    // background: "rgba(241, 241, 241, 0.88)",
-                                    color: "#414651",
-                                  }}
-                                  className="border-0 text-center fs14px fw-normal px-0 py-1"
-                                >
-                                  <div
-                                    style={{
-                                      background: "rgba(241, 241, 241, 0.88)",
-                                      padding: "10px 0px 19px 0px",
-                                    }}
-                                  >
-                                    {visit.onTimeSubmitted}
-                                  </div>
+                                <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold text-nowrap">
+                                  On-Time
                                 </td>
-                                <td
-                                  style={{
-                                    // background: "rgba(241, 241, 241, 0.88)",
-                                    color: "#414651",
-                                  }}
-                                  className="border-0 text-center fs14px fw-normal px-0 py-1"
-                                >
-                                  <div
-                                    style={{
-                                      background: "rgba(241, 241, 241, 0.88)",
-                                      padding: "10px 0px 19px 0px",
-                                    }}
-                                  >
-                                    {visit.lateSubmitted}
-                                  </div>
+                                <td className="bg-color-sea-blue border-0 text-white text-center fs18px fw-bold">
+                                  Late
                                 </td>
-                                <td
-                                  style={{
-                                    // background: "rgba(241, 241, 241, 0.88)",
-                                    color: "#414651",
-                                  }}
-                                  className="border-0 fs14px fw-bold px-0 py-1"
-                                >
-                                  <div
-                                    style={{
-                                      background: "rgba(241, 241, 241, 0.88)",
-                                      padding: "10px 0px 19px 0px",
-                                      borderTopRightRadius: "20px",
-                                      borderBottomRightRadius: "20px",
-                                    }}
-                                  >
-                                    {visit.issuedReport}
-                                  </div>
+                                <td className="bg-color-sea-blue border-0 text-white rounded-pill rounded-start text-nowrap text-center fs18px fw-bold">
+                                  Reports Issued
                                 </td>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              {d.detailOfEachVisit.map((visit, j) => (
+                                <tr key={j}>
+                                  <td
+                                    style={{
+                                      // background: "rgba(241, 241, 241, 0.88)",
+                                      color: "#414651",
+                                    }}
+                                    className="rounded-pill rounded-end border-0 fs14px fw-bold px-0 py-1"
+                                  >
+                                    <div
+                                      className="rounded-pill rounded-end"
+                                      style={{
+                                        background: "rgba(241, 241, 241, 0.88)",
+                                      }}
+                                    >
+                                      <CustomModal
+                                        HeaderTopPos={0}
+                                        HeaderRightPos={20}
+                                        isFullscreen={true}
+                                        size="xl"
+                                        modalId={`${j}"Projects"`}
+                                        button={
+                                          <Button
+                                            className="btn p-0 pe-1 shadow-none w-100"
+                                            onClick={() =>
+                                              getProjectsList("BeingMonitored")
+                                            }
+                                          >
+                                            {visit.officerName}
+                                            <br />
+                                            {visit.designation}
+                                            <br />
+                                            From:{" "}
+                                            {addDayToFormattedDate(
+                                              getFormattedDate(
+                                                new Date(visit.fromDate),
+                                                "short"
+                                              )!
+                                            )}
+                                            <br />
+                                            To:
+                                            {addDayToFormattedDate(
+                                              getFormattedDate(
+                                                new Date(visit.toDate),
+                                                "short"
+                                              )!
+                                            )}
+                                          </Button>
+                                        }
+                                        body={
+                                          <>
+                                            <div
+                                              className="container-fluid border border-white p-3"
+                                              style={{
+                                                borderRadius: "20px",
+                                                background: "#CFE6F8",
+                                                height: "100%",
+                                                overflow: "scroll",
+                                              }}
+                                            >
+                                              {projectsData && filteredKeys ? (
+                                                <ProjectsTable
+                                                  label="Being Monitored Projects"
+                                                  projectsData={projectsData.filter(
+                                                    (project) =>
+                                                      project.userName ===
+                                                        visit.officerName &&
+                                                      new Date(
+                                                        project.visitStartDate
+                                                      ) >=
+                                                        new Date(
+                                                          d.nameOfVisit.split(
+                                                            " "
+                                                          )[2]
+                                                        ) &&
+                                                      new Date(
+                                                        project.visitEndDate
+                                                      ) <=
+                                                        new Date(
+                                                          d.nameOfVisit.split(
+                                                            " "
+                                                          )[4]
+                                                        )
+                                                  )}
+                                                  setProjectsData={
+                                                    setProjectsData
+                                                  }
+                                                  keys={filteredKeys}
+                                                />
+                                              ) : (
+                                                <Loader />
+                                              )}
+                                            </div>
+                                          </>
+                                        }
+                                      />
+                                    </div>
+                                  </td>
+                                  <td
+                                    style={{
+                                      // background: "rgba(241, 241, 241, 0.88)",
+                                      color: "#414651",
+                                    }}
+                                    className="border-0 text-center fs14px fw-normal px-0 py-1"
+                                  >
+                                    <div
+                                      style={{
+                                        background: "rgba(241, 241, 241, 0.88)",
+                                        padding: "10px 0px 19px 0px",
+                                      }}
+                                    >
+                                      {visit.totalVisits}
+                                    </div>
+                                  </td>
+                                  <td
+                                    style={{
+                                      // background: "rgba(241, 241, 241, 0.88)",
+                                      color: "#414651",
+                                    }}
+                                    className="border-0 text-center fs14px fw-normal px-0 py-1"
+                                  >
+                                    <div
+                                      style={{
+                                        background: "rgba(241, 241, 241, 0.88)",
+                                        padding: "10px 0px 19px 0px",
+                                      }}
+                                    >
+                                      {visit.pendingVisits}
+                                    </div>
+                                  </td>
+                                  <td
+                                    style={{
+                                      // background: "rgba(241, 241, 241, 0.88)",
+                                      color: "#414651",
+                                    }}
+                                    className="border-0 text-center fs14px fw-normal px-0 py-1"
+                                  >
+                                    <div
+                                      style={{
+                                        background: "rgba(241, 241, 241, 0.88)",
+                                        padding: "10px 0px 19px 0px",
+                                      }}
+                                    >
+                                      {visit.completeVisits}
+                                    </div>
+                                  </td>
+                                  <td
+                                    style={{
+                                      // background: "rgba(241, 241, 241, 0.88)",
+                                      color: "#414651",
+                                    }}
+                                    className="border-0 text-center fs14px fw-normal px-0 py-1"
+                                  >
+                                    <div
+                                      style={{
+                                        background: "rgba(241, 241, 241, 0.88)",
+                                        padding: "10px 0px 19px 0px",
+                                      }}
+                                    >
+                                      {visit?.submitted || 0}
+                                    </div>
+                                  </td>
+                                  <td
+                                    style={{
+                                      // background: "rgba(241, 241, 241, 0.88)",
+                                      color: "#414651",
+                                    }}
+                                    className="border-0 text-center fs14px fw-normal px-0 py-1"
+                                  >
+                                    <div
+                                      style={{
+                                        background: "rgba(241, 241, 241, 0.88)",
+                                        padding: "10px 0px 19px 0px",
+                                      }}
+                                    >
+                                      {visit.onTimeSubmitted}
+                                    </div>
+                                  </td>
+                                  <td
+                                    style={{
+                                      // background: "rgba(241, 241, 241, 0.88)",
+                                      color: "#414651",
+                                    }}
+                                    className="border-0 text-center fs14px fw-normal px-0 py-1"
+                                  >
+                                    <div
+                                      style={{
+                                        background: "rgba(241, 241, 241, 0.88)",
+                                        padding: "10px 0px 19px 0px",
+                                      }}
+                                    >
+                                      {visit.lateSubmitted}
+                                    </div>
+                                  </td>
+                                  <td
+                                    style={{
+                                      // background: "rgba(241, 241, 241, 0.88)",
+                                      color: "#414651",
+                                    }}
+                                    className="border-0 fs14px fw-bold px-0 py-1"
+                                  >
+                                    <div
+                                      style={{
+                                        background: "rgba(241, 241, 241, 0.88)",
+                                        padding: "10px 0px 19px 0px",
+                                        borderTopRightRadius: "20px",
+                                        borderBottomRightRadius: "20px",
+                                      }}
+                                    >
+                                      {visit.issuedReport}
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </Accordion.Body>
                   </Accordion.Item>

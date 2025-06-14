@@ -1,9 +1,6 @@
-import dynamic from "next/dynamic";
-import UserProjects from "./components/UserProjects";
+// import UserProjects from "./components/UserProjects";
 
-const Dashboard = dynamic(() => import("./components/Dashboard"), {
-  ssr: false,
-});
+import Dashboard from "./components/Dashboard";
 
 const DashboardPage = () => {
   return (

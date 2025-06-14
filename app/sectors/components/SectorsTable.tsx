@@ -124,6 +124,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
               setRefresh={setRefresh}
               refresh={refresh}
               setData={setData}
+              data={data}
             />
           </div>
         }
@@ -200,6 +201,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                     setRefresh={setRefresh}
                     refresh={refresh}
                     setData={setData}
+                    data={data}
                   />
                 </td>
               </tr>

@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const VisitPlans = dynamic(() => import("./components/VisitPlans"), {
-  ssr: false,
-});
+import VisitPlans from "./components/VisitPlans";
 
 const VisitPlansPage = () => {
   return (

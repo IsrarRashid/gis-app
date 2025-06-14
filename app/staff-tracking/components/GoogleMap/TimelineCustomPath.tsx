@@ -32,7 +32,14 @@ const TimelineCustomPath = ({
   ];
 
   return (
-    <div style={{ height: "50vh", width: "100%" }}>
+    <div
+      style={{
+        height: "50vh",
+        width: "100%",
+        borderRadius: "10px",
+        overflow: "hidden",
+      }}
+    >
       <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
         <Map
           defaultCenter={{ lat: 43.6532, lng: -79.3832 }}

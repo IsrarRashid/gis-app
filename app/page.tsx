@@ -1,6 +1,5 @@
 "use client";
 import Cookies from "js-cookie";
-import { Poppins } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

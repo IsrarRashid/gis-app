@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const Feedback = dynamic(() => import("./components/Feedback"), {
-  ssr: false,
-});
+import Feedback from "./components/Feedback";
 
 const FeedbackPage = () => {
   return (

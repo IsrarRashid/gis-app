@@ -20,17 +20,14 @@ import GroupingForm from "./GroupingForm";
 
 const inter = Inter({ subsets: ["latin"] });
 
-interface ListProps {
-  refresh: boolean;
-  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
 export interface Option {
   attributeId: number;
   label: string;
 }
 
-const List = ({ refresh, setRefresh }: ListProps) => {
+const List = () => {
+  const [refresh, setRefresh] = useState(false);
+
   const { data, setData, setError, error, isLoading } = useAttributeGroups({
     refresh,
   });
@@ -124,6 +121,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
+              data={data}
             />
           </div>
         }
@@ -206,6 +204,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                     id={d.id}
                     setRefresh={setRefresh}
                     refresh={refresh}
+                    data={data}
                   />
                 </td>
               </tr>

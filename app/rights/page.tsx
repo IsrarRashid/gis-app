@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-
-const Rights = dynamic(() => import("./components/Rights"), {
-  ssr: false,
-});
+import Rights from "./components/Rights";
 
 const RightsPage = () => {
   return (

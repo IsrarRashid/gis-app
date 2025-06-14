@@ -26,7 +26,6 @@ import { Lexend, Montserrat } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import DistributedColumnChart from "./DistributedColumnChart";
 import FilterButtons from "./FilterButtons";
 import FinancialSlab from "./FinancialSlab";
@@ -38,6 +37,8 @@ import VisitsPlan from "./VisitsPlan";
 import ReportAnalysis from "./ReportAnalysis";
 import Cookies from "js-cookie";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import DashboardWrapper from "@/app/components/DashboardWrapper";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -128,19 +129,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    // Set the background for the body
-    document.body.style.background = "#CFE6F8";
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-
     handleButtonClick(
       "dashboard",
       "https://www.youtube.com/watch?v=1wgAwCufsko&ab_channel=DirectorateGeneralMonitoringandEvaluation"
     );
-    // Cleanup on unmount
-    return () => {
-      document.body.style.backgroundImage = "";
-    };
   }, []);
 
   const [isLoading, setLoading] = useState(true);
@@ -218,6 +210,7 @@ const Dashboard = () => {
   const [projectsData, setProjectsData] = useState<ProjectsList[]>();
 
   const getProjectsList = async (status: string) => {
+    setProjectsData([]);
     console.log("status", status);
     console.log("get projects with combinedFilters", combinedFilters);
     try {
@@ -297,8 +290,8 @@ const Dashboard = () => {
           "visitStartDate",
           "completedDate",
           role !== "Ministers" && "deadline",
-          "reportSubmitted",
-          "onePagerSubmitted",
+          "reportStatus",
+          "statusDate",
         ].includes(key)
       )
       .map((key) => key as keyof ProjectsList);
@@ -347,19 +340,10 @@ const Dashboard = () => {
   }, [projectsData]);
 
   return (
-    <div
-      className="container-fluid p-2 mb-4"
-      style={{
-        backgroundImage:
-          "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6), rgba(255, 255, 255, 0.08))",
-        border: "1px solid rgba(255, 255, 255, 0.6)",
-        padding: "10px",
-        borderRadius: "10px",
-      }}
-    >
+    <DashboardWrapper>
       <>
         {isLoading && <Loader />}
-        <div className={`row ${lexend.className} ps-2 m-0`}>
+        <div className={`row ${lexend.className} m-0`}>
           <>
             <CustomModal
               isFullscreen={true}
@@ -408,7 +392,7 @@ const Dashboard = () => {
               }
             />
             <div
-              className="col px-1 py-0 pe-0 me-1 text-center mb-2"
+              className="col px-1 py-0 me-1 text-center mb-2"
               style={{
                 width: "100%",
                 height: "100%",
@@ -433,7 +417,7 @@ const Dashboard = () => {
                         style={{
                           background:
                             "linear-gradient( rgba(163, 12, 233, 0), rgba(163, 12, 233, 0.2),rgba(163, 12, 233, 0.2))",
-                          transition: "background .4s, opacity .4s",
+                          transition: "all .4s",
                           opacity: !isHover1 ? 1 : 0,
                           borderRadius: "10px",
                           width: "98%",
@@ -482,7 +466,7 @@ const Dashboard = () => {
                   modalId={"noOfVisits"}
                   button={
                     <Button
-                      className="position-relative btn p-0 pe-1 shadow-none w-100"
+                      className="position-relative btn p-0 shadow-none w-100"
                       onClick={() => getProjectsList("BeingMonitored")}
                     >
                       <div
@@ -490,10 +474,10 @@ const Dashboard = () => {
                         style={{
                           background:
                             "linear-gradient( rgba(12, 140, 233, 0), rgba(12, 140, 233, 0.2),rgba(12, 140, 233, 0.2))",
-                          transition: "background .4s, opacity .4s",
                           opacity: !isHover2 ? 1 : 0,
+                          transition: "all .4s",
                           borderRadius: "10px",
-                          width: "98%",
+                          width: "100%",
                           height: "92%",
                         }}
                       ></div>
@@ -709,11 +693,11 @@ const Dashboard = () => {
             <ReportReview />
           </>
         </div>
-        <div className={`row m-0 mt-2 ${lexend.className}`}>
+        <div className={`row m-0 ${lexend.className}`}>
           <div
-            className={`${
+            className={`p-1 ${
               isInRange ? "col-lg-8" : "col-lg-9"
-            } col-md-12 col-sm-12 pe-1`}
+            } col-md-12 col-sm-12`}
           >
             {devMap && data && (
               <MyMap
@@ -728,9 +712,9 @@ const Dashboard = () => {
             )}
           </div>
           <div
-            className={`${
+            className={`p-1 ${
               isInRange ? "col-lg-4" : "col-lg-3"
-            } col-md-12 col-sm-12 pe-1`}
+            } col-md-12 col-sm-12`}
           >
             <FilterButtons
               handleSubmit={handleSubmit}
@@ -1131,7 +1115,7 @@ const Dashboard = () => {
                     }
                   />
                 </div>
-                {role !== "Ministers" && (
+                {/* {role !== "Ministers" && (
                   <div className="col-auto p-1">
                     <CustomModal
                       isFullscreen={true}
@@ -1175,6 +1159,33 @@ const Dashboard = () => {
                         </>
                       }
                     />
+                  </div>
+                )} */}
+                {role !== "Ministers" && (
+                  <div className="col-auto p-1">
+                    <Link
+                      target="_blank"
+                      href="/master-report"
+                      className="row d-flex flex-nowrap justify-content-center m-0 btn w-100 text-white fw-normal fs12px py-3 px-0"
+                      style={{
+                        borderRadius: "8px",
+                        background: "#1E6BDD",
+                      }}
+                    >
+                      <div className="col-auto px-1">
+                        <Image
+                          src={reportAnalysis}
+                          alt="reportAnalysis"
+                          width={32}
+                          height={32}
+                        />
+                      </div>
+                      <div className="col-auto px-1">
+                        Report
+                        <br />
+                        Analysis
+                      </div>
+                    </Link>
                   </div>
                 )}
               </div>
@@ -1657,7 +1668,7 @@ const Dashboard = () => {
             </div>
 
             <div
-              className={`col mb-3 shadow-sm fs14px ${lexend.className}`}
+              className={`col shadow-sm fs14px ${lexend.className}`}
               style={{
                 background: "#C6D9F1",
                 borderRadius: "10px",
@@ -1845,7 +1856,7 @@ const Dashboard = () => {
           </div>
         </div>
       </>
-    </div>
+    </DashboardWrapper>
   );
 };
 

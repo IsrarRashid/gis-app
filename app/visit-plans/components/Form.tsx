@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/app/components/Button";
-import useAuthentication from "@/app/hooks/useAuthentication";
+import { Authentication } from "@/app/hooks/useAuthentication";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
@@ -33,10 +33,18 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   refresh: boolean;
   setData: React.Dispatch<React.SetStateAction<TourPlan[]>>;
+  users: Authentication[];
 }
 
-const Form = ({ api, method, id, setRefresh, refresh, setData }: Props) => {
-  const { data: users } = useAuthentication({ refresh });
+const Form = ({
+  api,
+  method,
+  id,
+  setRefresh,
+  refresh,
+  setData,
+  users,
+}: Props) => {
   const {
     register,
     handleSubmit,

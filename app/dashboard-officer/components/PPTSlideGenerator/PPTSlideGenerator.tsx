@@ -8,9 +8,16 @@ import apiClient, {
   AxiosError,
   ErrorResponse,
 } from "@/app/services/api-client";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "react-toastify";
 import DragableTable from "./DragableTable/DragableTable";
+import ToggleBetweenModals from "@/app/components/ToggleBetweenModals";
 
 export interface SectorItem {
   id: number;
@@ -22,7 +29,6 @@ const PPTSlideGenerator = () => {
   const [toDate, setToDate] = useState<string>("");
   const [slidePath, setSlidePath] = useState<string>("");
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
-  const [isSubmitted, setSubmitted] = useState<boolean>(false);
   const [priority, setPriority] = useState<number[]>([]);
   const [sectorNames, setSectorNames] = useState<string[]>([]);
   const [sectors, setSectors] = useState<SectorItem[]>([]);
@@ -30,9 +36,10 @@ const PPTSlideGenerator = () => {
 
   const handlePriorityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
+    const isChecked = e.target.checked;
 
     setPriority((prev) =>
-      e.target.checked ? [...prev, value] : prev.filter((v) => v !== value)
+      isChecked ? [...prev, value] : prev.filter((v) => v !== value)
     );
   };
 
@@ -106,8 +113,8 @@ const PPTSlideGenerator = () => {
         `${generateReportAPI}/GeneratePowerPoint`,
         {
           pirority: priority,
-          to: new Date(toDate).toISOString().split("T")[0],
-          from: new Date(fromDate).toISOString().split("T")[0],
+          toDate: new Date(toDate).toISOString().split("T")[0],
+          fromDate: new Date(fromDate).toISOString().split("T")[0],
           sector: sectors.map((sector) => sector.title),
         }
       );
@@ -117,7 +124,6 @@ const PPTSlideGenerator = () => {
       setSlidePath(
         process.env.NEXT_PUBLIC_BACKEND_API + "/" + response.data.data
       );
-      setSubmitted(true);
     } catch (err) {
       setSubmitting(false);
       console.error("Submission error:", err);
@@ -130,7 +136,7 @@ const PPTSlideGenerator = () => {
     }
   };
 
-  const getSectors = async () => {
+  const getSectors = useCallback(async () => {
     if (priority.length <= 0) {
       toast.info("Please Select Atleast one Priority!");
       return;
@@ -145,8 +151,8 @@ const PPTSlideGenerator = () => {
     }
     console.log("sectors async data: ", {
       pirority: priority,
-      to: new Date(toDate).toISOString().split("T")[0],
-      from: new Date(fromDate).toISOString().split("T")[0],
+      toDate: new Date(toDate).toISOString().split("T")[0],
+      fromDate: new Date(fromDate).toISOString().split("T")[0],
       sector: [""],
     });
     try {
@@ -154,8 +160,8 @@ const PPTSlideGenerator = () => {
         `${generateReportAPI}/GetSectorAsync`,
         {
           pirority: priority,
-          to: new Date(toDate).toISOString().split("T")[0],
-          from: new Date(fromDate).toISOString().split("T")[0],
+          toDate: new Date(toDate).toISOString().split("T")[0],
+          fromDate: new Date(fromDate).toISOString().split("T")[0],
           sector: [""],
         }
       );
@@ -171,16 +177,55 @@ const PPTSlideGenerator = () => {
           (err as AxiosError<ErrorResponse>).message
       );
     }
-  };
+  }, [priority, fromDate, toDate]);
+
+  // const getSectors = async () => {
+  //   if (priority.length <= 0) {
+  //     toast.info("Please Select Atleast one Priority!");
+  //     return;
+  //   }
+  //   if (fromDate.length <= 0) {
+  //     toast.info("Please select 'From Date'!");
+  //     return;
+  //   }
+  //   if (toDate.length <= 0) {
+  //     toast.info("Please select 'To Date'!");
+  //     return;
+  //   }
+  //   console.log("sectors async data: ", {
+  //     pirority: priority,
+  //     to: new Date(toDate).toISOString().split("T")[0],
+  //     from: new Date(fromDate).toISOString().split("T")[0],
+  //     sector: [""],
+  //   });
+  //   try {
+  //     const response = await apiClient.post(
+  //       `${generateReportAPI}/GetSectorAsync`,
+  //       {
+  //         pirority: priority,
+  //         to: new Date(toDate).toISOString().split("T")[0],
+  //         from: new Date(fromDate).toISOString().split("T")[0],
+  //         sector: [""],
+  //       }
+  //     );
+
+  //     console.log(response);
+  //     setSectorNames(response.data.data);
+  //     toast.success("Sectors Obtained Successfully");
+  //   } catch (err) {
+  //     setSectorNames([]);
+  //     console.error("Submission error:", err);
+  //     toast.error(
+  //       (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
+  //         (err as AxiosError<ErrorResponse>).message
+  //     );
+  //   }
+  // };
 
   useEffect(() => {
     if (priority.length > 0 || fromDate.length > 0 || toDate.length > 0)
       getSectors();
-  }, [priority, fromDate, toDate]);
-
-  useEffect(() => {
-    if (isSubmitting) setSubmitting(false);
-  }, [isSubmitted]);
+  }, [priority, fromDate, toDate, getSectors]);
 
   useEffect(() => {
     if (slidePath) {
@@ -193,7 +238,6 @@ const PPTSlideGenerator = () => {
     setToDate("");
     setSlidePath("");
     setSubmitting(false);
-    setSubmitted(false);
     setPriority([]);
     setSectorNames([]);
     setSectors([]);
@@ -209,7 +253,7 @@ const PPTSlideGenerator = () => {
       button={
         <Button
           onClick={resetComponent}
-          className={`btn col-auto py-2 shadow-none mb-2 me-2 text-light`}
+          className={`btn col-auto py-2 shadow-none mb-2 me-2 text-light text-nowrap`}
           style={{
             background: `#fcb103`,
             borderTopLeftRadius: "10px",

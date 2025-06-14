@@ -21,6 +21,19 @@ import clock from "../../../public/icons/clock.svg";
 import complete from "../../../public/icons/complete.svg";
 import Form from "./Form";
 import GroupingForm from "./GroupingForm";
+import {
+  APPROVED,
+  CANCELLED,
+  COMPLETED,
+  ISSUED,
+  SCHEDULED,
+  SUBMITTED,
+} from "@/app/report-history/statuses";
+import DisplayStatusText from "@/app/components/DisplayStatusText";
+import useDriver from "@/app/hooks/useDriver";
+import useVehicle from "@/app/hooks/useVehicle";
+import useTourPlans from "@/app/hooks/useTourPlans";
+import useDistrict from "@/app/hooks/useDistrict";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -32,11 +45,15 @@ const inter = Inter({ subsets: ["latin"] });
 const VisitsList = () => {
   const [refresh, setRefresh] = useState(false);
   const [isLoading, setLoading] = useState(false);
-
   const { data, setData, setError } = useVisits({ refresh });
-  const { data: sectorsData } = useSectors({ refresh });
-  const { data: superGroups } = useSuperGroups({ refresh });
+  const { data: visits } = useVisits({ refresh });
+  const { data: drivers } = useDriver({ refresh });
+  const { data: vehicles } = useVehicle({ refresh });
   const { data: users } = useAuthentication({ refresh });
+  const { data: visitPlans } = useTourPlans({ refresh });
+  const { data: districts } = useDistrict({ refresh });
+
+  const { data: superGroups } = useSuperGroups({ refresh });
 
   const deleteMessage = "Deleted Successfully!";
   const syncMessage = "Attribute Values synced Successfully!";
@@ -54,7 +71,7 @@ const VisitsList = () => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     // const lowercasedFilter = searchTerm.toLowerCase();
     const filtered = data.filter((item) =>
-      [item.id.toString(), item.status]
+      [item.id.toString()]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
         .some((field) => field.includes(e.target.value.toLowerCase()))
@@ -145,6 +162,12 @@ const VisitsList = () => {
                   method={"POST"}
                   setRefresh={setRefresh}
                   refresh={refresh}
+                  visits={visits}
+                  drivers={drivers}
+                  vehicles={vehicles}
+                  users={users}
+                  visitPlans={visitPlans}
+                  districts={districts}
                 />
               </div>
               {/* <div className="col-auto">
@@ -230,54 +253,61 @@ const VisitsList = () => {
                 <td>{d.name}</td>
                 <td>{getName(d.sectorId, sectorsData)}</td> */}
                 <td style={{ whiteSpace: "nowrap" }}>
-                  {d.status === "scheduled" || d.status === "Scheduled" ? (
+                  {d.status === SCHEDULED ? (
                     <Image
                       src={calender}
                       style={{ marginBottom: "3px" }}
                       alt="calender"
                     />
-                  ) : d.status === "not confirmed" ||
-                    d.status === "Not Confirmed" ? (
+                  ) : d.status === SUBMITTED ? (
                     <Image
                       src={clock}
                       style={{ marginBottom: "3px" }}
                       alt="clock"
                     />
-                  ) : d.status === "cancel" || d.status === "Cancel" ? (
+                  ) : d.status === CANCELLED ? (
                     <Image
                       src={cancel}
                       style={{ marginBottom: "3px" }}
                       alt="cancel"
                     />
-                  ) : d.status === "completed" || d.status === "Completed" ? (
+                  ) : d.status === COMPLETED ? (
                     <Image
                       src={complete}
                       style={{ marginBottom: "3px" }}
                       alt="complete"
                     />
-                  ) : d.status.startsWith("approved") ||
-                    d.status.startsWith("Approved") ? (
+                  ) : d.status === APPROVED ? (
                     <Image
                       src={complete}
                       style={{ marginBottom: "3px" }}
                       alt="complete"
                     />
-                  ) : d.status === "active" || d.status === "Active" ? (
+                  ) : d.status === ISSUED ? (
                     <Image
-                      src={calender}
+                      src={complete}
                       style={{ marginBottom: "3px" }}
-                      alt="calender"
-                    />
-                  ) : d.status === "draft" || d.status === "Draft" ? (
-                    <Image
-                      src={clock}
-                      style={{ marginBottom: "3px" }}
-                      alt="clock"
+                      alt="complete"
                     />
                   ) : (
+                    // : d.status === "active" || d.status === "Active" ? (
+                    //   <Image
+                    //     src={calender}
+                    //     style={{ marginBottom: "3px" }}
+                    //     alt="calender"
+                    //   />
+                    // )
+                    // : d.status === "draft" || d.status === "Draft" ? (
+                    //   <Image
+                    //     src={clock}
+                    //     style={{ marginBottom: "3px" }}
+                    //     alt="clock"
+                    //   />
+                    // )
                     ""
                   )}
-                  &nbsp;{d.status}
+                  &nbsp;
+                  <DisplayStatusText statusId={d.status} />
                 </td>
                 {/* <td className="text-center">
                   <AssignUserForm id={d.id} options={users} />
@@ -298,6 +328,12 @@ const VisitsList = () => {
                     setRefresh={setRefresh}
                     refresh={refresh}
                     id={d.id}
+                    visits={visits}
+                    drivers={drivers}
+                    vehicles={vehicles}
+                    users={users}
+                    visitPlans={visitPlans}
+                    districts={districts}
                   />
                 </td>
               </tr>

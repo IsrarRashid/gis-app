@@ -189,7 +189,7 @@ const Pagination = ({
                   outline: "none",
                 }}
                 aria-label="Rows per page"
-                name="rowPerPage"
+                id="rowPerPage"
                 value={rows}
                 onChange={handleRowsPerPage}
               >

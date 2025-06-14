@@ -22,6 +22,8 @@ const UserDropDown = () => {
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState<number>();
   const [role, setRole] = useState<string>();
+  const [firstName, setFirstName] = useState<string>();
+  const [lastName, setLastName] = useState<string>();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -30,6 +32,11 @@ const UserDropDown = () => {
     const userName = Cookies.get("userName") || "";
     const userId = Cookies.get("userId") || "";
     const role = Cookies.get("role") || "";
+    const firstName = Cookies.get("deptUserFirstName");
+    const lastName = Cookies.get("deptUserLastName");
+
+    if (firstName) setFirstName(firstName);
+    if (lastName) setLastName(lastName);
     setUserEmail(email);
     setUserName(userName);
     setUserId(parseInt(userId));
@@ -43,10 +50,14 @@ const UserDropDown = () => {
     Cookies.remove("userId");
     Cookies.remove("role");
     Cookies.remove("rights");
+    Cookies.remove("departmentId");
+    Cookies.remove("deptUserFirstName");
+    Cookies.remove("deptUserLastName");
     setShow(false);
   };
 
   useEffect(() => {
+    if (typeof window === "undefined") return; // Prevents SSR crash
     const handleOutsideClick = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -121,12 +132,15 @@ const UserDropDown = () => {
             />
           </div>
           <div className="col p-0 m-auto">
-            <p className="m-0 text-dark fs13px fw-bold">{userName}</p>
+            <p className="m-0 text-dark text-start fs13px fw-bold">
+              {userName}
+            </p>
             <p
               className="m-0 text-start mt-1 fs11px"
               style={{ color: "#575757" }}
             >
-              {currentTime}
+              {/* {currentTime} */}
+              {firstName} {lastName}
             </p>
           </div>
           <div className="col ps-2 pe-3 m-auto">

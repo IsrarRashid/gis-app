@@ -13,6 +13,7 @@ import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
+import useAuthentication from "@/app/hooks/useAuthentication";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -28,6 +29,8 @@ interface Props {
 
 const List = ({ refresh, setRefresh }: Props) => {
   const { data, setData, setError, isLoading } = useTourPlans({ refresh });
+  const { data: users } = useAuthentication({ refresh });
+
   const deleteMessage = "Deleted Successfully!";
 
   const notifyCreate = (message: string) => toast.success(message);
@@ -119,6 +122,7 @@ const List = ({ refresh, setRefresh }: Props) => {
               setRefresh={setRefresh}
               refresh={refresh}
               setData={setData}
+              users={users}
             />
           </div>
         }
@@ -220,6 +224,7 @@ const List = ({ refresh, setRefresh }: Props) => {
                     setRefresh={setRefresh}
                     refresh={refresh}
                     setData={setData}
+                    users={users}
                   />
                 </td>
               </tr>

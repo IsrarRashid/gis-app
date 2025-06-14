@@ -67,16 +67,7 @@ const SummaryDashboard = () => {
   };
 
   useEffect(() => {
-    // Set the background for the body
-    document.body.style.background = "#CFE6F8";
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-
     handleButtonClick("Dashboard");
-    // Cleanup on unmount
-    return () => {
-      document.body.style.backgroundImage = "";
-    };
   }, []);
 
   const items = [

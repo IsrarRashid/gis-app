@@ -2,7 +2,7 @@
 import { smdpSyncApi } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import DeleteModal from "@/app/components/DeleteModal";
-import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
+// import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
 import TableHeading from "@/app/components/TableHeading";
 import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 import useProjects, { Project } from "@/app/hooks/useProjects";
@@ -360,9 +360,7 @@ const ProjectsList = ({
                         <td>
                           <DeleteModal handleDelete={handleDelete} id={d.id} />
                         </td>
-                        <td>
-                          <DownloadPDFBtn />
-                        </td>
+                        <td>{/* <DownloadPDFBtn /> */}</td>
                         {/* <td>
                           <Form
                             api={projectAPI}

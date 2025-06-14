@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   // Extract the path from the request URL
   const url = new URL(request.url);
   const pathname = url.pathname; // Full path of the request
-  const requiredRight = pathname.split("/")[1]; // Extract "requiredRight" from the path (top-level only)
+  const requiredRight = pathname.startsWith("/") ? pathname.slice(1) : pathname;
 
   // Get cookies from the request
   const rightsCookie = request.cookies.get("rights");
@@ -60,7 +60,15 @@ export function middleware(request: NextRequest) {
   //   }
   // }
 
-  if (!rights.includes(requiredRight)) {
+  console.log("User rights:", rights);
+  console.log("Required right:", requiredRight);
+  console.log("Current pathname:", pathname);
+
+  const hasRequiredRight = rights.some((right) =>
+    requiredRight.startsWith(right)
+  );
+
+  if (!hasRequiredRight) {
     const redirectPath =
       rights.length > 0 ? `/${rights[0]}` : "/not-authorized";
 
@@ -112,5 +120,6 @@ export const config = {
     "/dashboard-attendance",
     "/dashboard-attendance:path*",
     "/report-history",
+    "/departments",
   ],
 };

@@ -1,23 +1,6 @@
-"use client";
-import { useEffect, useState } from "react";
 import List from "./List";
 
 const AttributeGroups = () => {
-  const [refresh, setRefresh] = useState(false);
-  // useAuthorization("attribute-groups");
-
-  useEffect(() => {
-    // Set the background for the body
-    document.body.style.backgroundImage = `url('/images/bg2.png')`;
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-
-    // Cleanup on unmount
-    return () => {
-      document.body.style.backgroundImage = "";
-    };
-  }, []);
-
   return (
     <>
       <div
@@ -25,12 +8,11 @@ const AttributeGroups = () => {
         style={{
           background: "rgba(209, 209, 209, 0.4)",
           border: "1px solid #ededed",
-          padding: "10px",
           borderRadius: "15px",
         }}
       >
         <div className="row p-3">
-          <List refresh={refresh} setRefresh={setRefresh} />
+          <List />
         </div>
       </div>
     </>

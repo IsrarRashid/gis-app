@@ -1,5 +1,6 @@
 import { vehicleApi } from "../APIs";
 import useData from "./useData";
+import Cookies from "js-cookie";
 
 export interface Vehicle {
   id: number;
@@ -21,7 +22,12 @@ interface Props {
   refresh?: boolean;
 }
 
-const useVehicle = ({ refresh = false }: Props = {}) =>
-  useData<Vehicle>({ refresh, endpoint: vehicleApi });
+const useVehicle = ({ refresh = false }: Props = {}) => {
+  const departmentId = Cookies.get("departmentId");
+  return useData<Vehicle>({
+    refresh,
+    endpoint: vehicleApi + `?departmentId=${departmentId}`,
+  });
+};
 
 export default useVehicle;

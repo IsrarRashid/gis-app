@@ -1,15 +1,12 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
-import "react-toastify/dist/ReactToastify.css";
+import { Poppins } from "next/font/google";
 import Navbar from "./Navbar";
+import BgChanger from "./components/BgChanger";
 import BootstrapClient from "./components/BootstrapClient";
 import ReduxProvider from "./components/ReduxProvider";
+import ToastContainers from "./components/ToastContainers";
 import "./globals.css";
-import { ToastContainer } from "react-toastify";
-import { Toaster } from "react-hot-toast";
-
-const inter = Inter({ subsets: ["latin"] });
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,12 +27,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         <ReduxProvider>
+          <BgChanger />
           <Navbar />
-          {children}
+          <main className="p-2">{children}</main>
         </ReduxProvider>
         <BootstrapClient />
-        <ToastContainer />
-        <Toaster />
+        <ToastContainers />
       </body>
     </html>
   );

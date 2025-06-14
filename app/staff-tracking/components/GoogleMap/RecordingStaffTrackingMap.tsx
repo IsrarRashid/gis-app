@@ -167,7 +167,14 @@ const RecordingStaffTrackingMap: any = ({
 
   return (
     <APIProvider apiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`}>
-      <div style={{ width: "100%", height: "840px" }}>
+      <div
+        style={{
+          width: "100%",
+          height: "840px",
+          borderRadius: "10px",
+          overflow: "hidden",
+        }}
+      >
         {recordingData && recordingData.length > 0 && (
           <Map
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID}
