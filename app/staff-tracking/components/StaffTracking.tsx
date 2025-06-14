@@ -29,7 +29,7 @@ import StaffMemberInRecording from "./StaffMemberInRecording";
 
 const lexend = Lexend({
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 interface VisitByUserId {

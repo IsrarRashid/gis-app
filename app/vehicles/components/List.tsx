@@ -16,7 +16,7 @@ import Form from "./Form";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const inter = Inter({ subsets: ["latin"] });

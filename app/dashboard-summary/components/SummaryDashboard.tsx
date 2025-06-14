@@ -30,12 +30,12 @@ import StackedColumnChart from "./StackedColumnChart";
 
 const lexend = Lexend({
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const SummaryDashboard = () => {
@@ -130,7 +130,7 @@ const SummaryDashboard = () => {
                   className="m-0 fs14px shadow-sm p-2 text-center"
                   style={{
                     color: "#64748B",
-                    fontWeight: "400",
+                    fontweight: ["400", "500", "600", "700", "800"],
                     background: "#C6D9F1",
                     borderRadius: "10px",
                     whiteSpace: "nowrap",
