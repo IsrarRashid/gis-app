@@ -27,6 +27,7 @@ const BgChanger = () => {
     "departments",
     "new-visit-plan",
     "report-analysis",
+    "process",
   ];
 
   const pathSegment = currentPath.split("/")[1]; // e.g., "sectors"

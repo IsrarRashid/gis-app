@@ -4,11 +4,12 @@ const next = require("next");
 const app = next({ dev: false });
 const handle = app.getRequestHandler();
 
+const PORT = process.env.PORT || 155;
 app.prepare().then(() => {
   createServer((req, res) => {
     handle(req, res);
-  }).listen(process.env.PORT || 3000, (err) => {
+  }).listen(PORT, (err) => {
     if (err) throw err;
-    console.log("> Ready on http://localhost:3000");
+    console.log(`> Ready on http://localhost:${PORT}`);
   });
 });

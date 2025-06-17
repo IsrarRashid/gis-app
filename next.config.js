@@ -3,12 +3,12 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "rtmes-api-dgme.punjab.gov.pk",
-        port: "",
-        // protocol: "http",
-        // hostname: "110.39.184.210",
-        // port: "154",
+        // protocol: "https",
+        // hostname: "rtmes-api-dgme.punjab.gov.pk",
+        // port: "",
+        protocol: "http",
+        hostname: "110.39.184.210",
+        port: "154",
         pathname: "/**",
       },
     ],

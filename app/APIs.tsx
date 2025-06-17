@@ -46,3 +46,4 @@ export const generateReportAPI = `/api/ReportGenerate`;
 export const DEPARTMENT_API = `/api/Departments`;
 export const TEMP_TOUR_PLAN_API = `/api/TempTourPlan`;
 export const REPORT_API = `/api/Reports`;
+export const DEPARTMENT_ROLES_SORTING_API = `/api/DepartmentRolesSorting`;

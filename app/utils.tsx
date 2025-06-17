@@ -313,6 +313,25 @@ export const getDaysAgo = (targetDate: string) => {
   }
 };
 
+export const getTimeAgo = (targetDate: string) => {
+  const now = new Date();
+  const past = new Date(targetDate);
+  const diffInMs = now.getTime() - past.getTime();
+
+  const seconds = Math.floor(diffInMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (minutes < 1) return "Just now";
+  if (minutes === 1) return "1 minute ago";
+  if (minutes < 60) return `${minutes} minutes ago`;
+  if (hours === 1) return "1 hour ago";
+  if (hours < 24) return `${hours} hours ago`;
+  if (days === 1) return "Yesterday";
+  return `${days} days ago`;
+};
+
 /**
  * Formats a number by placing commas as thousands separators.
  *
