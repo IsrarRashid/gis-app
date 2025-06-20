@@ -223,7 +223,7 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
       toast.success(createdMessage);
       handleClose();
       setRefreshTabs((prev) => !prev);
-      router.push("/master-report/list");
+      router.push("/report-analysis/list");
     } catch (err) {
       setSubmitting(false);
       console.error("Submission error:", err);
@@ -384,7 +384,7 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
           ))}
         </div>
         <div className="row">
-          <div className="col-12 col-sm-12 col-md-7 col-lg-7">
+          <div className="col-12 col-sm-12 col-md-7 col-lg-8">
             <div className="table-responsive rounded-3">
               <table
                 className="table table-bordered mb-3 rounded-3 overflow-hidden"
@@ -456,7 +456,7 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
               </table>
             </div>
           </div>
-          <div className="col-12 col-sm-12 col-md-5 col-lg-5 ps-0">
+          <div className="col-12 col-sm-12 col-md-5 col-lg-4 ps-0">
             <div className="table-responsive rounded-3">
               <table
                 className="table table-bordered mb-3 rounded-3 overflow-hidden"

@@ -1,36 +1,38 @@
+import { cookies } from "next/headers";
 import { Sector } from "../hooks/useSectors";
 import { addDayToFormattedDate, getFormattedDate } from "../utils";
 
+async function getCookieData() {
+  const cookieData = cookies().getAll();
+  return new Promise<typeof cookieData>((resolve) =>
+    setTimeout(() => {
+      resolve(cookieData);
+    }, 1000)
+  );
+}
 const SectorsPage = async () => {
-  // const incomingHeaders = headers();
-  // console.log(
-  //   "Incoming Headers on Server:",
-  //   Object.fromEntries(incomingHeaders.entries())
-  // );
+  const cookieData = await getCookieData();
 
-  // const authorizationHeader = incomingHeaders.get("authorization");
-  // console.log("Authorization Header Value:", authorizationHeader);
+  const accessToken = cookieData.find(
+    (cookie) => cookie.name === "token"
+  )?.value; // Assuming your cookie is named 'accessToken'
 
-  // const cookieStore = await cookies();
-  // console.log("Cookie Store:", cookieStore); // Log the entire cookie store
-
-  // const accessToken = cookieStore.get("token"); // Assuming your cookie is named 'accessToken'
-
-  // if (!accessToken) {
-  //   console.error("Access token not found in cookies on the server");
-  //   // Handle the case where the token is not present.
-  //   // This might involve redirecting to a login page or rendering
-  //   // a different UI for unauthenticated users.
-  //   return <div>Authentication required</div>;
-  // }
+  if (!accessToken) {
+    console.error("Access token not found in cookies on the server");
+    // Handle the case where the token is not present.
+    // This might involve redirecting to a login page or rendering
+    // a different UI for unauthenticated users.
+    return <div>Authentication required</div>;
+  }
 
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_FRONTEND_API}/api/v1/sectors`,
-      {
-        cache: "no-store",
-      }
-    );
+    const res = await fetch(`http://110.39.184.210:154/api/Sectors`, {
+      headers: {
+        accept: "text/plain",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: "no-store",
+    });
     // const errorText = await res.text();
     // console.error("Error Body:", errorText);
     // console.log("error body ends");

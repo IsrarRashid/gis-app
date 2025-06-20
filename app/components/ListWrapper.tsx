@@ -19,7 +19,7 @@ const ListWrapper = ({ children }: PropsWithChildren) => {
           borderRadius: "15px",
         }}
       >
-        <div className="p-3">{children}</div>
+        <div className="px-3 py-1">{children}</div>
       </div>
     </div>
   );

@@ -45,6 +45,10 @@
   color: #7e7e7e !important;
 }
 
+.bg-color-light-gray {
+  background: #c4c4c4 !important;
+}
+
 .color-dark-gray {
   color: #344054 !important;
 }
@@ -56,6 +60,11 @@
 .custom-modal .modal-content {
   background: rgba(255, 255, 255, 0) !important;
   border: none;
+}
+
+.custom-modal {
+  max-width: none !important;
+  width: 90%;
 }
 
 .new-custom-modal .modal-content {

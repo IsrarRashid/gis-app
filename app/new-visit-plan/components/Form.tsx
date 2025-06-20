@@ -15,11 +15,23 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import Select, { StylesConfig } from "react-select";
 import DeleteModal from "@/app/components/DeleteModal";
+import { FaPaste } from "react-icons/fa";
+import { MdContentCopy } from "react-icons/md";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
+
+export interface TempCopyForm {
+  district_Id: number;
+  type: number;
+  userId: number;
+  dateFrom: string;
+  dateTo: string;
+  driverId: number;
+  vehicalId: number;
+}
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -46,6 +58,10 @@ interface Props {
   setFormsData: Dispatch<SetStateAction<COUTempTourPlan[]>>;
   districts: District[];
   handleDelete: (id: number) => void;
+  setCopiedFormData: Dispatch<SetStateAction<TempCopyForm | undefined>>;
+  copiedFormData: TempCopyForm | undefined;
+  setCopiedRowIndex: Dispatch<SetStateAction<number>>;
+  copiedRowIndex: number;
 }
 
 export const typeStatues = [
@@ -63,6 +79,10 @@ const Form = ({
   districts,
   setFormsData,
   handleDelete,
+  setCopiedFormData,
+  copiedFormData,
+  setCopiedRowIndex,
+  copiedRowIndex,
 }: Props) => {
   const {
     register,
@@ -292,10 +312,10 @@ const Form = ({
     };
   });
 
-  const dateFrom = watch("dateFrom");
-  const dateTo = watch("dateTo");
-  const driverId = watch("driverId");
-  const vehicalId = watch("vehicalId");
+  // const dateFrom = watch("dateFrom");
+  // const dateTo = watch("dateTo");
+  // const driverId = watch("driverId");
+  // const vehicalId = watch("vehicalId");
 
   // useEffect(() => {
   //   if (dateFrom && dateTo && driverId && vehicalId) {
@@ -303,6 +323,38 @@ const Form = ({
   //     checkVehicle(vehicalId, dateFrom, dateTo);
   //   }
   // }, [dateFrom, dateTo]);
+
+  const copyFormData = () => {
+    if (copiedFormData) {
+      setCopiedFormData(undefined);
+      setCopiedRowIndex(-1);
+    } else {
+      toast.info("Copied");
+      setCopiedRowIndex(index);
+      const values = getValues(); // Get all current form values
+      setCopiedFormData({
+        district_Id: values.district_Id,
+        type: values.type,
+        userId: values.userId,
+        dateFrom: values.dateFrom,
+        dateTo: values.dateTo,
+        driverId: values.driverId,
+        vehicalId: values.vehicalId,
+      });
+    }
+  };
+
+  const pasteFormData = (copiedFormData: TempCopyForm) => {
+    if (copiedFormData) {
+      setValue("type", copiedFormData.type);
+      setValue("userId", copiedFormData.userId);
+      setValue("dateFrom", `${copiedFormData.dateFrom?.split("T")[0]}`);
+      setValue("dateTo", `${copiedFormData.dateTo?.split("T")[0]}`);
+      setValue("driverId", copiedFormData.driverId);
+      setValue("vehicalId", copiedFormData.vehicalId);
+      setValue("district_Id", copiedFormData.district_Id);
+    }
+  };
 
   return (
     <tr
@@ -312,12 +364,28 @@ const Form = ({
         fontSize: ".85rem",
       }}
     >
-      <td>{index}</td>
-      <td>{planData.projectId}</td>
-      <td>{planData.gsNo}</td>
-      <td style={{ minWidth: "220px" }}>{planData.projectName}</td>
-      <td style={{ minWidth: "220px" }}>
-        <div className="col">
+      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+        {index}
+      </td>
+      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+        {planData.projectId}
+      </td>
+      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+        {planData.gsNo}
+      </td>
+      <td
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+        style={{ minWidth: "220px" }}
+      >
+        {planData.projectName}
+      </td>
+      <td
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+        style={{ minWidth: "220px" }}
+      >
+        <div
+          className={`col ${index === copiedRowIndex && "bg-color-light-gray"}`}
+        >
           <Controller
             name="district_Id"
             control={control}
@@ -358,10 +426,19 @@ const Form = ({
           )}
         </div>
       </td>
-      <td>{planData.sectors}</td>
-      <td>{planData.cost}</td>
-      <td style={{ minWidth: "220px" }}>
-        <div className="col">
+      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+        {planData.sectors}
+      </td>
+      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+        {planData.cost}
+      </td>
+      <td
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+        style={{ minWidth: "220px" }}
+      >
+        <div
+          className={`col ${index === copiedRowIndex && "bg-color-light-gray"}`}
+        >
           <Controller
             name="type"
             control={control}
@@ -403,8 +480,11 @@ const Form = ({
           )}
         </div>
       </td>
-      <td style={{ minWidth: "240px" }}>
-        <div className="col">
+      <td
+        className={`col ${index === copiedRowIndex && "bg-color-light-gray"}`}
+        style={{ minWidth: "240px" }}
+      >
+        <div className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
           <Controller
             name="userId"
             control={control}
@@ -448,9 +528,16 @@ const Form = ({
           )}
         </div>
       </td>
-      <td>{planData.section}</td>
-      <td style={{ minWidth: "220px" }}>
-        <div className="col">
+      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+        {planData.section}
+      </td>
+      <td
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+        style={{ minWidth: "220px" }}
+      >
+        <div
+          className={`col ${index === copiedRowIndex && "bg-color-light-gray"}`}
+        >
           <input
             {...register("dateFrom")}
             id="dateFrom"
@@ -463,8 +550,13 @@ const Form = ({
           )}
         </div>
       </td>
-      <td style={{ minWidth: "220px" }}>
-        <div className="col">
+      <td
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+        style={{ minWidth: "220px" }}
+      >
+        <div
+          className={`col ${index === copiedRowIndex && "bg-color-light-gray"}`}
+        >
           <input
             {...register("dateTo")}
             id="dateTo"
@@ -477,9 +569,14 @@ const Form = ({
           )}
         </div>
       </td>
-      <td style={{ minWidth: "220px" }}>
+      <td
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+        style={{ minWidth: "220px" }}
+      >
         {/* className="form-control form-control-sm border-0 bg-transparent shadow-none pt-0" */}
-        <div className="col">
+        <div
+          className={`col ${index === copiedRowIndex && "bg-color-light-gray"}`}
+        >
           <Controller
             name="driverId"
             control={control}
@@ -535,8 +632,13 @@ const Form = ({
           )}
         </div>
       </td>
-      <td style={{ minWidth: "220px" }}>
-        <div className="col">
+      <td
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+        style={{ minWidth: "220px" }}
+      >
+        <div
+          className={`col ${index === copiedRowIndex && "bg-color-light-gray"}`}
+        >
           <Controller
             name="vehicalId"
             control={control}
@@ -607,6 +709,30 @@ const Form = ({
           handleDelete={() => handleDelete(planData.tempId)}
           id={index}
         />
+      </td>
+      <td>
+        <Button
+          onClick={copyFormData}
+          className={`btn rounded-circle ${
+            index === copiedRowIndex && "text-success"
+          }`}
+        >
+          <MdContentCopy />
+        </Button>
+      </td>
+      <td>
+        {copiedFormData ? (
+          <Button
+            onClick={() => pasteFormData(copiedFormData)}
+            className="btn rounded-circle"
+          >
+            <FaPaste />
+          </Button>
+        ) : (
+          <Button className="btn rounded-circle" disabled>
+            <FaPaste />
+          </Button>
+        )}
       </td>
     </tr>
   );

@@ -22,9 +22,10 @@ import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 import Select, { SingleValue, StylesConfig } from "react-select";
 import { toast } from "react-toastify";
-import Form, { COUTempTourPlan, typeStatues } from "./Form";
+import Form, { COUTempTourPlan, TempCopyForm, typeStatues } from "./Form";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import * as XLSX from "xlsx";
+import { IoMdInformationCircle } from "react-icons/io";
 const inter = Inter({ subsets: ["latin"] });
 
 interface CreateVisit {
@@ -60,14 +61,14 @@ interface CreateVisit {
 
 const List = () => {
   const [refresh, setRefresh] = useState(false);
-  const [visitPlanGroup, setVisitPlanGroup] = useState<number>(0);
+  const [visitPlanGroup, setVisitPlanGroup] = useState<number>(-1);
   const { data, setData, isLoading } = useTempTourPlans({ refresh });
   const { data: users } = useAuthentication();
   const { data: drivers } = useDriver();
   const { data: vehicles } = useVehicle();
   const { data: districts } = useDistrict();
   const { data: tours } = useTourPlans();
-
+  const [copiedRowIndex, setCopiedRowIndex] = useState<number>(-1);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -85,6 +86,9 @@ const List = () => {
   const [filteredData, setFilteredData] = useState<TempTourPlan[]>([]);
 
   const [formsData, setFormsData] = useState<COUTempTourPlan[]>([]);
+  const [copiedFormData, setCopiedFormData] = useState<
+    TempCopyForm | undefined
+  >();
 
   // Handle search logic
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,6 +173,10 @@ const List = () => {
   };
 
   const createVisit = async (formsData: COUTempTourPlan[]) => {
+    if (!visitPlanGroup || visitPlanGroup === -1) {
+      toast.error("Please select visit plan");
+      return;
+    }
     console.log("formsData", formsData);
     const filteredFormsData = formsData.filter((form) => form !== undefined);
     console.log("filteredFormsData", filteredFormsData);
@@ -245,7 +253,7 @@ const List = () => {
     }),
   };
 
-  const defaultNumberOption = { value: "0", label: "Select" };
+  const defaultNumberOption = { value: "-1", label: "Select" };
 
   const tourNames = tours.map((tour) => {
     return {
@@ -335,16 +343,15 @@ const List = () => {
           {/* <pre>{tempJsonData ? JSON.stringify(tempJsonData, null, 2) : ""}</pre> */}
         </div>
         <div className="col text-end">
-          <Button
-            className="btn btn-sm btn-success"
-            disabled={
-              isSubmitting ||
-              formsData.filter((form) => form !== undefined).length <= 0
-            }
-            onClick={() => createVisit(formsData)}
-          >
-            Create Visit {isSubmitting && <Spinner color="text-light" />}
-          </Button>
+          {formsData.filter((form) => form !== undefined).length > 0 && (
+            <Button
+              className="btn btn-sm bg-color-sea-blue text-white"
+              disabled={isSubmitting}
+              onClick={() => createVisit(formsData)}
+            >
+              Create Visit {isSubmitting && <Spinner color="text-light" />}
+            </Button>
+          )}
         </div>
       </div>
       <div className="row">
@@ -372,6 +379,10 @@ const List = () => {
               }}
             />
           )}
+          {!visitPlanGroup ||
+            (visitPlanGroup === -1 && (
+              <p className="text-danger mt-1">Please Add Visit Plan!</p>
+            ))}
         </div>
         {data && data.length > 0 && (
           <div className="col text-end align-self-end mb-3">
@@ -391,64 +402,68 @@ const List = () => {
 
       <div className="table-responsive rounded-3 shadow-sm mb-3">
         <table
-          className="table table-bordered mb-3 rounded-3 overflow-hidden"
+          className="table table-bordered mb-3 rounded-3 overflow-hidden table-hover"
           style={{ borderColor: "#B9B9B9" }}
         >
           <thead>
             <tr
               className={`color-dark-blue cursor-pointer fs12px ${inter.className}`}
             >
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Sr. No.
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Project ID
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 GS No
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Name of Scheme
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 District
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Sectors
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Cost
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Type
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 M&E Officer Name
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Section
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Date From
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Date To
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Driver Name
               </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center">
+              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Vehicle Number
               </th>
               <th
-                colSpan={2}
-                className="bg-color-sea-green text-white fw-6 text-center"
-              ></th>
+                colSpan={4}
+                className="bg-color-sea-green text-white fw-6 text-center text-nowrap"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {data?.map((d, i) => (
               <Form
+                copiedRowIndex={copiedRowIndex}
+                setCopiedRowIndex={setCopiedRowIndex}
                 key={d.tempId}
                 planData={d}
                 index={i + 1}
@@ -458,19 +473,34 @@ const List = () => {
                 districts={districts}
                 setFormsData={setFormsData}
                 handleDelete={() => handleDelete(d.tempId)}
+                setCopiedFormData={setCopiedFormData}
+                copiedFormData={copiedFormData}
               />
             ))}
           </tbody>
         </table>
       </div>
-      <div className="col text-end">
-        <Button
-          onClick={() => saveFormsData(formsData)}
-          className="btn btn-warning fs12px fw-6"
-        >
-          Save Changes
-        </Button>
-      </div>
+      {formsData.filter((form) => form !== undefined).length > 0 ? (
+        <div className="col text-end">
+          <Button
+            onClick={() => saveFormsData(formsData)}
+            className="btn bg-color-sea-blue text-white fs12px fw-6 me-2"
+          >
+            Approval
+          </Button>
+          <Button
+            onClick={() => saveFormsData(formsData)}
+            className="btn bg-color-sea-blue text-white fs12px fw-6"
+          >
+            Save Changes
+          </Button>
+        </div>
+      ) : (
+        <div className="alert alert-info" role="alert">
+          <IoMdInformationCircle /> Please go to Projects page to add Visit
+          Plans!
+        </div>
+      )}
     </>
   );
 };

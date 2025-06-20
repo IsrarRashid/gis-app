@@ -132,11 +132,9 @@ const UserDropDown = () => {
             />
           </div>
           <div className="col p-0 m-auto">
-            <p className="m-0 text-dark text-start fs13px fw-bold">
-              {userName}
-            </p>
+            <p className="m-0 text-dark text-start fs13px fw-6">{userName}</p>
             <p
-              className="m-0 text-start mt-1 fs11px"
+              className="m-0 text-start mt-1 fs11px fw-normal"
               style={{ color: "#575757" }}
             >
               {/* {currentTime} */}
@@ -171,7 +169,7 @@ const UserDropDown = () => {
             />
           </div>
           <div className="col p-0 m-auto ms-1 p-1">
-            <p className="m-0 text-dark fs13px fw-bold text-break text-wrap">
+            <p className="m-0 text-dark fs13px fw-6 text-break text-wrap">
               {userName}
             </p>
             <p

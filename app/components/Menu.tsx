@@ -108,7 +108,7 @@ const Menu = ({
         style={{ zIndex: 2 }}
       >
         {icon && (
-          <div className="col-auto text-lg-end text-md-center text-center px-0">
+          <div className="col-auto text-lg-end text-md-center text-center pe-0">
             <img
               src={icon}
               alt={icon}
@@ -122,7 +122,7 @@ const Menu = ({
         )}
         {icon ? (
           <div
-            className="col-auto text-white fw-normal text-wrap text-break px-0"
+            className="col-auto text-white fw-normal text-wrap text-break ps-0"
             style={{ fontSize: `${isGrouped ? "1.3rem" : "2.5rem"}` }}
           >
             <AnimatedCounter
@@ -134,7 +134,7 @@ const Menu = ({
           </div>
         ) : (
           <div
-            className="col-auto text-white fw-bold px-0 text-wrap"
+            className="col-auto text-white fw-bold ps-0 text-wrap"
             style={{ fontSize: "2.5rem" }}
           >
             <AnimatedCounter

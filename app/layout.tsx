@@ -7,6 +7,7 @@ import BootstrapClient from "./components/BootstrapClient";
 import ReduxProvider from "./components/ReduxProvider";
 import ToastContainers from "./components/ToastContainers";
 import "./globals.css";
+import NavbarToggle from "./components/NavbarToggle";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -16,6 +17,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "RTMES",
   description: "Created by DGME",
+  viewport: "width=device-width, initial-scale=1",
 };
 
 export default function RootLayout({
@@ -28,8 +30,10 @@ export default function RootLayout({
       <body className={poppins.className}>
         <ReduxProvider>
           <BgChanger />
-          <Navbar />
-          <main className="p-2">{children}</main>
+          <NavbarToggle>{children}</NavbarToggle>
+          <footer className="text-white bg-color-sea-blue text-center py-1">
+            Copyright &copy; All Rights Reserved - DGM&E
+          </footer>
         </ReduxProvider>
         <BootstrapClient />
         <ToastContainers />

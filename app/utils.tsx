@@ -86,7 +86,7 @@ export function formatDateTime(dateTimeString: string, formatType: string) {
   }
 }
 
-export const devMap = true;
+export const devMap = false;
 
 // "yyyy-MM-dd" to the desired format "dd-MMM-yyyy"
 export function formatHHLStringDate(inputDate: string): string {
@@ -510,4 +510,33 @@ export interface StringOption {
 export interface NumberOption {
   label: string;
   value: number;
+}
+
+/**
+ * Converts a hex color code to an RGBA string.
+ * @param hex - The hex color code (e.g., "#ff0000" or "ff0000").
+ * @param alpha - The alpha value (between 0 and 1). Defaults to 1.
+ * @returns A string in the form "rgba(r, g, b, a)"
+ */
+export function hexToRgba(hex: string, alpha: number = 1): string {
+  // Remove # if present
+  hex = hex.replace(/^#/, "");
+
+  // Handle shorthand hex (e.g., "f00")
+  if (hex.length === 3) {
+    hex = hex
+      .split("")
+      .map((char) => char + char)
+      .join("");
+  }
+
+  if (hex.length !== 6) {
+    throw new Error("Invalid hex color.");
+  }
+
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }

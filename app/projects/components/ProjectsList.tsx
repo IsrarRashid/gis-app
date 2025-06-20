@@ -199,7 +199,7 @@ const ProjectsList = ({
           handleChange={handleChange}
           form={
             <>
-              <div className="col text-end mb-2">
+              <div className="col-auto text-end mb-2">
                 {/* <ProjectForm
               api={projectAPI}
               method="POST"
@@ -215,7 +215,7 @@ const ProjectsList = ({
                   setShowData={setShowData}
                 />
               </div>
-              <div className="col text-end">
+              <div className="col-auto text-end">
                 <SmdpAllProjectsSyncForm
                   api={smdpSyncApi}
                   method="POST"

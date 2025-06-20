@@ -227,7 +227,7 @@ const Login = () => {
             <div className="row m-0">
               <div className="col text-center">
                 <h3
-                  className="text-white fw-bold"
+                  className="text-white fw-6"
                   style={{ marginBottom: "20px" }}
                 >
                   Directorate General Monitoring & Evaluation

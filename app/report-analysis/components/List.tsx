@@ -15,6 +15,8 @@ import { exportDataToExcel } from "@/app/utils/exportToExcel";
 import { getFormattedDate } from "@/app/utils";
 import PPTSlideGenerator from "./PPTSlideGenerator/PPTSlideGenerator";
 import * as XLSX from "xlsx";
+import TimeSpentOnProjectSiteFilterMenu from "./TimeSpentOnProjectSite/TimeSpentOnProjectSiteFilterMenu";
+import TimeSpendOnProjectSiteData from "./TimeSpentOnProjectSite/TimeSpendOnProjectSiteData";
 
 export interface ReportTab {
   reportId: number;
@@ -341,6 +343,12 @@ const List = () => {
           <PPTSlideGenerator
             setActiveTab={setActiveTab}
             isActiveTab={isActiveTab}
+          />
+        </div>
+        <div className="col-auto mb-2 pe-0">
+          <TimeSpendOnProjectSiteData
+            selectedIndex={isActiveTab}
+            setSelectedIndex={setActiveTab}
           />
         </div>
         {(searchTerm ? filteredTabs : tabs)?.map((tab) => (

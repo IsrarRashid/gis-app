@@ -111,7 +111,7 @@ const SmdpSyncForm = ({
       {method === "POST" ? (
         <Button
           type="button"
-          className="btn btn-sm text-white bg-color-sea-green text-nowrap"
+          className="btn btn-sm text-white bg-color-sea-green"
           onClick={handleShow}
         >
           + SMDP ONE PROJECT SYNCHRONIZE

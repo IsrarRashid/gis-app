@@ -10,10 +10,11 @@ import GISMenu from "./components/GISMenu";
 import UserDropDown from "./components/UserDropDown/UserDropDown";
 import { RootState } from "./store";
 import Image from "next/image";
+import DashboardStatusFilter from "./dashboard/components/DashboardStatusFilter";
 
 const lexend = Lexend({
   subsets: ["latin"],
-  weight: "300",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const Navbar = () => {
@@ -84,6 +85,9 @@ const Navbar = () => {
           </ul>
 
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li className="nav-item p-1 me-2 m-auto">
+              <DashboardStatusFilter />
+            </li>
             {role !== "Ministers" && (
               <li className="nav-item p-1 me-2 m-auto">
                 <Link href={currentTutorial} target="_blank">
@@ -125,7 +129,7 @@ const Navbar = () => {
             <li className="nav-item p-1 me-2">
               <Link href="https://smdp.punjab.gov.pk/" target="_blank">
                 <Button
-                  className="btn rounded-pill fw-bold m-auto"
+                  className="btn rounded-pill fw-6 m-auto"
                   style={{
                     background: "rgba(255, 255, 255, 0.62)",
                     color: "#424242",

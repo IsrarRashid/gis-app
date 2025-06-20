@@ -132,7 +132,7 @@ function HirarchyFlow({
   );
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "104%" }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

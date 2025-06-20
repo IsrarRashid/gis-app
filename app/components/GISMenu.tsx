@@ -23,6 +23,10 @@ import superGroupWhite from "../../public/icons/superGroupWhite.svg";
 import truck from "../../public/icons/truck.svg";
 import user3White from "../../public/icons/user3White.svg";
 import visits from "../../public/icons/visits.svg";
+import process from "../../public/icons/process.svg";
+import departments from "../../public/icons/departments.svg";
+import newVisitPlan from "../../public/icons/newVisitPlan.svg";
+import reportAnalysis2 from "@/public/icons/reportAnalysis2.svg";
 import Button from "./Button";
 import { motion } from "framer-motion";
 
@@ -223,8 +227,29 @@ const GISMenu = () => {
       name: "Departments",
       nameId: "departments",
       link: "/departments",
-      icon: visits,
+      icon: departments,
       backgroundColor: "linear-gradient(to bottom right, #d3db44 , #23ad91)",
+    },
+    {
+      name: "New Visit Plan",
+      nameId: "new-visit-plan",
+      link: "/new-visit-plan",
+      icon: newVisitPlan,
+      backgroundColor: "linear-gradient(to bottom right, #964614 , #118fa8)",
+    },
+    {
+      name: "Report Analysis",
+      nameId: "report-analysis",
+      link: "/report-analysis",
+      icon: reportAnalysis2,
+      backgroundColor: "linear-gradient(to bottom right, #1137a8 , #363636)",
+    },
+    {
+      name: "Process",
+      nameId: "process",
+      link: "/process",
+      icon: process,
+      backgroundColor: "linear-gradient(to bottom right, #a8118f , #11a89b)",
     },
     // {
     //   name: "Visits",
@@ -260,7 +285,7 @@ const GISMenu = () => {
     <>
       {rights?.length <= 1 ? (
         <label
-          className="nav-link text-white badge rounded-pill fw-bold"
+          className="nav-link text-white badge rounded-pill fw-6"
           style={{
             padding: "12px 15px 12px 15px",
             fontSize: "22px",
@@ -272,7 +297,7 @@ const GISMenu = () => {
       ) : (
         <Button
           type="button"
-          className="nav-link btn btn-sm text-white badge rounded-pill bg-color-light-blue shadow-sm fs-6 fw-bold"
+          className="nav-link btn btn-sm text-white badge rounded-pill bg-color-light-blue shadow-sm fs-6 fw-6"
           style={{
             padding: "12px 15px 12px 15px",
             fontSize: "22px",
@@ -286,7 +311,6 @@ const GISMenu = () => {
       )}
 
       <Modal
-        size="xl"
         show={show}
         onHide={handleClose}
         dialogClassName="custom-modal"

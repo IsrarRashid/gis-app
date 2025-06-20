@@ -10,7 +10,7 @@ import { FiArrowRightCircle } from "react-icons/fi";
 import { GoArrowLeft } from "react-icons/go";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { SlSizeFullscreen } from "react-icons/sl";
-import { getDaysAgo, getTimeAgo, Option } from "@/app/utils";
+import { getDaysAgo, getTimeAgo, hexToRgba, Option } from "@/app/utils";
 import { RxExitFullScreen } from "react-icons/rx";
 import { BsFullscreenExit } from "react-icons/bs";
 import Link from "next/link";
@@ -122,7 +122,10 @@ const HierarchyBuilder = () => {
   };
 
   const handleAddNode = () => {
-    if (!roleId || !description) return;
+    if (!roleId || roleId === -1) {
+      toast.error("Please add Role!");
+      return;
+    }
 
     const newId = nodeId.toString();
 
@@ -137,13 +140,13 @@ const HierarchyBuilder = () => {
       },
       position: { x: 50 * nodeId, y: 50 * nodeId },
       style: {
-        backgroundColor: selectedColor,
-        color: "#fff",
+        backgroundColor: hexToRgba(selectedColor, 0.2),
+        color: "#000",
         padding: 10,
         borderRadius: 8,
         fontWeight: "bold",
         textAlign: "center",
-        border: "1px solid #E2E4E5",
+        border: `1px solid ${hexToRgba(selectedColor, 1)}`,
         width: "450px",
       },
     };
@@ -491,7 +494,7 @@ const HierarchyBuilder = () => {
               <div className="row">
                 <div className="col-auto">
                   <div className="row d-flex align-items-center justify-content-end">
-                    <div className="col-auto mb-2 pe-0">
+                    <div className="col-auto pe-0">
                       <Button
                         className="btn fw-5 fs15px"
                         style={{
@@ -521,7 +524,7 @@ const HierarchyBuilder = () => {
                         )}
                       </Button>
                     </div>
-                    <div className="col-auto mb-2 pe-0">
+                    <div className="col-auto pe-0">
                       <Button
                         className="btn fw-5 fs15px"
                         style={{
@@ -537,7 +540,7 @@ const HierarchyBuilder = () => {
                         &nbsp;Preview
                       </Button>
                     </div>
-                    <div className="col-auto mb-2">
+                    <div className="col-auto">
                       <Button
                         className="btn fw-5 fs15px"
                         style={{
@@ -562,9 +565,9 @@ const HierarchyBuilder = () => {
           </div>
         </div>
       </div>
-      <div className="row" style={{ height: "65vh" }}>
+      <div className="row" style={{ height: "72vh" }}>
         <div
-          className="col-3 bg-white p-4"
+          className="col-12 col-sm-12 col-md-6 col-lg-3 bg-white p-4"
           style={{ border: "1px solid #E2E4E5" }}
         >
           <div className="row">
@@ -672,7 +675,7 @@ const HierarchyBuilder = () => {
           </div>
         </div>
 
-        <div className="col">
+        <div className="col-12 col-sm-12 col-md-6 col-lg-9 ">
           <HirarchyFlow
             nodes={nodes}
             setNodes={setNodes}
@@ -686,9 +689,11 @@ const HierarchyBuilder = () => {
       <div
         className="row bg-white p-2"
         style={{
+          position: "relative",
           borderBottomRightRadius: "5px",
           borderBottomLeftRadius: "5px",
           border: "1px solid #E2E4E5",
+          zIndex: 999,
         }}
       >
         <div className="col">
