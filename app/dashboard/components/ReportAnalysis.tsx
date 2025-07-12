@@ -1,28 +1,23 @@
-import { mainDashboardAPI, staffTrackingAPI } from "@/app/APIs";
+import { MAIN_DASHBOARD_API, STAFF_TRACKING_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import Spinner from "@/app/components/Spinner";
+import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import apiClient from "@/app/services/api-client";
 import {
   StaffTracking,
   TrackingRequestData,
 } from "@/app/staff-tracking/components/StaffTracking";
-import {
-  addDayToFormattedDate,
-  formatDateTime,
-  getFormattedDate,
-} from "@/app/utils";
+import { formatDateTime } from "@/app/utils";
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import { DM_Sans } from "next/font/google";
 import { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
+import MasterReport from "./MasterReport";
+import PPTSlideGenerator from "./PPTSlideGenerator/PPTSlideGenerator";
 import { ProjectsList } from "./ProjectsTable/ProjectsTable";
 import { data, tabs } from "./reportAnalysisData";
-import * as XLSX from "xlsx";
-import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
-import { downloadReportAnalysisToExcel } from "@/app/utils";
 import TimeSpentOnProjectSiteFilterMenu from "./TimeSpentOnProjectSiteFilterMenu";
-import PPTSlideGenerator from "./PPTSlideGenerator/PPTSlideGenerator";
-import MasterReport from "./MasterReport";
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 
@@ -79,7 +74,7 @@ const ReportAnalysis = () => {
     console.log("status", status);
     try {
       const response = await apiClient.post(
-        `${mainDashboardAPI}/GetProjectsListByStatus?status=${status}`,
+        `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
         [...cmInitiativeFilters]
       );
       setProjectsData(response.data.data);
@@ -167,7 +162,7 @@ const ReportAnalysis = () => {
   ) => {
     try {
       const response = await apiClient.post<StaffTrackingData>(
-        staffTrackingAPI,
+        STAFF_TRACKING_API,
         recordingTrackingRequestBody
       );
       // console.log("recording data Israr:", response.data.data[0]);

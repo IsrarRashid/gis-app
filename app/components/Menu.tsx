@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import AnimatedCounter from "./AnimatedCounter";
 import { useEffect, useState } from "react";
+import styles from "./Menu.module.css";
 
 interface Props {
   tideOneImage?: string;
@@ -18,14 +19,17 @@ interface Props {
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
   showValueInDecimal?: boolean;
+  toggleLabel?: boolean;
+  sneCount?: number;
+  nonSneCount?: number;
+  classNames?: string;
+  labelColor?: string;
 }
 
 const Menu = ({
   background,
   tideOneImage = "/images/tideOne.png",
   tideTwoImage = "/images/tideTwo.png",
-  onMouseEnter = () => {},
-  onMouseLeave = () => {},
   icon,
   value,
   label,
@@ -36,6 +40,11 @@ const Menu = ({
   textWrap = true,
   isGrouped = false,
   showValueInDecimal = false,
+  toggleLabel = false,
+  sneCount,
+  nonSneCount,
+  classNames = "",
+  labelColor = "",
 }: Props) => {
   const [randomValue1, setRandomValue1] = useState(0);
   const [randomValue2, setRandomValue2] = useState(0);
@@ -47,9 +56,9 @@ const Menu = ({
 
   return (
     <div
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className="col-auto mb-2 shadow-sm"
+      className={`col-auto ${isGrouped ? "mb-1" : "mb-2"} shadow-sm ${
+        styles.cardContainer
+      } ${classNames}`}
       style={{
         outline: outline,
         background: background,
@@ -94,8 +103,8 @@ const Menu = ({
             src="/icons/linkArrow.svg"
             className="img-fluid"
             style={{
-              width: `${isGrouped ? "20px" : "30px"}`,
-              height: `${isGrouped ? "20px" : "30px"}`,
+              width: `${isGrouped ? "15px" : "20px"}`,
+              height: `${isGrouped ? "15px" : "20px"}`,
             }}
             alt="linkArrow"
           />
@@ -103,7 +112,11 @@ const Menu = ({
       )}
       <div
         className={`row d-flex flex-wrap justify-content-center align-items-center m-0 position-relative ${
-          showArrow && "mt-2"
+          showArrow && isGrouped
+            ? "mt-1"
+            : showArrow && !isGrouped
+            ? "mt-2"
+            : ""
         }`}
         style={{ zIndex: 2 }}
       >
@@ -114,16 +127,17 @@ const Menu = ({
               alt={icon}
               className="img-fluid"
               style={{
-                width: `${isGrouped ? "30px" : "45px"}`,
-                height: `${isGrouped ? "30px" : "45px"}`,
+                width: `${isGrouped ? "20px" : "40px"}`,
+                height: `${isGrouped ? "20px" : "40px"}`,
               }}
             />
           </div>
         )}
         {icon ? (
           <div
-            className="col-auto text-white fw-normal text-wrap text-break ps-0"
-            style={{ fontSize: `${isGrouped ? "1.3rem" : "2.5rem"}` }}
+            className={`col-auto text-white fw-5 text-wrap text-break ps-0 ${
+              isGrouped ? "fs-6" : "fs18px"
+            }`}
           >
             <AnimatedCounter
               from={0}
@@ -151,16 +165,61 @@ const Menu = ({
         style={{ zIndex: 2 }}
       >
         {textWrap ? (
-          <p className={`${isGrouped ? "fs-6" : "fs17px"} fw-normal mb-2`}>
+          <p className={`${isGrouped ? "fs12px" : "f14px"} fw-normal mb-2`}>
             {label}
           </p>
         ) : (
-          <p
-            className={`${isGrouped ? "fs14px" : "fs17px"} mb-2 text-nowrap`}
-            style={{ fontWeight: "500" }}
-          >
-            {label}
-          </p>
+          <>
+            {toggleLabel ? (
+              <div
+                className="col"
+                style={{
+                  position: "relative",
+                  minHeight: "25px",
+                  width: "110px",
+                }}
+              >
+                <p
+                  className={`${styles.labelHoverDown} fs11px mb-0 text-nowrap fw-5`}
+                  style={{
+                    fontWeight: "500",
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    color: labelColor,
+                  }}
+                >
+                  {label}
+                </p>
+                <div
+                  className={`row d-flex justify-content-between m-0 ${
+                    styles.labelHoverUp
+                  } ${isGrouped ? "fs10px" : "f12px"} mb-2 text-nowrap fw-5`}
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                  }}
+                >
+                  <div className="col-auto p-0" style={{ color: labelColor }}>
+                    SNE {sneCount}
+                  </div>
+                  <div className="col-auto p-0" style={{ color: labelColor }}>
+                    Non-SNE {nonSneCount}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p
+                className={`${
+                  isGrouped ? "mb-1" : "mb-2"
+                } fs12px text-nowrap text-center fw-5`}
+                style={{ color: labelColor }}
+              >
+                {label}
+              </p>
+            )}
+          </>
         )}
       </div>
     </div>

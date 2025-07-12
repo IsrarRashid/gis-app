@@ -1,4 +1,4 @@
-import { rightAPI } from "../APIs";
+import { RIGHT_API } from "../APIs";
 import useData from "./useData";
 
 export interface Right {
@@ -14,6 +14,6 @@ interface Props {
 }
 
 const useRights = ({ refresh = false }: Props = {}) =>
-  useData<Right>({ refresh, endpoint: rightAPI });
+  useData<Right>({ refresh, endpoint: RIGHT_API });
 
 export default useRights;

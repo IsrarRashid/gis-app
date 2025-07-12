@@ -46,21 +46,37 @@ const FilterButtons = ({
         style={{ background: "rgba(235, 239, 253, 0.33)" }}
       >
         <div
-          className="p-0 col btn-group rounded-pill"
+          className="p-0 col btn-group rounded-pill position-relative overflow-hidden"
           style={{ background: "#EBEFFD" }}
           role="group"
         >
+          {/* SLIDING GRADIENT DIV */}
+          <div
+            className={`position-absolute rounded-pill border-0 px-4 fw-normal`}
+            style={{
+              zIndex: 1,
+              paddingTop: "12px",
+              paddingBottom: "12px",
+              background: "linear-gradient(to left, #13629B, #2377B6)",
+              boxShadow: "inset 0 0px 15px rgba(0, 0, 0, .34)",
+              transition: "all .3s",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              width: "50%",
+              transform:
+                selectedButton === 2 ? "translateX(100%)" : "translate(0)",
+            }}
+          ></div>
           <Button
             type="button"
-            className={`btn rounded-pill border-0 shadow-none fw-normal w-100 whiteSpaceNoWrap ${
+            className={`btn rounded-pill border-0 shadow-none px-4 fs14px fw-5 w-100 text-nowrap ${
               selectedButton === 1 ? "text-white" : ""
             }`}
             style={{
+              zIndex: 2,
               paddingTop: "12px",
               paddingBottom: "12px",
-              background: `${
-                selectedButton === 1 ? "radial-gradient(#0C8CE9, #13629B)" : ""
-              }`,
             }}
             onClick={() => {
               setSelectedButton(1);
@@ -72,15 +88,13 @@ const FilterButtons = ({
           </Button>
           <Button
             type="button"
-            className={`btn rounded-pill border-0 shadow-none fw-normal w-100 ${
+            className={`btn rounded-pill border-0 shadow-none px-4 fs14px fw-5 w-100 ${
               selectedButton === 2 ? "text-white" : ""
             }`}
             style={{
+              zIndex: 2,
               paddingTop: "12px",
               paddingBottom: "12px",
-              background: `${
-                selectedButton === 2 ? "radial-gradient(#0C8CE9, #13629B)" : ""
-              }`,
             }}
             onClick={() => {
               setSelectedButton(2);

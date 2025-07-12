@@ -1,6 +1,6 @@
 // components/MapCars.tsx
 
-import { coordinatesAPI } from "@/app/APIs";
+import { COORDINATES_API } from "@/app/APIs";
 import apiClient from "@/app/services/api-client";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -33,7 +33,7 @@ const MapCarsComponent = () => {
   useEffect(() => {
     const loadItems = async () => {
       try {
-        const response = await apiClient.get(`${coordinatesAPI}/${visitId}`);
+        const response = await apiClient.get(`${COORDINATES_API}/${visitId}`);
         setData(response.data.data);
       } catch (err) {
         setError("Failed to fetch data.");

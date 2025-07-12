@@ -1,4 +1,4 @@
-import { superGroupApi } from "@/app/APIs";
+import { EVALUATION_SUPER_GROUP_API, SUPER_GROUP_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
@@ -11,19 +11,24 @@ import { Option } from "./ProjectsList";
 interface Props {
   id: number;
   options: Option[];
+  dashboardType?: string;
 }
 
-const GroupingForm = ({ id, options }: Props) => {
+const GroupingForm = ({ id, options, dashboardType }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
   const modalId = `groupModal-${id}`; // Unique modal ID
   const [refresh, setRefresh] = useState(false);
   const [show, setShow] = useState(false);
 
+  const SUPER_GROUP_API_Endpoint = dashboardType
+    ? EVALUATION_SUPER_GROUP_API
+    : SUPER_GROUP_API;
+
   // Fetch previously selected groups
   const fetchSelectedOptions = async () => {
     try {
       const response = await apiClient.get(
-        `${superGroupApi}/GetSuperGroupByProjectId?ProjectId=${id}`
+        `${SUPER_GROUP_API_Endpoint}/GetSuperGroupByProjectId?ProjectId=${id}`
       );
       console.log("supergroup new api", response);
       const data = response.data.data; // Assuming this returns an array of group objects
@@ -89,12 +94,12 @@ const GroupingForm = ({ id, options }: Props) => {
     try {
       if (selectedOptions.length > 0) {
         const response = await apiClient.post(
-          `${superGroupApi}/AssignSuperGroupToProject?superGroupID=${optionId}&projectID=${id}`
+          `${SUPER_GROUP_API_Endpoint}/AssignSuperGroupToProject?superGroupID=${optionId}&projectID=${id}`
         );
         console.log("supergroup assigned", response);
       } else {
         const response = await apiClient.post(
-          `${superGroupApi}/AssignSuperGroupToProject?projectID=${id}`
+          `${SUPER_GROUP_API_Endpoint}/AssignSuperGroupToProject?projectID=${id}`
         );
         console.log(response);
       }

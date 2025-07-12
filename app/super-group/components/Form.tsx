@@ -27,11 +27,9 @@ interface Props {
   method: "POST" | "PUT" | "PATCH";
   id?: number;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  refresh: boolean;
 }
 
-const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
-  const { data, setError } = useSuperGroups({ refresh });
+const Form = ({ api, method, id, setRefresh }: Props) => {
   const {
     register,
     handleSubmit,
@@ -63,7 +61,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
         setValue("updatedAt", new Date().toISOString());
       } catch (err) {
         console.log((err as AxiosError).message);
-        setError((err as AxiosError).message);
       }
     }
   };

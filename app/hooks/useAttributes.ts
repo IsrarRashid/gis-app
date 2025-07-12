@@ -1,5 +1,8 @@
-import { attributesAPI } from "../APIs";
+import { useEffect, useMemo } from "react";
+import { EVALUATION_ATTRIBUTES_API, ATTRIBUTES_API } from "../APIs";
+import { TypeEnum } from "../dashboard/types/types";
 import useData from "./useData";
+import { useSearchParams } from "next/navigation";
 
 export interface Attribute {
   attributeId: number;
@@ -41,6 +44,7 @@ export interface Attribute {
       createdAt: string;
       updatedAt: string;
       condition: string;
+      remarks: string;
     }
   ];
 }
@@ -49,7 +53,23 @@ interface Props {
   refresh?: boolean;
 }
 
-const useAttributes = ({ refresh = false }: Props = {}) =>
-  useData<Attribute>({ refresh, endpoint: attributesAPI });
+const useAttributes = ({ refresh = false }: Props = {}) => {
+  const serachParams = useSearchParams();
+  const dashboardType = serachParams.get("dashboardType");
+
+  // const endpoint =
+  //   dashboardType === TypeEnum.EVALUATION
+  //     ? EVALUATION_ATTRIBUTES_API
+  //     : ATTRIBUTES_API;
+
+  // useMemo to ensure recomputation when dashboardType changes
+  const endpoint = useMemo(() => {
+    return dashboardType === TypeEnum.EVALUATION
+      ? EVALUATION_ATTRIBUTES_API
+      : ATTRIBUTES_API;
+  }, [dashboardType]);
+
+  return useData<Attribute>({ refresh, endpoint });
+};
 
 export default useAttributes;

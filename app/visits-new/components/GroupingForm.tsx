@@ -1,4 +1,4 @@
-import { attributeGroupMappingAPI } from "@/app/APIs";
+import { ATTRIBUTE_GROUP_MAPPING_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
@@ -31,7 +31,7 @@ const GroupingForm = ({ id, options }: Props) => {
     const fetchSelectedOptions = async () => {
       try {
         const response = await apiClient.get(
-          `${attributeGroupMappingAPI}/${id}`
+          `${ATTRIBUTE_GROUP_MAPPING_API}/${id}`
         );
         const data = response.data.data; // Assuming this returns an array of group objects
         setSelectedOptions(data); // Set the selected groups as objects
@@ -75,7 +75,7 @@ const GroupingForm = ({ id, options }: Props) => {
     };
 
     try {
-      const response = await apiClient.post(attributeGroupMappingAPI, data);
+      const response = await apiClient.post(ATTRIBUTE_GROUP_MAPPING_API, data);
       // notifyCreate(updated);
       console.log(response);
       handleClose();

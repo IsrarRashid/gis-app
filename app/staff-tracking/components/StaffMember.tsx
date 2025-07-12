@@ -1,4 +1,4 @@
-import { staffTrackingAPI } from "@/app/APIs";
+import { STAFF_TRACKING_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import apiClient from "@/app/services/api-client";
 import { formatDateTime } from "@/app/utils";
@@ -29,7 +29,7 @@ const StaffMember = ({ setLiveTrackingRequestBody, setMapStatus }: Props) => {
   ) => {
     try {
       const response = await apiClient.post(
-        staffTrackingAPI,
+        STAFF_TRACKING_API,
         trackingRequestBody
       );
       if (response.data.data) {

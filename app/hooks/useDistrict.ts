@@ -1,4 +1,4 @@
-import { districtAPI } from "../APIs";
+import { DISTRICT_API } from "../APIs";
 import useData from "./useData";
 
 export interface District {
@@ -14,6 +14,6 @@ interface Props {
 }
 
 const useDistrict = ({ refresh = false }: Props = {}) =>
-  useData<District>({ refresh, endpoint: districtAPI });
+  useData<District>({ refresh, endpoint: DISTRICT_API });
 
 export default useDistrict;

@@ -10,7 +10,7 @@ import {
   TileLayer,
 } from "react-leaflet";
 // import carIconUrl from "/images/carTop.png"; // Add a car icon to show on the map
-import { coordinatesAPI } from "@/app/APIs";
+import { COORDINATES_API } from "@/app/APIs";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
 import search2 from "../../../../public/icons/search2.svg";
@@ -39,7 +39,7 @@ const MapCarsManualComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiClient.get(`${coordinatesAPI}/${visitId}`);
+        const response = await apiClient.get(`${COORDINATES_API}/${visitId}`);
         setData(response.data.data);
         console.log("staff", response.data.data);
       } catch (err) {

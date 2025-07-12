@@ -1,12 +1,15 @@
 "use client";
-import { attributesAPI, getProjectDetailKeysAPI } from "@/app/APIs";
+import {
+  EVALUATION_ATTRIBUTES_API,
+  ATTRIBUTES_API,
+  GET_PROJECT_DETAIL_KEYS_API,
+} from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/TableHeading";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import { getFormattedDate } from "@/app/utils";
 import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
 import { useEffect, useState } from "react";
@@ -21,15 +24,17 @@ const dmSans = DM_Sans({
 
 const inter = Inter({ subsets: ["latin"] });
 
-interface Props {
-  refresh: boolean;
-  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-}
+const List = ({ dashboardType }: { dashboardType?: string }) => {
+  const [refresh, setRefresh] = useState(false);
 
-const List = ({ refresh, setRefresh }: Props) => {
   const { data, setData, setError, error, isLoading } = useAttributes({
     refresh,
   });
+
+  const ATTRIBUTES_API_ENDPOINT = dashboardType
+    ? EVALUATION_ATTRIBUTES_API
+    : ATTRIBUTES_API;
+
   const deleteMessage = "Deleted Successfully!";
 
   const notifyCreate = (message: string) => toast.success(message);
@@ -113,7 +118,7 @@ const List = ({ refresh, setRefresh }: Props) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${attributesAPI}/${id}`);
+      await apiClient.delete(`${ATTRIBUTES_API_ENDPOINT}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.attributeId !== id));
       notifyCreate(deleteMessage);
@@ -129,7 +134,7 @@ const List = ({ refresh, setRefresh }: Props) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const response = await apiClient.get(`${getProjectDetailKeysAPI}`);
+        const response = await apiClient.get(`${GET_PROJECT_DETAIL_KEYS_API}`);
         const data = response.data.data; // Assuming this returns an array of group objects
         setProjectDetailKeys(data);
         console.log("projectDetailKeys", projectDetailKeys);
@@ -154,7 +159,7 @@ const List = ({ refresh, setRefresh }: Props) => {
         form={
           <div className="col-auto">
             <Form
-              api={attributesAPI}
+              api={ATTRIBUTES_API_ENDPOINT}
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
@@ -316,7 +321,7 @@ const List = ({ refresh, setRefresh }: Props) => {
                 </td>
                 <td>
                   <Form
-                    api={attributesAPI}
+                    api={ATTRIBUTES_API_ENDPOINT}
                     method="PUT"
                     id={d.attributeId}
                     setRefresh={setRefresh}

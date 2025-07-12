@@ -1,5 +1,5 @@
 "use client";
-import { rightAPI } from "@/app/APIs";
+import { RIGHT_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
@@ -60,7 +60,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${rightAPI}/${id}`);
+      await apiClient.delete(`${RIGHT_API}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.rightId !== id));
       notifyCreate(deleteMessage);
@@ -115,7 +115,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
         form={
           <div className="col-auto">
             <Form
-              api={rightAPI}
+              api={RIGHT_API}
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
@@ -185,7 +185,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 </td>
                 <td>
                   <Form
-                    api={rightAPI}
+                    api={RIGHT_API}
                     method="PUT"
                     id={d.rightId}
                     setRefresh={setRefresh}

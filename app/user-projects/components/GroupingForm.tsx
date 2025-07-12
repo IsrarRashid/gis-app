@@ -1,4 +1,4 @@
-import { projectAPI, superGroupApi } from "@/app/APIs";
+import { PROJECT_API, SUPER_GROUP_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
@@ -21,7 +21,7 @@ const GroupingForm = ({ id, options }: Props) => {
 
   const fetchSelectedOptions = async () => {
     try {
-      const response = await apiClient.get(`${projectAPI}/${id}`);
+      const response = await apiClient.get(`${PROJECT_API}/${id}`);
       const data = response.data.data; // Assuming this returns an array of group objects
       if (data?.superGroupID) {
         const selectedOptions = {
@@ -79,12 +79,12 @@ const GroupingForm = ({ id, options }: Props) => {
     try {
       if (selectedOptions.length > 0) {
         const response = await apiClient.post(
-          `${superGroupApi}/AssignSuperGroupToProject?superGroupID=${optionId}&projectID=${id}`
+          `${SUPER_GROUP_API}/AssignSuperGroupToProject?superGroupID=${optionId}&projectID=${id}`
         );
         console.log(response);
       } else {
         const response = await apiClient.post(
-          `${superGroupApi}/AssignSuperGroupToProject?projectID=${id}`
+          `${SUPER_GROUP_API}/AssignSuperGroupToProject?projectID=${id}`
         );
         console.log(response);
       }

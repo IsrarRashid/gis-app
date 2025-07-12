@@ -34,7 +34,7 @@ import {
   MdNavigateNext,
   MdOutlineDateRange,
 } from "react-icons/md";
-import Select, { ActionMeta, SingleValue, StylesConfig } from "react-select";
+import Select, { SingleValue, StylesConfig } from "react-select";
 import styles from "./ProjectsTable.module.css";
 
 // Define the type of the range state
@@ -1477,6 +1477,8 @@ const ProjectsTable = ({
           marginTop: "0px",
         }}
       >
+        {/* <div style={{ height: "96vh", overflow: "hidden" }}> */}
+        {/* <ScrollWrapper> */}
         <div style={{ height: "96vh" }}>
           <table
             id="my-table"
@@ -1813,7 +1815,7 @@ const ProjectsTable = ({
               )}
               <tr>
                 <td colSpan={keys.length} className="p-0">
-                  <div className="row d-flex mb-3 m-0">
+                  <div className="row d-flex mb-2 m-0">
                     <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
                       {indexOfFirstRow + 1} -{" "}
                       {Math.min(indexOfLastRow, projectsData.length)} of{" "}
@@ -1858,7 +1860,7 @@ const ProjectsTable = ({
               </tr>
               <tr>
                 <td colSpan={keys?.length} className="p-0">
-                  <div className="col text-center mt-2">
+                  <div className="col text-center">
                     <Button
                       className="btn bg-color-sea-green shadow me-2 text-white"
                       onClick={handleFirstPage}
@@ -1905,6 +1907,7 @@ const ProjectsTable = ({
               </tr>
             </tbody>
           </table>
+          {/* </ScrollWrapper> */}
         </div>
       </div>
     </div>

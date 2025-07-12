@@ -1,5 +1,10 @@
 "use client";
-import { projectAPI, smdpSyncApi, TEMP_TOUR_PLAN_API } from "@/app/APIs";
+import {
+  EVALUATION_PROJECT_API,
+  PROJECT_API,
+  SMDP_SYNC_API,
+  TEMP_TOUR_PLAN_API,
+} from "@/app/APIs";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
@@ -33,13 +38,6 @@ const dmSans = DM_Sans({
 
 const inter = Inter({ subsets: ["latin"] });
 
-interface ListProps {
-  refresh: boolean;
-  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  showData: boolean;
-  setShowData: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
 export interface Option {
   id: number;
   superGroupLabel: string;
@@ -50,17 +48,17 @@ export interface UserOption {
   userName: string;
 }
 
-const ProjectsList = ({
-  refresh,
-  setRefresh,
-  showData,
-  setShowData,
-}: ListProps) => {
-  const { data, setData, error, setError, isLoading, setLoading } = useProjects(
-    {
-      refresh,
-    }
-  );
+const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
+  const [refresh, setRefresh] = useState(false);
+  const [showData, setShowData] = useState(false);
+
+  const PROJECT_API_ENDPOINT = dashboardType
+    ? EVALUATION_PROJECT_API
+    : PROJECT_API;
+
+  const { data, setData, setError, isLoading } = useProjects({
+    refresh,
+  });
   const { data: sectorsData } = useSectors({ refresh });
   const { data: superGroups } = useSuperGroups({ refresh });
   const { data: users } = useAuthentication({ refresh });
@@ -123,7 +121,7 @@ const ProjectsList = ({
 
   const handleDelete = async (id: number): Promise<void> => {
     try {
-      await apiClient.delete(`${projectAPI}/${id}`);
+      await apiClient.delete(`${PROJECT_API_ENDPOINT}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.id !== id));
       notifyCreate(deleteMessage);
@@ -201,13 +199,13 @@ const ProjectsList = ({
             <>
               <div className="col-auto text-end mb-2">
                 {/* <ProjectForm
-              api={projectAPI}
+              api={PROJECT_API_ENDPOINT}
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
             /> */}
                 <SmdpSyncForm
-                  api={smdpSyncApi}
+                  api={SMDP_SYNC_API}
                   method="POST"
                   setRefresh={setRefresh}
                   refresh={refresh}
@@ -217,7 +215,7 @@ const ProjectsList = ({
               </div>
               <div className="col-auto text-end">
                 <SmdpAllProjectsSyncForm
-                  api={smdpSyncApi}
+                  api={SMDP_SYNC_API}
                   method="POST"
                   setRefresh={setRefresh}
                   refresh={refresh}
@@ -334,7 +332,11 @@ const ProjectsList = ({
                   <SyncModal handleSubmit={handleSync} id={d.smdpProjectID} />
                 </td> */}
                 <td className="text-center">
-                  <GroupingForm id={d.id} options={superGroups} />
+                  <GroupingForm
+                    id={d.id}
+                    options={superGroups}
+                    dashboardType={dashboardType}
+                  />
                 </td>
                 <td className="text-center">
                   <Button
@@ -352,7 +354,7 @@ const ProjectsList = ({
                 </td> */}
                 {/* <td>
                   <ProjectForm
-                    api={projectAPI}
+                    api={PROJECT_API_ENDPOINT}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}

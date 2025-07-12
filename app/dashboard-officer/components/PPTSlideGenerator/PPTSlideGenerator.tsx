@@ -1,6 +1,6 @@
 "use client";
 
-import { generateReportAPI } from "@/app/APIs";
+import { GENERATE_REPORT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import Spinner from "@/app/components/Spinner";
@@ -110,7 +110,7 @@ const PPTSlideGenerator = () => {
     try {
       setSubmitting(true);
       const response = await apiClient.post(
-        `${generateReportAPI}/GeneratePowerPoint`,
+        `${GENERATE_REPORT_API}/GeneratePowerPoint`,
         {
           pirority: priority,
           toDate: new Date(toDate).toISOString().split("T")[0],
@@ -157,7 +157,7 @@ const PPTSlideGenerator = () => {
     });
     try {
       const response = await apiClient.post(
-        `${generateReportAPI}/GetSectorAsync`,
+        `${GENERATE_REPORT_API}/GetSectorAsync`,
         {
           pirority: priority,
           toDate: new Date(toDate).toISOString().split("T")[0],
@@ -200,7 +200,7 @@ const PPTSlideGenerator = () => {
   //   });
   //   try {
   //     const response = await apiClient.post(
-  //       `${generateReportAPI}/GetSectorAsync`,
+  //       `${GENERATE_REPORT_API}/GetSectorAsync`,
   //       {
   //         pirority: priority,
   //         to: new Date(toDate).toISOString().split("T")[0],

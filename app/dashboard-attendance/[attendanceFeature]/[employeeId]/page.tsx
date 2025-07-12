@@ -1,5 +1,5 @@
 "use client";
-import { staffAttendanceAPI } from "@/app/APIs";
+import { STAFF_ATTENDANCE_API } from "@/app/APIs";
 import Loader from "@/app/components/Loader";
 import TableHeader from "@/app/components/Table/TableHeader";
 import apiClient from "@/app/services/api-client";
@@ -55,7 +55,7 @@ const EmployeeProfilePage = ({ params }: Props) => {
   ) => {
     try {
       const response = await apiClient.post(
-        `${staffAttendanceAPI}/GetStaffRecord`,
+        `${STAFF_ATTENDANCE_API}/GetStaffRecord`,
         {
           userId,
           fromDate,

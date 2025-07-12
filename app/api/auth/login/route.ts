@@ -1,4 +1,4 @@
-import { loginAPI } from "@/app/APIs";
+import { LOGIN_API } from "@/app/APIs";
 import { NextRequest, NextResponse } from "next/server";
 import { serialize } from "cookie";
 import axios from "axios";
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const { username, password } = await req.json();
 
     const backendRes = await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_API}${loginAPI}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_API}${LOGIN_API}`,
       {
         username,
         password,

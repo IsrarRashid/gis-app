@@ -1,5 +1,5 @@
 "use client";
-import { trackingAPI } from "@/app/APIs";
+import { TRACKING_API } from "@/app/APIs";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
@@ -62,7 +62,7 @@ const MapCarsManualComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(trackingAPI); // Replace with your API endpoint
+        const response = await fetch(TRACKING_API); // Replace with your API endpoint
         const data: Tracking = await response.json();
         setAPIData(data);
         const coordinatesList = data["GBB-062"]["coordnaties list"];

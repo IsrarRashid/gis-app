@@ -1,4 +1,4 @@
-import { getUserProjectsAPI } from "@/app/APIs";
+import { GET_USER_PROJECTS_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import useAuthentication, {
@@ -163,7 +163,7 @@ const Form = ({
   const getUserProjects = async (id: number) => {
     try {
       const response = await apiClient.get(
-        `${getUserProjectsAPI}?userId=${id}`
+        `${GET_USER_PROJECTS_API}?userId=${id}`
       );
       console.log("Response:", response);
       setUserProjects(response.data.data);

@@ -1,4 +1,4 @@
-import { getAllUsersAndOfficersAPI } from "../APIs";
+import { GET_ALL_USERS_AND_OFFICERS_API } from "../APIs";
 import useData from "./useData";
 
 export interface ReportHistoryUser {
@@ -19,7 +19,7 @@ interface Props {
 const useReportHistoryUser = ({ refresh = false }: Props = {}) =>
   useData<ReportHistoryUser>({
     refresh,
-    endpoint: getAllUsersAndOfficersAPI,
+    endpoint: GET_ALL_USERS_AND_OFFICERS_API,
   });
 
 export default useReportHistoryUser;

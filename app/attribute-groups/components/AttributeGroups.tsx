@@ -1,6 +1,6 @@
 import List from "./List";
 
-const AttributeGroups = () => {
+const AttributeGroups = ({ dashboardType }: { dashboardType?: string }) => {
   return (
     <>
       <div
@@ -12,7 +12,7 @@ const AttributeGroups = () => {
         }}
       >
         <div className="row p-3">
-          <List />
+          <List dashboardType={dashboardType} />
         </div>
       </div>
     </>

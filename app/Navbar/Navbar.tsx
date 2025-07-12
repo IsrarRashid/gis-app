@@ -1,16 +1,18 @@
 "use client";
 import Cookies from "js-cookie";
 import { Lexend } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { FaPlay, FaYoutube } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import Button from "./components/Button";
-import GISMenu from "./components/GISMenu";
-import UserDropDown from "./components/UserDropDown/UserDropDown";
-import { RootState } from "./store";
-import Image from "next/image";
-import DashboardStatusFilter from "./dashboard/components/DashboardStatusFilter";
+import Button from "../components/Button";
+import GISMenu from "../components/GISMenu";
+import UserDropDown from "../components/UserDropDown/UserDropDown";
+import DashboardTypeFilter from "../dashboard/components/DashboardTypeFilter";
+import { RootState } from "../store";
+import styles from "./Navbar.module.css";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -18,6 +20,15 @@ const lexend = Lexend({
 });
 
 const Navbar = () => {
+  const searchParams = useSearchParams();
+  const [currentType, setCurrentType] = useState<string | null>();
+
+  useEffect(() => {
+    const type = searchParams.get("dashboardType");
+    console.log("searchParams type", type);
+    setCurrentType(type);
+  }, [searchParams]);
+
   const [role, setRole] = useState<string>();
 
   const currentTutorial = useSelector(
@@ -33,7 +44,12 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`navbar navbar-expand-lg navbar-light bg-color-sea-blue p-0 ${lexend.className}`}
+      className={`navbar navbar-expand-lg navbar-light p-0 ${
+        currentType ? styles.bgGradientEvaluation : "bg-color-sea-blue"
+      } ${lexend.className}`}
+      style={{
+        boxShadow: "0px 3px 3px 1px rgba(0, 0, 0, 0.2)",
+      }}
     >
       <div className="container-fluid">
         <Link className="navbar-brand" href="/">
@@ -60,7 +76,7 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item dropdown">
-              <GISMenu />
+              <GISMenu dashboardType={currentType} />
               <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
                   <Link className="dropdown-item" href="#">
@@ -85,11 +101,8 @@ const Navbar = () => {
           </ul>
 
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li className="nav-item p-1 me-2 m-auto">
-              <DashboardStatusFilter />
-            </li>
             {role !== "Ministers" && (
-              <li className="nav-item p-1 me-2 m-auto">
+              <li className="nav-item p-1 me-3 mt-1">
                 <Link href={currentTutorial} target="_blank">
                   <div
                     style={{
@@ -126,6 +139,11 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
+            <li className="nav-item p-1 me-3 m-auto">
+              <Suspense fallback={<span>Loading filter...</span>}>
+                <DashboardTypeFilter />
+              </Suspense>
+            </li>
             <li className="nav-item p-1 me-2">
               <Link href="https://smdp.punjab.gov.pk/" target="_blank">
                 <Button

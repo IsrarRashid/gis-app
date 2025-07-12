@@ -1,5 +1,5 @@
 "use client";
-import { deleteUserAPI, registerUserAPI } from "@/app/APIs";
+import { DELETE_USER_API, REGISTER_USER_API } from "@/app/APIs";
 import DeleteModal2 from "@/app/components/DeleteModal2";
 import TableHeading from "@/app/components/TableHeading";
 import useAuthentication, {
@@ -80,7 +80,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   const handleDelete = async (userName: string) => {
     try {
-      await apiClient.delete(`${deleteUserAPI}?UserName=${userName}`);
+      await apiClient.delete(`${DELETE_USER_API}?UserName=${userName}`);
       // remove the deleted item from the data array
       setData((prevData) =>
         prevData.filter((item) => item.userName !== userName)
@@ -149,7 +149,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
         form={
           <div className="col-auto">
             <Form
-              api={registerUserAPI}
+              api={REGISTER_USER_API}
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
@@ -252,7 +252,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
                 {/* <td>
                   <Form
-                    api={userAPI}
+                    api={USER_API}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}

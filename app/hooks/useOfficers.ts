@@ -1,4 +1,4 @@
-import { getAllOfficersAPI } from "../APIs";
+import { GET_ALL_OFFICERS_API } from "../APIs";
 import useData from "./useData";
 
 export interface Officer {
@@ -17,6 +17,6 @@ interface Props {
 }
 
 const useOfficers = ({ refresh = false }: Props = {}) =>
-  useData<Officer>({ refresh, endpoint: getAllOfficersAPI });
+  useData<Officer>({ refresh, endpoint: GET_ALL_OFFICERS_API });
 
 export default useOfficers;

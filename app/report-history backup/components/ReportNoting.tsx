@@ -1,5 +1,5 @@
 "use client";
-import { reportsHistoryAPI } from "@/app/APIs";
+import { REPORTS_HISTORY_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import Spinner from "@/app/components/Spinner";
 import useOfficers from "@/app/hooks/useOfficers";
@@ -297,7 +297,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
       try {
         setSubmitting(true);
         const response = await apiClient.post(
-          `${reportsHistoryAPI}/MarkedReport`,
+          `${REPORTS_HISTORY_API}/MarkedReport`,
           modifiedFormData
         );
         console.log("Response:", response);
@@ -316,7 +316,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
   // const handleMarkedReport = async (data: ReportHistory) => {
   //   try {
   //     const response = await apiClient.post(
-  //       `${reportsHistoryAPI}/MarkedReport`,
+  //       `${REPORTS_HISTORY_API}/MarkedReport`,
   //       data
   //     );
   //     console.log("marked report: ", response.data.data);
@@ -329,7 +329,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
     const getReportHistory = async (visitId: number, projectId: number) => {
       try {
         const response = await apiClient.get(
-          `${reportsHistoryAPI}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}`
+          `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}`
         );
         setReportsHistory(response.data.data);
       } catch (err) {

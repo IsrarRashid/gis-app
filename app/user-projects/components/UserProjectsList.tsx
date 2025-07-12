@@ -1,5 +1,5 @@
 "use client";
-import { getUserProjectsAPI, smdpSyncApi } from "@/app/APIs";
+import { GET_USER_PROJECTS_API, SMDP_SYNC_API } from "@/app/APIs";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
@@ -131,7 +131,7 @@ const UserProjectsList = ({
   const handleSubmit = async (id: number) => {
     try {
       const response = await apiClient.get(
-        `${getUserProjectsAPI}?userId=${id}`
+        `${GET_USER_PROJECTS_API}?userId=${id}`
       );
       console.log("Response:", response);
       setData(response.data.data);
@@ -156,7 +156,7 @@ const UserProjectsList = ({
             <>
               <div className="col text-end mb-2">
                 <SmdpSyncForm
-                  api={smdpSyncApi}
+                  api={SMDP_SYNC_API}
                   method="POST"
                   setRefresh={setRefresh}
                   refresh={refresh}
@@ -166,7 +166,7 @@ const UserProjectsList = ({
               </div>
               <div className="col text-end mb-2">
                 <SmdpAllProjectsSyncForm
-                  api={smdpSyncApi}
+                  api={SMDP_SYNC_API}
                   method="POST"
                   setRefresh={setRefresh}
                   refresh={refresh}
@@ -314,7 +314,7 @@ const UserProjectsList = ({
                 </td> */}
                 {/* <td>
                   <ProjectForm
-                    api={projectAPI}
+                    api={PROJECT_API}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}

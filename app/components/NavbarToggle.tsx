@@ -1,21 +1,14 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { PropsWithChildren } from "react";
-import Navbar from "../Navbar";
+import Navbar from "../Navbar/Navbar";
 
-const NavbarToggle = ({ children }: PropsWithChildren) => {
+const NavbarToggle = () => {
   const currentPath = usePathname();
 
-  if (currentPath === "/login") {
-    return <main>{children}</main>;
-  } else
-    return (
-      <>
-        <Navbar />
-        <main className="p-2">{children}</main>
-      </>
-    );
+  if (currentPath !== "/login") {
+    return <Navbar />;
+  }
 };
 
 export default NavbarToggle;

@@ -1,5 +1,5 @@
 "use client";
-import { coordinatesAPI } from "@/app/APIs";
+import { COORDINATES_API } from "@/app/APIs";
 import apiClient from "@/app/services/api-client";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -111,7 +111,7 @@ const MapCarsComponent = () => {
     // Function to fetch the latest coordinates from the API
     const fetchCoordinates = async () => {
       try {
-        const response = await apiClient.get(`${coordinatesAPI}/${visitId}`);
+        const response = await apiClient.get(`${COORDINATES_API}/${visitId}`);
         setData(response.data.data);
         // Get the coordinates from the response
         const coordinatesList = response.data.data;

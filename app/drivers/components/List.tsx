@@ -1,5 +1,5 @@
 "use client";
-import { driverApi } from "@/app/APIs";
+import { DRIVER_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
@@ -97,7 +97,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${driverApi}/${id}`);
+      await apiClient.delete(`${DRIVER_API}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.id !== id));
       notifyCreate(deleteMessage);
@@ -224,7 +224,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           form={
             <div className="col-auto">
               <Form
-                api={driverApi}
+                api={DRIVER_API}
                 method="POST"
                 setRefresh={setRefresh}
                 refresh={refresh}
@@ -313,7 +313,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 </td>
                 <td>
                   <Form
-                    api={driverApi}
+                    api={DRIVER_API}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}

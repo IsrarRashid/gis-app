@@ -1,4 +1,4 @@
-import { roleAPI, updateUserRole } from "@/app/APIs";
+import { ROLE_API, UPDATE_USER_ROLE_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
@@ -31,7 +31,7 @@ const GroupingForm = ({ id, options, userName }: Props) => {
   // useEffect(() => {
   //   const fetchSelectedOptions = async () => {
   //     try {
-  //       const response = await apiClient.get(`${roleAPI}/${id}`);
+  //       const response = await apiClient.get(`${ROLE_API}/${id}`);
   //       const data = response.data.data; // Assuming this returns an array of group objects
   //       if (data.roleId) {
   //         const selectedOptions = {
@@ -81,7 +81,7 @@ const GroupingForm = ({ id, options, userName }: Props) => {
     console.log("selectedOptions", selectedOptions);
     try {
       const response = await apiClient.post(
-        `${updateUserRole}?UserName=${userName}&RoleName=${roleName}`
+        `${UPDATE_USER_ROLE_API}?UserName=${userName}&RoleName=${roleName}`
       );
       console.log(response);
       // notifyCreate(updated);

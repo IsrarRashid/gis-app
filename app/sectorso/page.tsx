@@ -1,5 +1,5 @@
 import { cookies, headers } from "next/headers";
-import { sectorAPI } from "../APIs";
+import { SECTOR_API } from "../APIs";
 import { Sector } from "../hooks/useSectors";
 import { addDayToFormattedDate, getFormattedDate } from "../utils";
 
@@ -31,7 +31,7 @@ const SectorsPage = async () => {
   myHeaders.append("Authorization", `Bearer ${cookies().get("token")?.value}`);
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_API}${sectorAPI}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_API}${SECTOR_API}`,
       {
         cache: "no-store",
         headers: myHeaders,

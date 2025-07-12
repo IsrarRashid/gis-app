@@ -3,26 +3,30 @@
 import { useCallback, useEffect, useState } from "react";
 import Button from "@/app/components/Button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { StatusEnum } from "../types/status";
+import { TypeEnum } from "../types/types";
 
-const DashboardStatusFilter = () => {
+const DashboardTypeFilter = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const status = searchParams.get("status") || StatusEnum.MONITORING; // Default to 1
+  const dashboardType = searchParams.get("dashboardType") || undefined;
 
   const [selectedButton, setSelectedButton] = useState(1);
 
   const handleStatusChange = useCallback(
-    (status: string) => {
-      const query = `?status=${status}`;
+    (dashboardType: string) => {
+      const query = dashboardType && `?dashboardType=${dashboardType}`;
       router.push("/dashboard" + query);
     },
     [router]
   );
 
+  // useEffect(() => {
+  //   handleStatusChange(status);
+  // }, [router, handleStatusChange]);
+
   useEffect(() => {
-    handleStatusChange(status);
-  }, [router, handleStatusChange]);
+    if (dashboardType) setSelectedButton(2);
+  }, []);
 
   return (
     <div
@@ -64,7 +68,7 @@ const DashboardStatusFilter = () => {
           }}
           onClick={() => {
             setSelectedButton(1);
-            handleStatusChange(StatusEnum.MONITORING);
+            handleStatusChange("");
           }}
         >
           Monitoring
@@ -81,7 +85,7 @@ const DashboardStatusFilter = () => {
           }}
           onClick={() => {
             setSelectedButton(2);
-            handleStatusChange(StatusEnum.EVALUATION);
+            handleStatusChange(TypeEnum.EVALUATION);
           }}
         >
           Evaluation
@@ -91,4 +95,4 @@ const DashboardStatusFilter = () => {
   );
 };
 
-export default DashboardStatusFilter;
+export default DashboardTypeFilter;

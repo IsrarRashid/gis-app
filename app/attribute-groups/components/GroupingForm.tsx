@@ -1,4 +1,8 @@
-import { attributeGroupMappingAPI } from "@/app/APIs";
+"use client";
+import {
+  ATTRIBUTE_GROUP_MAPPING_API,
+  EVALUATION_ATTRIBUTE_GROUP_MAPPING_API,
+} from "@/app/APIs";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
@@ -11,18 +15,26 @@ import { Option } from "./List";
 interface Props {
   id: number;
   options: Option[];
+  dashboardType?: string;
 }
 
-const GroupingForm = ({ id, options }: Props) => {
+const GroupingForm = ({ id, options, dashboardType }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
   const modalId = `groupModal-${id}`; // Unique modal ID
   const [refresh, setRefresh] = useState(false);
   const [show, setShow] = useState(false);
 
+  const ATTRIBUTE_GROUP_MAPPING_API_Endpoint = dashboardType
+    ? EVALUATION_ATTRIBUTE_GROUP_MAPPING_API
+    : ATTRIBUTE_GROUP_MAPPING_API;
+
   const fetchSelectedOptions = async () => {
     try {
-      const response = await apiClient.get(`${attributeGroupMappingAPI}/${id}`);
+      const response = await apiClient.get(
+        `${ATTRIBUTE_GROUP_MAPPING_API_Endpoint}/${id}`
+      );
       const data = response.data.data; // Assuming this returns an array of group objects
+      console.log("attribute group mapping response data", data);
       setSelectedOptions(data); // Set the selected groups as objects
     } catch (error) {
       console.error("Error fetching selected groups:", error);
@@ -72,10 +84,15 @@ const GroupingForm = ({ id, options }: Props) => {
     };
 
     try {
-      const response = await apiClient.post(attributeGroupMappingAPI, data);
-      // notifyCreate(updated);
-      console.log(response);
-      handleClose();
+      if (ATTRIBUTE_GROUP_MAPPING_API_Endpoint) {
+        const response = await apiClient.post(
+          ATTRIBUTE_GROUP_MAPPING_API_Endpoint,
+          data
+        );
+        // notifyCreate(updated);
+        console.log(response);
+        handleClose();
+      }
     } catch (error) {
       console.error("Error submitting data:", error);
     }

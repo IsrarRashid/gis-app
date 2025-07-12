@@ -1,5 +1,5 @@
 "use client";
-import { sectorAPI } from "@/app/APIs";
+import { SECTOR_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
@@ -95,7 +95,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${sectorAPI}/${id}`);
+      await apiClient.delete(`${SECTOR_API}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.id !== id));
       notifyCreate(deleteMessage);
@@ -119,7 +119,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
         form={
           <div className="col-auto">
             <SectorForm
-              api={sectorAPI}
+              api={SECTOR_API}
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
@@ -195,7 +195,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                 </td>
                 <td>
                   <SectorForm
-                    api={sectorAPI}
+                    api={SECTOR_API}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}

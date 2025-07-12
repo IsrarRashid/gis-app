@@ -1,5 +1,5 @@
 "use client";
-import { mainDashboardAPI } from "../APIs";
+import { MAIN_DASHBOARD_API } from "../APIs";
 import useLazyFetch from "../hooks/useLazyFetch";
 
 const ProjectDetailsDashboard = () => {
@@ -15,7 +15,7 @@ const ProjectDetailsDashboard = () => {
   };
   const handleFetch = () => {
     fetchData({
-      endpoint: `${mainDashboardAPI}`,
+      endpoint: `${MAIN_DASHBOARD_API}`,
       method: "POST",
       body: [
         {

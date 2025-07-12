@@ -1,5 +1,5 @@
 "use client";
-import { roleAPI } from "@/app/APIs";
+import { ROLE_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
@@ -79,7 +79,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${roleAPI}/${id}`);
+      await apiClient.delete(`${ROLE_API}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.id !== id));
       notifyCreate(deleteMessage);
@@ -134,7 +134,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
         form={
           <div className="col-auto">
             <Form
-              api={roleAPI}
+              api={ROLE_API}
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
@@ -191,7 +191,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 </td>
                 <td>
                   <Form
-                    api={roleAPI}
+                    api={ROLE_API}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}

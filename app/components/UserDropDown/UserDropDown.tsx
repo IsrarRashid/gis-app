@@ -13,7 +13,7 @@ import Button from "../Button";
 import styles from "./UserDropDown.module.css";
 import { useDispatch } from "react-redux";
 import apiClient from "@/app/services/api-client";
-import { feedbackAPI } from "@/app/APIs";
+import { FEEDBACK_API } from "@/app/APIs";
 import { Feedback } from "@/app/feedback/components/Feedback";
 
 const UserDropDown = () => {
@@ -100,7 +100,7 @@ const UserDropDown = () => {
     const handleSubmit = async (userId: number) => {
       try {
         const response = await apiClient.get(
-          `${feedbackAPI}/GetFeedBackByReportingTo?reportingTo=${userId}`
+          `${FEEDBACK_API}/GetFeedBackByReportingTo?reportingTo=${userId}`
         );
         setData(response.data.data);
       } catch (err) {

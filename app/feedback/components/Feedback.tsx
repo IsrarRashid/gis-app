@@ -1,5 +1,5 @@
 "use client";
-import { feedbackAPI } from "@/app/APIs";
+import { FEEDBACK_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import { setFeedbackCount } from "@/app/features/feedback/feedbackCountSlice";
@@ -56,7 +56,7 @@ const Feedback = () => {
     const handleSubmit = async (userId: number) => {
       try {
         const response = await apiClient.get(
-          `${feedbackAPI}/GetFeedBackByReportingTo?reportingTo=${userId}`
+          `${FEEDBACK_API}/GetFeedBackByReportingTo?reportingTo=${userId}`
         );
         setData(response.data.data);
         {
@@ -80,7 +80,7 @@ const Feedback = () => {
   //   const handleSubmit = async (projectId: number) => {
   //     try {
   //       const response = await apiClient.get(
-  //         `${projectAPI}/GetSingleProject?id=${projectId}`
+  //         `${PROJECT_API}/GetSingleProject?id=${projectId}`
   //       );
   //       setSingleProjectData(response.data.data);
   //     } catch (err) {
@@ -95,7 +95,7 @@ const Feedback = () => {
   const handleSubmit = async (data: Feedback) => {
     console.log("feedback data", data);
     try {
-      const response = await apiClient.put(feedbackAPI, data);
+      const response = await apiClient.put(FEEDBACK_API, data);
       toast.success("Issue Resolved Successfully");
       console.log("resolved api status:", response);
       setRefresh(!refresh);

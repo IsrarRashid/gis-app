@@ -1,4 +1,4 @@
-import { attributeGroupsToProjectMappingAPI } from "@/app/APIs";
+import { ATTRIBUTE_GROUPS_TO_PROJECT_MAPPING_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -43,7 +43,7 @@ const GroupingForm: React.FC<GroupingFormProps> = ({
 
       try {
         const response = await axios.get(
-          `${attributeGroupsToProjectMappingAPI}/${1}?projectId=${projectId}`,
+          `${ATTRIBUTE_GROUPS_TO_PROJECT_MAPPING_API}/${1}?projectId=${projectId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -93,7 +93,7 @@ const GroupingForm: React.FC<GroupingFormProps> = ({
     console.log("submit data: ", data);
     try {
       const response = await axios.post(
-        attributeGroupsToProjectMappingAPI,
+        ATTRIBUTE_GROUPS_TO_PROJECT_MAPPING_API,
         data,
         {
           headers: {

@@ -42,7 +42,7 @@
 //   useEffect(() => {
 //     const loadItems = async () => {
 //       try {
-//         const response = await axios.get("/api/trackingAPI");
+//         const response = await axios.get("/api/TRACKING_API");
 //         setData(response.data);
 //       } catch (err) {
 //         setError("Failed to fetch data.");

@@ -1,21 +1,26 @@
 "use client";
+import reportAnalysis2 from "@/public/icons/reportAnalysis2.svg";
 import staffTrackingIcon from "@/public/icons/staffTracking.svg";
 import userProjects from "@/public/icons/userProjects.svg";
 import vehicleTrackingIcon from "@/public/icons/vehicleTracking.svg";
 import visitSchedule from "@/public/icons/visitSchedule.svg";
+import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import clock2 from "../../public/icons/clock-2.svg";
 import cross from "../../public/icons/cross-2.svg";
 import dashboard from "../../public/icons/dashboard.svg";
 import db from "../../public/icons/db.svg";
+import departments from "../../public/icons/departments.svg";
 import downArrow from "../../public/icons/down-arrow.svg";
 import driver from "../../public/icons/driver.svg";
 import group from "../../public/icons/group.svg";
+import newVisitPlan from "../../public/icons/newVisitPlan.svg";
+import process from "../../public/icons/process.svg";
 import qr from "../../public/icons/qr.svg";
 import rightsWhite from "../../public/icons/rightsWhite.svg";
 import rolesWhite from "../../public/icons/rolesWhite.svg";
@@ -23,12 +28,7 @@ import superGroupWhite from "../../public/icons/superGroupWhite.svg";
 import truck from "../../public/icons/truck.svg";
 import user3White from "../../public/icons/user3White.svg";
 import visits from "../../public/icons/visits.svg";
-import process from "../../public/icons/process.svg";
-import departments from "../../public/icons/departments.svg";
-import newVisitPlan from "../../public/icons/newVisitPlan.svg";
-import reportAnalysis2 from "@/public/icons/reportAnalysis2.svg";
 import Button from "./Button";
-import { motion } from "framer-motion";
 
 interface Data {
   name: string;
@@ -37,16 +37,22 @@ interface Data {
   backgroundColor: string;
 }
 
-const GISMenu = () => {
+const GISMenu = ({
+  dashboardType,
+}: {
+  dashboardType: string | null | undefined;
+}) => {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const [rights, setRights] = useState([]);
-  const [isHover, setHover] = useState(false);
 
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const currentParams = searchParams.toString();
 
   useEffect(() => {
     const rights = JSON.parse(Cookies.get("rights") || "[]");
@@ -110,7 +116,13 @@ const GISMenu = () => {
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #3c74c2 , #2352a6)",
     },
-
+    {
+      name: "DDO Dashboard",
+      nameId: "dashboard-ddo",
+      link: "/dashboard-ddo",
+      icon: dashboard,
+      backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
+    },
     // {
     //   name: "Summary Dashboard",
     //   nameId: "summaryDashboard",
@@ -245,7 +257,7 @@ const GISMenu = () => {
       backgroundColor: "linear-gradient(to bottom right, #1137a8 , #363636)",
     },
     {
-      name: "Process",
+      name: "File Process Hirarchy",
       nameId: "process",
       link: "/process",
       icon: process,
@@ -292,7 +304,7 @@ const GISMenu = () => {
             letterSpacing: 1,
           }}
         >
-          Monitoring Dashboard
+          {dashboardType ? "Evaluation Dashboard" : "Monitoring Dashboard"}
         </label>
       ) : (
         <Button
@@ -305,7 +317,8 @@ const GISMenu = () => {
           }}
           onClick={handleShow}
         >
-          Monitoring Dashboard &nbsp;
+          {dashboardType ? "Evaluation Dashboard" : "Monitoring Dashboard"}
+          &nbsp;
           <Image src={downArrow} alt="down arrow" />
         </Button>
       )}
@@ -313,7 +326,7 @@ const GISMenu = () => {
       <Modal
         show={show}
         onHide={handleClose}
-        dialogClassName="custom-modal"
+        dialogClassName="gismenu-modal"
         backdropClassName="custom-backdrop"
       >
         <Modal.Body className="bg-transparent">
@@ -332,7 +345,7 @@ const GISMenu = () => {
             <div className="row d-flex justify-content-center p-4">
               {filteredMenu?.map((d) => (
                 <Link
-                  href={d.link}
+                  href={`${d.link}${currentParams ? `?${currentParams}` : ""}`}
                   key={d.name}
                   className="col text-center text-decoration-none mb-2"
                   onClick={() => setShow(!show)}

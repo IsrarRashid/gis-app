@@ -1,13 +1,15 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import Navbar from "./Navbar";
 import BgChanger from "./components/BgChanger";
 import BootstrapClient from "./components/BootstrapClient";
+import NavbarToggle from "./components/NavbarToggle";
 import ReduxProvider from "./components/ReduxProvider";
 import ToastContainers from "./components/ToastContainers";
 import "./globals.css";
-import NavbarToggle from "./components/NavbarToggle";
+import { Suspense } from "react";
+import Loader from "./components/Loader";
+import FooterToggle from "./components/FooterToggle";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -29,11 +31,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         <ReduxProvider>
-          <BgChanger />
-          <NavbarToggle>{children}</NavbarToggle>
-          <footer className="text-white bg-color-sea-blue text-center py-1">
-            Copyright &copy; All Rights Reserved - DGM&E
-          </footer>
+          <Suspense fallback={<Loader />}>
+            <BgChanger />
+            <NavbarToggle />
+          </Suspense>
+          <main className="p-2">{children}</main>
+          <Suspense fallback={<Loader />}>
+            <FooterToggle />
+          </Suspense>
         </ReduxProvider>
         <BootstrapClient />
         <ToastContainers />

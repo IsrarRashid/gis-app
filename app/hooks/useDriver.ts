@@ -1,4 +1,4 @@
-import { driverApi } from "../APIs";
+import { DRIVER_API } from "../APIs";
 import useData from "./useData";
 import Cookies from "js-cookie";
 
@@ -21,7 +21,7 @@ const useDriver = ({ refresh = false }: Props = {}) => {
 
   return useData<Driver>({
     refresh,
-    endpoint: driverApi + `?deptId=${departmentId}`,
+    endpoint: DRIVER_API + `?deptId=${departmentId}`,
   });
 };
 

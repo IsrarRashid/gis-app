@@ -1,5 +1,5 @@
 "use client";
-import { mainDashboardAPI, staffTrackingAPI } from "@/app/APIs";
+import { MAIN_DASHBOARD_API, STAFF_TRACKING_API } from "@/app/APIs";
 import { ProjectsList } from "@/app/dashboard/components/ProjectsTable/ProjectsTable";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import apiClient from "@/app/services/api-client";
@@ -71,7 +71,7 @@ const TimeSpendOnProjectSiteData = ({
     console.log("status", status);
     try {
       const response = await apiClient.post(
-        `${mainDashboardAPI}/GetProjectsListByStatus?status=${status}`,
+        `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
         [...cmInitiativeFilters]
       );
       setProjectsData(response.data.data);
@@ -159,7 +159,7 @@ const TimeSpendOnProjectSiteData = ({
   ) => {
     try {
       const response = await apiClient.post<StaffTrackingData>(
-        staffTrackingAPI,
+        STAFF_TRACKING_API,
         recordingTrackingRequestBody
       );
       // console.log("recording data Israr:", response.data.data[0]);

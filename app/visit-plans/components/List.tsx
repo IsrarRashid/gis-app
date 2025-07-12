@@ -1,5 +1,5 @@
 "use client";
-import { tourPlanAPI } from "@/app/APIs";
+import { TOUR_PLAN_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
@@ -93,7 +93,7 @@ const List = ({ refresh, setRefresh }: Props) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${tourPlanAPI}/${id}`);
+      await apiClient.delete(`${TOUR_PLAN_API}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.id !== id));
       notifyCreate(deleteMessage);
@@ -117,7 +117,7 @@ const List = ({ refresh, setRefresh }: Props) => {
         form={
           <div className="col-auto">
             <Form
-              api={tourPlanAPI}
+              api={TOUR_PLAN_API}
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
@@ -218,7 +218,7 @@ const List = ({ refresh, setRefresh }: Props) => {
                 </td>
                 <td>
                   <Form
-                    api={tourPlanAPI}
+                    api={TOUR_PLAN_API}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}

@@ -1,4 +1,4 @@
-import { roleAPI } from "../APIs";
+import { ROLE_API } from "../APIs";
 import useData from "./useData";
 
 export interface Role {
@@ -13,6 +13,6 @@ interface Props {
 }
 
 const useRoles = ({ refresh = false }: Props = {}) =>
-  useData<Role>({ refresh, endpoint: roleAPI });
+  useData<Role>({ refresh, endpoint: ROLE_API });
 
 export default useRoles;

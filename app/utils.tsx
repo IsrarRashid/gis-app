@@ -86,7 +86,7 @@ export function formatDateTime(dateTimeString: string, formatType: string) {
   }
 }
 
-export const devMap = false;
+export const devMap = true;
 
 // "yyyy-MM-dd" to the desired format "dd-MMM-yyyy"
 export function formatHHLStringDate(inputDate: string): string {
@@ -539,4 +539,34 @@ export function hexToRgba(hex: string, alpha: number = 1): string {
   const b = parseInt(hex.substring(4, 6), 16);
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+export function getBGColor(
+  status: string | null,
+  requireColorCode: boolean
+): string {
+  return status === "EVALUATION" && !requireColorCode
+    ? "bg-color-evaluation-dark-blue"
+    : status === "EVALUATION" && requireColorCode
+    ? "#2377b6"
+    : status === null && !requireColorCode
+    ? "bg-color-sea-blue"
+    : status === null && requireColorCode
+    ? "#0c8ce9"
+    : "";
+}
+
+export function getColor(
+  status: string | null,
+  requireColorCode: boolean
+): string {
+  return status === "EVALUATION" && !requireColorCode
+    ? "color-evaluation-dark-blue"
+    : status === "EVALUATION" && requireColorCode
+    ? "#2377b6"
+    : status === null && !requireColorCode
+    ? "color-sea-blue"
+    : status === null && requireColorCode
+    ? "#0c8ce9"
+    : "";
 }

@@ -3,7 +3,7 @@
 // import SectorForm from "../sectors/components/SectorForm";
 // import Cookies from "js-cookie";
 // import axios from "axios";
-// import { projectAPI } from "../APIs";
+// import { PROJECT_API } from "../APIs";
 // import { getFormattedDate } from "../utils";
 
 // interface Props {
@@ -25,7 +25,7 @@
 //       try {
 //         const token = Cookies.get("token");
 //         if (token) {
-//           const response = await axios.get(projectAPI, {
+//           const response = await axios.get(PROJECT_API, {
 //             headers: {
 //               Authorization: `Bearer ${token}`,
 //               "Content-Type": "application/json",
@@ -57,7 +57,7 @@
 //               <span className="fw-bold">{getFormattedDate()}</span> Today
 //             </div>
 //             <div className="col text-end">
-//               <SectorForm api={projectAPI} method="POST" />
+//               <SectorForm api={PROJECT_API} method="POST" />
 //             </div>
 //           </div>
 //         </div>

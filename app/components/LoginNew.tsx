@@ -9,7 +9,7 @@ import passwordGrey from "../../public/icons/passwordGrey.svg";
 import userGrey from "../../public/icons/userGrey.svg";
 import verticalLineGrey from "../../public/icons/verticalLineGrey.svg";
 import bgVideoNew from "../../public/video/bgVideoNew.mp4";
-import { loginAPI } from "../APIs";
+import { LOGIN_API } from "../APIs";
 import apiClient, { AxiosError, ErrorResponse } from "../services/api-client";
 import Button from "./Button";
 import Spinner from "./Spinner";

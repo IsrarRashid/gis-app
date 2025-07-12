@@ -1,5 +1,5 @@
 "use client";
-import { reportsHistoryAPI } from "@/app/APIs";
+import { REPORTS_HISTORY_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import apiClient from "@/app/services/api-client";
@@ -65,7 +65,7 @@ const List = () => {
     const handleSubmit = async (userId: number) => {
       try {
         const response = await apiClient.get(
-          `${reportsHistoryAPI}/GetSubmittedReports?submittedTo=${userId}`
+          `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`
         );
         setData(response.data.data);
         console.log("original data", response.data.data);

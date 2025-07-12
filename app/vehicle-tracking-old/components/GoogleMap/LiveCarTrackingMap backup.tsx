@@ -1,6 +1,6 @@
 "use client";
 
-import { trackingAPI } from "@/app/APIs";
+import { TRACKING_API } from "@/app/APIs";
 import {
   AdvancedMarker,
   APIProvider,
@@ -120,7 +120,7 @@ const LiveCarTrackingMap = () => {
     const fetchCoordinates = async () => {
       try {
         if (!isError) {
-          const response = await fetch(trackingAPI); // Replace with your API endpoint
+          const response = await fetch(TRACKING_API); // Replace with your API endpoint
           const data: Tracking = await response.json();
           setAPIData(data);
           // Get the coordinates from the response

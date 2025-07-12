@@ -1,14 +1,10 @@
-"use client";
-import { useState } from "react";
 import List from "./List";
 import ListWrapper from "@/app/components/ListWrapper";
 
-const Attributes = () => {
-  const [refresh, setRefresh] = useState(false);
-
+const Attributes = ({ dashboardType }: { dashboardType?: string }) => {
   return (
     <ListWrapper>
-      <List refresh={refresh} setRefresh={setRefresh} />
+      <List dashboardType={dashboardType} />
     </ListWrapper>
   );
 };

@@ -1,4 +1,4 @@
-import { addRightsToRoleAPI, getRightsByRoleAPI } from "@/app/APIs";
+import { ADD_RIGHTS_TO_ROLE_API, GET_RIGHTS_BY_ROLE_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
@@ -32,7 +32,7 @@ const GroupingForm = ({ id, options, name }: Props) => {
     const fetchSelectedOptions = async () => {
       try {
         const response = await apiClient.get(
-          `${getRightsByRoleAPI}?RoleName=${name}`
+          `${GET_RIGHTS_BY_ROLE_API}?RoleName=${name}`
         );
         const data = response.data.data; // Assuming this returns an array of group objects
         setSelectedOptions(data); // Set the selected groups as objects
@@ -74,7 +74,7 @@ const GroupingForm = ({ id, options, name }: Props) => {
 
     try {
       const response = await apiClient.post(
-        `${addRightsToRoleAPI}?RoleID=${id}`,
+        `${ADD_RIGHTS_TO_ROLE_API}?RoleID=${id}`,
         data
       );
       // notifyCreate(updated);
@@ -156,7 +156,7 @@ const GroupingForm = ({ id, options, name }: Props) => {
                         className="text-center text-white"
                         style={{ fontSize: "1.5rem", fontWeight: "800" }}
                       >
-                        SELECT ATTRIBUTES
+                        SELECT RIGHTS
                       </p>
                     </div>
                   </div>

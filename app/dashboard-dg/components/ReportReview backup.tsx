@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import apiClient from "@/app/services/api-client";
-import { reportsHistoryAPI } from "@/app/APIs";
+import { REPORTS_HISTORY_API } from "@/app/APIs";
 import { SubmittedReport } from "@/app/report-history/list/components/List";
 
 const ReportReview = () => {
@@ -22,7 +22,7 @@ const ReportReview = () => {
     const handleSubmit = async (userId: number) => {
       try {
         const response = await apiClient.get(
-          `${reportsHistoryAPI}/GetSubmittedReports?submittedTo=${userId}`
+          `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`
         );
         setData(response.data.data);
       } catch (err) {

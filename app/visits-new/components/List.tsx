@@ -1,5 +1,5 @@
 "use client";
-import { visitAPI, visitNewAPI } from "@/app/APIs";
+import { VISIT_API, VISIT_NEW_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
@@ -110,7 +110,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${visitNewAPI}/${id}`);
+      await apiClient.delete(`${VISIT_NEW_API}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.id !== id));
       notifyCreate(deleteMessage);
@@ -297,7 +297,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 </td>
                 <td>
                   <Form
-                    api={visitAPI}
+                    api={VISIT_API}
                     method="POST"
                     id={d.id}
                     setRefresh={setRefresh}

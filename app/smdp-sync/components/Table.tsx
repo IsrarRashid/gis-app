@@ -1,5 +1,5 @@
 "use client";
-import { smdpSyncApi } from "@/app/APIs";
+import { SMDP_SYNC_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import DeleteModal from "@/app/components/DeleteModal";
 // import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
@@ -87,7 +87,7 @@ const ProjectsList = ({
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${smdpSyncApi}/${id}`);
+      await apiClient.delete(`${SMDP_SYNC_API}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.id !== id));
       notifyCreate(deleteMessage);
@@ -215,7 +215,7 @@ const ProjectsList = ({
               </div>
               <div className="col text-end">
                 <Form
-                  api={smdpSyncApi}
+                  api={SMDP_SYNC_API}
                   method="POST"
                   setRefresh={setRefresh}
                   refresh={refresh}
@@ -363,7 +363,7 @@ const ProjectsList = ({
                         <td>{/* <DownloadPDFBtn /> */}</td>
                         {/* <td>
                           <Form
-                            api={projectAPI}
+                            api={PROJECT_API}
                             method="PUT"
                             id={d.id}
                             setRefresh={setRefresh}

@@ -1,6 +1,6 @@
 import {
-  assignUserToProjectAPI,
-  getAssignedUsersToProjectAPI,
+  ASSIGN_USER_TO_PROJECT_API,
+  GET_ASSIGNED_USERS_TO_PROJECT_API,
 } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import apiClient from "@/app/services/api-client";
@@ -34,7 +34,7 @@ const AssignUserForm = ({ id, options }: Props) => {
     const fetchSelectedOptions = async () => {
       try {
         const response = await apiClient.get(
-          `${getAssignedUsersToProjectAPI}?projectId=${id}`
+          `${GET_ASSIGNED_USERS_TO_PROJECT_API}?projectId=${id}`
         );
         const data = response.data.data; // Assuming this returns an array of group objects
         setSelectedOptions(data); // Set the selected groups as objects
@@ -78,7 +78,7 @@ const AssignUserForm = ({ id, options }: Props) => {
     };
 
     try {
-      const response = await apiClient.post(assignUserToProjectAPI, data);
+      const response = await apiClient.post(ASSIGN_USER_TO_PROJECT_API, data);
       // notifyCreate(updated);
       console.log(response);
       handleClose();

@@ -1,4 +1,4 @@
-// import { trackingAPI } from "../APIs";
+// import { TRACKING_API } from "../APIs";
 // import useData from "./useData";
 
 // export interface AttributeGroup {
@@ -7502,6 +7502,6 @@
 // }
 
 // const useAttributeGroups = ({ refresh }: Props) =>
-//   useData<AttributeGroup>({ refresh, endpoint: trackingAPI });
+//   useData<AttributeGroup>({ refresh, endpoint: TRACKING_API });
 
 // export default useAttributeGroups;

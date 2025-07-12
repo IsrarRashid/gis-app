@@ -1,5 +1,8 @@
-import { attributeGroupsAPI } from "../APIs";
+import { useMemo } from "react";
+import { ATTRIBUTE_GROUPS_API, EVALUATION_ATTRIBUTE_GROUPS_API } from "../APIs";
 import useData from "./useData";
+import { useSearchParams } from "next/navigation";
+import { TypeEnum } from "../dashboard/types/types";
 
 export interface AttributeGroup {
   id: number;
@@ -18,7 +21,18 @@ interface Props {
   refresh?: boolean;
 }
 
-const useAttributeGroups = ({ refresh = false }: Props = {}) =>
-  useData<AttributeGroup>({ refresh, endpoint: attributeGroupsAPI });
+const useAttributeGroups = ({ refresh = false }: Props = {}) => {
+  const serachParams = useSearchParams();
+  const dashboardType = serachParams.get("dashboardType");
+
+  // useMemo to ensure recomputation when dashboardType changes
+  const endpoint = useMemo(() => {
+    return dashboardType === TypeEnum.EVALUATION
+      ? EVALUATION_ATTRIBUTE_GROUPS_API
+      : ATTRIBUTE_GROUPS_API;
+  }, [dashboardType]);
+
+  return useData<AttributeGroup>({ refresh, endpoint });
+};
 
 export default useAttributeGroups;

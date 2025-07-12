@@ -1,6 +1,6 @@
 "use client";
 
-import { reverseGeoCodingAPI } from "@/app/APIs";
+import { REVERSE_GEO_CODING_API } from "@/app/APIs";
 import {
   AdvancedMarker,
   APIProvider,
@@ -41,7 +41,7 @@ const RecordingStaffTrackingMap: any = ({
     try {
       if (data && data.startAddressLat && data.startAddressLong) {
         const response = await fetch(
-          `${reverseGeoCodingAPI}${data.startAddressLat},${data.startAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
+          `${REVERSE_GEO_CODING_API}${data.startAddressLat},${data.startAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
         );
         const resopnseData = await response.json();
         setStartLocation(resopnseData.results[0].formatted_address);
@@ -55,7 +55,7 @@ const RecordingStaffTrackingMap: any = ({
     try {
       if (data && data.endAddressLat && data.endAddressLong) {
         const response = await fetch(
-          `${reverseGeoCodingAPI}${data.endAddressLat},${data.endAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
+          `${REVERSE_GEO_CODING_API}${data.endAddressLat},${data.endAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
         );
         const resopnseData = await response.json();
         setEndLocation(resopnseData.results[0].formatted_address);

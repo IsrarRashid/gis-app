@@ -1,4 +1,4 @@
-import { projectAPI } from "@/app/APIs";
+import { PROJECT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import ProgressBar from "@/app/components/ProgressBar";
@@ -73,7 +73,7 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
   const handleSubmit = async (id: number, visitId: number) => {
     try {
       const response = await apiClient.get(
-        `${projectAPI}/${id}?visitId=${visitId}`
+        `${PROJECT_API}/${id}?visitId=${visitId}`
       );
       setProjectsData(response.data.data);
       console.log("reports data", response.data.data);

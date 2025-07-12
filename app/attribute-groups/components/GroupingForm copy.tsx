@@ -1,4 +1,4 @@
-import { attributeGroupMappingAPI } from "@/app/APIs";
+import { ATTRIBUTE_GROUP_MAPPING_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -43,7 +43,7 @@ const GroupingForm: React.FC<GroupingFormProps> = ({
 
       try {
         const response = await axios.get(
-          `${attributeGroupMappingAPI}/${groupId}`,
+          `${ATTRIBUTE_GROUP_MAPPING_API}/${groupId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -92,7 +92,7 @@ const GroupingForm: React.FC<GroupingFormProps> = ({
 
     console.log("submit data: ", data);
     try {
-      const response = await axios.post(attributeGroupMappingAPI, data, {
+      const response = await axios.post(ATTRIBUTE_GROUP_MAPPING_API, data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

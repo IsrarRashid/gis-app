@@ -1,4 +1,4 @@
-import { visitAPI } from "@/app/APIs";
+import { VISIT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import Loader from "@/app/components/Loader";
@@ -12,6 +12,7 @@ import visitPlan from "@/public/icons/visitPlan.svg";
 import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import { exportDataToExcel } from "@/app/utils/exportToExcel";
+import styles from "./Dashboard.module.css";
 
 interface VisitsPlan {
   nameOfVisit: string;
@@ -53,7 +54,7 @@ const VisitsPlan = ({
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get(`${visitAPI}/GetVisitPlan`);
+      const response = await apiClient.get(`${VISIT_API}/GetVisitPlan`);
       setData(response.data.data);
       console.log("visits plan data", response.data.data);
       setLoading(false);
@@ -169,22 +170,37 @@ const VisitsPlan = ({
         size="xl"
         modalId="visitsPlan"
         button={
-          <Button
-            className="row d-flex flex-nowrap m-0 justify-content-center btn w-100 fw-normal fs14px"
+          <div
+            className="text-decoration-none cursor-pointer text-dark d-flex align-items-center justify-content-center"
             style={{
+              height: "62px",
               borderRadius: "8px",
               background: "#C6F1DF",
             }}
           >
-            <div className="col-auto pe-1 my-auto">
-              <Image src={visitPlan} alt="visitPlan" width={24} height={24} />
+            <div className="d-flex align-items-center justify-content-center">
+              <div className="me-2">
+                <Image src={visitPlan} alt="visitPlan" width={24} height={24} />
+              </div>
+              <div className="text-start">Visits Plan</div>
             </div>
-            <div className="col-auto p-0">
-              Visits
-              <br />
-              Plan
-            </div>
-          </Button>
+          </div>
+          // <Button
+          //   className="row d-flex flex-nowrap m-0 justify-content-center btn w-100 fw-normal fs14px"
+          //   style={{
+          //     borderRadius: "8px",
+          //     background: "#C6F1DF",
+          //   }}
+          // >
+          //   <div className="col-auto pe-1 my-auto">
+          //     <Image src={visitPlan} alt="visitPlan" width={24} height={24} />
+          //   </div>
+          //   <div className="col-auto p-0">
+          //     Visits
+          //     <br />
+          //     Plan
+          //   </div>
+          // </Button>
         }
         body={
           <div

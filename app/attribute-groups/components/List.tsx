@@ -1,5 +1,8 @@
 "use client";
-import { attributeGroupsAPI } from "@/app/APIs";
+import {
+  EVALUATION_ATTRIBUTE_GROUPS_API,
+  ATTRIBUTE_GROUPS_API,
+} from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
@@ -25,12 +28,17 @@ export interface Option {
   label: string;
 }
 
-const List = () => {
+const List = ({ dashboardType }: { dashboardType?: string }) => {
   const [refresh, setRefresh] = useState(false);
 
   const { data, setData, setError, error, isLoading } = useAttributeGroups({
     refresh,
   });
+
+  const ATTRIBUTE_GROUPS_API_ENDPOINT = dashboardType
+    ? EVALUATION_ATTRIBUTE_GROUPS_API
+    : ATTRIBUTE_GROUPS_API;
+
   const { data: attributes } = useAttributes({ refresh });
   const deleteMessage = "Deleted Successfully!";
 
@@ -84,7 +92,7 @@ const List = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${attributeGroupsAPI}/${id}`);
+      await apiClient.delete(`${ATTRIBUTE_GROUPS_API_ENDPOINT}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.id !== id));
       notifyCreate(deleteMessage);
@@ -117,7 +125,7 @@ const List = () => {
         form={
           <div className="col-auto">
             <Form
-              api={attributeGroupsAPI}
+              api={ATTRIBUTE_GROUPS_API_ENDPOINT}
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
@@ -192,14 +200,18 @@ const List = () => {
                     getFormattedDate(new Date(d.updatedAt), "short")}
                 </td>
                 <td className="text-center">
-                  <GroupingForm id={d.id} options={attributes} />
+                  <GroupingForm
+                    id={d.id}
+                    options={attributes}
+                    dashboardType={dashboardType}
+                  />
                 </td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
                 </td>
                 <td>
                   <Form
-                    api={attributeGroupsAPI}
+                    api={ATTRIBUTE_GROUPS_API_ENDPOINT}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}

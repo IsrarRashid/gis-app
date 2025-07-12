@@ -1,5 +1,5 @@
 "use client";
-import { filterSettingAPI } from "@/app/APIs";
+import { FILTER_SETTING_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
@@ -108,7 +108,7 @@ const FilterModal = ({
     const getFilters = async (userId: number) => {
       try {
         const response = await apiClient.get(
-          `${filterSettingAPI}/GetUserFilters?userId=${userId}`
+          `${FILTER_SETTING_API}/GetUserFilters?userId=${userId}`
         );
         setData(response.data.data);
         console.log("filtersss", response);
@@ -165,7 +165,7 @@ const FilterModal = ({
                           {d.label}
                         </label>
                         <select
-                        id={d.label}
+                          id={d.label}
                           ref={(el) => {
                             selectRefs.current[i] = el;
                           }} // Type-safe ref assignment

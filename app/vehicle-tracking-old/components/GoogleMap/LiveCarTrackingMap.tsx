@@ -1,6 +1,6 @@
 "use client";
 
-import { trackingAPI } from "@/app/APIs";
+import { TRACKING_API } from "@/app/APIs";
 import {
   AdvancedMarker,
   APIProvider,
@@ -204,7 +204,7 @@ const MapWithMarkers = () => {
 
     const fetchCoordinates = async () => {
       try {
-        const response = await fetch(trackingAPI);
+        const response = await fetch(TRACKING_API);
         const data: Tracking = await response.json();
         setAPIData(data);
         const coordinatesList = data["GBB-062"]["coordnaties list"];

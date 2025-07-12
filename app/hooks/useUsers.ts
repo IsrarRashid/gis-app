@@ -1,4 +1,4 @@
-import { userAPI } from "../APIs";
+import { USER_API } from "../APIs";
 import useData from "./useData";
 
 export interface User {
@@ -23,6 +23,6 @@ interface Props {
 }
 
 const useUsers = ({ refresh = false }: Props = {}) =>
-  useData<User>({ refresh, endpoint: userAPI });
+  useData<User>({ refresh, endpoint: USER_API });
 
 export default useUsers;

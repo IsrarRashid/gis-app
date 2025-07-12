@@ -1,4 +1,4 @@
-import { coordinatesAPI } from "@/app/APIs";
+import { COORDINATES_API } from "@/app/APIs";
 import apiClient from "@/app/services/api-client";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -75,7 +75,7 @@ const MapCarsRecordedComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiClient.get(`${coordinatesAPI}/${visitId}`);
+        const response = await apiClient.get(`${COORDINATES_API}/${visitId}`);
         setData(response.data.data);
         if (data) {
           const newPath: [number, number][] = data.map((coord) => [

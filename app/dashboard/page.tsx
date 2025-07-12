@@ -1,25 +1,25 @@
 import Dashboard from "./components/Dashboard";
-import { Status, StatusEnum } from "./types/status";
+import { DashboardType, TypeEnum } from "./types/types";
 
 interface Props {
   searchParams: Promise<{
-    status: Status;
+    dashboardType: DashboardType;
   }>;
 }
 
 const DashboardPage = async ({ searchParams }: Props) => {
-  const { status } = await searchParams;
+  const { dashboardType } = await searchParams;
 
-  const statuses = Object.values(StatusEnum) as StatusEnum[]; // Cast to StatusEnum[]
-  const currentStatus = statuses.includes(status as StatusEnum)
-    ? (status as StatusEnum)
-    : StatusEnum.MONITORING;
+  const types = Object.values(TypeEnum) as TypeEnum[]; // Cast to TypeEnum[]
+  const currentType = types.includes(dashboardType as TypeEnum)
+    ? (dashboardType as TypeEnum)
+    : undefined;
 
-  console.log("statuses array:", statuses);
-  console.log("searchParams status", status);
-  console.log("currentStatus", currentStatus);
+  console.log("types array:", types);
+  console.log("searchParams status", dashboardType);
+  console.log("currentStatus", currentType);
 
-  return <Dashboard status={currentStatus} />;
+  return <Dashboard dashboardType={currentType} />;
 };
 
 export default DashboardPage;

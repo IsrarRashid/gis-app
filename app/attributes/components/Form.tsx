@@ -48,6 +48,7 @@ interface Option {
   condition: string;
   createdAt: string;
   updatedAt: string;
+  remarks: string;
 }
 
 interface Props {
@@ -133,6 +134,7 @@ const Form = ({
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       label: "",
+      remarks: "",
     },
   ]);
 
@@ -199,6 +201,7 @@ const Form = ({
               updatedAt: new Date().toISOString(),
               label: "",
               condition: "",
+              remarks: "",
             },
           ]
         );
@@ -269,6 +272,7 @@ const Form = ({
         isActive: 0,
         label: "",
         condition: "",
+        remarks: "",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -416,6 +420,7 @@ const Form = ({
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
                 label: "",
+                remarks: "",
               },
             ]);
             setActiveStates({});
@@ -1012,7 +1017,7 @@ const Form = ({
                         key={index}
                         className="row d-flex justify-content-end align-items-center mb-3"
                       >
-                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3 text-start">
+                        <div className="col-lg-2 col-md-6 col-sm-6 mb-3 text-start">
                           <label
                             htmlFor={`value-${index}`}
                             className="form-label text-white"
@@ -1029,7 +1034,7 @@ const Form = ({
                             placeholder="Enter Value"
                           />
                         </div>
-                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3 text-start">
+                        <div className="col-lg-2 col-md-6 col-sm-6 mb-3 text-start">
                           <label
                             htmlFor={`label-${index}`}
                             className="form-label text-white"
@@ -1046,7 +1051,7 @@ const Form = ({
                             placeholder="Enter Label"
                           />
                         </div>
-                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3 text-start">
+                        <div className="col-lg-2 col-md-6 col-sm-6 mb-3 text-start">
                           <label
                             htmlFor="sortId"
                             className="form-label text-white"
@@ -1063,7 +1068,7 @@ const Form = ({
                             placeholder="Enter sortId value"
                           />
                         </div>
-                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3 text-start">
+                        <div className="col-lg-2 col-md-6 col-sm-6 mb-3 text-start">
                           <label
                             htmlFor={`condition-${index}`}
                             className="form-label text-white"
@@ -1080,7 +1085,24 @@ const Form = ({
                             placeholder="Enter Condition"
                           />
                         </div>
-                        <div className="col-auto text-start">
+                        <div className="col-lg-2 col-md-6 col-sm-6 mb-3 text-start">
+                          <label
+                            htmlFor={`remarks-${index}`}
+                            className="form-label text-white"
+                          >
+                            Description
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control form-control-sm color-light-dark"
+                            id={`remarks-${index}`}
+                            name="remarks"
+                            value={option.remarks}
+                            onChange={(e) => handleOptionChange(index, e)}
+                            placeholder="Enter Description"
+                          />
+                        </div>
+                        <div className="col-lg-2 col-md-6 col-sm-6 text-start my-auto">
                           <div className="form-check form-switch">
                             <label
                               className="form-check-label text-white"

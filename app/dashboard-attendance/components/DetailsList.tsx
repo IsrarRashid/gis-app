@@ -129,7 +129,7 @@ const DetailsList = ({ attendanceDetails, slug }: Props) => {
             form={
               //   <div className="col-auto">
               //     <SectorForm
-              //       api={sectorAPI}
+              //       api={SECTOR_API}
               //       method="POST"
               //       setRefresh={setRefresh}
               //       refresh={refresh}

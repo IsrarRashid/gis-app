@@ -1,6 +1,6 @@
 "use client";
 
-import { singleProjectDashboardAPI } from "@/app/APIs";
+import { SINGLE_PROJECT_DASHBOARD_API } from "@/app/APIs";
 import { setContent } from "@/app/features/content/contentSlice";
 import apiClient from "@/app/services/api-client";
 import { Lexend } from "next/font/google";
@@ -239,7 +239,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
   const handleSubmit = async (projectId: number, visitId: number) => {
     try {
       const response = await apiClient.get(
-        `${singleProjectDashboardAPI}?projectid=${projectId}&visitId=${visitId}`
+        `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`
       );
       setData(response.data.data);
       console.log(
@@ -426,12 +426,12 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
             >
               <div className="row d-flex m-0">
                 <div className="col">
-                  <p className="fw-bold fs24px p-1 pt-0 m-0">
+                  <p className="fw-bold fs23px p-1 pt-0 m-0">
                     Physical Progress
                   </p>
                 </div>
                 <div className="col">
-                  <p className="fw-bold fs24px p-1 pt-0 m-0">
+                  <p className="fw-bold fs23px p-1 pt-0 m-0">
                     Financial Progress
                   </p>
                 </div>
@@ -467,9 +467,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                               : "Lag in Physical Progress"
                             : attribute.label
                         }
-                        showTides={true}
-                        tideOneImage="/images/tideOne.png"
-                        tideTwoImage="/images/tideTwo.png"
+                        showTides={false}
                         showPercentageSign={true}
                       />
                     ))}
@@ -503,9 +501,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                               : "Lead in Financial Progress"
                             : attribute.label
                         }
-                        showTides={true}
-                        tideOneImage="/images/tideOne.png"
-                        tideTwoImage="/images/tideTwo.png"
+                        showTides={false}
                         showPercentageSign={true}
                       />
                     ))}

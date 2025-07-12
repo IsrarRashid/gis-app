@@ -1,5 +1,9 @@
 @import "leaflet/dist/leaflet.css";
 
+main {
+  min-height: calc(100vh - 100px);
+}
+
 #map {
   height: 100vh;
   width: 100%;
@@ -7,30 +11,37 @@
 
 .color-dark-blue {
   color: #108fa8 !important;
+  transition: all 0.3s;
 }
 
 .color-sea-blue {
   color: #0c8ce9 !important;
+  transition: all 0.3s;
 }
 
 .bg-color-light-blue {
   background: #72b8ea !important;
+  transition: all 0.3s;
 }
 
 .bg-color-sea-blue {
   background: #0c8ce9 !important;
+  transition: all 0.3s;
 }
 
 .bg-color-matte-blue {
   background: #4bacc6 !important;
+  transition: all 0.3s;
 }
 
 .bg-color-matte-light-blue {
   background: #c6d9f1 !important;
+  transition: all 0.3s;
 }
 
 .bg-color-sea-green {
   background: #108fa8 !important;
+  transition: all 0.3s;
 }
 
 .bg-transparent {
@@ -39,22 +50,47 @@
 
 .bg-white {
   background: #fff !important;
+  transition: all 0.3s;
 }
 
 .color-light-dark {
   color: #7e7e7e !important;
+  transition: all 0.3s;
 }
 
 .bg-color-light-gray {
   background: #c4c4c4 !important;
+  transition: all 0.3s;
 }
 
 .color-dark-gray {
   color: #344054 !important;
+  transition: all 0.3s;
 }
 
 .bg-silver {
   background: #d9d9d9 !important;
+  transition: all 0.3s;
+}
+
+.color-evaluation-light-blue {
+  color: #2377b6;
+  transition: all 0.3s;
+}
+
+.bg-color-evaluation-light-blue {
+  color: #2377b6;
+  transition: all 0.3s;
+}
+
+.color-evaluation-dark-blue {
+  color: #155e95;
+  transition: all 0.3s;
+}
+
+.bg-color-evaluation-dark-blue {
+  color: #155e95;
+  transition: all 0.3s;
 }
 
 .custom-modal .modal-content {
@@ -62,9 +98,14 @@
   border: none;
 }
 
-.custom-modal {
+.gismenu-modal .modal-content {
+  background: rgba(255, 255, 255, 0) !important;
+  border: none;
+}
+
+.gismenu-modal {
   max-width: none !important;
-  width: 90%;
+  width: 98%;
 }
 
 .new-custom-modal .modal-content {
@@ -170,6 +211,10 @@ select {
   font-size: 1.5rem !important;
 }
 
+.fs23px {
+  font-size: 1.438rem !important;
+}
+
 .fs22px {
   font-size: 1.375rem !important;
 }
@@ -198,16 +243,16 @@ select {
   font-size: 0.875rem !important;
 }
 
-.fs11px {
-  font-size: 0.688rem !important;
+.fs13px {
+  font-size: 0.813rem;
 }
 
 .fs12px {
   font-size: 0.75rem !important;
 }
 
-.fs13px {
-  font-size: 0.813rem;
+.fs11px {
+  font-size: 0.688rem !important;
 }
 
 .fs10px {
@@ -250,6 +295,7 @@ select {
 /* dashboardThree search input */
 .dSearchInput::placeholder {
   color: #1b2559 !important;
+  transition: all 0.3s;
   font-weight: 500 !important;
 }
 
@@ -283,17 +329,36 @@ select {
 /* Track */
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
+  transition: all 0.3s;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #22a3bd;
+  border-radius: 10px;
+  transition: all 0.3s;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #108fa8;
+  transition: all 0.3s;
 }
+
+/* .ps__rail-y {
+  background: transparent;
+  width: 4px;
+}
+.ps:hover .ps__rail-y {
+  width: 16px;
+}
+.ps__thumb-y {
+  background-color: #22a3bd !important;
+  border-radius: 4px;
+}
+.ps:hover .ps__thumb-y {
+  background-color: #108fa8 !important;
+} */
 
 #dateFilterSideNavAccordian .accordion-button {
   background-color: rgba(180, 222, 240, 0.9) !important;

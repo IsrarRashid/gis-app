@@ -1,4 +1,4 @@
-import { visitNewAPI } from "../APIs";
+import { VISIT_NEW_API } from "../APIs";
 import useData from "./useData";
 
 export interface VisitNew {
@@ -30,6 +30,6 @@ interface Props {
 }
 
 const useVisitsNew = ({ refresh = false }: Props = {}) =>
-  useData<VisitNew>({ refresh, endpoint: visitNewAPI });
+  useData<VisitNew>({ refresh, endpoint: VISIT_NEW_API });
 
 export default useVisitsNew;

@@ -1,4 +1,4 @@
-import { mainDashboardAPI, staffTrackingAPI } from "@/app/APIs";
+import { MAIN_DASHBOARD_API, STAFF_TRACKING_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import Spinner from "@/app/components/Spinner";
 import useAuthentication from "@/app/hooks/useAuthentication";
@@ -79,7 +79,7 @@ const ReportAnalysis = () => {
     console.log("status", status);
     try {
       const response = await apiClient.post(
-        `${mainDashboardAPI}/GetProjectsListByStatus?status=${status}`,
+        `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
         [...cmInitiativeFilters]
       );
       setProjectsData(response.data.data);
@@ -167,7 +167,7 @@ const ReportAnalysis = () => {
   ) => {
     try {
       const response = await apiClient.post<StaffTrackingData>(
-        staffTrackingAPI,
+        STAFF_TRACKING_API,
         recordingTrackingRequestBody
       );
       // console.log("recording data Israr:", response.data.data[0]);

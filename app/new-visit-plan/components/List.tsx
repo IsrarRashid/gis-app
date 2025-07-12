@@ -407,7 +407,7 @@ const List = () => {
         >
           <thead>
             <tr
-              className={`color-dark-blue cursor-pointer fs12px ${inter.className}`}
+              className={`color-dark-blue cursor-pointer fs14px ${inter.className}`}
             >
               <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
                 Sr. No.

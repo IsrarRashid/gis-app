@@ -1,4 +1,4 @@
-import { sectorAPI } from "../APIs";
+import { SECTOR_API } from "../APIs";
 import useData from "./useData";
 
 export interface Sector {
@@ -16,6 +16,6 @@ interface Props {
 }
 
 const useSectors = ({ refresh = false }: Props = {}) =>
-  useData<Sector>({ refresh, endpoint: sectorAPI });
+  useData<Sector>({ refresh, endpoint: SECTOR_API });
 
 export default useSectors;

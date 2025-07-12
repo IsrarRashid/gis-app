@@ -1,4 +1,4 @@
-import { superGroupApi } from "@/app/APIs";
+import { EVALUATION_SUPER_GROUP_API, SUPER_GROUP_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import { SuperGroup } from "@/app/hooks/useSuperGroups";
 import apiClient from "@/app/services/api-client";
@@ -9,34 +9,32 @@ import Select, { ActionMeta, MultiValue } from "react-select";
 import { toast } from "react-toastify";
 import groupGrey from "../../../public/icons/groupGray.svg";
 import { Option } from "./List";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
   id: number;
   options: Option[];
   superGroups: SuperGroup[];
+  dashboardType?: string;
 }
 
-interface SuperGroupData {
-  data: SuperGroup[];
-}
-
-const GroupingForm = ({ id, options }: Props) => {
+const GroupingForm = ({ id, options, dashboardType, superGroups }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
   const modalId = `groupModal-${id}`; // Unique modal ID
   const [refresh, setRefresh] = useState(false);
   const [show, setShow] = useState(false);
-  const [superGroups, setSuperGroups] = useState<SuperGroup[]>();
   const handleShow = async () => {
     setShow(true);
     setRefresh(!refresh);
   };
   const handleClose = () => setShow(false);
 
-  const fetchSelectedOptions = async () => {
+  const SUPER_GROUP_API_Endpoint = dashboardType
+    ? EVALUATION_SUPER_GROUP_API
+    : SUPER_GROUP_API;
+
+  const fetchSelectedOptions = async (superGroups: SuperGroup[]) => {
     try {
-      const response = await apiClient.get<SuperGroupData>(`${superGroupApi}`);
-      const data = response.data.data; // Assuming this returns an array of group objects
-      setSuperGroups(data);
       const matchedSuperGroup = superGroups?.find(
         (superGroup) => superGroup.id === id
       );
@@ -60,8 +58,8 @@ const GroupingForm = ({ id, options }: Props) => {
 
   // Fetch previously selected groups
   useEffect(() => {
-    fetchSelectedOptions();
-  }, [id, refresh, show]);
+    fetchSelectedOptions(superGroups);
+  }, [id, refresh, show, superGroups]);
 
   const handleSelectGroup = (
     newValue: MultiValue<{ value: number; label: string }>,
@@ -96,7 +94,7 @@ const GroupingForm = ({ id, options }: Props) => {
 
     try {
       const response = await apiClient.post(
-        `${superGroupApi}/addGroupsToSuperGroup`,
+        `${SUPER_GROUP_API_Endpoint}/addGroupsToSuperGroup`,
         data
       );
       // notifyCreate(updated);

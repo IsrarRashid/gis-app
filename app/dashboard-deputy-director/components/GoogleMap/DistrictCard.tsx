@@ -15,6 +15,7 @@ const DistrictCard = ({ data }: Props) => {
       className="card border-0"
       style={{
         borderRadius: "10px",
+        padding: "10px",
       }}
     >
       <div className="col fw-bold fs-6">{data.divisionName}</div>

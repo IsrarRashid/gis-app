@@ -1,4 +1,4 @@
-import { vehicleApi } from "@/app/APIs";
+import { VEHICLE_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import useVehicle from "@/app/hooks/useVehicle";
 import apiClient from "@/app/services/api-client";
@@ -85,7 +85,7 @@ const Vehicles = () => {
   useEffect(() => {
     const handleSubmit = async () => {
       try {
-        const response = await apiClient.get(`${vehicleApi}/GetVehiclesList`);
+        const response = await apiClient.get(`${VEHICLE_API}/GetVehiclesList`);
         console.log("Response:", response);
         setData(response.data.data);
       } catch (err) {

@@ -1,20 +1,10 @@
-"use client";
-import { useState } from "react";
 import ProjectsList from "./ProjectsList";
 import ListWrapper from "@/app/components/ListWrapper";
 
-const Projects = () => {
-  const [refresh, setRefresh] = useState(false);
-  const [showData, setShowData] = useState(false);
-
+const Projects = ({ dashboardType }: { dashboardType?: string }) => {
   return (
     <ListWrapper>
-      <ProjectsList
-        refresh={refresh}
-        setRefresh={setRefresh}
-        showData={showData}
-        setShowData={setShowData}
-      />
+      <ProjectsList dashboardType={dashboardType} />
       {/* <span>
           Image:
           <DownloadPDFBtn />

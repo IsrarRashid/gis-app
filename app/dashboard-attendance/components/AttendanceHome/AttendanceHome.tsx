@@ -1,5 +1,5 @@
 "use client";
-import { dashboardAttendanceAPI } from "@/app/APIs";
+import { DASHBOARD_ATTENDANCE_API } from "@/app/APIs";
 import Loader from "@/app/components/Loader";
 import apiClient from "@/app/services/api-client";
 import Link from "next/link";
@@ -35,7 +35,7 @@ const AttendanceHome = () => {
   useEffect(() => {
     const handleSubmit = async () => {
       try {
-        const response = await apiClient.get(dashboardAttendanceAPI);
+        const response = await apiClient.get(DASHBOARD_ATTENDANCE_API);
         setData(response.data);
         console.log("attendace data ", response);
       } catch (err) {
@@ -46,7 +46,7 @@ const AttendanceHome = () => {
   }, []);
 
   // const res = await fetch(
-  //   `${process.env.NEXT_PUBLIC_BACKEND_API}${dashboardAttendanceAPI}`
+  //   `${process.env.NEXT_PUBLIC_BACKEND_API}${DASHBOARD_ATTENDANCE_API}`
   // );
   // const attendanceData: DashboardAttendance = await res.json();
 

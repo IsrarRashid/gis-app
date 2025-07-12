@@ -1,5 +1,5 @@
 "use client";
-import { superGroupApi } from "@/app/APIs";
+import { EVALUATION_SUPER_GROUP_API, SUPER_GROUP_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
@@ -32,10 +32,16 @@ export interface Option {
   name: string;
 }
 
-const List = ({ refresh, setRefresh }: ListProps) => {
+const List = ({ dashboardType }: { dashboardType?: string }) => {
+  const [refresh, setRefresh] = useState(false);
   const { data, setData, setError, error, isLoading } = useSuperGroups({
     refresh,
   });
+
+  const SUPER_GROUP_API_ENDPOINT = dashboardType
+    ? EVALUATION_SUPER_GROUP_API
+    : SUPER_GROUP_API;
+
   const { data: attributeGroups } = useAttributeGroups({ refresh });
   const deleteMessage = "Deleted Successfully!";
 
@@ -89,7 +95,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${superGroupApi}/${id}`);
+      await apiClient.delete(`${SUPER_GROUP_API_ENDPOINT}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.id !== id));
       notifyCreate(deleteMessage);
@@ -123,10 +129,9 @@ const List = ({ refresh, setRefresh }: ListProps) => {
         form={
           <div className="col-auto">
             <Form
-              api={superGroupApi}
+              api={SUPER_GROUP_API_ENDPOINT}
               method="POST"
               setRefresh={setRefresh}
-              refresh={refresh}
             />
           </div>
         }
@@ -173,6 +178,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                     id={d.id}
                     options={attributeGroups}
                     superGroups={data}
+                    dashboardType={dashboardType}
                   />
                 </td>
                 <td>
@@ -180,11 +186,10 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 </td>
                 <td>
                   <Form
-                    api={superGroupApi}
+                    api={SUPER_GROUP_API_ENDPOINT}
                     method="PUT"
                     id={d.id}
                     setRefresh={setRefresh}
-                    refresh={refresh}
                   />
                 </td>
               </tr>

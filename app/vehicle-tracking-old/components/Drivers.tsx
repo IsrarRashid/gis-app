@@ -1,4 +1,4 @@
-import { driverApi } from "@/app/APIs";
+import { DRIVER_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import apiClient from "@/app/services/api-client";
 import { motion } from "framer-motion";
@@ -44,7 +44,7 @@ const Drivers = () => {
   const handleSubmit = async (status: string) => {
     try {
       const response = await apiClient.get(
-        `${driverApi}/GetDriversList?status=${status}`
+        `${DRIVER_API}/GetDriversList?status=${status}`
       );
       setData(response.data.data);
       console.log("Response:", response);

@@ -61,7 +61,7 @@ const TableHeader = ({
       </div>
       <div className="row d-flex justify-content-between p-3 m-0">
         <div className="col-lg-6 col-md-5 col-sm-12">
-          <p>
+          <p className="fw-5">
             Showing:{" "}
             {status ? (
               <span className="fw-bold">

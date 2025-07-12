@@ -1,5 +1,5 @@
 import React from "react";
-import { DEPARTMENT_API, sectorAPI } from "../../APIs";
+import { DEPARTMENT_API, SECTOR_API } from "../../APIs";
 import { cookies } from "next/headers";
 import { DM_Sans, Inter } from "next/font/google";
 import { addDayToFormattedDate, getFormattedDate } from "../../utils";
@@ -62,7 +62,7 @@ const DepartmentsPage = async () => {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_API}${sectorAPI}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_API}${SECTOR_API}`,
       {
         cache: "no-store",
         headers: {

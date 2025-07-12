@@ -3,10 +3,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import apiClient from "@/app/services/api-client";
-import { reportsHistoryAPI } from "@/app/APIs";
+import { REPORTS_HISTORY_API } from "@/app/APIs";
 import { SubmittedReport } from "@/app/report-history/list/components/List";
 
-const ReportReview = () => {
+const ReportReview = ({
+  dashboardType,
+}: {
+  dashboardType: string | null | undefined;
+}) => {
   const [data, setData] = useState<SubmittedReport[]>();
   const [role, setRole] = useState<string>();
   const [userId, setUserId] = useState<number>();
@@ -29,7 +33,7 @@ const ReportReview = () => {
     const handleSubmit = async (userId: number) => {
       try {
         const response = await apiClient.get(
-          `${reportsHistoryAPI}/GetSubmittedReports?submittedTo=${userId}`
+          `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`
         );
         setData(response.data.data);
       } catch (err) {
@@ -69,18 +73,27 @@ const ReportReview = () => {
             outline="1px solid rgba(12, 233, 174, 0.4)"
             icon="/icons/reportReview.svg"
             value={
-              data?.filter(
-                (d) => d.submittedTo === userId || d.submittedFrom === userId
-              ).length || 0
+              dashboardType
+                ? 0
+                : data?.filter(
+                    (d) =>
+                      d.submittedTo === userId || d.submittedFrom === userId
+                  ).length || 0
             }
             label="Report Review"
             showTides={true}
             showArrow={true}
             textWrap={false}
           />
-          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {data?.filter((d) => d.submittedTo === userId).length}
-          </span>
+          {dashboardType ? (
+            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              0
+            </span>
+          ) : (
+            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {data?.filter((d) => d.submittedTo === userId).length}
+            </span>
+          )}
         </Link>
       )}
     </>

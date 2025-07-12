@@ -1,6 +1,6 @@
 "use client";
 
-import { generateReportAPI } from "@/app/APIs";
+import { GENERATE_REPORT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import Spinner from "@/app/components/Spinner";
@@ -143,7 +143,7 @@ const MasterReport = () => {
     try {
       setSubmitting(true);
       const response = await apiClient.post(
-        `${generateReportAPI}/GeneratePowerPoint`,
+        `${GENERATE_REPORT_API}/GeneratePowerPoint`,
         {
           pirority: mrStatus,
           to: new Date(toDate).toISOString().split("T")[0],
@@ -190,7 +190,7 @@ const MasterReport = () => {
     });
     try {
       const response = await apiClient.post(
-        `${generateReportAPI}/GetSectorAsync`,
+        `${GENERATE_REPORT_API}/GetSectorAsync`,
         {
           pirority: mrStatus,
           to: new Date(toDate).toISOString().split("T")[0],
@@ -237,7 +237,7 @@ const MasterReport = () => {
   //   });
   //   try {
   //     const response = await apiClient.post(
-  //       `${generateReportAPI}/GetSectorAsync`,
+  //       `${GENERATE_REPORT_API}/GetSectorAsync`,
   //       {
   //         pirority: priority,
   //         to: new Date(toDate).toISOString().split("T")[0],

@@ -9,7 +9,7 @@ import passwordGrey from "../../public/icons/passwordGrey.svg";
 import userGrey from "../../public/icons/userGrey.svg";
 import verticalLineGrey from "../../public/icons/verticalLineGrey.svg";
 import bgVideoNew from "../../public/video/bgVideoNew.mp4";
-import { loginAPI } from "../APIs";
+import { LOGIN_API } from "../APIs";
 import apiClient, { AxiosError, ErrorResponse } from "../services/api-client";
 import Button from "./Button";
 import Spinner from "./Spinner";
@@ -74,7 +74,7 @@ const Login = () => {
     console.log("Form Data:", formData);
     try {
       setSubmitting(true);
-      const response = await apiClient.post<Props>(loginAPI, formData);
+      const response = await apiClient.post<Props>(LOGIN_API, formData);
 
       if (response.data.responseCode === 200) {
         console.log("responseCode", response.data.responseCode);
@@ -175,7 +175,7 @@ const Login = () => {
           bottom: "0",
           minWidth: "100%",
           minHeight: "100%",
-          zIndex: "0",
+          zIndex: "1",
         }}
       >
         <source src={bgVideoNew} type="video/mp4" />
@@ -189,14 +189,14 @@ const Login = () => {
           width: "100%",
           height: "100%",
           backgroundColor: "rgba(0,0,0,0.6)",
-          zIndex: 0,
+          zIndex: 1,
         }}
       ></div>
       <div
         className="container"
         style={{
           position: "relative",
-          zIndex: "1",
+          zIndex: "2",
         }}
       >
         <div className="row d-flex justify-content-center">
@@ -357,7 +357,7 @@ const Login = () => {
                   )}
                 </div>
               </div>
-              <div className="form-check" style={{ marginBottom: "20px" }}>
+              {/* <div className="form-check" style={{ marginBottom: "20px" }}>
                 <input
                   type="checkbox"
                   className="form-check-input"
@@ -369,7 +369,7 @@ const Login = () => {
                 >
                   Remember Me
                 </label>
-              </div>
+              </div> */}
               <div className="row d-flex flex-colum justify-content-center">
                 <div className="col">
                   <Button

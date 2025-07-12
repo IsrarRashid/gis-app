@@ -1,5 +1,5 @@
 "use client";
-import { getUserProjectsAPI, visitAPI } from "@/app/APIs";
+import { GET_USER_PROJECTS_API, VISIT_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
@@ -119,7 +119,7 @@ const VisitsList = () => {
   const handleSubmit = async (id: number) => {
     try {
       const response = await apiClient.get(
-        `${getUserProjectsAPI}?userId=${id}`
+        `${GET_USER_PROJECTS_API}?userId=${id}`
       );
       console.log("Response:", response);
       setData(response.data.data);
@@ -132,7 +132,7 @@ const VisitsList = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await apiClient.delete(`${visitAPI}/${id}`);
+      await apiClient.delete(`${VISIT_API}/${id}`);
       // remove the deleted item from the data array
       setData((prevData) => prevData.filter((item) => item.id !== id));
       notifyCreate(deleteMessage);
@@ -158,7 +158,7 @@ const VisitsList = () => {
             <>
               <div className="col-auto text-end mb-2">
                 <Form
-                  api={visitAPI}
+                  api={VISIT_API}
                   method={"POST"}
                   setRefresh={setRefresh}
                   refresh={refresh}
@@ -323,7 +323,7 @@ const VisitsList = () => {
                 </td>
                 <td>
                   <Form
-                    api={visitAPI}
+                    api={VISIT_API}
                     method={"PUT"}
                     setRefresh={setRefresh}
                     refresh={refresh}

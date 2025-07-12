@@ -1,9 +1,9 @@
 "use client";
 import {
-  getUserProjectsAPI,
-  reverseGeoCodingAPI,
-  staffTrackingAPI,
-  visitAPI,
+  GET_USER_PROJECTS_API,
+  REVERSE_GEO_CODING_API,
+  STAFF_TRACKING_API,
+  VISIT_API,
 } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
@@ -174,7 +174,7 @@ const StaffTracking = () => {
   ) => {
     try {
       const response = await apiClient.post(
-        staffTrackingAPI,
+        STAFF_TRACKING_API,
         trackingRequestBody
       );
       if (response.data.data) {
@@ -254,7 +254,7 @@ const StaffTracking = () => {
     console.log("recordingTrackingRequestBody", recordingTrackingRequestBody);
     try {
       const response = await apiClient.post(
-        staffTrackingAPI,
+        STAFF_TRACKING_API,
         recordingTrackingRequestBody
       );
       console.log("recording data Israr:", response.data.data);
@@ -285,7 +285,7 @@ const StaffTracking = () => {
     try {
       if (data && data.startAddressLat && data.startAddressLong) {
         const response = await fetch(
-          `${reverseGeoCodingAPI}${data.startAddressLat},${data.startAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
+          `${REVERSE_GEO_CODING_API}${data.startAddressLat},${data.startAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
         );
         const resopnseData = await response.json();
         setStartLocation(resopnseData.results[0].formatted_address);
@@ -299,7 +299,7 @@ const StaffTracking = () => {
     try {
       if (data && data.endAddressLat && data.endAddressLong) {
         const response = await fetch(
-          `${reverseGeoCodingAPI}${data.endAddressLat},${data.endAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
+          `${REVERSE_GEO_CODING_API}${data.endAddressLat},${data.endAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
         );
         const resopnseData = await response.json();
         setEndLocation(resopnseData.results[0].formatted_address);
@@ -329,7 +329,7 @@ const StaffTracking = () => {
   const handleUserSubmit = async (id: number) => {
     try {
       const response = await apiClient.get(
-        `${getUserProjectsAPI}?userId=${id}`
+        `${GET_USER_PROJECTS_API}?userId=${id}`
       );
       console.log("Response:", response);
       setUserProjects(response.data.data);
@@ -341,7 +341,7 @@ const StaffTracking = () => {
   const handleProjectSubmit = async (projectId: number, userId: number) => {
     try {
       const response = await apiClient.get(
-        `${visitAPI}/GetVisitsByProjectId?ProjectId=${projectId}&userId=${userId}`
+        `${VISIT_API}/GetVisitsByProjectId?ProjectId=${projectId}&userId=${userId}`
       );
       console.log("Response:", response);
       setUserVisits(response.data.data);

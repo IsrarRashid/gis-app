@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 const ListWrapper = ({ children }: PropsWithChildren) => {
   return (
     <div
-      className="shadow"
+      className="shadow-sm"
       style={{
         backgroundImage:
           "linear-gradient(to bottom right, rgba(255, 255, 255, 0.6) , rgba(255, 255, 255, 0.1))",

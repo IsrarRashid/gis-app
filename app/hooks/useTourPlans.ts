@@ -1,4 +1,4 @@
-import { tourPlanAPI } from "../APIs";
+import { TOUR_PLAN_API } from "../APIs";
 import useData from "./useData";
 import Cookies from "js-cookie";
 
@@ -23,7 +23,7 @@ const useTourPlans = ({ refresh = false }: Props = {}) => {
 
   return useData<TourPlan>({
     refresh,
-    endpoint: tourPlanAPI + `?departmentId=${departmentId}`,
+    endpoint: TOUR_PLAN_API + `?departmentId=${departmentId}`,
   });
 };
 
