@@ -1,12 +1,23 @@
 import Button from "@/app/components/Button";
-import useAttributes, { Attribute } from "@/app/hooks/useAttributes";
+import CustomToggleSwitch from "@/app/components/CustomToggleSwitch";
+import TrashIcon from "@/app/components/TrashIcon";
+import { Attribute } from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
+import { customSelectStyles, defaultOption, OptionType } from "@/app/utils";
+import { Manrope } from "next/font/google";
 import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import Modal from "react-bootstrap/Modal";
+import Select, { ActionMeta, SingleValue } from "react-select";
 import { toast } from "react-toastify";
 import more from "../../../public/icons/more.svg";
-
+import FormWrapper from "@/app/components/Form/FormWrapper";
 interface Form {
   attributeId: number;
   attributeDataType: string;
@@ -80,6 +91,15 @@ const Form = ({
   const [activeStates, setActiveStates] = useState<{ [key: number]: boolean }>(
     {}
   );
+  const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLElement | null>(
+    null
+  );
+
+  useEffect(() => {
+    // This code only runs on the client side after the component mounts
+    setMenuPortalTarget(document.body);
+  }, []);
+
   const modalId = `formModal-${id}`;
   const handleCheckboxChange = (index: number) => {
     setActiveStates((prevStates) => ({
@@ -237,6 +257,7 @@ const Form = ({
       [name]: value,
     }));
   };
+
   const handleDatalistSelect = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -260,6 +281,19 @@ const Form = ({
       )
     );
   };
+
+  function handleSelectChange<Key extends keyof Attribute>(
+    name: Key,
+    newValue: SingleValue<OptionType>,
+    actionMeta: ActionMeta<OptionType>,
+    setFormData: Dispatch<SetStateAction<Attribute>>
+  ) {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: newValue ? newValue.value : "",
+    }));
+    console.log({ name, newValue, actionMeta });
+  }
 
   // Function to handle adding new option
   const addNewOption = () => {
@@ -461,6 +495,50 @@ const Form = ({
     }
   };
 
+  const attributeDataTypes = ["String", "Number", "Date"];
+
+  const attributeDataTypeOptions = attributeDataTypes.map((dataType) => {
+    return {
+      value: dataType.toLowerCase(),
+      label: dataType,
+    };
+  });
+
+  const attributeTypes = [
+    "Textfield",
+    "Select",
+    "File",
+    "Radio",
+    "Slider",
+    "Textarea",
+    "Progress",
+    "Checkbox",
+    "Formula",
+  ];
+
+  const attributeTypeOptions = attributeTypes.map((dataType) => {
+    return {
+      value: dataType.toLowerCase(),
+      label: dataType,
+    };
+  });
+
+  const verificationTypes = ["Image", "Video"];
+
+  const verificationTypeOptions = verificationTypes.map((dataType) => {
+    return {
+      value: dataType.toLowerCase(),
+      label: dataType,
+    };
+  });
+
+  const smdpIdentifierOptions = projectDetailKeys?.map((key) => {
+    return {
+      value: key,
+      label: key,
+    };
+  });
+
   return (
     <>
       <Button
@@ -495,662 +573,958 @@ const Form = ({
           className="p-0"
           style={{ background: "rgba(156,255,255,0)" }}
         >
-          <div
-            className="container-fluid pt-3 pb-3 ps-4 pe-4"
-            style={{
-              backgroundImage:
-                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-              borderRadius: "15px",
-              border: "1.7px solid rgba(255, 255, 255, 0.6)",
-            }}
+          <FormWrapper
+            heading={method === "POST" ? "Add Attribute" : "Update Attribute"}
           >
-            <div className="row flex-column justify-content-center mb-4">
-              <div className="col-lg-12">
-                <p
-                  className="text-center text-white mt-4"
-                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
-                >
-                  {method === "POST" ? "ADD ATTRIBUTE" : "UPDATE ATTRIBUTE"}
-                </p>
-              </div>
-              <form
-                className="ps-lg-4 pe-lg-4 ps-md-4 pe-md-4"
-                onSubmit={handleSubmit}
+            <form onSubmit={handleSubmit}>
+              <div
+                className="row g-2 g-lg-3 mt-0"
+                style={{ marginBottom: "5px" }}
               >
-                <div className="row d-flex justify-content-between align-items-center mb-3">
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
-                    <label htmlFor="label" className="form-label text-white">
-                      Label
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      id="label"
-                      name="label"
-                      value={formData.label}
-                      onChange={handleChange}
-                      placeholder="Enter Label"
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="label"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Label
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    id="label"
+                    name="label"
+                    value={formData.label}
+                    onChange={handleChange}
+                    placeholder="Enter Label"
+                  />
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="placeholder"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Placeholder
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    id="placeholder"
+                    name="placeholder"
+                    value={formData.placeholder}
+                    onChange={handleChange}
+                    placeholder="Enter Placeholder"
+                  />
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="attributeDataType"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Attribute Data Type
+                  </label>
+                  <Select
+                    options={attributeDataTypeOptions}
+                    name="attributeDataType"
+                    id="attributeDataType"
+                    isClearable
+                    isSearchable
+                    styles={customSelectStyles}
+                    menuPlacement="auto"
+                    menuPosition="absolute"
+                    menuPortalTarget={menuPortalTarget}
+                    value={
+                      attributeDataTypeOptions.find(
+                        (opt) => opt.value === formData.attributeDataType
+                      ) || null
+                    }
+                    onChange={(nv, meta) =>
+                      handleSelectChange(
+                        "attributeDataType",
+                        nv,
+                        meta,
+                        setFormData
+                      )
+                    }
+                  />
+                  {/* <select
+                    className="form-select form-select-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    aria-label="Default select example"
+                    name="attributeDataType"
+                    id="attributeDataType"
+                    onChange={handleChange}
+                    value={formData.attributeDataType}
+                  >
+                    <option value="string">String</option>
+                    <option value="number">Number</option>
+                    <option value="date">Date</option>
+                  </select> */}
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="attributeType"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Attribute Type
+                  </label>
+                  <Select
+                    options={[defaultOption, ...attributeTypeOptions]}
+                    name="attributeType"
+                    id="attributeType"
+                    isClearable
+                    isSearchable
+                    styles={customSelectStyles}
+                    menuPlacement="auto"
+                    menuPosition="absolute"
+                    menuPortalTarget={menuPortalTarget}
+                    value={
+                      attributeTypeOptions.find(
+                        (opt) => opt.value === formData.attributeType
+                      ) || null
+                    }
+                    onChange={(nv, meta) =>
+                      handleSelectChange("attributeType", nv, meta, setFormData)
+                    }
+                  />
+                  {/* <select
+                    className="form-select form-select-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    aria-label="Default select example"
+                    name="attributeType"
+                    id="attributeType"
+                    onChange={handleChange}
+                    value={formData.attributeType}
+                  >
+                    <option value="">None</option>
+                    <option value="textfield">TextField</option>
+                    <option value="select">Select</option>
+                    <option value="file">File</option>
+                    -<option value="radio">Radio</option>
+                    <option value="slider">Slider</option>
+                    <option value="textarea">Textarea</option>
+                    <option value="progress">Progress</option>
+                    <option value="checkbox">Checkbox</option>
+                    <option value="formula">Formula</option>
+                  </select> */}
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="unit"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Unit
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    id="unit"
+                    name="unit"
+                    value={formData.unit}
+                    onChange={handleChange}
+                    placeholder="Enter Unit"
+                  />
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="validationRegx"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Validation Regx
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    id="validationRegx"
+                    name="validationRegx"
+                    value={formData.validationRegx}
+                    onChange={handleChange}
+                    placeholder="Enter Validation Regx"
+                  />
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="sortId"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Sort Id
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control form-control-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    id="sortId"
+                    name="sortId"
+                    value={formData.sortId}
+                    onChange={handleChange}
+                    placeholder="Enter Sort Id"
+                  />
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="verificationType"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Verification Type
+                  </label>
+                  <Select
+                    options={[defaultOption, ...verificationTypeOptions]}
+                    name="verificationType"
+                    id="verificationType"
+                    isClearable
+                    isSearchable
+                    styles={customSelectStyles}
+                    menuPlacement="auto"
+                    menuPosition="absolute"
+                    menuPortalTarget={menuPortalTarget}
+                    value={
+                      verificationTypeOptions.find(
+                        (opt) => opt.value === formData.verificationType
+                      ) || null
+                    }
+                    onChange={(nv, meta) =>
+                      handleSelectChange(
+                        "verificationType",
+                        nv,
+                        meta,
+                        setFormData
+                      )
+                    }
+                  />
+                  {/* <select
+                    className="form-select form-select-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    aria-label="Default select example"
+                    name="verificationType"
+                    id="verificationType"
+                    onChange={handleChange}
+                    value={formData.verificationType}
+                  >
+                    <option value="">None</option>
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                  </select> */}
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="smdpIdentifier"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Smdp Identifier
+                  </label>
+                  <Select
+                    options={[defaultOption, ...smdpIdentifierOptions]}
+                    name="smdpIdentifier"
+                    id="smdpIdentifier"
+                    isClearable
+                    isSearchable
+                    styles={customSelectStyles}
+                    menuPlacement="auto"
+                    menuPosition="absolute"
+                    menuPortalTarget={menuPortalTarget}
+                    value={
+                      smdpIdentifierOptions.find(
+                        (opt) => opt.value === formData.smdpIdentifier
+                      ) || null
+                    }
+                    onChange={(nv, meta) =>
+                      handleSelectChange(
+                        "smdpIdentifier",
+                        nv,
+                        meta,
+                        setFormData
+                      )
+                    }
+                  />
+                  {/* <select
+                    className="form-select form-select-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    aria-label="Default select example"
+                    name="smdpIdentifier"
+                    id="smdpIdentifier"
+                    onChange={handleChange}
+                    value={formData.smdpIdentifier}
+                  >
+                    <option value="">None</option>
+                    {projectDetailKeys?.map((key, i) => (
+                      <option key={i} value={key}>
+                        {key}
+                      </option>
+                    ))}
+                  </select> */}
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="errorMessage"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Error Message
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    id="errorMessage"
+                    name="errorMessage"
+                    value={formData.errorMessage}
+                    onChange={handleChange}
+                    placeholder="Enter Error Message"
+                  />
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="remarks"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Remarks
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    id="remarks"
+                    name="remarks"
+                    value={formData.remarks}
+                    onChange={handleChange}
+                    placeholder="Enter Remarks"
+                  />
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="attributeCode"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Attribute Code
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    id="attributeCode"
+                    name="attributeCode"
+                    value={formData.attributeCode}
+                    onChange={handleChange}
+                    placeholder="Enter Attribute Code"
+                  />
+                </div>
+                <div
+                  className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <label
+                    htmlFor="priority"
+                    className="form-label form-label-color-black fw-5 fs14px"
+                    style={{ marginBottom: "6px" }}
+                  >
+                    Priority
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control form-control-sm color-light-dark shadow-none"
+                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                    id="priority"
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleChange}
+                    placeholder="Enter Priority"
+                  />
+                </div>
+                {formData.attributeType === "slider" && (
+                  <>
+                    <div
+                      className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                      style={{ marginBottom: "10px", padding: "0px 10px" }}
+                    >
+                      <label
+                        htmlFor="min"
+                        className="form-label form-label-color-black fw-5 fs14px"
+                        style={{ marginBottom: "6px" }}
+                      >
+                        Min
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control form-control-sm color-light-dark shadow-none"
+                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                        id="min"
+                        name="min"
+                        value={formData.min}
+                        onChange={handleChange}
+                        placeholder="Enter Min value"
+                      />
+                    </div>
+                    <div
+                      className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                      style={{ marginBottom: "10px", padding: "0px 10px" }}
+                    >
+                      <label
+                        htmlFor="max"
+                        className="form-label form-label-color-black fw-5 fs14px"
+                        style={{ marginBottom: "6px" }}
+                      >
+                        Max
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control form-control-sm color-light-dark shadow-none"
+                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                        id="max"
+                        name="max"
+                        value={formData.max}
+                        onChange={handleChange}
+                        placeholder="Enter Max value"
+                      />
+                    </div>
+                    <div
+                      className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                      style={{ marginBottom: "10px", padding: "0px 10px" }}
+                    >
+                      <label
+                        htmlFor="weightage"
+                        className="form-label form-label-color-black fw-5 fs14px"
+                        style={{ marginBottom: "6px" }}
+                      >
+                        Weightage
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control form-control-sm color-light-dark shadow-none"
+                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                        id="weightage"
+                        name="weightage"
+                        value={formData.weightage}
+                        onChange={handleChange}
+                        placeholder="Enter Weightage"
+                      />
+                    </div>
+                  </>
+                )}
+                {formData.attributeType === "formula" && (
+                  <>
+                    <div
+                      className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                      style={{ marginBottom: "10px", padding: "0px 10px" }}
+                    >
+                      <label
+                        htmlFor="evaluationFormula"
+                        className="form-label form-label-color-black fw-5 fs14px"
+                        style={{ marginBottom: "6px" }}
+                      >
+                        Evaluation Formula
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control form-control-sm color-light-dark shadow-none"
+                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                        id="evaluationFormula"
+                        name="evaluationFormula"
+                        value={formData.evaluationFormula}
+                        onChange={handleChange}
+                        placeholder="Enter Evaluation Formula"
+                      />
+                    </div>
+                    <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0">
+                      <label
+                        htmlFor="searchAttributeCodes"
+                        className="form-label form-label-color-black fw-5 fs14px"
+                        style={{ marginBottom: "6px" }}
+                      >
+                        Search Attribute Codes
+                      </label>
+                      <select
+                        className="form-select form-select-sm color-light-dark shadow-none"
+                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                        aria-label="Default select example"
+                        name="searchAttributeCodes"
+                        id="searchAttributeCodes"
+                        onChange={handleDatalistSelect}
+                      >
+                        <option value="">Select</option>
+                        {data
+                          .filter((d) => d.attributeCode)
+                          .map((d, i) => (
+                            <option key={i} value={d.attributeCode}>
+                              {d.label}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                    <div
+                      className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
+                      style={{ marginBottom: "10px", padding: "0px 10px" }}
+                    >
+                      <label
+                        htmlFor="evaluationFormulaWeightage"
+                        className="form-label form-label-color-black fw-5 fs14px"
+                        style={{ marginBottom: "6px" }}
+                      >
+                        Evaluation Formula Weightage
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control form-control-sm color-light-dark shadow-none"
+                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                        id="evaluationFormulaWeightage"
+                        name="evaluationFormulaWeightage"
+                        value={formData.evaluationFormulaWeightage}
+                        onChange={handleChange}
+                        placeholder="Enter Evaluation Formula Weightage"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="row g-2 g-lg-3 mt-0">
+                <div
+                  className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "25px", padding: "0px 10px" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <CustomToggleSwitch
+                      checked={isMultiSelect}
+                      onChange={() => setMultiSelect(!isMultiSelect)}
+                      id="multiselect"
                     />
-                  </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
-                      htmlFor="placeholder"
-                      className="form-label text-white"
+                      className="form-label form-label-color-black fs14px ms-2 mb-0"
+                      htmlFor="multiselect"
                     >
-                      Placeholder
+                      Is Multi Select
                     </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      id="placeholder"
-                      name="placeholder"
-                      value={formData.placeholder}
-                      onChange={handleChange}
-                      placeholder="Enter Placeholder"
-                    />
+                    {/* <input
+                      className="form-check-input my-switch-primary"
+                      type="checkbox"
+                      id="multiselect"
+                      name="multiselect"
+                      checked={isMultiSelect}
+                      onChange={() => setMultiSelect(!isMultiSelect)}
+                    /> */}
                   </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                </div>
+                <div
+                  className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "25px", padding: "0px 10px" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <CustomToggleSwitch
+                      checked={isRequired}
+                      onChange={() => setRequired(!isRequired)}
+                      id="required"
+                    />
                     <label
-                      htmlFor="attributeDataType"
-                      className="form-label text-white"
+                      className="form-label form-label-color-black fs14px ms-2 mb-0"
+                      htmlFor="required"
                     >
-                      Attribute DataType
+                      Is Required
                     </label>
-                    <select
-                      className="form-select form-select-sm color-light-dark"
-                      aria-label="Default select example"
-                      name="attributeDataType"
-                      id="attributeDataType"
-                      onChange={handleChange}
-                      value={formData.attributeDataType}
-                    >
-                      <option value="string">String</option>
-                      <option value="number">Number</option>
-                      <option value="date">Date</option>
-                    </select>
+                    {/* <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="required"
+                      name="required"
+                      checked={isRequired}
+                      onChange={() => setRequired(!isRequired)}
+                    /> */}
                   </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                </div>
+                <div
+                  className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "25px", padding: "0px 10px" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <CustomToggleSwitch
+                      id="status"
+                      checked={isStatus}
+                      onChange={() => setStatus(!isStatus)}
+                    />
                     <label
-                      htmlFor="attributeType"
-                      className="form-label text-white"
+                      className="form-label form-label-color-black fs14px ms-2 mb-0"
+                      htmlFor="status"
                     >
-                      Attribute Type
+                      Status
                     </label>
-                    <select
-                      className="form-select form-select-sm color-light-dark"
-                      aria-label="Default select example"
-                      name="attributeType"
-                      id="attributeType"
-                      onChange={handleChange}
-                      value={formData.attributeType}
-                    >
-                      <option value="">None</option>
-                      <option value="textfield">TextField</option>
-                      <option value="select">Select</option>
-                      <option value="file">File</option>
-                      <option value="radio">Radio</option>
-                      <option value="slider">Slider</option>
-                      <option value="textarea">Textarea</option>
-                      <option value="progress">Progress</option>
-                      <option value="checkbox">Checkbox</option>
-                      <option value="formula">Formula</option>
-                    </select>
+                    {/* <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="status"
+                      id="status"
+                      checked={isStatus}
+                      onChange={() => setStatus(!isStatus)}
+                    /> */}
                   </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
-                    <label htmlFor="unit" className="form-label text-white">
-                      Unit
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      id="unit"
-                      name="unit"
-                      value={formData.unit}
-                      onChange={handleChange}
-                      placeholder="Enter Unit"
+                </div>
+                <div
+                  className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "25px", padding: "0px 10px" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <CustomToggleSwitch
+                      id="hidden"
+                      checked={isHidden}
+                      onChange={() => setHidden(!isHidden)}
                     />
-                  </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
-                      htmlFor="validationRegx"
-                      className="form-label text-white"
+                      className="form-label form-label-color-black fs14px ms-2 mb-0"
+                      htmlFor="hidden"
                     >
-                      Validation Regx
+                      Is Hidden
                     </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      id="validationRegx"
-                      name="validationRegx"
-                      value={formData.validationRegx}
-                      onChange={handleChange}
-                      placeholder="Enter Validation Regx"
-                    />
+                    {/* <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="hidden"
+                      id="hidden"
+                      checked={isHidden}
+                      onChange={() => setHidden(!isHidden)}
+                    /> */}
                   </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
-                    <label htmlFor="sortId" className="form-label text-white">
-                      Sort Id
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control form-control-sm color-light-dark"
-                      id="sortId"
-                      name="sortId"
-                      value={formData.sortId}
-                      onChange={handleChange}
-                      placeholder="Enter Sort Id"
+                </div>
+                <div
+                  className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "25px", padding: "0px 10px" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <CustomToggleSwitch
+                      id="readoOnly"
+                      checked={isReadOnly}
+                      onChange={() => setReadOnly(!isReadOnly)}
                     />
-                  </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
                     <label
-                      htmlFor="verificationType"
-                      className="form-label text-white"
+                      className="form-label form-label-color-black fs14px ms-2 mb-0"
+                      htmlFor="readoOnly"
                     >
-                      Verification Type
+                      Is ReadOnly
                     </label>
-                    <select
-                      className="form-select form-select-sm color-light-dark"
-                      aria-label="Default select example"
-                      name="verificationType"
-                      id="verificationType"
-                      onChange={handleChange}
-                      value={formData.verificationType}
-                    >
-                      <option value="">None</option>
-                      <option value="image">Image</option>
-                      <option value="video">Video</option>
-                    </select>
+                    {/* <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="readoOnly"
+                      id="readoOnly"
+                      checked={isReadOnly}
+                      onChange={() => setReadOnly(!isReadOnly)}
+                    /> */}
                   </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                </div>
+                <div
+                  className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "25px", padding: "0px 10px" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <CustomToggleSwitch
+                      id="removeable"
+                      checked={isRemoveable}
+                      onChange={() => setRemoveable(!isRemoveable)}
+                    />
                     <label
-                      htmlFor="smdpIdentifier"
-                      className="form-label text-white"
+                      className="form-label form-label-color-black fs14px ms-2 mb-0"
+                      htmlFor="removeable"
                     >
-                      Smdp Identifier
+                      Is Removeable
                     </label>
-                    <select
-                      className="form-select form-select-sm color-light-dark"
-                      aria-label="Default select example"
-                      name="smdpIdentifier"
-                      id="smdpIdentifier"
-                      onChange={handleChange}
-                      value={formData.smdpIdentifier}
-                    >
-                      <option value="">None</option>
-                      {projectDetailKeys?.map((key, i) => (
-                        <option key={i} value={key}>
-                          {key}
-                        </option>
-                      ))}
-                    </select>
+                    {/* <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="removeable"
+                      id="removeable"
+                      checked={isRemoveable}
+                      onChange={() => setRemoveable(!isRemoveable)}
+                    /> */}
                   </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                </div>
+                <div
+                  className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "25px", padding: "0px 10px" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <CustomToggleSwitch
+                      id="master"
+                      checked={isMaster}
+                      onChange={() => setMaster(!isMaster)}
+                    />
                     <label
-                      htmlFor="errorMessage"
-                      className="form-label text-white"
+                      className="form-label form-label-color-black fs14px ms-2 mb-0"
+                      htmlFor="master"
                     >
-                      Error Message
+                      Is Master
                     </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      id="errorMessage"
-                      name="errorMessage"
-                      value={formData.errorMessage}
-                      onChange={handleChange}
-                      placeholder="Enter Error Message"
-                    />
+                    {/* <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="master"
+                      id="master"
+                      checked={isMaster}
+                      onChange={() => setMaster(!isMaster)}
+                    /> */}
                   </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
-                    <label htmlFor="remarks" className="form-label text-white">
-                      Remarks
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      id="remarks"
-                      name="remarks"
-                      value={formData.remarks}
-                      onChange={handleChange}
-                      placeholder="Enter Remarks"
-                    />
+                </div>
+              </div>
+              {formData.attributeType === "radio" ||
+              formData.attributeType === "select" ||
+              formData.attributeType === "checkbox" ? (
+                <>
+                  <hr className="mt-0 " style={{ color: "#c2c2c281" }} />
+                  <div className="row d-flex justify-content-between align-items-center py-2 mb-3">
+                    <div className="col-auto my-auto">
+                      <h5 className="m-0 mb-1 fw-bold color-evaluation-dark-blue fs24px">
+                        Attribute Options
+                      </h5>
+                    </div>
+                    <div className="col-auto">
+                      <Button
+                        className="btn text-white fw-bold fs14px border-0"
+                        style={{
+                          backgroundImage:
+                            "linear-gradient(to bottom, #0C8CE9 ,#074F83)",
+                          borderRadius: "10px",
+                        }}
+                        type="button"
+                        onClick={addNewOption}
+                      >
+                        Add More
+                      </Button>
+                    </div>
                   </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
-                    <label
-                      htmlFor="attributeCode"
-                      className="form-label text-white"
+                  {optionsData.map((option, index) => (
+                    <div
+                      key={index}
+                      className="row d-flex justify-content-end align-items-center"
                     >
-                      Attribute Code
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      id="attributeCode"
-                      name="attributeCode"
-                      value={formData.attributeCode}
-                      onChange={handleChange}
-                      placeholder="Enter Attribute Code"
-                    />
-                  </div>
-                  <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
-                    <label htmlFor="priority" className="form-label text-white">
-                      Priority
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control form-control-sm color-light-dark"
-                      id="priority"
-                      name="priority"
-                      value={formData.priority}
-                      onChange={handleChange}
-                      placeholder="Enter Priority"
-                    />
-                  </div>
-                  {formData.attributeType === "slider" && (
-                    <>
-                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
-                        <label htmlFor="min" className="form-label text-white">
-                          Min
-                        </label>
-                        <input
-                          type="number"
-                          className="form-control form-control-sm color-light-dark"
-                          id="min"
-                          name="min"
-                          value={formData.min}
-                          onChange={handleChange}
-                          placeholder="Enter Min value"
-                        />
-                      </div>
-                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
-                        <label htmlFor="max" className="form-label text-white">
-                          Max
-                        </label>
-                        <input
-                          type="number"
-                          className="form-control form-control-sm color-light-dark"
-                          id="max"
-                          name="max"
-                          value={formData.max}
-                          onChange={handleChange}
-                          placeholder="Enter Max value"
-                        />
-                      </div>
-                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                      <div
+                        className="col-xl-2 col-lg-4 col-md-6 col-sm-6 text-start"
+                        style={{ marginBottom: "10px", padding: "0px 10px" }}
+                      >
                         <label
-                          htmlFor="weightage"
-                          className="form-label text-white"
+                          htmlFor={`value-${index}`}
+                          className="form-label form-label-color-black fw-5 fs14px"
+                          style={{ marginBottom: "6px" }}
                         >
-                          Weightage
-                        </label>
-                        <input
-                          type="number"
-                          className="form-control form-control-sm color-light-dark"
-                          id="weightage"
-                          name="weightage"
-                          value={formData.weightage}
-                          onChange={handleChange}
-                          placeholder="Enter Weightage"
-                        />
-                      </div>
-                    </>
-                  )}
-                  {formData.attributeType === "formula" && (
-                    <>
-                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
-                        <label
-                          htmlFor="evaluationFormula"
-                          className="form-label text-white"
-                        >
-                          Evaluation Formula
+                          Value
                         </label>
                         <input
                           type="text"
-                          className="form-control form-control-sm color-light-dark"
-                          id="evaluationFormula"
-                          name="evaluationFormula"
-                          value={formData.evaluationFormula}
-                          onChange={handleChange}
-                          placeholder="Enter Evaluation Formula"
+                          className="form-control form-control-sm color-light-dark shadow-none"
+                          style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                          id={`value-${index}`}
+                          name="value"
+                          value={option.value}
+                          onChange={(e) => handleOptionChange(index, e)}
+                          placeholder="Enter Value"
                         />
                       </div>
-                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mb-3">
+                      <div
+                        className="col-xl-2 col-lg-4 col-md-6 col-sm-6 text-start"
+                        style={{ marginBottom: "10px", padding: "0px 10px" }}
+                      >
                         <label
-                          htmlFor="searchAttributeCodes"
-                          className="form-label text-white"
+                          htmlFor={`label-${index}`}
+                          className="form-label form-label-color-black fw-5 fs14px"
+                          style={{ marginBottom: "6px" }}
                         >
-                          Search Attribute Codes
+                          Label
                         </label>
-                        <select
-                          className="form-select form-select-sm color-light-dark"
-                          aria-label="Default select example"
-                          name="searchAttributeCodes"
-                          id="searchAttributeCodes"
-                          onChange={handleDatalistSelect}
-                        >
-                          <option value="">Select</option>
-                          {data
-                            .filter((d) => d.attributeCode)
-                            .map((d, i) => (
-                              <option key={i} value={d.attributeCode}>
-                                {d.label}
-                              </option>
-                            ))}
-                        </select>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm color-light-dark shadow-none"
+                          style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                          id={`label-${index}`}
+                          name="label"
+                          value={option.label}
+                          onChange={(e) => handleOptionChange(index, e)}
+                          placeholder="Enter Label"
+                        />
                       </div>
-                      <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 text-start">
+                      <div
+                        className="col-xl-2 col-lg-4 col-md-6 col-sm-6 text-start"
+                        style={{ marginBottom: "10px", padding: "0px 10px" }}
+                      >
                         <label
-                          htmlFor="evaluationFormulaWeightage"
-                          className="form-label text-white"
+                          htmlFor="sortId"
+                          className="form-label form-label-color-black fw-5 fs14px"
+                          style={{ marginBottom: "6px" }}
                         >
-                          Evaluation Formula Weightage
+                          Sort Id
                         </label>
                         <input
                           type="number"
-                          className="form-control form-control-sm color-light-dark"
-                          id="evaluationFormulaWeightage"
-                          name="evaluationFormulaWeightage"
-                          value={formData.evaluationFormulaWeightage}
-                          onChange={handleChange}
-                          placeholder="Enter Evaluation Formula Weightage"
+                          className="form-control form-control-sm color-light-dark shadow-none"
+                          style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                          id="sortId"
+                          name="sortId"
+                          value={option.sortId}
+                          onChange={(e) => handleOptionChange(index, e)}
+                          placeholder="Enter sortId value"
                         />
                       </div>
-                    </>
-                  )}
-                </div>
-                <div className="row d-flex justify-content-start align-items-center mb-3">
-                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
-                    <div className="form-check form-switch">
-                      <label
-                        className="form-check-label text-white"
-                        htmlFor="multiselect"
-                      >
-                        Is Multi Select
-                      </label>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="multiselect"
-                        name="multiselect"
-                        checked={isMultiSelect}
-                        onChange={() => setMultiSelect(!isMultiSelect)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
-                    <div className="form-check form-switch">
-                      <label
-                        className="form-check-label text-white"
-                        htmlFor="required"
-                      >
-                        Is Required
-                      </label>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="required"
-                        name="required"
-                        checked={isRequired}
-                        onChange={() => setRequired(!isRequired)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
-                    <div className="form-check form-switch">
-                      <label
-                        className="form-check-label text-white"
-                        htmlFor="status"
-                      >
-                        Status
-                      </label>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="status"
-                        name="status"
-                        checked={isStatus}
-                        onChange={() => setStatus(!isStatus)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
-                    <div className="form-check form-switch">
-                      <label
-                        className="form-check-label text-white"
-                        htmlFor="hidden"
-                      >
-                        Is Hidden
-                      </label>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="hidden"
-                        name="hidden"
-                        checked={isHidden}
-                        onChange={() => setHidden(!isHidden)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
-                    <div className="form-check form-switch">
-                      <label
-                        className="form-check-label text-white"
-                        htmlFor="readoOnly"
-                      >
-                        Is ReadOnly
-                      </label>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="readoOnly"
-                        name="readoOnly"
-                        checked={isReadOnly}
-                        onChange={() => setReadOnly(!isReadOnly)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
-                    <div className="form-check form-switch">
-                      <label
-                        className="form-check-label text-white"
-                        htmlFor="removeable"
-                      >
-                        Is Removeable
-                      </label>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="removeable"
-                        name="removeable"
-                        checked={isRemoveable}
-                        onChange={() => setRemoveable(!isRemoveable)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xl-2 col-lg-3 col-md-6 col-sm-6 col-12 text-start">
-                    <div className="form-check form-switch">
-                      <label
-                        className="form-check-label text-white"
-                        htmlFor="master"
-                      >
-                        Is Master
-                      </label>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="master"
-                        name="master"
-                        checked={isMaster}
-                        onChange={() => setMaster(!isMaster)}
-                      />
-                    </div>
-                  </div>
-                </div>
-                {formData.attributeType === "radio" ||
-                formData.attributeType === "select" ||
-                formData.attributeType === "checkbox" ? (
-                  <>
-                    <div className="row d-flex justify-content-between align-items-center mb-3">
-                      <div className="col-auto my-auto">
-                        <h5 className="m-0 text-white mb-1">
-                          Attribute Options
-                        </h5>
-                      </div>
-                      <div className="col-auto">
-                        <Button
-                          className="btn text-white"
-                          style={{
-                            backgroundImage:
-                              "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                            borderRadius: "12px",
-                          }}
-                          type="button"
-                          onClick={addNewOption}
-                        >
-                          Add More +
-                        </Button>
-                      </div>
-                    </div>
-                    <hr />
-                    {optionsData.map((option, index) => (
                       <div
-                        key={index}
-                        className="row d-flex justify-content-end align-items-center mb-3"
+                        className="col-xl-2 col-lg-4 col-md-6 col-sm-6 text-start"
+                        style={{ marginBottom: "10px", padding: "0px 10px" }}
                       >
-                        <div className="col-lg-2 col-md-6 col-sm-6 mb-3 text-start">
-                          <label
-                            htmlFor={`value-${index}`}
-                            className="form-label text-white"
-                          >
-                            Value
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control form-control-sm color-light-dark"
-                            id={`value-${index}`}
-                            name="value"
-                            value={option.value}
-                            onChange={(e) => handleOptionChange(index, e)}
-                            placeholder="Enter Value"
-                          />
-                        </div>
-                        <div className="col-lg-2 col-md-6 col-sm-6 mb-3 text-start">
-                          <label
-                            htmlFor={`label-${index}`}
-                            className="form-label text-white"
-                          >
-                            Label
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control form-control-sm color-light-dark"
-                            id={`label-${index}`}
-                            name="label"
-                            value={option.label}
-                            onChange={(e) => handleOptionChange(index, e)}
-                            placeholder="Enter Label"
-                          />
-                        </div>
-                        <div className="col-lg-2 col-md-6 col-sm-6 mb-3 text-start">
-                          <label
-                            htmlFor="sortId"
-                            className="form-label text-white"
-                          >
-                            Sort Id
-                          </label>
-                          <input
-                            type="number"
-                            className="form-control form-control-sm color-light-dark"
-                            id="sortId"
-                            name="sortId"
-                            value={option.sortId}
-                            onChange={(e) => handleOptionChange(index, e)}
-                            placeholder="Enter sortId value"
-                          />
-                        </div>
-                        <div className="col-lg-2 col-md-6 col-sm-6 mb-3 text-start">
-                          <label
-                            htmlFor={`condition-${index}`}
-                            className="form-label text-white"
-                          >
-                            condition
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control form-control-sm color-light-dark"
-                            id={`condition-${index}`}
-                            name="condition"
-                            value={option.condition}
-                            onChange={(e) => handleOptionChange(index, e)}
-                            placeholder="Enter Condition"
-                          />
-                        </div>
-                        <div className="col-lg-2 col-md-6 col-sm-6 mb-3 text-start">
+                        <label
+                          htmlFor={`condition-${index}`}
+                          className="form-label form-label-color-black fw-5 fs14px"
+                          style={{ marginBottom: "6px" }}
+                        >
+                          condition
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm color-light-dark shadow-none"
+                          style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                          id={`condition-${index}`}
+                          name="condition"
+                          value={option.condition}
+                          onChange={(e) => handleOptionChange(index, e)}
+                          placeholder="Enter Condition"
+                        />
+                      </div>
+                      <div
+                        className="col-xl-2 col-lg-4 col-md-6 col-sm-6 text-start"
+                        style={{ marginBottom: "10px", padding: "0px 10px" }}
+                      >
+                        <label
+                          htmlFor={`remarks-${index}`}
+                          className="form-label form-label-color-black fw-5 fs14px"
+                          style={{ marginBottom: "6px" }}
+                        >
+                          Description
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm color-light-dark shadow-none"
+                          style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                          id={`remarks-${index}`}
+                          name="remarks"
+                          value={option.remarks}
+                          onChange={(e) => handleOptionChange(index, e)}
+                          placeholder="Enter Description"
+                        />
+                      </div>
+                      <div
+                        className="col-xl-1 col-lg-2 col-md-3 col-sm-6 col-6 text-start"
+                        style={{ marginBottom: "10px", padding: "0px 10px" }}
+                      >
+                        <div className="d-flex flex-column justify-content-between">
                           <label
                             htmlFor={`remarks-${index}`}
-                            className="form-label text-white"
+                            className="form-label form-label-color-black fw-5 fs14px"
+                            style={{ marginBottom: "6px" }}
                           >
-                            Description
+                            Is Active
                           </label>
-                          <input
-                            type="text"
-                            className="form-control form-control-sm color-light-dark"
-                            id={`remarks-${index}`}
-                            name="remarks"
-                            value={option.remarks}
-                            onChange={(e) => handleOptionChange(index, e)}
-                            placeholder="Enter Description"
-                          />
-                        </div>
-                        <div className="col-lg-2 col-md-6 col-sm-6 text-start my-auto">
-                          <div className="form-check form-switch">
-                            <label
-                              className="form-check-label text-white"
-                              htmlFor={`isActive${index}`}
-                            >
-                              Is Active
-                            </label>
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
+                          <div style={{ padding: "11px 0px 3px 0px" }}>
+                            <CustomToggleSwitch
                               id={`isActive${index}`}
-                              name="isActive"
                               checked={activeStates[index] || false}
                               onChange={() => handleCheckboxChange(index)}
                             />
+                            {/* <input
+                            className="form-check-input"
+                            type="checkbox"
+                            name="isActive"
+                            id={`isActive${index}`}
+                            checked={activeStates[index] || false}
+                            onChange={() => handleCheckboxChange(index)}
+                          /> */}
                           </div>
                         </div>
-                        <div className="col-auto">
-                          <Button
-                            className="btn btn-danger text-white w-100"
-                            type="button"
-                            onClick={() => handleDeleteOption(index)}
+                      </div>
+                      <div
+                        className="col-xl-1 col-lg-2 col-md-3 col-sm-6 col-6 text-start"
+                        style={{ marginBottom: "10px", padding: "0px 10px" }}
+                      >
+                        <div className="d-flex flex-column justify-content-between">
+                          <label
+                            htmlFor={`remarks-${index}`}
+                            className="form-label form-label-color-black fw-5 fs14px"
+                            style={{ marginBottom: "6px" }}
                           >
-                            Delete
-                          </Button>
+                            Action
+                          </label>
+                          <div style={{ padding: "5px 0px 8px 0px" }}>
+                            <Button
+                              className="btn w-100 shadow-none p-0 text-start border-0"
+                              type="button"
+                              style={{ outline: "none" }}
+                              onClick={() => handleDeleteOption(index)}
+                            >
+                              <TrashIcon />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    ))}
-                  </>
-                ) : (
-                  ""
-                )}
-                <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
-                  <Button
-                    className="btn text-white w-100 border-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                      borderRadius: "12px",
-                    }}
-                    type="submit"
-                  >
-                    Done
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </div>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                ""
+              )}
+              <div className="col-lg-4 col-md-6 col-sm-4 mx-auto mt-3">
+                <Button
+                  className="btn text-white w-100 border-0 fw-bold fs14px"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(to bottom, #0C8CE9 ,#074F83)",
+                    borderRadius: "10px",
+                    padding: "11px 16px",
+                  }}
+                  type="submit"
+                >
+                  Save Attribute
+                </Button>
+              </div>
+            </form>
+          </FormWrapper>
         </Modal.Body>
       </Modal>
     </>

@@ -51,7 +51,7 @@
 
 .hoverItem:hover {
   flex: 3 !important; /* hovered item expands */
-  opacity: 1;
+  opacity: 1 !important;
   z-index: 2;
 }
 

@@ -156,7 +156,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         placeholder="Enter Right Name"
                       />
                       {errors.rightName && (
-                        <p className="text-danger mt-1">
+                        <p className="text-danger mt-1 fs14px">
                           {errors.rightName.message}
                         </p>
                       )}

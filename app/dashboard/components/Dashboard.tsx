@@ -44,11 +44,13 @@ const Menu = dynamic(() => import("@/app/components/Menu"), { ssr: false });
 const lexend = Lexend({
   subsets: ["latin"],
   preload: false,
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const montserrat = Montserrat({
   subsets: ["latin"],
   preload: false,
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export interface DistrictList {
@@ -188,7 +190,9 @@ const Dashboard = ({ dashboardType }: Props) => {
   const handleSubmit = async (filterData: FilterData[]) => {
     setLoading(true);
     try {
-      const response = await apiClient.post(MAIN_DASHBOARD_API, filterData);
+      const response = await apiClient.post(MAIN_DASHBOARD_API, filterData, {
+        withCredentials: true,
+      });
       setData(response.data.data);
       // setProjectsData(response.data.data.projectslist.reverse());
       // const districtFilter = filterData.find(
@@ -364,7 +368,7 @@ const Dashboard = ({ dashboardType }: Props) => {
                       value={0}
                       label={
                         activeFilter === "cmInitiative"
-                          ? "CM Initiatives"
+                          ? "Submitted PC(IV)s"
                           : "ADP Projects"
                       }
                       showTides={false}
@@ -444,7 +448,7 @@ const Dashboard = ({ dashboardType }: Props) => {
                           icon="/icons/cubes.svg"
                           // value={data ? data.noofProject : 0}
                           value={0}
-                          label="No. of PC(IV)"
+                          label="No. of Visits (Umbrella)"
                           showTides={false}
                           showArrow={true}
                           textWrap={false}
@@ -474,43 +478,58 @@ const Dashboard = ({ dashboardType }: Props) => {
                   />
                   <CustomModal
                     isFullscreen={true}
-                    size="xl"
-                    modalId={"noOfVisits"}
+                    modalId={"noOfPCIV"}
                     button={
                       <Button
-                        className="position-relative btn p-0 shadow-none w-100"
-                        onClick={() => getProjectsList("BeingMonitored")}
+                        className="position-relative btn p-0 pe-1 shadow-none w-100"
+                        onClick={() => getProjectsList("NoOfProject")}
                       >
-                        <div
+                        {/* <div
                           className="position-absolute"
                           style={{
                             background:
-                              "linear-gradient( rgba(12, 140, 233, 0), rgba(12, 140, 233, 0.2),rgba(12, 140, 233, 0.2))",
+                              "linear-gradient( rgba(163, 12, 233, 0), rgba(163, 12, 233, 0.2),rgba(163, 12, 233, 0.2))",
+                            transition: "all .4s",
+                            opacity: !isHover1 ? 1 : 0,
                             borderRadius: "10px",
-                            width: "100%",
+                            width: "98%",
+                            height: "92%",
+                          }}
+                        ></div> */}
+                        <div
+                          className="position-absolute"
+                          style={{
+                            // background:
+                            //   "linear-gradient( rgba(35, 119, 182, 0), rgba(35, 119, 182, 1))",
+                            padding: "1px",
+                            borderRadius: "10px",
+                            width: "98%",
                             height: "92%",
                           }}
                         ></div>
                         <Menu
                           background={`linear-gradient( rgba(35, 119, 182, 0), rgba(35, 119, 182, 1))`}
-                          icon="/icons/archery.svg"
-                          // value={data ? data.monitoredProjects : 0}
+                          icon="/icons/cubes.svg"
+                          // value={data ? data.noofProject : 0}
                           value={0}
-                          label="No. of Visits"
+                          label="No. of Visits (Single)"
                           showTides={false}
                           showArrow={true}
                           textWrap={false}
                           isGrouped={true}
+                          toggleLabel={true}
+                          sneCount={0}
+                          nonSneCount={0}
                         />
                       </Button>
                     }
                     body={
                       <>
                         <div className="container-fluid border-0 p-1">
-                          {projectsData && filteredKeys ? (
+                          {projectsData && filteredNoOfProjectsKeys ? (
                             <ProjectsTable
-                              keys={filteredKeys}
-                              label="Visits"
+                              keys={filteredNoOfProjectsKeys}
+                              label="Projects"
                               projectsData={projectsData}
                               setProjectsData={setProjectsData}
                             />
@@ -1057,7 +1076,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                 adpFilters={adpFilters}
                 otherFilters={otherFilters}
                 setOtherFilters={setOtherFilters}
-                dashboardType={dashboardType}
               />
             )}
           </div>
@@ -1570,7 +1588,7 @@ const Dashboard = ({ dashboardType }: Props) => {
                           <p className="mb-0">Utilization</p>
                           {dashboardType ? (
                             <p className="mb-0">
-                              <span className="text-nowrap">(80% - 100%)</span>
+                              <span className="text-nowrap">(80%)</span>
                               &nbsp;
                               <span>0</span>
                             </p>

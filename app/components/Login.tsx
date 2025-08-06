@@ -1,24 +1,20 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
 import Image from "next/image";
-import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { FaRegEye } from "react-icons/fa";
+import { TbEyeClosed } from "react-icons/tb";
 import { toast } from "react-toastify";
-import eye from "../../public/icons/eye.svg";
-import passwordGrey from "../../public/icons/passwordGrey.svg";
-import userGrey from "../../public/icons/userGrey.svg";
-import verticalLineGrey from "../../public/icons/verticalLineGrey.svg";
+import { z } from "zod";
 import bgVideoNew from "../../public/video/bgVideoNew.mp4";
 import { LOGIN_API } from "../APIs";
 import apiClient, { AxiosError, ErrorResponse } from "../services/api-client";
 import Button from "./Button";
-import Spinner from "./Spinner";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "./ErrorMessage";
-import { FaRegEye } from "react-icons/fa";
-import { TbEyeClosed } from "react-icons/tb";
+import Spinner from "./Spinner";
+import Link from "next/link";
 
 const schema = z.object({
   username: z.string().min(1, { message: "Please add Username!" }),
@@ -63,6 +59,7 @@ const Login = () => {
   const [buttonType, setButtonType] = useState(true);
   const [isSubmitting, setSubmitting] = useState(false);
   const [isCookiesSaved, setCookiesSaved] = useState(false);
+  const [activePrivacyLink, setActivePrivacyLink] = useState(false);
 
   const createdMessage = "Logged In Successfully!";
   const errorMessage = "Username or Password is not Correct!";
@@ -274,6 +271,7 @@ const Login = () => {
                         background: "rgba(255, 255, 255, 0.7)",
                       }}
                       id="username"
+                      autoComplete="username"
                     />
                   </div>
                   {errors.username && (
@@ -317,6 +315,7 @@ const Login = () => {
                       }}
                       placeholder="Enter your Password"
                       id="password"
+                      autoComplete="current-password"
                     />
                     <Button
                       className="btn position-absolute rounded-3"
@@ -370,7 +369,7 @@ const Login = () => {
                   Remember Me
                 </label>
               </div> */}
-              <div className="row d-flex flex-colum justify-content-center">
+              <div className="row d-flex flex-colum justify-content-center mb-3">
                 <div className="col">
                   <Button
                     type="submit"
@@ -390,6 +389,21 @@ const Login = () => {
                     LOGIN {isSubmitting && <Spinner color="text-light" />}
                   </Button>
                 </div>
+              </div>
+              <div className="text-center">
+                <Link
+                  href="/privacy-policy"
+                  target="_blank"
+                  className={`w-100 fw-5 fs14px ${
+                    activePrivacyLink
+                      ? "text-white"
+                      : "text-decoration-none color-sea-blue "
+                  }`}
+                  onMouseEnter={() => setActivePrivacyLink(true)}
+                  onMouseLeave={() => setActivePrivacyLink(false)}
+                >
+                  Privacy Policy
+                </Link>
               </div>
             </form>
           </div>

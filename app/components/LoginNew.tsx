@@ -76,10 +76,7 @@ const LoginNew = () => {
     try {
       setSubmitting(true);
       console.log("api url", "/api/auth/login", formData);
-      const response = await axios.post<Props>(
-        `${process.env.NEXT_PUBLIC_FRONTEND_API}/api/auth/login`,
-        formData
-      );
+      const response = await axios.post<Props>(`/api/auth/login`, formData);
       console.log("response", response);
       if (response.status === 200) {
         console.log("responseCode", response.data.responseCode);

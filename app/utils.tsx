@@ -120,6 +120,7 @@ export function formatHHLStringDate(inputDate: string): string {
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { FaLaptopHouse } from "react-icons/fa";
+import { GroupBase, StylesConfig } from "react-select";
 
 const renameMap: Record<string, string> = {
   id: "GS No.",
@@ -502,6 +503,8 @@ export interface Option {
   value: string;
 }
 
+export type OptionType = { value: string; label: string };
+
 export interface StringOption {
   label: string;
   value: string;
@@ -570,3 +573,67 @@ export function getColor(
     ? "#0c8ce9"
     : "";
 }
+
+// Custom Select Style
+export const customSelectStyles: StylesConfig<
+  OptionType,
+  false,
+  GroupBase<OptionType>
+> = {
+  control: (base, state) => ({
+    ...base,
+    fontSize: "14px",
+    borderRadius: 7,
+    background: "rgba(255, 255, 255, 0.8)",
+    border: state.isFocused
+      ? "1px solid #0c8ce9" // border on focus
+      : "1px solid #eff0f2", // default border
+    boxShadow: state.isFocused
+      ? "0 0 0 1px rgba(12, 140, 233, 0.4)" // focus glow
+      : "none",
+    "&:hover": {
+      border: "1px solid #0c8ce9", // hover border color
+      boxShadow: "0 0 0 1px rgba(12, 140, 233, 0.4)", // hover glow
+    },
+  }),
+  dropdownIndicator: (base) => ({
+    ...base,
+    padding: 10.5,
+  }),
+  clearIndicator: (base) => ({
+    ...base,
+    padding: 4,
+  }),
+  valueContainer: (base) => ({
+    ...base,
+    padding: "0 6px",
+  }),
+  input: (base) => ({
+    ...base,
+    margin: 0,
+    padding: 0,
+  }),
+  menu: (base) => ({
+    ...base,
+    zIndex: 9999,
+    padding: "4px 8px",
+    borderRadius: 14,
+    border: 0,
+    boxShadow: "0px 0px 7px 3px rgba(0,0,0,0.1)",
+  }),
+  menuPortal: (base) => ({
+    ...base,
+    zIndex: 9999,
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isFocused ? "#E4EDEC" : "white",
+    color: "#333",
+    fontSize: "14px",
+    padding: "10px",
+    borderRadius: 7,
+  }),
+};
+
+export const defaultOption = { value: "", label: "Select" };
+export const defaultNumberOption = { value: "0", label: "Select" };

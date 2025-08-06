@@ -38,6 +38,7 @@ const BgChanger = () => {
     "report-analysis",
     "process",
     "dashboard-to",
+    "dashboard-summary",
   ];
 
   const pathSegment = currentPath.split("/")[1]; // e.g., "sectors"

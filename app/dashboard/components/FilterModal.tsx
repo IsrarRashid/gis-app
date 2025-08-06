@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import filterBlack from "../../../public/icons/filterBlack.svg";
 import { FilterData } from "./Dashboard";
+import { Modal } from "react-bootstrap";
 
 interface Filter {
   label: string;
@@ -119,13 +120,17 @@ const FilterModal = ({
     getFilters(0);
   }, []);
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <>
       <Button
         type="button"
         className="btn rounded-pill position-relative"
-        data-bs-toggle="modal"
-        data-bs-target="#filterModal"
+        onClick={handleShow}
       >
         <Image src={filterBlack} alt="filterBlack" width={18} height={18} />
         <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -134,18 +139,19 @@ const FilterModal = ({
         </span>
       </Button>
 
-      <div
-        className="modal fade"
+      <Modal
+        show={show}
+        onHide={handleClose}
+        centered
         id="filterModal"
-        aria-labelledby="filterModalLabel"
-        aria-hidden="true"
+        dialogClassName="custom-modal"
       >
-        <div className="modal-dialog modal-lg" style={{ marginTop: "80px" }}>
+        <Modal.Body>
           <div
-            className="modal-content border-0"
+            className="border-0"
             style={{ background: "rgba(255,255,255,0)" }}
           >
-            <div className="modal-body p-0">
+            <div className="p-0">
               <div
                 className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
                 style={{
@@ -195,19 +201,19 @@ const FilterModal = ({
                       </div>
                     ))}
                   {/* <div className="col-lg-6 col-md-6 col-sm-12 text-start mb-3">
-                    <label htmlFor="sectorId" className="form-label">
-                      Department
-                    </label>
-                    <select
-                      className="form-select form-select-sm"
-                      name="sectorId"
-                      //   onChange={}
-                      //   value={}
-                    >
-                      <option value={0}>None</option>
-                      <option value={1}>asd</option>
-                    </select>
-                  </div> */}
+                      <label htmlFor="sectorId" className="form-label">
+                        Department
+                      </label>
+                      <select
+                        className="form-select form-select-sm"
+                        name="sectorId"
+                        //   onChange={}
+                        //   value={}
+                      >
+                        <option value={0}>None</option>
+                        <option value={1}>asd</option>
+                      </select>
+                    </div> */}
                 </div>
                 <div className="row d-flex">
                   <div className="col-lg-6 col-md-6 col-sm-12 text-end">
@@ -252,8 +258,8 @@ const FilterModal = ({
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };

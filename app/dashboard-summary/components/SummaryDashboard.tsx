@@ -1,454 +1,713 @@
 "use client";
 import Button from "@/app/components/Button";
-import { setContent } from "@/app/features/content/contentSlice";
-import useAuthorization from "@/app/hooks/useAuthorization";
-import { DM_Sans, Lexend } from "next/font/google";
+import CustomModal from "@/app/components/CustomModal";
+import useDepartments from "@/app/hooks/useDepartments";
+import useUsers from "@/app/hooks/useUsers";
+import { customSelectStyles, OptionType } from "@/app/utils";
+import { Manrope, Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import IndustryBalancer from "../../../public/icons/IndustryBalancer.svg";
-import boxes from "../../../public/icons/boxes.svg";
-import calendarBlack from "../../../public/icons/calendarBlack.svg";
-import calendarCircle from "../../../public/icons/calendarCircle.svg";
-import cow from "../../../public/icons/cow.svg";
-import halfUpArrow from "../../../public/icons/halfUpArrow.svg";
-import hatDegree from "../../../public/icons/hatDegree.svg";
-import heartRate from "../../../public/icons/heartRate.svg";
-import information from "../../../public/icons/information.svg";
-import leaf from "../../../public/icons/leaf.svg";
-import population from "../../../public/icons/population.svg";
-import questionMark from "../../../public/icons/questionMark.svg";
-import search from "../../../public/icons/search.svg";
-import stacks from "../../../public/icons/stacks.svg";
-import tick from "../../../public/icons/tick.svg";
-import verticalLineLong from "../../../public/icons/verticalLineLong.svg";
-import Menu from "./Menu";
-import ProjectModal from "./ProjectModal";
-import SimplePieChart from "./SimplePieChart";
-import SimplePieChart2 from "./SimplePieChart2";
-import StackedColumnChart from "./StackedColumnChart";
+import { FiSearch } from "react-icons/fi";
+import { RiExpandUpDownFill } from "react-icons/ri";
+import Select, { ActionMeta, SingleValue } from "react-select";
 
-const lexend = Lexend({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const dmSans = DM_Sans({
+const manrope = Manrope({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
 
 const SummaryDashboard = () => {
-  const [refresh, setRefresh] = useState(false);
-  const dispatch = useDispatch();
-  // useAuthorization("dashboard-summary");
-
-  const options = [
-    { value: "daily", label: "Daily" },
-    { value: "weekly", label: "Weekly" },
-    { value: "monthly", label: "Monthly" },
-  ];
-
-  const customStyles = {
-    control: (provided: any) => ({
-      ...provided,
-      backgroundColor: "#C6D9F1", // Background for the input box
-      borderRadius: "10px",
-      // boxShadow: "0px 3px 5px #9c9c9c",
-    }),
-    menu: (provided: any) => ({
-      ...provided,
-      backgroundColor: "#C6D9F1", // Background for the dropdown menu
-    }),
-  };
-
-  const handleButtonClick = (content: string) => {
-    dispatch(setContent(content));
-  };
+  const router = useRouter();
+  const [selectedTab, setSelectedTab] = useState(0);
+  const { data: users } = useUsers();
+  const { data: departments } = useDepartments();
+  const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLElement | null>(
+    null
+  );
 
   useEffect(() => {
-    handleButtonClick("Dashboard");
+    // This code only runs on the client side after the component mounts
+    setMenuPortalTarget(document.body);
   }, []);
 
-  const items = [
+  const commissionerOptions = users?.map((d) => {
+    return {
+      value: d.name,
+      label: d.name,
+    };
+  });
+
+  const departmentOptions = departments?.map((d) => {
+    return {
+      value: d.name,
+      label: d.name,
+    };
+  });
+
+  const tabs = [
+    // {
+    //   tabName: "All",
+    //   count: 4,
+    //   icon: <FaFile size={30} className="color-sea-blue" />,
+    //   selectLabel: "Name",
+    //   selectOptions: [{ option: "" }],
+    // },
     {
-      title: "Agriculture",
-      icon: leaf,
+      tabName: "Commissioner",
+      count: 1,
+      icon: (
+        <Image
+          src="/icons/user-5.svg"
+          alt="user-4"
+          width={16}
+          height={16}
+          className="color-sea-blue"
+        />
+      ),
+      selectLabel: "Name",
+      selectOptions: commissionerOptions,
     },
     {
-      title: "Higher Education",
-      icon: IndustryBalancer,
+      tabName: "Deputy Commissioner",
+      count: 1,
+      icon: (
+        <Image
+          src="/icons/user-4.svg"
+          alt="user-4"
+          width={16}
+          height={16}
+          className="color-sea-blue"
+        />
+      ),
+      selectLabel: "Name",
+      selectOptions: commissionerOptions,
     },
     {
-      title: "Industries, Commerce & Inversment",
-      icon: hatDegree,
+      tabName: "Sponsoring Agency",
+      count: 1,
+      icon: (
+        <Image
+          src="/icons/building-1.svg"
+          alt="building-1"
+          width={16}
+          height={16}
+          className="color-sea-blue"
+        />
+      ),
+      selectLabel: "Department",
+      selectOptions: departmentOptions,
     },
     {
-      title: "Information & Culture",
-      icon: information,
+      tabName: "Executing Agency",
+      count: 1,
+      icon: (
+        <Image
+          src="/icons/building-2.svg"
+          alt="building-2"
+          width={16}
+          height={16}
+          className="color-sea-blue"
+        />
+      ),
+      selectLabel: "Department",
+      selectOptions: departmentOptions,
     },
-    {
-      title: "LG&CD",
-      icon: stacks,
-    },
-    {
-      title: "Livestock & Dairy Development",
-      icon: cow,
-    },
-    {
-      title: "Planning & Development",
-      icon: calendarCircle,
-    },
-    {
-      title: "Population Welfare",
-      icon: population,
-    },
-    {
-      title: "Primary & Secondary Healthcare",
-      icon: heartRate,
-    },
+    // {
+    //   tabName: "DGME",
+    //   count: 0,
+    //   icon: <RiBuildingFill size={30} className="color-sea-blue" />,
+    //   selectLabel: "",
+    //   selectOptions: [{ option: "" }],
+    // },
   ];
 
+  const handleSelectChange = (
+    newValue: SingleValue<OptionType>,
+    actionMeta: ActionMeta<OptionType>
+  ) => {
+    console.log({ newValue, actionMeta });
+    /* your state handling logic */
+  };
+
   return (
-    <div
-      className={`container-fluid p-3 mb-4 ${lexend.className}`}
-      style={{
-        backgroundImage:
-          "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6), rgba(255, 255, 255, 0.08))",
-        border: "1px solid rgba(255, 255, 255, 0.6)",
-        padding: "10px",
-        borderRadius: "10px",
-      }}
-    >
-      <div className="row mb-3">
-        <div className="col-lg-7 col-md-12 col">
-          <Menu />
-          <div className="col">
-            <div className="row d-flex justify-content-between mt-3 mb-3">
-              <div className="col" style={{}}>
-                <p
-                  className="m-0 fs14px shadow-sm p-2 text-center"
-                  style={{
-                    color: "#64748B",
-                    fontWeight: "400",
-                    background: "#C6D9F1",
-                    borderRadius: "10px",
-                    whiteSpace: "nowrap",
-                    width: "230px",
-                  }}
-                >
-                  <Image
-                    src={calendarBlack}
-                    alt="calendarBlack"
-                    style={{ marginTop: "-4px" }}
-                  />
-                  &nbsp;Jan 12, 2024 - Sep 4, 2024
-                </p>
-              </div>
-              <div className="col text-end">
-                <select
-                  className="bg-color-matte-light-blue fw-bold shadow-sm pe-0"
-                  style={{
-                    color: "#64748B",
-                    outline: "none",
-                    borderRadius: "10px",
-                    border: 0,
-                  }}
-                  aria-label="Rows per page"
-                  name="rowPerPage"
-                >
-                  <option value="day">Daily</option>
-                  <option value="month">Monthly</option>
-                  <option value="year">Yearly</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <StackedColumnChart />
-        </div>
-        <div className="col-lg-5 col-md-12 col">
-          <SimplePieChart title="Rating Index" />
-          <SimplePieChart2 title="Physical Progress" />
-        </div>
-      </div>
+    <div className={plusJakartaSans.className}>
       <div
-        className="row d-flex justify-content-center shadow-sm mb-3 p-3 ms-1 me-1"
         style={{
-          background: "#C6D9F1",
-          borderRadius: "15px",
-          fontSize: ".9rem",
+          padding: "0px 15px",
+          margin: "0px",
         }}
       >
-        <div className="col-lg-2 col-md-4 col">
-          <div className="row d-flex">
-            <div className="col-lg-4 col-md-4 col">
-              <Image src={boxes} alt="boxes" />
-            </div>
-            <div className="col-lg-7 col-md-7 col ps-3">
-              <p className="m-0 mt-2">
-                <span className="fw-bold fs-3">772</span>{" "}
-                <span
-                  className="fs14px text-success ms-3"
-                  style={{ fontWeight: "500" }}
-                >
-                  18%
-                </span>{" "}
-                <Image src={halfUpArrow} alt="halfUpArrow" />
-              </p>
-              <p className="m-0 fs14px fw-normal text-secondary">
-                Total Schemes
-              </p>
-            </div>
-            <div className="col-lg-1 col-md-1 col p-0 ps-3">
-              <Image src={verticalLineLong} alt="verticalLineLong" />
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-2 col-md-4 col ms-lg-4">
-          <div className="row d-flex">
-            <div className="col-lg-4 col-md-4 col ">
-              <Image src={tick} alt="tick" />
-            </div>
-            <div className="col-lg-7 col-md-7 col ps-3">
-              <p className="m-0 mt-2">
-                <span className="fw-bold fs-3">10</span>{" "}
-                <span
-                  className="fs14px text-success ms-3"
-                  style={{ fontWeight: "500" }}
-                >
-                  25%
-                </span>
-              </p>
-              <p className="m-0 fs14px fw-normal text-secondary">Approved</p>
-            </div>
-            <div className="col-lg-1 col-md-1 col p-0">
-              <Image src={verticalLineLong} alt="verticalLineLong" />
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-2 col-md-4 ms-lg-4 col">
-          <div className="row d-flex">
-            <div className="col-lg-4 col-md-4 col">
-              <Image src={questionMark} alt="questionMark" />
-            </div>
-            <div className="col-lg-7 col-md-7 col ps-3">
-              <p className="m-0 mt-2">
-                <span className="fw-bold fs-3">02</span>{" "}
-                <span
-                  className="fs14px ms-3"
-                  style={{ fontWeight: "500", color: "#F0950C" }}
-                >
-                  7%
-                </span>
-              </p>
-              <p className="m-0 fs14px fw-normal text-secondary">Unapproved</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Search */}
-      <div className="row d-flex">
-        <div className="col-lg-11 col-md-10 col">
-          <div className="input-group mb-3">
-            <span className="input-group-text bg-white" id="basic-addon1">
-              <Image src={search} alt="search" />
-            </span>
-            <input
-              type="text"
-              className="form-control border-start-0 dSearchInput"
-              placeholder="Search Schemes"
-            />
-          </div>
-        </div>
-        <div className="col-lg-1 col-md-2 col ps-0">
-          <Button
-            className="btn text-white w-100"
-            style={{
-              backgroundImage: "linear-gradient(to right, #0C8CE9 , #13629B)",
-              border: "0px",
-              height: "41px",
-            }}
-          >
-            Search
-          </Button>
-        </div>
-      </div>
-      <div className="col mb-3">
-        <Button className="btn bg-color-sea-blue text-white fw-bold fs12px me-2 mb-2">
-          Sector
-        </Button>
-        <Button className="btn bg-color-sea-blue text-white fw-bold fs12px me-2 mb-2">
-          Sponsoring Agency
-        </Button>
-        <Button className="btn bg-color-sea-blue text-white fw-bold fs12px me-2 mb-2">
-          Executing Agency
-        </Button>
-      </div>
-      <div className={`row d-flex ms-1 me-1 ${dmSans.className}`}>
-        {/* {items.map((d, i) => (
-          <div key={i} className="col-lg-6 col-md-12 col ps-3 pe-3 pb-1">
+        <div className="row g-2 g-lg-3 mb-3">
+          <div className="col-12 col-sm-6 col-md-6 col-lg-2 ps-0">
             <div
-              className="col shadow-sm mb-3 p-3"
+              className="row d-flex align-items-center bg-white m-0"
               style={{
-                background: "#C6D9F1",
-                borderRadius: "15px",
-                fontSize: ".9rem",
+                padding: "20px 10px 21px 10px",
+                borderRadius: "20px",
+              }}
+              onClick={() => setSelectedTab(0)}
+            >
+              <div
+                className="col-auto rounded-circle flex items-center justify-center"
+                style={{
+                  background: "#F4F7FE",
+                  padding: "10px",
+                }}
+              >
+                <Image
+                  src="/icons/file2.svg"
+                  alt="file2"
+                  width={16}
+                  height={16}
+                  className="color-sea-blue"
+                />
+              </div>
+              <div className="col pe-0" style={{ paddingLeft: "10px" }}>
+                <p
+                  className="fw-5 fs14px"
+                  style={{ color: "#4D5878", marginBottom: "7px" }}
+                >
+                  All
+                </p>
+                <p className="fw-bold fs18px mb-0" style={{ color: "#1F3D57" }}>
+                  4&nbsp;&nbsp;
+                  <span className="fs12px fw-5" style={{ color: "#A3AED0" }}>
+                    Total Visits
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+          {tabs?.map((tab, i) => (
+            <div key={i} className="col-12 col-sm-6 col-md-6 col-lg-2 ps-0">
+              <CustomModal
+                modalId={"tab" + i}
+                showCloseButton={false}
+                buttonColumn="col p-0"
+                button={
+                  <div
+                    className="row d-flex align-items-center bg-white cursor-pointer m-0"
+                    style={{
+                      padding: "20px 10px 21px 10px",
+                      borderRadius: "20px",
+                      boxShadow:
+                        selectedTab === i
+                          ? "0px 0px 0px 2px rgba(12, 140, 233, 0.5)"
+                          : "",
+
+                      transition: "all .3s",
+                    }}
+                    onClick={() => setSelectedTab(i)}
+                  >
+                    <div
+                      className="col-auto rounded-circle flex items-center justify-center"
+                      style={{
+                        background: "#F4F7FE",
+                        padding: "10px",
+                      }}
+                    >
+                      {tab.icon}
+                    </div>
+                    <div className="col pe-0" style={{ paddingLeft: "10px" }}>
+                      <p
+                        className="fw-5 fs12px "
+                        style={{ color: "#4D5878", marginBottom: "7px" }}
+                      >
+                        {tab.tabName}
+                      </p>
+                      <p
+                        className="fw-bold fs18px mb-0"
+                        style={{ color: "#1F3D57" }}
+                      >
+                        {tab.count}&nbsp;&nbsp;
+                        <span
+                          className="fs12px fw-5"
+                          style={{ color: "#A3AED0" }}
+                        >
+                          Total Visits
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                }
+                body={
+                  <div
+                    className={manrope.className}
+                    style={{
+                      background: "#F1F6F7",
+                      borderRadius: "15px",
+                      padding: "25px 0px",
+                    }}
+                  >
+                    <p
+                      className="fs24px fw-bold py-2 text-center"
+                      style={{
+                        background: "#E4EDEC",
+                        marginBottom: "25px",
+                        color: "#155E95",
+                      }}
+                    >
+                      Select {tab.tabName}
+                    </p>
+                    <div
+                      className="col"
+                      style={{ marginBottom: "25px", padding: "0px 30px" }}
+                    >
+                      <label
+                        htmlFor="commissioner"
+                        className="form-label form-label-color-black fw-5 fs14px"
+                        style={{ marginBottom: "6px" }}
+                      >
+                        {tab.selectLabel}
+                      </label>
+                      {menuPortalTarget && (
+                        <Select
+                          options={tab.selectOptions}
+                          name="districtName"
+                          id="districtName"
+                          isClearable
+                          isSearchable
+                          styles={customSelectStyles}
+                          menuPlacement="auto"
+                          menuPosition="absolute"
+                          menuPortalTarget={menuPortalTarget}
+                          onChange={handleSelectChange}
+                        />
+                      )}
+                      {/* <select
+                      className="form-select form-select-sm color-light-dark shadow-none"
+                      style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                      aria-label="Default select example"
+                      name="commissioner"
+                      id="commissioner"
+                    >
+                      <option value="Ali Jibran">
+                        {tab.selectOptions[0].option}
+                      </option>
+                    </select> */}
+                    </div>
+                    <div style={{ padding: "0px 30px" }}>
+                      <Button
+                        className="btn text-white w-100 border-0 fs14px fw-bold"
+                        style={{
+                          backgroundImage:
+                            "linear-gradient(to bottom, #0C8CE9 , #074F83)",
+                          padding: "11px 16px",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        Select
+                      </Button>
+                    </div>
+                  </div>
+                }
+              />
+            </div>
+          ))}
+          <div className="col-12 col-sm-6 col-md-6 col-lg-2 ps-0">
+            <div
+              className="row d-flex align-items-center bg-white m-0"
+              style={{
+                padding: "20px 10px 21px 10px",
+                borderRadius: "20px",
               }}
             >
-              <div className="col text-end">
-                <Image src={arrowTopRight} alt="arrowTopRight" />
-              </div>
-              <div className="row d-flex">
-                <div className="col-lg-1 col-md-1 col-sm-12 ms-3 mt-2">
-                  <Image src={d.icon} alt={d.icon} />
-                </div>
-                <div className="col-lg-10 col-md-10 col-sm-12 ms-1">
-                  <p
-                    className="m-0 fs-4 mb-1 ms-1"
-                    style={{ fontWeight: "900" }}
-                  >
-                    {d.title}
-                  </p>
-                  <div className="row d-flex ms-1">
-                    <div
-                      className=" col p-2 fs12px text-center me-2 mb-1 mb-1"
-                      style={{
-                        color: "#0C8CE9",
-                        background: "#E2F2F8",
-                        borderRadius: "7px",
-                        fontWeight: "900",
-                      }}
-                    >
-                      Total Visit : 5
-                    </div>
-                    <div
-                      className=" col p-2 fs12px text-center me-2 mb-1"
-                      style={{
-                        color: "#0C8CE9",
-                        background: "#E2F2F8",
-                        borderRadius: "7px",
-                        fontWeight: "900",
-                      }}
-                    >
-                      Total Reports: 3
-                    </div>
-                    <div
-                      className=" col p-2 fs12px text-center me-2 mb-1"
-                      style={{
-                        color: "#0C8CE9",
-                        background: "#E2F2F8",
-                        borderRadius: "7px",
-                        fontWeight: "900",
-                      }}
-                    >
-                      Schemes: 3
-                    </div>
-                    <div
-                      className=" col p-2 fs12px text-center me-2 mb-1"
-                      style={{
-                        color: "#0C8CE9",
-                        background: "#E2F2F8",
-                        borderRadius: "7px",
-                        fontWeight: "900",
-                      }}
-                    >
-                      Monitored 4 &nbsp;
-                      <Image src={arrowDown} alt="arrowDown" />
-                    </div>
-                  </div>
-                </div>
-              </div>
               <div
-                className="row d-none d-md-block"
-                style={{ marginTop: "-8px", marginLeft: "100px" }}
+                className="col-auto rounded-circle flex items-center justify-center"
+                style={{
+                  background: "#F4F7FE",
+                  padding: "10px",
+                }}
               >
-                <Image src={tree} alt="tree" width={50} height={50} />
-                <div className="row d-flex justify">
-                  <div className="col-4 text-center">
-                    <p
-                      className="text-danger fw-bold"
-                      style={{
-                        fontWeight: "500",
-                        marginLeft: "-30px",
-                        marginBottom: 0,
-                      }}
-                    >
-                      Critical
-                      <br />3
-                    </p>
-                  </div>
-                  <div className="col-4">
-                    <p
-                      className="m-0 text-center fw-bold"
-                      style={{ color: "#2AA0F6", fontWeight: "500" }}
-                    >
-                      Within Defined Limits
-                      <br />1
-                    </p>
-                  </div>
-                  <div className="col-4">
-                    <p
-                      className="text-center fw-bold"
-                      style={{
-                        color: "#F2D01B",
-                        fontWeight: "500",
-                        marginLeft: "10px",
-                        marginBottom: 0,
-                      }}
-                    >
-                      Need Consideration
-                      <br />5
-                    </p>
-                  </div>
-                </div>
+                <Image
+                  src="/icons/building-3.svg"
+                  alt="building-3"
+                  width={16}
+                  height={16}
+                  className="color-sea-blue"
+                />
               </div>
-              <div className="row d-flex ps-3 pe-3 pt-3">
-                <div
-                  className="col-lg-2 col-md-2 col rounded-3 text-center fs14px me-2 p-1 mb-1"
-                  style={{ background: "rgba(255,255,255,.5)" }}
+              <div className="col pe-0" style={{ paddingLeft: "10px" }}>
+                <p
+                  className="fw-5 fs14px"
+                  style={{ color: "#4D5878", marginBottom: "7px" }}
                 >
-                  <span className="fw-bold">Cost</span>
-                  <br />
-                  970.73 B
-                </div>
-                <div
-                  className="col-lg-2 col-md-2 col rounded-3 text-center fs14px me-2 p-1 mb-1"
-                  style={{ background: "rgba(255,255,255,.5)" }}
-                >
-                  <span className="fw-bold">Allocation</span>
-                  <br />
-                  278.13 B
-                </div>
-                <div
-                  className="col-lg-3 col-md-3 col rounded-3 text-center fs14px me-2 p-1 mb-1"
-                  style={{ background: "rgba(255,255,255,.5)" }}
-                >
-                  <span className="fw-bold">Current Year Release</span>
-                  <br />
-                  100.13 B
-                </div>
-                <div
-                  className="col-lg-2 col-md-2 col rounded-3 text-center fs14px me-2 p-1 mb-1"
-                  style={{ background: "rgba(255,255,255,.5)" }}
-                >
-                  <span className="fw-bold">Total Release</span>
-                  <br />
-                  2.25 B
-                </div>
-                <div
-                  className="col-lg-2 col-md-2 col rounded-3 text-center fs14px me-2 p-1 mb-1"
-                  style={{ background: "rgba(255,255,255,.5)" }}
-                >
-                  <span className="fw-bold">Utilization</span>
-                  <br />
-                  0.00 B
-                </div>
+                  DGME
+                </p>
+                <p className="fw-bold fs18px mb-0" style={{ color: "#1F3D57" }}>
+                  0&nbsp;&nbsp;
+                  <span className="fs12px fw-5" style={{ color: "#A3AED0" }}>
+                    Total Visits
+                  </span>
+                </p>
               </div>
             </div>
           </div>
-        ))} */}
-        <div className="col-lg-6 col-md-12 col ps-3 pe-3 pb-1">
-          <ProjectModal />
+        </div>
+        <div
+          className="col bg-white fs21px"
+          style={{
+            border: "1px solid #E2E4E5",
+            borderRadius: "10px",
+            color: "#1E293B",
+            fontWeight: 800,
+          }}
+        >
+          <div
+            className="row d-flex align-items-center "
+            style={{
+              padding: "17px 26px",
+            }}
+          >
+            <div className="col">
+              <div className="row d-flex align-items-center">
+                <div className="col-auto pe-0">No. of Visits</div>
+                {/* <div className="col">
+                  <span
+                    className="badge rounded-pill"
+                    style={{ border: "1px solid #1C6BA6", color: "#1C6BA6" }}
+                  >
+                    <VscCircleFilled />
+                    &nbsp;665/665 visits
+                  </span>
+                </div> */}
+              </div>
+            </div>
+            <div className="col">
+              <div className="row gap-2 align-items-center justify-content-end">
+                <div className="col-auto p-0">
+                  <form onSubmit={(e) => e.preventDefault()}>
+                    <div className="input-group">
+                      <div
+                        className="rounded-end rounded-pill text-white shadow-none border-end-0"
+                        style={{
+                          border: "1px solid #CBD5E1",
+                          padding: "4px 0px 8px 17px",
+                        }}
+                      >
+                        <FiSearch size={21} style={{ color: "#475569" }} />
+                      </div>
+                      <input
+                        type="text"
+                        className="form-control border-start-0 rounded-pill rounded-start shadow-none fs15px fw-bold bg-transparent placeholder-bold"
+                        style={{
+                          border: "1px solid #CBD5E1",
+                          color: "#475569",
+                          padding: "10px 17px 10px 8px",
+                        }}
+                        placeholder="Search"
+                      />
+                    </div>
+                  </form>
+                </div>
+                {/* <div className="col-auto p-0">
+                  <Button
+                    className="btn fw-bold bg-color-sea-blue text-white rounded-pill"
+                    style={{ padding: "10px 17px" }}
+                  >
+                    <CgOptions size={21} />
+                    District
+                  </Button>
+                </div> */}
+              </div>
+            </div>
+          </div>
+
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th
+                    className="fs15px"
+                    scope="col"
+                    style={{
+                      background: "#F8FAFC",
+                      padding: "15px 26px",
+                      borderBottom: "1px solid #CBD5E1",
+                    }}
+                  >
+                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
+                      <div className="col-auto text-nowrap pe-0">GS No.</div>
+                      <div
+                        className="col"
+                        style={{ padding: "0px 0px 0px 13px" }}
+                      >
+                        <RiExpandUpDownFill size={21} />
+                      </div>
+                    </div>
+                  </th>
+                  <th
+                    className="fs15px"
+                    scope="col"
+                    style={{
+                      background: "#F8FAFC",
+                      padding: "15px 26px",
+                      borderBottom: "1px solid #CBD5E1",
+                    }}
+                  >
+                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
+                      <div className="col-auto text-nowrap pe-0">
+                        Project Name
+                      </div>
+                      <div
+                        className="col"
+                        style={{ padding: "0px 0px 0px 13px" }}
+                      >
+                        <RiExpandUpDownFill size={21} />
+                      </div>
+                    </div>
+                  </th>
+                  <th
+                    className="fs15px"
+                    scope="col"
+                    style={{
+                      background: "#F8FAFC",
+                      padding: "15px 26px",
+                      borderBottom: "1px solid #CBD5E1",
+                    }}
+                  >
+                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
+                      <div className="col-auto text-nowrap pe-0">District</div>
+                      <div
+                        className="col"
+                        style={{ padding: "0px 0px 0px 13px" }}
+                      >
+                        <RiExpandUpDownFill size={21} />
+                      </div>
+                    </div>
+                  </th>
+                  <th
+                    className="fs15px"
+                    scope="col"
+                    style={{
+                      background: "#F8FAFC",
+                      padding: "15px 26px",
+                      borderBottom: "1px solid #CBD5E1",
+                    }}
+                  >
+                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
+                      <div className="col-auto text-nowrap pe-0">
+                        Commissioner Visit
+                      </div>
+                      <div
+                        className="col"
+                        style={{ padding: "0px 0px 0px 13px" }}
+                      >
+                        <RiExpandUpDownFill size={21} />
+                      </div>
+                    </div>
+                  </th>
+                  <th
+                    className="fs15px"
+                    scope="col"
+                    style={{
+                      background: "#F8FAFC",
+                      padding: "15px 26px",
+                      borderBottom: "1px solid #CBD5E1",
+                    }}
+                  >
+                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
+                      <div className="col-auto text-nowrap pe-0">DC Visit</div>
+                      <div
+                        className="col"
+                        style={{ padding: "0px 0px 0px 13px" }}
+                      >
+                        <RiExpandUpDownFill size={21} />
+                      </div>
+                    </div>
+                  </th>
+                  <th
+                    className="fs15px"
+                    scope="col"
+                    style={{
+                      background: "#F8FAFC",
+                      padding: "15px 26px",
+                      borderBottom: "1px solid #CBD5E1",
+                    }}
+                  >
+                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
+                      <div className="col-auto text-nowrap pe-0">
+                        Sponsoring Agency Visit
+                      </div>
+                      <div
+                        className="col"
+                        style={{ padding: "0px 0px 0px 13px" }}
+                      >
+                        <RiExpandUpDownFill size={21} />
+                      </div>
+                    </div>
+                  </th>
+                  <th
+                    className="fs15px"
+                    scope="col"
+                    style={{
+                      background: "#F8FAFC",
+                      padding: "15px 26px",
+                      borderBottom: "1px solid #CBD5E1",
+                    }}
+                  >
+                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
+                      <div className="col-auto text-nowrap pe-0">
+                        Executing Agency Visit
+                      </div>
+                      <div
+                        className="col"
+                        style={{ padding: "0px 0px 0px 13px" }}
+                      >
+                        <RiExpandUpDownFill size={21} />
+                      </div>
+                    </div>
+                  </th>
+                  <th
+                    className="fs15px"
+                    scope="col"
+                    style={{
+                      background: "#F8FAFC",
+                      padding: "15px 26px",
+                      borderBottom: "1px solid #CBD5E1",
+                    }}
+                  >
+                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
+                      <div className="col-auto text-nowrap pe-0">
+                        DGM&E Visit
+                      </div>
+                      <div
+                        className="col"
+                        style={{ padding: "0px 0px 0px 13px" }}
+                      >
+                        <RiExpandUpDownFill size={21} />
+                      </div>
+                    </div>
+                  </th>
+                  <th
+                    className="fs15px"
+                    scope="col"
+                    style={{
+                      background: "#F8FAFC",
+                      padding: "15px 26px",
+                      borderBottom: "1px solid #CBD5E1",
+                    }}
+                  >
+                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
+                      <div className="col-auto text-nowrap pe-0">
+                        Total Visit
+                      </div>
+                      <div
+                        className="col"
+                        style={{ padding: "0px 0px 0px 13px" }}
+                      >
+                        <RiExpandUpDownFill size={21} />
+                      </div>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th
+                    className="fs15px bg-white"
+                    scope="row"
+                    style={{
+                      padding: "28px 26px",
+                      borderBottom: "1px solid #E2E8F0",
+                    }}
+                  >
+                    706
+                  </th>
+                  <td
+                    className="fs15px bg-white fw-5"
+                    style={{
+                      padding: "13px 26px",
+                      borderBottom: "1px solid #E2E8F0",
+                    }}
+                  >
+                    CM Himmat Card Program for Persons with Disabilities (PWDs)
+                  </td>
+                  <td
+                    className="fs15px bg-white fw-5"
+                    style={{
+                      padding: "13px 26px",
+                      borderBottom: "1px solid #E2E8F0",
+                    }}
+                  >
+                    Sialkot
+                  </td>
+                  <td
+                    className="fw-5 fs15px bg-white color-sea-blue text-decoration-underline text-center cursor-pointer"
+                    style={{
+                      padding: "13px 26px",
+                      borderBottom: "1px solid #E2E8F0",
+                    }}
+                    onClick={() =>
+                      router.push("/dashboard-summary/summary-detail")
+                    }
+                  >
+                    1
+                  </td>
+                  <td
+                    className="fw-5 fs15px bg-white color-sea-blue text-decoration-underline text-center cursor-pointer"
+                    style={{
+                      padding: "13px 26px",
+                      borderBottom: "1px solid #E2E8F0",
+                    }}
+                    onClick={() =>
+                      router.push("/dashboard-summary/summary-detail")
+                    }
+                  >
+                    1
+                  </td>
+                  <td
+                    className="fw-5 fs15px bg-white color-sea-blue text-decoration-underline text-center cursor-pointer"
+                    style={{
+                      padding: "13px 26px",
+                      borderBottom: "1px solid #E2E8F0",
+                    }}
+                    onClick={() =>
+                      router.push("/dashboard-summary/summary-detail")
+                    }
+                  >
+                    1
+                  </td>
+                  <td
+                    className="fw-5 fs15px bg-white color-sea-blue text-decoration-underline text-center cursor-pointer"
+                    style={{
+                      padding: "13px 26px",
+                      borderBottom: "1px solid #E2E8F0",
+                    }}
+                    onClick={() =>
+                      router.push("/dashboard-summary/summary-detail")
+                    }
+                  >
+                    1
+                  </td>
+                  <td
+                    className="fw-5 fs15px bg-white color-sea-blue text-decoration-underline text-center cursor-pointer"
+                    style={{
+                      padding: "13px 26px",
+                      borderBottom: "1px solid #E2E8F0",
+                    }}
+                  >
+                    0
+                  </td>
+                  <td
+                    className="fw-5 fs15px bg-white color-sea-blue text-center"
+                    style={{
+                      padding: "13px 26px",
+                      borderBottom: "1px solid #E2E8F0",
+                    }}
+                  >
+                    4
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -456,3 +715,89 @@ const SummaryDashboard = () => {
 };
 
 export default SummaryDashboard;
+
+{
+  /* <div
+          className="row d-flex justify-content-between align-items-center"
+          style={{ padding: "32px" }}
+        >
+          <div className="col-auto">
+            <h5
+              className="m-0"
+              style={{ fontSize: "1.875rem", fontWeight: "800" }}
+            >
+              Summary Dashboard
+            </h5>
+          </div>
+
+          <div className="col-auto my-auto">
+            <div className="row d-flex justify-content-end">
+              <div className="col">
+                <form onSubmit={(e) => e.preventDefault()}>
+                  <div className="input-group">
+                    <button
+                      className="btn rounded-end rounded-pill text-white shadow-none border-end-0 pe-0"
+                      type="submit"
+                      style={{
+                        border: "1px solid rgba(38, 50, 56,.6)",
+                      }}
+                    >
+                      <Image
+                        src={search3}
+                        alt="search3"
+                        width={18}
+                        height={18}
+                      />
+                    </button>
+                    <input
+                      type="text"
+                      className="form-control border-start-0 rounded-pill rounded-start shadow-none fs14px bg-transparent py-2"
+                      style={{
+                        border: "1px solid rgba(38, 50, 56,.6)",
+                        color: "rgba(38, 50, 56,1)",
+                      }}
+                      placeholder="Search"
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="row d-flex mb-3">
+          <div className="col">
+            <div className="btn-group d-flex" role="group">
+              {tabs?.map((tab, i) => (
+                <div className="col-auto">
+                  <Button
+                    className={`btn shadow-none rounded-0 fw-bold position-relative border-end-0 border-start-0 ${
+                      selectedTab === i ? "text-dark" : "text-secondary"
+                    }`}
+                    style={{
+                      borderBottom:
+                        selectedTab === i
+                          ? "2px solid #0c8ce9"
+                          : "2px solid #E2E8F0",
+                      padding: "12px 16px",
+                    }}
+                    onClick={() => {
+                      setSelectedTab(i);
+                    }}
+                  >
+                    {tab.tabName} &nbsp;
+                    <span
+                      className="badge rounded-pill color-sea-blue fw-6"
+                      style={{
+                        background: "#EEF2FF",
+                        border: "1px solid #A5B4FC",
+                      }}
+                    >
+                      {tab.count}
+                    </span>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div> */
+}

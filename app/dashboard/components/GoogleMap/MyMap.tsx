@@ -48,7 +48,6 @@ interface Props {
   adpFilters: FilterData[];
   otherFilters: FilterData[];
   setOtherFilters: Dispatch<SetStateAction<FilterData[]>>;
-  dashboardType: string | null | undefined;
 }
 
 const MyMap = ({
@@ -59,7 +58,6 @@ const MyMap = ({
   adpFilters,
   otherFilters,
   setOtherFilters,
-  dashboardType,
 }: Props) => {
   const InitialCenterPosition = {
     lat: 31.1704,
@@ -401,11 +399,7 @@ const MyMap = ({
                   >
                     <span>
                       <img
-                        src={`${
-                          dashboardType
-                            ? "/images/evaluation/districtLocationE.png"
-                            : "/images/districtLocation.png"
-                        }`}
+                        src="/images/districtLocation.png"
                         alt="districtLocation"
                         style={{ width: "50px", height: "50px" }}
                       />
@@ -427,11 +421,7 @@ const MyMap = ({
                           backgroundColor: "rgba(0,0,0,0)",
                         }}
                       >
-                        {dashboardType ? (
-                          <DistrictCardEvaluation data={district} />
-                        ) : (
-                          <DistrictCard data={district} />
-                        )}
+                        <DistrictCard data={district} />
                       </div>
                     </InfoWindow>
                   )}
@@ -451,7 +441,7 @@ const MyMap = ({
                         })`,
                         transition: "transform 0.1s ease-in-out",
                       }}
-                      onClick={() => handleProjectSubmit(project.id)}
+                      // onClick={() => handleProjectSubmit(project.id)}
                       position={{
                         lat: parseFloat(project.latitude),
                         lng: parseFloat(project.longitude),

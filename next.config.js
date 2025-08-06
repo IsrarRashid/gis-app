@@ -5,7 +5,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "rtmes-api-dgme.punjab.gov.pk",
-        port: "443",
+        port: "",
         // protocol: "http",
         // hostname: "110.39.184.210",
         // port: "154",

@@ -4,11 +4,14 @@ import Modal from "react-bootstrap/Modal";
 import more from "../../../public/icons/more.svg";
 // import { ToastContainer, toast } from "react-toastify";
 import Button from "@/app/components/Button";
-import useSuperGroups from "@/app/hooks/useSuperGroups";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { z } from "zod";
 
 const schema = z.object({
@@ -86,9 +89,6 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
 
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
       <Button
         type="button"
         className={`btn shadow ${
@@ -120,61 +120,33 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
           className="p-0"
           style={{ background: "rgba(156,255,255,0)" }}
         >
-          <div
-            className="container-fluid pt-3 pb-3 ps-4 pe-4"
-            style={{
-              backgroundImage:
-                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-              borderRadius: "15px",
-              border: "1.7px solid rgba(255, 255, 255, 0.6)",
-            }}
+          <FormWrapper
+            heading={
+              method === "POST" ? "Add Super Group" : "UPDATE Super Group"
+            }
           >
-            <div className="row flex-column justify-content-center mb-4">
-              <div className="col-lg-12">
-                <p
-                  className="text-center text-white mt-4"
-                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
-                >
-                  {method === "POST" ? "ADD SUPER GROUP" : "UPDATE SUPER GROUP"}
-                </p>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
+                <CustomLabel htmlFor="superGroupLabel">
+                  Super Group Label
+                </CustomLabel>
+                <CustomInput
+                  {...register("superGroupLabel")}
+                  id="superGroupLabel"
+                  type="text"
+                  placeholder="Enter Super Group Label"
+                />
+                {errors.superGroupLabel && (
+                  <p className="text-danger mt-1 fs14px">
+                    {errors.superGroupLabel.message}
+                  </p>
+                )}
               </div>
-              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
-                <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
-                  <label
-                    htmlFor="superGroupLabel"
-                    className="form-label text-white"
-                  >
-                    Super Group Label
-                  </label>
-                  <input
-                    {...register("superGroupLabel")}
-                    id="superGroupLabel"
-                    type="text"
-                    className="form-control form-control-sm color-light-dark"
-                    placeholder="Enter Super Group Label"
-                  />
-                  {errors.superGroupLabel && (
-                    <p className="text-danger mt-1">
-                      {errors.superGroupLabel.message}
-                    </p>
-                  )}
-                </div>
-                <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <Button
-                    className="btn text-white w-100 border-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                      borderRadius: "12px",
-                    }}
-                    type="submit"
-                  >
-                    Done
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </div>
+              <div className="col-xxl-5 col-xl-7 col-lg-6 col-md-6 col-sm-6 col-10 mx-auto">
+                <SubmitButton>Save Super Group</SubmitButton>
+              </div>
+            </form>
+          </FormWrapper>
         </Modal.Body>
       </Modal>
     </>

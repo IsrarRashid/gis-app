@@ -217,7 +217,9 @@ const Form = ({ api, method, id }: Props) => {
                       placeholder="e.g. DGME"
                     />
                     {errors.name && (
-                      <p className="text-danger mt-1">{errors.name.message}</p>
+                      <p className="text-danger mt-1 fs14px">
+                        {errors.name.message}
+                      </p>
                     )}
                   </div>
                   <div className="col-12 col col-sm-12 col-md-12 col-lg-6 mb-3 text-start">
@@ -235,7 +237,7 @@ const Form = ({ api, method, id }: Props) => {
                       placeholder="Enter Phone Number"
                     />
                     {errors.phoneNumber && (
-                      <p className="text-danger mt-1">
+                      <p className="text-danger mt-1 fs14px">
                         {errors.phoneNumber.message}
                       </p>
                     )}
@@ -252,7 +254,7 @@ const Form = ({ api, method, id }: Props) => {
                       placeholder="Enter your Addresss"
                     />
                     {errors.address && (
-                      <p className="text-danger mt-1">
+                      <p className="text-danger mt-1 fs14px">
                         {errors.address.message}
                       </p>
                     )}
@@ -269,7 +271,9 @@ const Form = ({ api, method, id }: Props) => {
                       placeholder="your@company.com"
                     />
                     {errors.email && (
-                      <p className="text-danger mt-1">{errors.email.message}</p>
+                      <p className="text-danger mt-1 fs14px">
+                        {errors.email.message}
+                      </p>
                     )}
                   </div>
                   <div className="col-12 col col-sm-12 col-md-12 col-lg-6 mb-3 text-start">
@@ -288,7 +292,9 @@ const Form = ({ api, method, id }: Props) => {
                       placeholder="Select your logo"
                     />
                     {errors.logo && (
-                      <p className="text-danger mt-1">{errors.logo.message}</p>
+                      <p className="text-danger mt-1 fs14px">
+                        {errors.logo.message}
+                      </p>
                     )}
                   </div>
                 </div>

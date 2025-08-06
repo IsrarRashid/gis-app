@@ -12,7 +12,7 @@ interface Props {
   HeaderRightPos?: number;
   HeaderTopPos?: number;
   showCloseButton?: true | false;
-  buttonColumn?: "col" | "col-auto";
+  buttonColumn?: string; // col || col-auto
 }
 
 const CustomModal = ({
@@ -40,7 +40,7 @@ const CustomModal = ({
         onClick={() => {
           handleShow();
         }}
-        className={`${buttonColumn} p-0`}
+        className={`${buttonColumn}`}
       >
         {button}
       </div>

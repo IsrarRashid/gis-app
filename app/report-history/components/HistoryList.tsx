@@ -2,25 +2,38 @@
 import useReportHistoryUser from "@/app/hooks/useReportHistoryUsers";
 import { convertToLocaleTimeString, getFormattedDate } from "@/app/utils";
 import Link from "next/link";
-import { useState } from "react";
 import { Accordion } from "react-bootstrap";
 import ReactMarkDown from "react-markdown";
 import { ReportHistory } from "./ReportNoting";
+import ReportHistoryDownload from "./ReportHistoryDownload";
 
-const HistoryList = ({ data }: { data: ReportHistory[] }) => {
-  const [refresh, setRefresh] = useState(false);
-  const { data: users } = useReportHistoryUser({ refresh });
+interface Props {
+  data: ReportHistory[];
+  projectName: string;
+  initialUser: string;
+}
+
+const HistoryList = ({ data, projectName, initialUser }: Props) => {
+  const { data: users } = useReportHistoryUser();
 
   return (
     <div className="mb-2 p-2">
       <Accordion flush>
         <Accordion.Item eventKey="reportHistory">
-          <Accordion.Header>Report History List</Accordion.Header>
+          <Accordion.Header>Report History List </Accordion.Header>
           <Accordion.Body>
             <div
               className="col"
               style={{ height: "500px", overflow: "scroll" }}
             >
+              <div className="col mb-2 text-end">
+                <ReportHistoryDownload
+                  data={data}
+                  users={users}
+                  projectName={projectName}
+                  initialUser={initialUser}
+                />
+              </div>
               {data?.map((d) => (
                 <div
                   key={d.id}

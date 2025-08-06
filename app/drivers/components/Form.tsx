@@ -154,7 +154,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     placeholder="Enter Driver Name"
                   />
                   {errors.driverName && (
-                    <p className="text-danger mt-1">
+                    <p className="text-danger mt-1 fs14px">
                       {errors.driverName.message}
                     </p>
                   )}
@@ -174,7 +174,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     placeholder="Enter Mobile Number"
                   />
                   {errors.mobileNumber && (
-                    <p className="text-danger mt-1">
+                    <p className="text-danger mt-1 fs14px">
                       {errors.mobileNumber.message}
                     </p>
                   )}
@@ -193,7 +193,9 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     value={0}
                   />
                   {errors.user_Id && (
-                    <p className="text-danger mt-1">{errors.user_Id.message}</p>
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.user_Id.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">

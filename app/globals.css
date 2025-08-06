@@ -93,6 +93,10 @@ main {
   transition: all 0.3s;
 }
 
+.form-label-color-black {
+  color: #2a2a2b;
+}
+
 .custom-modal .modal-content {
   background: rgba(255, 255, 255, 0) !important;
   border: none;
@@ -170,37 +174,68 @@ main {
   cursor: pointer;
 }
 
+input::placeholder {
+  color: #80889e !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 1; /* Ensures full visibility in Firefox */
+}
+
+textarea::placeholder {
+  color: #80889e !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 1; /* Ensures full visibility in Firefox */
+}
+
 input[type="text"] {
-  font-size: 0.8rem;
-  padding: 10px;
-  border-radius: 5px;
+  font-size: 0.875rem;
+  padding: 10px 12px;
+  border-radius: 7px;
+  border: 1.5px solid #eff0f2;
+  color: #545861 !important;
+  font-weight: 500;
 }
 
 input[type="password"] {
-  font-size: 0.8rem;
-  padding: 10px;
-  border-radius: 5px;
+  font-size: 0.875rem;
+  padding: 10px 12px;
+  border-radius: 7px;
+  border: 1.5px solid #eff0f2;
+  color: #545861 !important;
+  font-weight: 500;
 }
 
 input[type="number"] {
-  font-size: 0.8rem;
-  padding: 10px;
-  border-radius: 5px;
+  font-size: 0.875rem;
+  padding: 10px 12px;
+  border-radius: 7px;
+  border: 1.5px solid #eff0f2;
+  color: #545861 !important;
+  font-weight: 500;
 }
 input[type="date"] {
-  font-size: 0.8rem;
-  padding: 10px;
-  border-radius: 5px;
+  font-size: 0.875rem;
+  padding: 10px 12px;
+  border-radius: 7px;
+  border: 1.5px solid #eff0f2;
+  color: #545861 !important;
+  font-weight: 500;
 }
+
 textarea {
-  font-size: 0.8rem !important;
-  padding: 10px !important;
-  border-radius: 5px;
+  font-size: 0.875rem;
+  padding: 10px 12px;
+  border-radius: 7px !important;
+  border: 1.5px solid #eff0f2;
+  color: #545861 !important;
+  font-weight: 500;
 }
+
 select {
   font-size: 0.8rem !important;
-  padding: 10px !important;
-  border-radius: 5px;
+  padding: 10px 12px !important;
+  border-radius: 7px !important;
 }
 
 .fs26px {
@@ -377,4 +412,17 @@ select {
   height: 150px !important;
   min-height: 150px !important;
   max-height: 150px !important;
+}
+
+/* custom toggle switch */
+/* Default appearance of your variant */
+.form-switch .form-check-input.my-switch-primary {
+  background-color: "#BBC5CB";
+  border: "0px";
+}
+
+.placeholder-bold::placeholder {
+  color: #475569; /* placeholder color */
+  font-weight: bold; /* make it bold */
+  font-size: 15px; /* or whatever size */
 }

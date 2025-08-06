@@ -67,13 +67,13 @@ const GISMenu = ({
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #5746DD , #26AE92)",
     },
-    {
-      name: "DG Dashboard",
-      nameId: "dashboard-dg",
-      link: "/dashboard-dg",
-      icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #3e86d6 , #235aa6)",
-    },
+    // {
+    //   name: "DG Dashboard",
+    //   nameId: "dashboard",
+    //   link: "/dashboard",
+    //   icon: dashboard,
+    //   backgroundColor: "linear-gradient(to bottom right, #3e86d6 , #235aa6)",
+    // },
     {
       name: "Attendance Dashboard",
       nameId: "dashboard-attendance",
@@ -81,20 +81,20 @@ const GISMenu = ({
       icon: dashboard,
       backgroundColor: "linear-gradient(to bottom right, #43abd1 , #2680ad)",
     },
-    {
-      name: "Director Dashboard",
-      nameId: "dashboard-director",
-      link: "/dashboard-director",
-      icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #4364d9 , #211fab)",
-    },
-    {
-      name: "Deputy Director Dashboard",
-      nameId: "dashboard-deputy-director",
-      link: "/dashboard-deputy-director",
-      icon: dashboard,
-      backgroundColor: "linear-gradient(to bottom right, #3d76d1 , #217a9c)",
-    },
+    // {
+    //   name: "Director Dashboard",
+    //   nameId: "dashboard",
+    //   link: "/dashboard",
+    //   icon: dashboard,
+    //   backgroundColor: "linear-gradient(to bottom right, #4364d9 , #211fab)",
+    // },
+    // {
+    //   name: "Deputy Director Dashboard",
+    //   nameId: "dashboard",
+    //   link: "/dashboard",
+    //   icon: dashboard,
+    //   backgroundColor: "linear-gradient(to bottom right, #3d76d1 , #217a9c)",
+    // },
     // {
     //   name: "Officer Dashboard",
     //   nameId: "dashboard-officer",
@@ -125,10 +125,11 @@ const GISMenu = ({
     },
     // {
     //   name: "Summary Dashboard",
-    //   nameId: "summaryDashboard",
-    //   link: "/summaryDashboard",
+    //   nameId: "dashboard-summary",
+    //   link: "/dashboard-summary",
     //   icon: dashboard,
-    //   backgroundColor: "linear-gradient(to bottom right, #E48E6E , #EE7E37)",
+    //   backgroundColor:
+    //     "linear-gradient(to bottom right, red ,#E48E6E , yellow)",
     // },
     {
       name: "Vehicle Tracking",

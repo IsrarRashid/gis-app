@@ -514,7 +514,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                               )}
                             />
                             {errors.remarks && (
-                              <p className="text-danger mt-1">
+                              <p className="text-danger mt-1 fs14px">
                                 {errors.remarks.message}
                               </p>
                             )}
@@ -671,7 +671,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                     )}
                                   </select>
                                   {errors.submittedTo && (
-                                    <p className="text-danger mt-1">
+                                    <p className="text-danger mt-1 fs14px">
                                       {errors.submittedTo.message}
                                     </p>
                                   )}

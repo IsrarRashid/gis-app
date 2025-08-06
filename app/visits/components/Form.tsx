@@ -306,7 +306,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         ))}
                       </select>
                       {errors.vehicleID && (
-                        <p className="text-danger mt-1">
+                        <p className="text-danger mt-1 fs14px">
                           {errors.vehicleID.message}
                         </p>
                       )}
@@ -331,7 +331,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                         ))}
                       </select>
                       {errors.driverID && (
-                        <p className="text-danger mt-1">
+                        <p className="text-danger mt-1 fs14px">
                           {errors.driverID.message}
                         </p>
                       )}

@@ -280,7 +280,11 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                 >
                   {viewPdf ? "Hide" : "View"} PDF
                 </Button>
-                <HistoryList data={reportsHistory} />
+                <HistoryList
+                  data={reportsHistory}
+                  projectName={data.projectName}
+                  initialUser={data.intiallyUser}
+                />
                 <div
                   className="col p-4 ms-1 mb-3"
                   style={{
@@ -290,6 +294,9 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                 >
                   <p className="mb-4 fw-normal">
                     <span>Project:&nbsp;&nbsp;</span> {data.projectName}
+                  </p>
+                  <p className="mb-4 fw-normal">
+                    <span>Name:&nbsp;&nbsp;</span> {data.intiallyUser}
                   </p>
                   <hr style={{ opacity: ".1" }} />
                   <>
@@ -319,7 +326,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                               )}
                             />
                             {errors.remarks && (
-                              <p className="text-danger mt-1">
+                              <p className="text-danger mt-1 fs14px">
                                 {errors.remarks.message}
                               </p>
                             )}
@@ -414,7 +421,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                     ))}
                                 </select>
                                 {errors.submittedTo && (
-                                  <p className="text-danger mt-1">
+                                  <p className="text-danger mt-1 fs14px">
                                     {errors.submittedTo.message}
                                   </p>
                                 )}
@@ -495,6 +502,9 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                         <option value={officers[28]?.id}>
                                           {officers[28]?.designation}
                                         </option>
+                                        <option value={officers[48]?.id}>
+                                          {officers[48]?.designation}
+                                        </option>
                                       </>
                                     ) : (
                                       <>
@@ -507,11 +517,14 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                         <option value={officers[26]?.id}>
                                           {officers[26]?.designation}
                                         </option>
+                                        <option value={officers[49]?.id}>
+                                          {officers[49]?.fullName}
+                                        </option>
                                       </>
                                     )}
                                   </select>
                                   {errors.submittedTo && (
-                                    <p className="text-danger mt-1">
+                                    <p className="text-danger mt-1 fs14px">
                                       {errors.submittedTo.message}
                                     </p>
                                   )}

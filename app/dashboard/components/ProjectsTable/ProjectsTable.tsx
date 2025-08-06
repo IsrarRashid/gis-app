@@ -8,6 +8,7 @@ import useSectors from "@/app/hooks/useSectors";
 import useUsers from "@/app/hooks/useUsers";
 import {
   addDayToFormattedDate,
+  defaultOption,
   displayStatusText,
   exportToPDF,
   formatAmountWithCommas,
@@ -139,8 +140,6 @@ const ProjectsTable = ({
       fontSize: "14px",
     }),
   };
-
-  const defaultOption = { value: "", label: "Select" };
 
   const districtOptions = districts.map((district) => {
     return {

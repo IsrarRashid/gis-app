@@ -148,7 +148,9 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     placeholder="Enter Role Name"
                   />
                   {errors.name && (
-                    <p className="text-danger mt-1">{errors.name.message}</p>
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
                 <div className="col mb-3">

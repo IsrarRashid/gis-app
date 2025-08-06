@@ -1,4 +1,6 @@
 import Dashboard from "./components/Dashboard";
+import DashboardEvaluation from "./components/DashboardEvaluation";
+import DashboardMonitoring from "./components/DashboardMonitoring";
 import { DashboardType, TypeEnum } from "./types/types";
 
 interface Props {
@@ -19,7 +21,7 @@ const DashboardPage = async ({ searchParams }: Props) => {
   console.log("searchParams status", dashboardType);
   console.log("currentStatus", currentType);
 
-  return <Dashboard dashboardType={currentType} />;
+  return currentType ? <DashboardEvaluation /> : <DashboardMonitoring />;
 };
 
 export default DashboardPage;

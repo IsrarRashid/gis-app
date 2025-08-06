@@ -41,8 +41,8 @@ const Menu = ({
   isGrouped = false,
   showValueInDecimal = false,
   toggleLabel = false,
-  sneCount,
-  nonSneCount,
+  sneCount = 0,
+  nonSneCount = 0,
   classNames = "",
   labelColor = "",
 }: Props) => {
@@ -170,17 +170,67 @@ const Menu = ({
           </p>
         ) : (
           <>
-            {toggleLabel ? (
+            {toggleLabel && isGrouped ? (
               <div
                 className="col"
                 style={{
                   position: "relative",
-                  minHeight: "25px",
-                  width: "110px",
+                  minHeight: "20px",
+                  width: isGrouped ? "130px" : "auto",
                 }}
               >
                 <p
-                  className={`${styles.labelHoverDown} fs11px mb-0 text-nowrap fw-5`}
+                  className={`${styles.labelHoverDown} fs11px mb-0 text-nowrap fw-5 mt-1`}
+                  style={{
+                    fontWeight: "500",
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    color: labelColor,
+                  }}
+                >
+                  {label}
+                </p>
+                <div
+                  className={`row d-flex justify-content-between m-0 ${
+                    styles.labelHoverUp
+                  } ${isGrouped ? "fs10px" : "f12px"} mb-2 text-nowrap fw-5`}
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                  }}
+                >
+                  <div className="col-auto p-0" style={{ color: labelColor }}>
+                    SNE&nbsp;
+                    <AnimatedCounter
+                      from={0}
+                      to={sneCount}
+                      showValueInDecimal={showValueInDecimal}
+                    />
+                  </div>
+                  <div className="col-auto p-0" style={{ color: labelColor }}>
+                    Non-SNE&nbsp;
+                    <AnimatedCounter
+                      from={0}
+                      to={nonSneCount}
+                      showValueInDecimal={showValueInDecimal}
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : toggleLabel ? (
+              <div
+                className="col"
+                style={{
+                  position: "relative",
+                  minHeight: "24px",
+                  minWidth: isGrouped ? "130px" : "100px",
+                  maxWidth: isGrouped ? "200px" : "100%",
+                }}
+              >
+                <p
+                  className={`${styles.labelHoverDown} fs11px mb-0 text-nowrap fw-5 mt-1`}
                   style={{
                     fontWeight: "500",
                     position: "absolute",
@@ -211,9 +261,7 @@ const Menu = ({
               </div>
             ) : (
               <p
-                className={`${
-                  isGrouped ? "mb-1" : "mb-2"
-                } fs12px text-nowrap text-center fw-5`}
+                className={`mb-1 fs12px text-nowrap text-center fw-5`}
                 style={{ color: labelColor }}
               >
                 {label}

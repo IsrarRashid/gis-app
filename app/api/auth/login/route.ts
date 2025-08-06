@@ -2,7 +2,6 @@ import { LOGIN_API } from "@/app/APIs";
 import { NextRequest, NextResponse } from "next/server";
 import { serialize } from "cookie";
 import axios from "axios";
-import { corsHeaders } from "@/app/lib/cors";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,9 +12,6 @@ export async function POST(req: NextRequest) {
       {
         username,
         password,
-      },
-      {
-        headers: corsHeaders,
       }
     );
 

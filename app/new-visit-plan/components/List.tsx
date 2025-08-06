@@ -381,7 +381,7 @@ const List = () => {
           )}
           {!visitPlanGroup ||
             (visitPlanGroup === -1 && (
-              <p className="text-danger mt-1">Please Add Visit Plan!</p>
+              <p className="text-danger mt-1 fs14px">Please Add Visit Plan!</p>
             ))}
         </div>
         {data && data.length > 0 && (

@@ -13,6 +13,7 @@ import UserDropDown from "../components/UserDropDown/UserDropDown";
 import DashboardTypeFilter from "../dashboard/components/DashboardTypeFilter";
 import { RootState } from "../store";
 import styles from "./Navbar.module.css";
+import DepartmentCategoryFilter from "../dashboard/components/DepartmentCategoryFilter";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -20,8 +21,9 @@ const lexend = Lexend({
 });
 
 const Navbar = () => {
-  const searchParams = useSearchParams();
   const [currentType, setCurrentType] = useState<string | null>();
+  const searchParams = useSearchParams();
+  const currentParams = searchParams.toString();
 
   useEffect(() => {
     const type = searchParams.get("dashboardType");
@@ -30,6 +32,7 @@ const Navbar = () => {
   }, [searchParams]);
 
   const [role, setRole] = useState<string>();
+  const [departmentId, setDepartmentId] = useState<number>();
 
   const currentTutorial = useSelector(
     (state: RootState) => state.tutorial.currentTutorial
@@ -37,7 +40,9 @@ const Navbar = () => {
 
   useEffect(() => {
     const userRole = Cookies.get("role");
+    const departmentId = Cookies.get("departmentId");
     if (userRole) setRole(userRole);
+    if (departmentId) setDepartmentId(parseInt(departmentId));
   }, []);
 
   const [isEnter, setEnter] = useState(false);
@@ -52,7 +57,10 @@ const Navbar = () => {
       }}
     >
       <div className="container-fluid">
-        <Link className="navbar-brand" href="/">
+        <Link
+          className="navbar-brand"
+          href={`/${currentParams ? `?${currentParams}` : ""}`}
+        >
           <Image
             src="/icons/logoNew1.svg"
             className="img-fluid object-contain"
@@ -139,11 +147,19 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
-            <li className="nav-item p-1 me-3 m-auto">
-              <Suspense fallback={<span>Loading filter...</span>}>
-                <DashboardTypeFilter />
-              </Suspense>
-            </li>
+            {departmentId === 1 ? (
+              <li className="nav-item p-1 me-3 m-auto">
+                <Suspense fallback={<span>Loading filter...</span>}>
+                  <DashboardTypeFilter />
+                </Suspense>
+              </li>
+            ) : (
+              <li className="nav-item p-1 me-3 m-auto">
+                <Suspense fallback={<span>Loading filter...</span>}>
+                  <DepartmentCategoryFilter />
+                </Suspense>
+              </li>
+            )}
             <li className="nav-item p-1 me-2">
               <Link href="https://smdp.punjab.gov.pk/" target="_blank">
                 <Button

@@ -6,8 +6,10 @@ import Navbar from "../Navbar/Navbar";
 const NavbarToggle = () => {
   const currentPath = usePathname();
 
-  if (currentPath !== "/login") {
+  if (currentPath !== "/login" && currentPath !== "/privacy-policy") {
     return <Navbar />;
+  } else {
+    return <div style={{ height: "68px" }}></div>;
   }
 };
 

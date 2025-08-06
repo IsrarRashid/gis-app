@@ -7,8 +7,14 @@ import Button from "@/app/components/Button";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { z } from "zod";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomTextArea from "@/app/components/Form/CustomTextArea";
+import SubmitButton from "@/app/components/Form/SubmitButton";
+import CustomToggleSwitch from "@/app/components/CustomToggleSwitch";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -107,9 +113,6 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
 
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
       <Button
         type="button"
         className={`btn ${
@@ -134,6 +137,7 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
         onHide={handleClose}
         aria-labelledby="contained-modal-title-vcenter"
         centered
+        size="lg"
         dialogClassName="custom-modal"
         id={modalId}
       >
@@ -141,150 +145,132 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
           className="p-0"
           style={{ background: "rgba(156,255,255,0)" }}
         >
-          <div
-            className="container-fluid pt-3 pb-3 ps-4 pe-4"
-            style={{
-              backgroundImage:
-                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-              borderRadius: "15px",
-              border: "1.7px solid rgba(255, 255, 255, 0.6)",
-            }}
+          <FormWrapper
+            heading={
+              method === "POST"
+                ? "Add Attribute Group"
+                : "Update Attribute Group"
+            }
           >
-            <div className="row flex-column justify-content-center mb-4">
-              <div className="col-lg-12">
-                <p
-                  className="text-center text-white mt-4"
-                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
-                >
-                  {method === "POST"
-                    ? "ADD ATTRIBUTE GROUP"
-                    : "UPDATE ATTRIBUTE GROUP"}
-                </p>
-              </div>
-              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
-                <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
-                  <label htmlFor="name" className="form-label text-white">
-                    Name
-                  </label>
-                  <input
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div
+                className="row g-2 g-lg-3 mt-0"
+                style={{ marginBottom: "5px" }}
+              >
+                <div className="col-lg-4 col-md-6 col-sm-12 col-12 mb-3 text-start">
+                  <CustomLabel htmlFor="name">Name</CustomLabel>
+                  <CustomInput
                     {...register("name")}
                     id="name"
                     type="text"
-                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Attribute Group Name"
                   />
                   {errors.name && (
-                    <p className="text-danger mt-1">{errors.name.message}</p>
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
-                <div className="col mb-3">
-                  <div className="row d-flex justify-content-between">
-                    <div className="col-lg-7 col-md-6 col-sm-12 text-start mb-3">
-                      <label
-                        htmlFor="parentId"
-                        className="form-label text-white"
-                      >
-                        Parent Attribute Group
-                      </label>
-                      <select
-                        id="parentId"
-                        {...register("parentId", { valueAsNumber: true })}
-                        className="form-select form-select-sm color-light-dark"
-                      >
-                        <option value="0">None</option>
-                        {[...(data || [])].reverse().map((d) => (
-                          <option key={d.id} value={d.id}>
-                            {d.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-lg-5 col-md-6 col-sm-12 text-start mb-3">
-                      <label htmlFor="sortId" className="form-label text-white">
-                        Sort Id
-                      </label>
-                      <input
-                        {...register("sortId", { valueAsNumber: true })}
-                        id="sortId"
-                        type="number"
-                        className="form-control form-control-sm color-light-dark"
-                        placeholder="Enter Sort ID"
-                      />
-                      {errors.sortId && (
-                        <p className="text-danger mt-1">
-                          {errors.sortId.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="col text-start">
-                      <div className="form-check form-switch">
-                        <label
-                          className="form-check-label text-white"
-                          htmlFor="group_type"
-                        >
-                          Group Type
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="group_type"
-                          name="group_type"
-                          checked={isGroupType}
-                          onChange={() => setGroupType(!isGroupType)}
-                        />
-                      </div>
-                    </div>
-                    <div className="col text-start">
-                      <div className="form-check form-switch">
-                        <label
-                          className="form-check-label text-white"
-                          htmlFor="group_nature"
-                        >
-                          Group Nature
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="group_nature"
-                          name="group_nature"
-                          checked={isGroupNature}
-                          onChange={() => setGroupNature(!isGroupNature)}
-                        />
-                      </div>
-                    </div>
+                <div className="col-lg-4 col-md-6 col-sm-12 col-12 mb-3 text-start">
+                  <CustomLabel htmlFor="parentId">
+                    Parent Attribute Group
+                  </CustomLabel>
+                  <select
+                    id="parentId"
+                    {...register("parentId", { valueAsNumber: true })}
+                    className="form-select form-select-sm color-light-dark"
+                  >
+                    <option value="0">None</option>
+                    {[...(data || [])].reverse().map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-lg-4 col-md-6 col-sm-12 col-12 mb-3 text-start">
+                  <CustomLabel htmlFor="sortId">Sort Id</CustomLabel>
+                  <CustomInput
+                    {...register("sortId", { valueAsNumber: true })}
+                    id="sortId"
+                    type="number"
+                    placeholder="Enter Sort ID"
+                  />
+                  {errors.sortId && (
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.sortId.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="row g-2 g-lg-3 mt-0">
+                <div
+                  className="col-auto text-start mt-0"
+                  style={{ marginBottom: "16px", padding: "0px 10px" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <CustomToggleSwitch
+                      id="group_type"
+                      checked={isGroupType}
+                      onChange={() => setGroupType(!isGroupType)}
+                    />
+                    <label
+                      className="form-label form-label-color-black fs14px ms-2 mb-0"
+                      htmlFor="group_type"
+                    >
+                      Group Type
+                    </label>
+
+                    {/* <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name="group_type"
+                        id="group_type"
+                        checked={isGroupType}
+                        onChange={() => setGroupType(!isGroupType)}
+                      /> */}
                   </div>
                 </div>
-                <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
-                  <label
-                    htmlFor="description"
-                    className="form-label text-white"
-                  >
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    {...register("description")}
-                    className="form-control form-control-sm color-light-dark"
-                    placeholder="Write Brief Description..."
-                    style={{ height: "100px" }}
-                  />
+                <div
+                  className="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 text-start mt-0"
+                  style={{ marginBottom: "16px", padding: "0px 10px" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <CustomToggleSwitch
+                      id="group_nature"
+                      checked={isGroupNature}
+                      onChange={() => setGroupNature(!isGroupNature)}
+                    />
+                    <label
+                      className="form-label form-label-color-black fs14px ms-2 mb-0"
+                      htmlFor="group_nature"
+                    >
+                      Group Nature
+                    </label>
+                    {/* <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name="group_nature"
+                        id="group_nature"
+                        checked={isGroupNature}
+                        onChange={() => setGroupNature(!isGroupNature)}
+                      /> */}
+                  </div>
                 </div>
-                <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <Button
-                    className="btn text-white w-100 border-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                      borderRadius: "12px",
-                    }}
-                    type="submit"
-                  >
-                    Done
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </div>
+              </div>
+              <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
+                <CustomLabel htmlFor="description">Description</CustomLabel>
+                <CustomTextArea
+                  id="description"
+                  {...register("description")}
+                  placeholder="Write Brief Description..."
+                />
+              </div>
+              <div className="col-lg-4 col-md-6 col-sm-6 col-12 mx-auto">
+                <SubmitButton>Save Attribute Group</SubmitButton>
+              </div>
+            </form>
+          </FormWrapper>
         </Modal.Body>
       </Modal>
     </>

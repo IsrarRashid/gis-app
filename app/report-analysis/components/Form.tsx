@@ -148,8 +148,6 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
     "Project.ExecutionAgency.Name",
   ];
 
-  const defaultOption = { value: "", label: "Select" };
-
   const orderByOptions = defaultGroupByFields.map((defaultGroupByField) => {
     return {
       value: defaultGroupByField,
@@ -315,7 +313,9 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
               placeholder="Enter Report Name"
             />
             {errors.reportName && (
-              <p className="text-danger mt-1">{errors.reportName.message}</p>
+              <p className="text-danger mt-1 fs14px">
+                {errors.reportName.message}
+              </p>
             )}
           </div>
           <div className="col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3 mb-3">
@@ -352,7 +352,9 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
               )}
             />
             {errors.orderByFields && (
-              <p className="text-danger mt-1">{errors.orderByFields.message}</p>
+              <p className="text-danger mt-1 fs14px">
+                {errors.orderByFields.message}
+              </p>
             )}
           </div>
         </div>

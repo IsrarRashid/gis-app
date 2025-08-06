@@ -304,7 +304,7 @@
 //                       placeholder="Enter Label"
 //                     />
 //                     {errors.label && (
-//                       <p className="text-danger mt-1">{errors.label.message}</p>
+//                       <p className="text-danger mt-1 fs14px">{errors.label.message}</p>
 //                     )}
 //                   </div>
 //                   <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
@@ -339,7 +339,7 @@
 //                       <option value="date">Date</option>
 //                     </select>
 //                     {errors.label && (
-//                       <p className="text-danger mt-1">{errors.label.message}</p>
+//                       <p className="text-danger mt-1 fs14px">{errors.label.message}</p>
 //                     )}
 //                   </div>
 //                 </div>

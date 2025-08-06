@@ -67,8 +67,14 @@ const List = () => {
         const response = await apiClient.get(
           `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`
         );
-        setData(response.data.data);
+        const sortedData = response.data.data.sort(
+          (a: any, b: any) =>
+            new Date(a.submittedDate).getTime() -
+            new Date(b.submittedDate).getTime()
+        );
+        setData(sortedData);
         console.log("original data", response.data.data);
+        console.log("sortedData data", sortedData);
       } catch (err) {
         console.error("Submission error:", err);
       }
@@ -451,7 +457,7 @@ const List = () => {
             </div>
           </div>
           {filteredData?.map((d, i) => (
-            <div key={d.id} className="col mb-2">
+            <div key={i} className="col mb-2">
               <div
                 className="col p-3"
                 style={{

@@ -171,7 +171,9 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                     placeholder="Enter Project Name"
                   />
                   {errors.name && (
-                    <p className="text-danger mt-1">{errors.name.message}</p>
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
                 <div className="row d-flex justify-content-between">
@@ -231,7 +233,7 @@ const ProjectForm = ({ api, method, id, setRefresh, refresh }: Props) => {
                       ))}
                     </select>
                     {errors.sectorId && (
-                      <p className="text-danger mt-1">
+                      <p className="text-danger mt-1 fs14px">
                         {errors.sectorId.message}
                       </p>
                     )}

@@ -170,7 +170,9 @@ const SectorForm = ({
                     placeholder="Enter Sector Name"
                   />
                   {errors.name && (
-                    <p className="text-danger mt-1">{errors.name.message}</p>
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
                 <div className="col mb-3">
@@ -207,7 +209,7 @@ const SectorForm = ({
                         placeholder="Enter Sort ID"
                       />
                       {errors.sortId && (
-                        <p className="text-danger mt-1">
+                        <p className="text-danger mt-1 fs14px">
                           {errors.sortId.message}
                         </p>
                       )}

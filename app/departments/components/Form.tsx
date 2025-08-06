@@ -360,7 +360,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                       placeholder="Enter Department Name"
                     />
                     {errors.department?.name && (
-                      <p className="text-danger mt-1">
+                      <p className="text-danger mt-1 fs14px">
                         {errors.department.name.message}
                       </p>
                     )}
@@ -380,7 +380,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                       placeholder="e.g. DGME"
                     />
                     {errors.department?.shortName && (
-                      <p className="text-danger mt-1">
+                      <p className="text-danger mt-1 fs14px">
                         {errors.department.shortName.message}
                       </p>
                     )}
@@ -400,7 +400,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                       placeholder="Enter Phone Number"
                     />
                     {errors.department?.phoneNumber && (
-                      <p className="text-danger mt-1">
+                      <p className="text-danger mt-1 fs14px">
                         {errors.department.phoneNumber.message}
                       </p>
                     )}
@@ -417,7 +417,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                       placeholder="Enter your Addresss"
                     />
                     {errors.department?.address && (
-                      <p className="text-danger mt-1">
+                      <p className="text-danger mt-1 fs14px">
                         {errors.department.address.message}
                       </p>
                     )}
@@ -434,7 +434,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                       placeholder="your@company.com"
                     />
                     {errors.department?.email && (
-                      <p className="text-danger mt-1">
+                      <p className="text-danger mt-1 fs14px">
                         {errors.department.email.message}
                       </p>
                     )}
@@ -460,7 +460,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                         </Button>
                       </div>
                       {errors.departmentRights && (
-                        <p className="text-danger mt-1">
+                        <p className="text-danger mt-1 fs14px">
                           {errors.departmentRights.message}
                         </p>
                       )}
@@ -500,7 +500,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                             ))}
                           </select>
                           {errors.departmentRights?.[index]?.fieldName && (
-                            <p className="text-danger mt-1">
+                            <p className="text-danger mt-1 fs14px">
                               {
                                 errors.departmentRights?.[index]?.fieldName
                                   .message
@@ -542,7 +542,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                             )}
                           />
                           {errors.departmentRights?.[index]?.fieldValue && (
-                            <p className="text-danger mt-1">
+                            <p className="text-danger mt-1 fs14px">
                               {
                                 errors.departmentRights?.[index]?.fieldValue
                                   .message
@@ -621,7 +621,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                       placeholder="Select your logo"
                     />
                     {errors.logo && (
-                      <p className="text-danger mt-1">{errors.logo.message}</p>
+                      <p className="text-danger mt-1 fs14px">{errors.logo.message}</p>
                     )}
                   </div> */}
                 </div>

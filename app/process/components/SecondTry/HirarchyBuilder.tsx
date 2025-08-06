@@ -34,7 +34,84 @@ const HierarchyBuilder = () => {
   const [edges, setEdges] = useState<Edge[]>([]);
   const [nodeId, setNodeId] = useState(1);
   const [isClient, setClient] = useState(false);
-  const [apiData, setApiData] = useState<DepartmentRolesSorting[]>([]);
+  const [data, setData] = useState<DepartmentRolesSorting[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const response = await apiClient.get(
+          DEPARTMENT_ROLES_SORTING_API + "/GetByDepartment"
+        );
+        setData(response.data.data);
+        console.log("load previous hirarchy", response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    // Convert data to nodes and edges
+    const loadedNodes: Node[] = data.map((item, index) => {
+      const id = (index + 1).toString(); // generate node ID from index
+      return {
+        id,
+        data: {
+          role: item.roleId,
+          description: item.description,
+          label: getNodeLabel(
+            item.roleId as number,
+            item.description as string,
+            index,
+            () => handleDeleteNode(id)
+          ),
+        },
+        position: { x: 50 * index, y: 110 * index },
+        style: {
+          backgroundColor: hexToRgba(selectedColor, 0.2),
+          color: "#000",
+          padding: 10,
+          borderRadius: 8,
+          fontWeight: "bold",
+          textAlign: "center",
+          border: `1px solid ${hexToRgba(selectedColor, 1)}`,
+          width: "450px",
+        },
+      };
+    });
+
+    const loadedEdges: Edge[] = [];
+
+    for (let i = 0; i < data.length - 1; i++) {
+      loadedEdges.push({
+        id: `e${i + 1}-${i + 2}`,
+        source: (i + 1).toString(),
+        target: (i + 2).toString(),
+        type: "step",
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 20,
+          height: 20,
+          color: "#0C8CE9",
+        },
+        style: {
+          strokeWidth: 2,
+          stroke: "#939393",
+        },
+      });
+    }
+
+    setNodes(loadedNodes);
+    setEdges(loadedEdges);
+    setNodeId(data.length + 1); // increment for new nodes later
+
+    console.log("📦 Reconstructed flow from DB", {
+      loadedNodes,
+      loadedEdges,
+    });
+  }, [data]);
 
   useEffect(() => {
     setClient(true);
@@ -138,7 +215,7 @@ const HierarchyBuilder = () => {
           handleDeleteNode(newId)
         ),
       },
-      position: { x: 50 * nodeId, y: 50 * nodeId },
+      position: { x: 50 * nodeId, y: 110 * nodeId },
       style: {
         backgroundColor: hexToRgba(selectedColor, 0.2),
         color: "#000",

@@ -422,7 +422,9 @@ const Form = ({
             ))}
           </select> */}
           {errors.district_Id && (
-            <p className="text-danger mt-1">{errors.district_Id.message}</p>
+            <p className="text-danger mt-1 fs14px">
+              {errors.district_Id.message}
+            </p>
           )}
         </div>
       </td>
@@ -476,7 +478,7 @@ const Form = ({
             <option value="2">MonitoringAndCMInitiative</option>
           </select> */}
           {errors.type && (
-            <p className="text-danger mt-1">{errors.type.message}</p>
+            <p className="text-danger mt-1 fs14px">{errors.type.message}</p>
           )}
         </div>
       </td>
@@ -524,7 +526,7 @@ const Form = ({
             ))}
           </select> */}
           {errors.userId && (
-            <p className="text-danger mt-1">{errors.userId.message}</p>
+            <p className="text-danger mt-1 fs14px">{errors.userId.message}</p>
           )}
         </div>
       </td>
@@ -546,7 +548,7 @@ const Form = ({
             placeholder="Enter dateFrom"
           />
           {errors.dateFrom && (
-            <p className="text-danger mt-1">{errors.dateFrom.message}</p>
+            <p className="text-danger mt-1 fs14px">{errors.dateFrom.message}</p>
           )}
         </div>
       </td>
@@ -565,7 +567,7 @@ const Form = ({
             placeholder="Enter dateTo"
           />
           {errors.dateTo && (
-            <p className="text-danger mt-1">{errors.dateTo.message}</p>
+            <p className="text-danger mt-1 fs14px">{errors.dateTo.message}</p>
           )}
         </div>
       </td>
@@ -628,7 +630,7 @@ const Form = ({
             ))}
           </select> */}
           {errors.driverId && (
-            <p className="text-danger mt-1">{errors.driverId.message}</p>
+            <p className="text-danger mt-1 fs14px">{errors.driverId.message}</p>
           )}
         </div>
       </td>
@@ -691,7 +693,7 @@ const Form = ({
             ))}
           </select> */}
           {errors.driverId && (
-            <p className="text-danger mt-1">{errors.driverId.message}</p>
+            <p className="text-danger mt-1 fs14px">{errors.driverId.message}</p>
           )}
         </div>
       </td>

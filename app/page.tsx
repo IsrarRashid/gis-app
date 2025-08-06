@@ -1,6 +1,6 @@
 "use client";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function Home() {
@@ -14,6 +14,8 @@ export default function Home() {
   // };
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentParams = searchParams.toString();
 
   useEffect(() => {
     const token = Cookies.get("token");
@@ -29,7 +31,9 @@ export default function Home() {
             rights[i].toLowerCase() === "dashboard-dg" &&
             role?.toLowerCase() === "director general"
           ) {
-            router.push(`/${rights[i]}`);
+            router.push(
+              `/${rights[i]}${currentParams ? `?${currentParams}` : ""}`
+            );
             hasDashboard = true;
             break;
           }
@@ -38,7 +42,9 @@ export default function Home() {
       if (!hasDashboard) {
         for (let i = 0; i < rights.length; i++) {
           if (rights[i].toLowerCase() === "dashboard") {
-            router.push(`/${rights[i]}`);
+            router.push(
+              `/${rights[i]}${currentParams ? `?${currentParams}` : ""}`
+            );
             hasDashboard = true;
             break;
           } else if (
@@ -52,7 +58,8 @@ export default function Home() {
         }
       }
 
-      if (!hasDashboard) router.push(`/${rights[0]}`);
+      if (!hasDashboard)
+        router.push(`/${rights[0]}${currentParams ? `?${currentParams}` : ""}`);
     } else {
       router.push("/not-authorized");
     }
