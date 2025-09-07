@@ -26,7 +26,6 @@ const DeleteModal2 = ({ handleDelete, userName }: Props) => {
         className="modal fade"
         id={modalId}
         aria-labelledby="deleteModalLabel"
-        aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered modal-lg">
           <div

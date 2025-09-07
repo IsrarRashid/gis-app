@@ -1,15 +1,17 @@
 import { EVALUATION_SUPER_GROUP_API, SUPER_GROUP_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
+import FormWrapper from "@/app/components/Form/FormWrapper";
 import { SuperGroup } from "@/app/hooks/useSuperGroups";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import Select, { ActionMeta, MultiValue } from "react-select";
+import { ActionMeta, MultiValue } from "react-select";
 import { toast } from "react-toastify";
 import groupGrey from "../../../public/icons/groupGray.svg";
 import { Option } from "./List";
-import { useSearchParams } from "next/navigation";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 
 interface Props {
   id: number;
@@ -62,13 +64,13 @@ const GroupingForm = ({ id, options, dashboardType, superGroups }: Props) => {
   }, [id, refresh, show, superGroups]);
 
   const handleSelectGroup = (
-    newValue: MultiValue<{ value: number; label: string }>,
-    actionMeta: ActionMeta<{ value: number; label: string }>
+    newValue: MultiValue<{ value: string; label: string }>,
+    actionMeta: ActionMeta<{ value: string; label: string }>
   ) => {
     // Map selected groups to the original format (GroupOption)
     const selectedOptions = newValue
       ? newValue.map((option) => ({
-          id: option.value,
+          id: Number(option.value),
           name: option.label,
         }))
       : [];
@@ -106,31 +108,16 @@ const GroupingForm = ({ id, options, dashboardType, superGroups }: Props) => {
   };
 
   // Prepare options for react-select in {value, label} format
-  const availableOptions = options.map((group) => ({
-    value: group.id,
+  const availableOptions: OptionType[] = options.map((group) => ({
+    value: group.id.toString(),
     label: group.name,
   }));
 
   // Prepare selected values for react-select in {value, label} format
-  const selectedValues = selectedOptions.map((group) => ({
-    value: group.id,
+  const selectedValues: OptionType[] = selectedOptions.map((group) => ({
+    value: group.id.toString(),
     label: group.name,
   }));
-
-  // Custom styles for react-select options
-  const customStyles = {
-    option: (provided: any, state: any) => ({
-      ...provided,
-      backgroundColor: state.isSelected
-        ? "#B0E0E6" // Light blue for selected options
-        : provided.backgroundColor,
-      color: state.isSelected ? "#000" : provided.color,
-    }),
-    multiValue: (provided: any) => ({
-      ...provided,
-      backgroundColor: "#B0E0E6", // Light blue for selected values
-    }),
-  };
 
   return (
     <>
@@ -159,53 +146,27 @@ const GroupingForm = ({ id, options, dashboardType, superGroups }: Props) => {
             className="p-0"
             style={{ background: "rgba(156,255,255,0)" }}
           >
-            <div
-              className="container-fluid pt-3 pb-3 ps-4 pe-4"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-                borderRadius: "15px",
-                border: "1.7px solid rgba(255, 255, 255, 0.6)",
-              }}
-            >
+            <FormWrapper heading="Select Attribute Groups">
               <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <div className="row d-flex">
-                    <div className="col">
-                      <p
-                        className="text-center text-white"
-                        style={{ fontSize: "1.5rem", fontWeight: "800" }}
-                      >
-                        SELECT ATTRIBUTE GROUPS
-                      </p>
-                    </div>
-                  </div>
-                  <Select
+                <div
+                  className="col text-start mt-0"
+                  style={{ marginBottom: "10px" }}
+                >
+                  <CustomSelect
                     id="groupSelect"
                     isMulti
                     options={availableOptions} // Correctly mapped options
                     value={selectedValues} // Correctly mapped selected values
-                    onChange={handleSelectGroup} // Correct handler
-                    styles={customStyles}
+                    onChangeMulti={handleSelectGroup} // Correct handler
                     closeMenuOnSelect={false}
                     placeholder="Choose Attribute Groups..."
                   />
                 </div>
-                <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <Button
-                    className="btn text-white w-100 border-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                      borderRadius: "12px",
-                    }}
-                    type="submit"
-                  >
-                    Done
-                  </Button>
+                <div className="col-lg-6 col-md-5 col-sm-6 col-8 mx-auto">
+                  <SubmitButton>Save Attribute Groups</SubmitButton>
                 </div>
               </form>
-            </div>
+            </FormWrapper>
           </Modal.Body>
         </Modal>
       </div>

@@ -62,41 +62,39 @@ const ReportReview = ({
 
   return (
     <>
-      {role && userId && data && role.toLowerCase().includes("director") && (
-        <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
-          <Link
-            href="/report-history"
-            target="_blank"
-            className="col btn p-0 pe-1 shadow-none w-100 position-relative"
-          >
-            <Menu
-              background="rgba(12, 140, 233, 0.2)"
-              outline="1px solid rgba(12, 140, 233, 0.4)"
-              icon="/icons/reportReview.svg"
-              value={
-                dashboardType
-                  ? 0
-                  : data?.filter(
-                      (d) =>
-                        d.submittedTo === userId || d.submittedFrom === userId
-                    ).length || 0
-              }
-              label="Report Review"
-              showTides={false}
-              showArrow={true}
-              textWrap={false}
-            />
-            {dashboardType ? (
-              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                0
-              </span>
-            ) : (
-              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {data?.filter((d) => d.submittedTo === userId).length}
-              </span>
-            )}
-          </Link>
-        </div>
+      {userId && (
+        <Link
+          href="/report-history"
+          target="_blank"
+          className="col btn p-0 pe-1 shadow-none w-100 position-relative"
+        >
+          <Menu
+            background="rgba(12, 140, 233, 0.2)"
+            outline="1px solid rgba(12, 140, 233, 0.4)"
+            icon="/icons/reportReview.svg"
+            value={
+              dashboardType
+                ? 0
+                : data?.filter(
+                    (d) =>
+                      d.submittedTo === userId || d.submittedFrom === userId
+                  ).length || 0
+            }
+            label="Report Review"
+            showTides={false}
+            showArrow={true}
+            textWrap={false}
+          />
+          {dashboardType ? (
+            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              0
+            </span>
+          ) : (
+            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {data?.filter((d) => d.submittedTo === userId).length}
+            </span>
+          )}
+        </Link>
       )}
     </>
   );

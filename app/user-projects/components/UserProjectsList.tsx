@@ -1,13 +1,14 @@
 "use client";
-import { GET_USER_PROJECTS_API, SMDP_SYNC_API } from "@/app/APIs";
-import Loader from "@/app/components/Loader";
+import { GET_USER_PROJECTS_API } from "@/app/APIs";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
-import useProjects, { Project } from "@/app/hooks/useProjects";
+import { Project } from "@/app/hooks/useProjects";
 import useSectors from "@/app/hooks/useSectors";
 import useSuperGroups from "@/app/hooks/useSuperGroups";
+import AssignUserForm from "@/app/projects/components/AssignUserForm";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getName } from "@/app/utils";
 import { sort } from "fast-sort";
@@ -19,10 +20,7 @@ import calender from "../../../public/icons/calendar.svg";
 import cancel from "../../../public/icons/cancel.svg";
 import clock from "../../../public/icons/clock.svg";
 import complete from "../../../public/icons/complete.svg";
-import AssignUserForm from "./AssignUserForm";
 import GroupingForm from "./GroupingForm";
-import SmdpAllProjectsSyncForm from "./SmdpAllProjectsSyncForm";
-import SmdpSyncForm from "./SmdpSyncForm";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -48,26 +46,13 @@ export interface UserOption {
   userName: string;
 }
 
-const UserProjectsList = ({
-  refresh,
-  setRefresh,
-  showData,
-  setShowData,
-}: ListProps) => {
-  const { error, setError, isLoading } = useProjects({
-    refresh,
-  });
+const UserProjectsList = ({ refresh }: ListProps) => {
   const { data: sectorsData } = useSectors({ refresh });
   const { data: superGroups } = useSuperGroups({ refresh });
   const { data: users } = useAuthentication({ refresh });
-  const [originalData, setOriginalData] = useState<Project[]>([]); // Store the original data
   const [data, setData] = useState<Project[]>([]); // Store the original data
-
-  const deleteMessage = "Deleted Successfully!";
-  const syncMessage = "Attribute Values synced Successfully!";
-
-  const notifyCreate = (message: string) => toast.success(message);
-  const notifyError = (message: string) => toast.error(message);
+  const [userOptions, setUserOptions] = useState<OptionType[]>(); // Store the original data
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   // State for search input
   const [searchTerm, setSearchTerm] = useState("");
@@ -92,10 +77,6 @@ const UserProjectsList = ({
     setSearchTerm(e.target.value);
     handleSearch(e);
   };
-
-  useEffect(() => {
-    setOriginalData(data);
-  }, [refresh, data]);
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -136,16 +117,28 @@ const UserProjectsList = ({
       console.log("Response:", response);
       setData(response.data.data);
       setCurrentPage(1);
+      setSelectedUserId(id);
     } catch (err) {
       console.error("Submission error:", err);
       toast.error((err as AxiosError).message);
     }
   };
 
+  useEffect(() => {
+    if (users) {
+      const userOptions: OptionType[] = users.map((user) => {
+        return {
+          value: String(user.id),
+          label: user.fullName,
+        };
+      });
+      setUserOptions(userOptions);
+    }
+  }, [users]);
+
   return (
     <>
       <>
-        {isLoading && <Loader />}
         <TableHeader
           heading="User Projects"
           searchTerm={searchTerm}
@@ -154,7 +147,7 @@ const UserProjectsList = ({
           handleChange={handleChange}
           form={
             <>
-              <div className="col text-end mb-2">
+              {/* <div className="col text-end mb-2">
                 <SmdpSyncForm
                   api={SMDP_SYNC_API}
                   method="POST"
@@ -163,8 +156,8 @@ const UserProjectsList = ({
                   showData={showData}
                   setShowData={setShowData}
                 />
-              </div>
-              <div className="col text-end mb-2">
+              </div> */}
+              {/* <div className="col text-end mb-2">
                 <SmdpAllProjectsSyncForm
                   api={SMDP_SYNC_API}
                   method="POST"
@@ -173,11 +166,33 @@ const UserProjectsList = ({
                   showData={showData}
                   setShowData={setShowData}
                 />
-              </div>
-              <div className="col-auto">
+              </div> */}
+              <div className="col-12 col-sm-8 col-md-5 col-lg-4 col-xl-3">
                 <form>
                   <div className="col text-start">
-                    <select
+                    {userOptions && (
+                      <CustomSelect
+                        options={userOptions}
+                        id="user"
+                        value={
+                          userOptions.find(
+                            (opt) => opt.value === String(selectedUserId)
+                          )
+                            ? [
+                                userOptions.find(
+                                  (opt) => opt.value === String(selectedUserId)
+                                )!,
+                              ]
+                            : null
+                        }
+                        onChangeSingle={(nv) => {
+                          if (nv) {
+                            handleSubmit(Number(nv.value));
+                          }
+                        }}
+                      />
+                    )}
+                    {/* <select
                       className="color-light-dark pt-1 pb-2"
                       aria-label="Select User"
                       name="user"
@@ -193,7 +208,7 @@ const UserProjectsList = ({
                           {d.userName}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
                   </div>
                 </form>
               </div>
@@ -216,6 +231,7 @@ const UserProjectsList = ({
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
+                className="text-nowrap"
                 name="gs No"
                 handleSort={() => handleSort("gsNo")}
               />

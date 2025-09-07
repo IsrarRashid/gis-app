@@ -4,7 +4,7 @@ import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useDepartments, { Department } from "@/app/hooks/useDepartments";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { sort } from "fast-sort";
@@ -113,7 +113,7 @@ const List = ({ refresh, setRefresh }: Props) => {
         form={
           <div className="col-auto">
             <Form
-              api={DEPARTMENT_API + "/CreateDepartmentWithRights"}
+              api={DEPARTMENT_API + "/CreateWithRights"}
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
@@ -137,6 +137,10 @@ const List = ({ refresh, setRefresh }: Props) => {
               }}
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
+              <TableHeading
+                name="shortName"
+                handleSort={() => handleSort("shortName")}
+              />
               <TableHeading
                 name="department name"
                 handleSort={() => handleSort("name")}
@@ -169,6 +173,7 @@ const List = ({ refresh, setRefresh }: Props) => {
                 key={d.id}
               >
                 <td>{d.id}</td>
+                <td>{d.shortName}</td>
                 <td>{d.name}</td>
                 <td>{d.phoneNumber}</td>
                 <td>{d.email}</td>

@@ -1,22 +1,24 @@
 import { TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
+import DeleteModal from "@/app/components/DeleteModal";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import { Authentication } from "@/app/hooks/useAuthentication";
 import { District } from "@/app/hooks/useDistrict";
 import { Driver } from "@/app/hooks/useDriver";
 import { TempTourPlan } from "@/app/hooks/useTempTourPlan";
 import { Vehicle } from "@/app/hooks/useVehicle";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import { deleteMessage, isValidDate, NumberOption } from "@/app/utils";
+import { isValidDate } from "@/app/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DM_Sans } from "next/font/google";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { z } from "zod";
-import Select, { StylesConfig } from "react-select";
-import DeleteModal from "@/app/components/DeleteModal";
 import { FaPaste } from "react-icons/fa";
 import { MdContentCopy } from "react-icons/md";
+import { toast } from "react-toastify";
+import { z } from "zod";
+import { Calendar } from "react-date-range";
+import CustomCalendar from "@/app/components/Form/CustomCalender";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -55,6 +57,7 @@ interface Props {
   users: Authentication[];
   drivers: Driver[];
   vehicles: Vehicle[];
+  formsData: COUTempTourPlan[];
   setFormsData: Dispatch<SetStateAction<COUTempTourPlan[]>>;
   districts: District[];
   handleDelete: (id: number) => void;
@@ -64,10 +67,10 @@ interface Props {
   copiedRowIndex: number;
 }
 
-export const typeStatues = [
-  { value: 0, label: "Monitoring" },
-  { value: 1, label: "Evaluation" },
-  { value: 2, label: "MonitoringAndCMInitiative" },
+export const typeStatues: OptionType[] = [
+  { value: "0", label: "Monitoring" },
+  { value: "1", label: "Evaluation" },
+  { value: "2", label: "MonitoringAndCMInitiative" },
 ];
 
 const Form = ({
@@ -165,8 +168,11 @@ const Form = ({
       setValue("type", planData.type);
       setValue("userId", planData.userId);
       setValue("section", planData.section ? planData.section : "");
-      setValue("dateFrom", `${planData.dateFrom?.split("T")[0]}`);
-      setValue("dateTo", `${planData.dateTo?.split("T")[0]}`);
+      setValue(
+        "dateFrom",
+        planData.dateFrom ? planData.dateFrom.split("T")[0] : ""
+      );
+      setValue("dateTo", planData.dateTo ? planData.dateTo.split("T")[0] : "");
       setValue("driverId", planData.driverId);
       setValue("vehicalId", planData.vehicleId);
       setValue("district_Id", planData.districtId);
@@ -260,54 +266,30 @@ const Form = ({
     }
   };
 
-  const customStyles: StylesConfig<NumberOption, false> = {
-    control: (base) => ({
-      ...base,
-      fontSize: "14px",
-      // backgroundColor: "rgba(16, 143, 168, .1)",
-    }),
-    menu: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    menuPortal: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    option: (base, state) => ({
-      ...base,
-      // backgroundColor: state.isFocused ? "#f0f0f0" : "white",
-      // color: "#333",
-      fontSize: "14px",
-    }),
-  };
-
-  const defaultOption = { value: "", label: "Select" };
-
-  const districtOptions = districts.map((district) => {
+  const districtOptions: OptionType[] = districts.map((district) => {
     return {
-      value: district.id,
+      value: district.id.toString(),
       label: district.districtName,
     };
   });
 
-  const userNames = users.map((user) => {
+  const userNames: OptionType[] = users.map((user) => {
     return {
-      value: user.id,
+      value: user.id.toString(),
       label: user.fullName,
     };
   });
 
-  const driverNames = drivers.map((driver) => {
+  const driverNames: OptionType[] = drivers.map((driver) => {
     return {
-      value: driver.id,
+      value: driver.id.toString(),
       label: driver.driverName,
     };
   });
 
-  const vehicleNumbers = vehicles.map((vehicle) => {
+  const vehicleNumbers: OptionType[] = vehicles.map((vehicle) => {
     return {
-      value: vehicle.id,
+      value: vehicle.id.toString(),
       label: vehicle.vehicleNumber,
     };
   });
@@ -390,23 +372,30 @@ const Form = ({
             name="district_Id"
             control={control}
             render={({ field }) => (
-              <Select
+              <CustomSelect
                 {...field}
                 options={districtOptions} // must be in format { value, label }
                 placeholder="Select"
-                styles={customStyles}
-                isClearable
-                isSearchable
-                menuPlacement="auto"
-                menuPosition="absolute"
-                menuPortalTarget={document.body}
                 // Convert between react-select and raw value
                 value={
-                  districtOptions.find((opt) => opt.value === field.value) ||
-                  null
+                  districtOptions.find(
+                    (opt) =>
+                      opt.value ===
+                      (field.value != null ? field.value.toString() : "")
+                  )
+                    ? [
+                        districtOptions.find(
+                          (opt) =>
+                            opt.value ===
+                            (field.value != null ? field.value.toString() : "")
+                        )!,
+                      ]
+                    : null
                 }
-                onChange={(selectedOption) => {
-                  field.onChange(selectedOption ? selectedOption.value : null);
+                onChangeSingle={(selectedOption) => {
+                  field.onChange(
+                    selectedOption ? Number(selectedOption.value) : null
+                  );
                 }}
               />
             )}
@@ -445,21 +434,28 @@ const Form = ({
             name="type"
             control={control}
             render={({ field }) => (
-              <Select
+              <CustomSelect
                 {...field}
                 options={typeStatues} // must be in format { value, label }
                 placeholder="Select"
-                styles={customStyles}
-                isClearable
-                isSearchable
-                menuPlacement="auto"
-                menuPosition="absolute"
-                menuPortalTarget={document.body}
+                isDisabled={true}
                 // Convert between react-select and raw value
                 value={
-                  typeStatues.find((opt) => opt.value === field.value) || null
+                  typeStatues.find(
+                    (opt) =>
+                      opt.value ===
+                      (field.value != null ? field.value.toString() : "")
+                  )
+                    ? [
+                        typeStatues.find(
+                          (opt) =>
+                            opt.value ===
+                            (field.value != null ? field.value.toString() : "")
+                        )!,
+                      ]
+                    : null
                 }
-                onChange={(selectedOption) => {
+                onChangeSingle={(selectedOption) => {
                   field.onChange(
                     selectedOption ? Number(selectedOption.value) : null
                   );
@@ -491,21 +487,27 @@ const Form = ({
             name="userId"
             control={control}
             render={({ field }) => (
-              <Select
+              <CustomSelect
                 {...field}
                 options={userNames} // must be in format { value, label }
                 placeholder="Select"
-                styles={customStyles}
-                isClearable
-                isSearchable
-                menuPlacement="auto"
-                menuPosition="absolute"
-                menuPortalTarget={document.body}
                 // Convert between react-select and raw value
                 value={
-                  userNames.find((opt) => opt.value === field.value) || null
+                  userNames.find(
+                    (opt) =>
+                      opt.value ===
+                      (field.value != null ? field.value.toString() : "")
+                  )
+                    ? [
+                        userNames.find(
+                          (opt) =>
+                            opt.value ===
+                            (field.value != null ? field.value.toString() : "")
+                        )!,
+                      ]
+                    : null
                 }
-                onChange={(selectedOption) => {
+                onChangeSingle={(selectedOption) => {
                   field.onChange(
                     selectedOption ? Number(selectedOption.value) : null
                   );
@@ -540,13 +542,25 @@ const Form = ({
         <div
           className={`col ${index === copiedRowIndex && "bg-color-light-gray"}`}
         >
-          <input
+          <Controller
+            name="dateFrom"
+            control={control}
+            render={({ field }) => (
+              <CustomCalendar
+                {...field}
+                value={field.value}
+                onChange={(date) => field.onChange(date.toISOString())}
+              />
+            )}
+          />
+
+          {/* <input
             {...register("dateFrom")}
             id="dateFrom"
             type="date"
             className="form-control form-control-sm color-light-dark"
             placeholder="Enter dateFrom"
-          />
+          /> */}
           {errors.dateFrom && (
             <p className="text-danger mt-1 fs14px">{errors.dateFrom.message}</p>
           )}
@@ -559,13 +573,24 @@ const Form = ({
         <div
           className={`col ${index === copiedRowIndex && "bg-color-light-gray"}`}
         >
-          <input
+          <Controller
+            name="dateTo"
+            control={control}
+            render={({ field }) => (
+              <CustomCalendar
+                {...field}
+                value={field.value}
+                onChange={(date) => field.onChange(date.toISOString())}
+              />
+            )}
+          />
+          {/* <input
             {...register("dateTo")}
             id="dateTo"
             type="date"
             className="form-control form-control-sm color-light-dark"
             placeholder="Enter dateTo"
-          />
+          /> */}
           {errors.dateTo && (
             <p className="text-danger mt-1 fs14px">{errors.dateTo.message}</p>
           )}
@@ -583,21 +608,27 @@ const Form = ({
             name="driverId"
             control={control}
             render={({ field }) => (
-              <Select
+              <CustomSelect
                 {...field}
                 options={driverNames} // must be in format { value, label }
                 placeholder="Select"
-                styles={customStyles}
-                isClearable
-                isSearchable
-                menuPlacement="auto"
-                menuPosition="absolute"
-                menuPortalTarget={document.body}
                 // Convert between react-select and raw value
                 value={
-                  driverNames.find((opt) => opt.value === field.value) || null
+                  driverNames.find(
+                    (opt) =>
+                      opt.value ===
+                      (field.value != null ? field.value.toString() : "")
+                  )
+                    ? [
+                        driverNames.find(
+                          (opt) =>
+                            opt.value ===
+                            (field.value != null ? field.value.toString() : "")
+                        )!,
+                      ]
+                    : null
                 }
-                onChange={(selectedOption) => {
+                onChangeSingle={(selectedOption) => {
                   field.onChange(
                     selectedOption ? Number(selectedOption.value) : null
                   );
@@ -645,22 +676,27 @@ const Form = ({
             name="vehicalId"
             control={control}
             render={({ field }) => (
-              <Select
+              <CustomSelect
                 {...field}
                 options={vehicleNumbers} // must be in format { value, label }
                 placeholder="Select"
-                styles={customStyles}
-                isClearable
-                isSearchable
-                menuPlacement="auto"
-                menuPosition="absolute"
-                menuPortalTarget={document.body}
                 // Convert between react-select and raw value
                 value={
-                  vehicleNumbers.find((opt) => opt.value === field.value) ||
-                  null
+                  vehicleNumbers.find(
+                    (opt) =>
+                      opt.value ===
+                      (field.value != null ? field.value.toString() : "")
+                  )
+                    ? [
+                        vehicleNumbers.find(
+                          (opt) =>
+                            opt.value ===
+                            (field.value != null ? field.value.toString() : "")
+                        )!,
+                      ]
+                    : null
                 }
-                onChange={(selectedOption) => {
+                onChangeSingle={(selectedOption) => {
                   field.onChange(
                     selectedOption ? Number(selectedOption.value) : null
                   );

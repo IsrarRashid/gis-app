@@ -142,10 +142,10 @@ const StaffTracking = () => {
   const [mapStatus, setMapStatus] = useState(false);
   const dispatch = useDispatch();
   // useAuthorization("staff-tracking");
-  const [userId, setUserId] = useState<number>();
-  const [visitId, setVisitId] = useState<number>();
-  const [visits, setVisits] = useState();
-  const [refresh, setRefresh] = useState(false);
+  // const [userId, setUserId] = useState<number>();
+  // const [visitId, setVisitId] = useState<number>();
+  // const [visits, setVisits] = useState();
+  // const [refresh, setRefresh] = useState(false);
 
   const [data, setData] = useState<StaffTracking[]>();
   const [recordingTrackingRequestBody, setRecordingTrackingRequestBody] =
@@ -350,7 +350,7 @@ const StaffTracking = () => {
     }
   };
 
-  const { data: users } = useAuthentication({ refresh });
+  const { data: users } = useAuthentication();
 
   return (
     <div

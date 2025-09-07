@@ -1,13 +1,27 @@
 import Button from "@/app/components/Button";
 import { Lexend } from "next/font/google";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FilterData } from "./Dashboard";
 import FilterModal from "./FilterModal";
+import { FILTER_SETTING_API } from "@/app/APIs";
+import apiClient from "@/app/services/api-client";
+import {
+  adpFilters,
+  cmInitiativeFilters,
+  oldCmInitiativeFilters,
+} from "../filters";
 
 const lexend = Lexend({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
+
+export interface Filter {
+  label: string;
+  filterIdentifier: string;
+  dataType: string;
+  filterValues: [string];
+}
 
 interface Props {
   handleSubmit: (filterData: FilterData[]) => Promise<void>;
@@ -15,8 +29,6 @@ interface Props {
   setOtherFilters: Dispatch<SetStateAction<FilterData[]>>;
   handleFilterChange: (filterType: "cmInitiative" | "adp") => void;
   combinedFilters: FilterData[];
-  cmInitiativeFilters: FilterData[];
-  adpFilters: FilterData[];
   activeFilter: string;
 }
 
@@ -26,11 +38,26 @@ const FilterButtons = ({
   setOtherFilters,
   handleFilterChange,
   combinedFilters,
-  cmInitiativeFilters,
-  adpFilters,
   activeFilter,
 }: Props) => {
   const [selectedButton, setSelectedButton] = useState(1);
+
+  const [userFiltersData, setUserFiltersData] = useState<Filter[]>();
+
+  useEffect(() => {
+    const getFilters = async (userId: number) => {
+      try {
+        const response = await apiClient.get(
+          `${FILTER_SETTING_API}/GetUserFilters?userId=${userId}`
+        );
+        setUserFiltersData(response.data.data);
+        console.log("filtersss", response);
+      } catch (err) {
+        console.error("Submission error:", err);
+      }
+    };
+    getFilters(0);
+  }, []);
 
   return (
     <div
@@ -81,7 +108,16 @@ const FilterButtons = ({
             onClick={() => {
               setSelectedButton(1);
               handleFilterChange("cmInitiative");
-              handleSubmit([...cmInitiativeFilters, ...otherFilters]);
+              const yearFilter = otherFilters.find(
+                (filter) => filter.filterIdentifier === "Year"
+              );
+              if (yearFilter && yearFilter.filterValues === "2025-2026") {
+                handleSubmit([...cmInitiativeFilters, ...otherFilters]);
+              } else if (!yearFilter) {
+                handleSubmit([...cmInitiativeFilters, ...otherFilters]);
+              } else {
+                handleSubmit([...oldCmInitiativeFilters, ...otherFilters]);
+              }
             }}
           >
             CM Initiatives
@@ -106,15 +142,16 @@ const FilterButtons = ({
           </Button>
         </div>
         <div className="p-0 col-2 text-center m-auto">
-          <FilterModal
-            otherFilters={otherFilters}
-            setOtherFilters={setOtherFilters}
-            handleSubmit={handleSubmit}
-            combinedFilters={combinedFilters}
-            activeFilter={activeFilter}
-            cmInitiativeFilters={cmInitiativeFilters}
-            adpFilters={adpFilters}
-          />
+          {userFiltersData && (
+            <FilterModal
+              otherFilters={otherFilters}
+              setOtherFilters={setOtherFilters}
+              handleSubmit={handleSubmit}
+              combinedFilters={combinedFilters}
+              activeFilter={activeFilter}
+              userFiltersData={userFiltersData}
+            />
+          )}
         </div>
       </div>
     </div>

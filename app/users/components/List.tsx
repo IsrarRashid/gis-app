@@ -1,7 +1,7 @@
 "use client";
 import { DELETE_USER_API, REGISTER_USER_API } from "@/app/APIs";
 import DeleteModal2 from "@/app/components/DeleteModal2";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useAuthentication, {
   Authentication,
 } from "@/app/hooks/useAuthentication";
@@ -125,18 +125,6 @@ const List = ({ refresh, setRefresh }: ListProps) => {
     currentPage * rows
   );
 
-  interface ImageProps {
-    src: any;
-    width: any;
-    quality?: any;
-  }
-
-  const imageLoader = ({ src, width, quality }: ImageProps) => {
-    return `${process.env.NEXT_PUBLIC_BACKEND_API}${src}?w=${width}&q=${
-      quality || 75
-    }`;
-  };
-
   return (
     <>
       {isLoading && <Loader />}
@@ -173,10 +161,12 @@ const List = ({ refresh, setRefresh }: ListProps) => {
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
+                className="text-nowrap"
                 name="user name"
                 handleSort={() => handleSort("userName")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="full Name"
                 handleSort={() => handleSort("fullName")}
               />
@@ -219,11 +209,26 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                       href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
                       target="_blank"
                     >
+                      <img
+                        className="rounded-circle shadow-sm"
+                        style={{
+                          objectFit: "cover",
+                          objectPosition: "center top",
+                          width: "70px",
+                          height: "70px",
+                        }}
+                        // width={70}
+                        // height={70}
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
+                        alt="picture"
+                      />
                       <Image
                         className="rounded-circle shadow-sm"
                         style={{
                           objectFit: "cover",
                           objectPosition: "center top",
+                          width: "70px",
+                          height: "70px",
                         }}
                         width={70}
                         height={70}

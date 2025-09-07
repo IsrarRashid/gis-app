@@ -21,12 +21,7 @@ const SyncModal = ({ handleSubmit, id }: Props) => {
         <Image src={dbGrey} alt="trash" width={20} height={20} />
       </Button>
 
-      <div
-        className="modal fade"
-        id={modalId}
-        aria-labelledby="syncModalLabel"
-        aria-hidden="true"
-      >
+      <div className="modal fade" id={modalId} aria-labelledby="syncModalLabel">
         <div className="modal-dialog modal-dialog-centered modal-lg">
           <div
             className="modal-content border-0"

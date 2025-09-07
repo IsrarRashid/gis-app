@@ -2,7 +2,7 @@
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import apiClient from "@/app/services/api-client";
 import {

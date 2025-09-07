@@ -22,7 +22,10 @@ import DistrictCard from "./DistrictCard";
 import ProjectCard from "./ProjectCard";
 import DistrictCardEvaluation from "./DistrictCardEvaluation";
 import "@/app/_css/InfoWindow.css";
-import { DistrictList, EvaluationMainDashboard } from "../DashboardEvaluation";
+import {
+  DistrictList,
+  EvaluationMainDashboard,
+} from "../Evaluation/DashboardEvaluation";
 
 export interface DistrictProjects {
   id: number;
@@ -83,77 +86,77 @@ const EvaluationMap = ({
   const [activeProjects, setActiveProjects] = useState<DistrictProjects[]>([]);
   const { data: districts } = useDistrict();
 
-  const handleDistrictClick = async (
-    districtId: number,
-    showProjects: boolean
-  ) => {
-    if (showProjects) {
-      try {
-        const response = await apiClient.get(
-          `${DISTRICT_API}/GetProjectByDistrict?districtId=${districtId}`
-        );
-        setActiveProjects(response.data.data);
-        setActiveDistrictId(districtId);
-      } catch (err) {
-        console.error("Submission error:", err);
-      }
-    } else {
-      setActiveProjects([]);
-      setActiveDistrictId(null);
-    }
-  };
+  // const handleDistrictClick = async (
+  //   districtId: number,
+  //   showProjects: boolean
+  // ) => {
+  //   if (showProjects) {
+  //     try {
+  //       const response = await apiClient.get(
+  //         `${DISTRICT_API}/GetProjectByDistrict?districtId=${districtId}`
+  //       );
+  //       setActiveProjects(response.data.data);
+  //       setActiveDistrictId(districtId);
+  //     } catch (err) {
+  //       console.error("Submission error:", err);
+  //     }
+  //   } else {
+  //     setActiveProjects([]);
+  //     setActiveDistrictId(null);
+  //   }
+  // };
 
-  const handleMarkerClick = (districtId: number) => {
-    const isActive = activeDistrictId === districtId;
-    const districtName = districts.find(
-      (district) => district.id === districtId
-    )?.districtName;
+  // const handleMarkerClick = (districtId: number) => {
+  //   const isActive = activeDistrictId === districtId;
+  //   const districtName = districts.find(
+  //     (district) => district.id === districtId
+  //   )?.districtName;
 
-    // Update otherFilters
-    setOtherFilters((prevFilters) => {
-      const updatedFilters = [...prevFilters];
-      const districtFilterIndex = updatedFilters.findIndex(
-        (filter) => filter.filterIdentifier === "District"
-      );
+  //   // Update otherFilters
+  //   setOtherFilters((prevFilters) => {
+  //     const updatedFilters = [...prevFilters];
+  //     const districtFilterIndex = updatedFilters.findIndex(
+  //       (filter) => filter.filterIdentifier === "District"
+  //     );
 
-      if (districtFilterIndex !== -1) {
-        // If "District" filter exists, update it
-        updatedFilters[districtFilterIndex].filterValues = districtName!;
-      } else {
-        // Otherwise, add a new filter
-        updatedFilters.push({
-          filterIdentifier: "District",
-          filterValues: districtName!,
-        });
-      }
-      return updatedFilters; // Return updated filters
-    });
-    handleDistrictClick(districtId, !isActive); // Toggle project markers
-    if (
-      activeFilter === "cmInitiative"
-      // && districts.find((district) => district.id === districtId)?.districtName
-    ) {
-      handleSubmit([
-        ...cmInitiativeFilters,
-        ...[
-          {
-            filterIdentifier: "District",
-            filterValues: districtName!,
-          },
-        ],
-      ]);
-    } else {
-      handleSubmit([
-        ...adpFilters,
-        ...[
-          {
-            filterIdentifier: "District",
-            filterValues: districtName!,
-          },
-        ],
-      ]);
-    }
-  };
+  //     if (districtFilterIndex !== -1) {
+  //       // If "District" filter exists, update it
+  //       updatedFilters[districtFilterIndex].filterValues = districtName!;
+  //     } else {
+  //       // Otherwise, add a new filter
+  //       updatedFilters.push({
+  //         filterIdentifier: "District",
+  //         filterValues: districtName!,
+  //       });
+  //     }
+  //     return updatedFilters; // Return updated filters
+  //   });
+  //   handleDistrictClick(districtId, !isActive); // Toggle project markers
+  //   if (
+  //     activeFilter === "cmInitiative"
+  //     // && districts.find((district) => district.id === districtId)?.districtName
+  //   ) {
+  //     handleSubmit([
+  //       ...cmInitiativeFilters,
+  //       ...[
+  //         {
+  //           filterIdentifier: "District",
+  //           filterValues: districtName!,
+  //         },
+  //       ],
+  //     ]);
+  //   } else {
+  //     handleSubmit([
+  //       ...adpFilters,
+  //       ...[
+  //         {
+  //           filterIdentifier: "District",
+  //           filterValues: districtName!,
+  //         },
+  //       ],
+  //     ]);
+  //   }
+  // };
 
   const handleProjectSubmit = async (projectId: number) => {
     try {
@@ -171,54 +174,54 @@ const EvaluationMap = ({
     }
   };
 
-  const handleBackButtonClick = async () => {
-    setShowButton(false);
-    setActiveDistrict(null); // Reset to show all districts
-    // Update otherFilters
-    setOtherFilters((prevFilters) => {
-      const updatedFilters = [...prevFilters];
-      const districtFilterIndex = updatedFilters.findIndex(
-        (filter) => filter.filterIdentifier === "District"
-      );
+  // const handleBackButtonClick = async () => {
+  //   setShowButton(false);
+  //   setActiveDistrict(null); // Reset to show all districts
+  //   // Update otherFilters
+  //   setOtherFilters((prevFilters) => {
+  //     const updatedFilters = [...prevFilters];
+  //     const districtFilterIndex = updatedFilters.findIndex(
+  //       (filter) => filter.filterIdentifier === "District"
+  //     );
 
-      if (districtFilterIndex !== -1) {
-        // If "District" filter exists, remove it
-        return prevFilters.filter(
-          (filter) =>
-            filter.filterIdentifier !==
-            updatedFilters[districtFilterIndex].filterIdentifier
-        );
-      }
-      return updatedFilters; // Return updated filters
-    });
-    if (
-      activeFilter === "cmInitiative"
-      // && districts.find((district) => district.id === districtId)?.districtName
-    ) {
-      handleSubmit([
-        ...cmInitiativeFilters,
-        ...otherFilters.filter(
-          (filter) => filter.filterIdentifier !== "District"
-        ),
-      ]);
-    } else {
-      handleSubmit([
-        ...adpFilters,
-        ...otherFilters.filter(
-          (filter) => filter.filterIdentifier !== "District"
-        ),
-      ]);
-    }
-    try {
-      const response = await apiClient.post(MAIN_DASHBOARD_API, [
-        { filterIdentifier: "", filterValues: "" },
-      ]);
-      setActiveProjects([]);
-      setActiveDistrictId(null);
-    } catch (err) {
-      console.error("Submission error:", err);
-    }
-  };
+  //     if (districtFilterIndex !== -1) {
+  //       // If "District" filter exists, remove it
+  //       return prevFilters.filter(
+  //         (filter) =>
+  //           filter.filterIdentifier !==
+  //           updatedFilters[districtFilterIndex].filterIdentifier
+  //       );
+  //     }
+  //     return updatedFilters; // Return updated filters
+  //   });
+  //   if (
+  //     activeFilter === "cmInitiative"
+  //     // && districts.find((district) => district.id === districtId)?.districtName
+  //   ) {
+  //     handleSubmit([
+  //       ...cmInitiativeFilters,
+  //       ...otherFilters.filter(
+  //         (filter) => filter.filterIdentifier !== "District"
+  //       ),
+  //     ]);
+  //   } else {
+  //     handleSubmit([
+  //       ...adpFilters,
+  //       ...otherFilters.filter(
+  //         (filter) => filter.filterIdentifier !== "District"
+  //       ),
+  //     ]);
+  //   }
+  //   try {
+  //     const response = await apiClient.post(MAIN_DASHBOARD_API, [
+  //       { filterIdentifier: "", filterValues: "" },
+  //     ]);
+  //     setActiveProjects([]);
+  //     setActiveDistrictId(null);
+  //   } catch (err) {
+  //     console.error("Submission error:", err);
+  //   }
+  // };
 
   return (
     <>
@@ -226,7 +229,7 @@ const EvaluationMap = ({
         <div className="position-relative">
           <button
             className="position-absolute btn bg-color-sea-green text-white fw-bold mb-3"
-            onClick={handleBackButtonClick}
+            // onClick={handleBackButtonClick}
             style={{ zIndex: 1, right: 60, top: 10 }}
           >
             Back
@@ -265,7 +268,7 @@ const EvaluationMap = ({
                       transition: "transform 0.1s ease-in-out",
                     }}
                     onClick={() => {
-                      handleMarkerClick(district.id);
+                      // handleMarkerClick(district.id);
                       setActiveDistrict(district);
                       setShowButton(true);
                     }}

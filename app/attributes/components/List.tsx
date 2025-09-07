@@ -8,19 +8,14 @@ import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useAttributes, { Attribute } from "../../hooks/useAttributes";
 import Form from "./Form";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -185,89 +180,122 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
               <TableHeading
                 name="attribute Id"
                 handleSort={() => handleSort("attributeId")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="sort Id"
                 handleSort={() => handleSort("sortId")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="attribute data type"
                 handleSort={() => handleSort("attributeDataType")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="multiselect"
                 handleSort={() => handleSort("multiselect")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="label"
                 handleSort={() => handleSort("label")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="validation regx"
                 handleSort={() => handleSort("validationRegx")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="attribute code"
                 handleSort={() => handleSort("attributeCode")}
+                className="text-nowrap"
               />
-              <TableHeading name="min" handleSort={() => handleSort("min")} />
-              <TableHeading name="max" handleSort={() => handleSort("max")} />
+              <TableHeading
+                name="min"
+                handleSort={() => handleSort("min")}
+                className="text-nowrap"
+              />
+              <TableHeading
+                name="max"
+                handleSort={() => handleSort("max")}
+                className="text-nowrap"
+              />
               <TableHeading
                 name="required"
                 handleSort={() => handleSort("required")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="status"
                 handleSort={() => handleSort("status")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="hidden"
                 handleSort={() => handleSort("hidden")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="placeholder"
                 handleSort={() => handleSort("placeholder")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="attribute type"
                 handleSort={() => handleSort("attributeType")}
+                className="text-nowrap"
               />
-              <TableHeading name="unit" handleSort={() => handleSort("unit")} />
+              <TableHeading
+                name="unit"
+                handleSort={() => handleSort("unit")}
+                className="text-nowrap"
+              />
               <TableHeading
                 name="error message"
                 handleSort={() => handleSort("errorMessage")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="verification type"
                 handleSort={() => handleSort("verificationType")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="evaluation formula"
                 handleSort={() => handleSort("evaluationFormula")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="weightage"
                 handleSort={() => handleSort("weightage")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="remarks"
                 handleSort={() => handleSort("remarks")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="removeable"
                 handleSort={() => handleSort("removeable")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="options"
                 handleSort={() => handleSort("options")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="Master"
                 handleSort={() => handleSort("isMaster")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="priority"
                 handleSort={() => handleSort("priority")}
+                className="text-nowrap"
               />
 
               <th colSpan={2}></th>
@@ -276,14 +304,20 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
           <tbody>
             {paginatedData.map((d, i) => (
               <tr
-                className={dmSans.className}
                 style={{
                   border: ".41px solid rgba(81,81,81,0.20) !important",
                   fontSize: ".85rem",
                 }}
                 key={i}
               >
-                <td>{d.attributeId}</td>
+                <th
+                  style={{
+                    borderBottom: "1.08px solid #E2E8F0",
+                    padding: "28px 26px",
+                  }}
+                >
+                  {d.attributeId}
+                </th>
                 <td>{d.sortId}</td>
                 <td>{d.attributeDataType}</td>
                 <td>{d.multiselect}</td>

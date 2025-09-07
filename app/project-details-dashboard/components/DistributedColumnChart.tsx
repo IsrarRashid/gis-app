@@ -1,11 +1,8 @@
 "use client";
 
-import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
-import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
 import ApexCharts, { ApexOptions } from "apexcharts";
 import { useEffect, useRef, useState } from "react";
-import DistributedColumnChart2 from "./DistributedColumnChart2";
+import DetailAnalysis from "./DetailAnalysis";
 import { SingleProjectDashboard } from "./ProjectDetailsDashboard";
 
 interface Props {
@@ -262,7 +259,8 @@ const DistributedColumnChart = ({ data, spi, cpi, projectRating }: Props) => {
           </div>
         </div>
       </div>
-      <CustomModal
+      <DetailAnalysis data={data.detailAnalysis} />
+      {/* <CustomModal
         size="xl"
         modalId="detailAnalysis"
         button={
@@ -486,7 +484,7 @@ const DistributedColumnChart = ({ data, spi, cpi, projectRating }: Props) => {
             </div>
           </div>
         }
-      />
+      /> */}
     </>
   );
 };

@@ -2,7 +2,10 @@
 import { REPORTS_HISTORY_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
-import apiClient from "@/app/services/api-client";
+import Loader from "@/app/components/Loader";
+import useOfficers, { Officer } from "@/app/hooks/useOfficers";
+import useReportHistoryUser from "@/app/hooks/useReportHistoryUsers";
+import apiClient, { AxiosError } from "@/app/services/api-client";
 import {
   addDayToFormattedDate,
   convertToLocaleTimeString,
@@ -13,7 +16,9 @@ import Cookies from "js-cookie";
 import { Raleway } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { BsExclamationTriangleFill } from "react-icons/bs";
 import ReportNoting from "../../components/ReportNoting";
+import ViewHistoryOnly from "../../components/ViewHistoryOnly";
 import { APPROVED, ISSUED, REFERBACK, SUBMITTED } from "../../statuses";
 
 const raleway = Raleway({
@@ -39,6 +44,17 @@ export interface SubmittedReport {
   intiallyDesignation: string;
 }
 
+interface Tab {
+  id: number;
+  label: string;
+  status: number;
+  role: string;
+  reportSubmittedFrom?: number;
+  reportSubmittedTo?: number;
+  count: number;
+  filteredData: SubmittedReport[] | undefined;
+}
+
 const List = () => {
   const [refresh, setRefresh] = useState(false);
   const [data, setData] = useState<SubmittedReport[]>([]);
@@ -46,6 +62,13 @@ const List = () => {
   const [userId, setUserId] = useState<number>();
   const [role, setRole] = useState<string>();
   const [selectedTab, setSelectedTab] = useState<number>(0);
+  const [selectedTabLabel, setSelectedLabel] = useState<string>("");
+  const [error, setError] = useState("");
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    console.log("selectedTab", selectedTab);
+  }, [selectedTab]);
 
   useEffect(() => {
     const id = Cookies.get("userId");
@@ -59,160 +82,277 @@ const List = () => {
   }, []);
 
   // State for filtered data
-  const [filteredData, setFilteredData] = useState<SubmittedReport[]>([]);
+  const [filteredData, setFilteredData] = useState<
+    SubmittedReport[] | undefined
+  >();
 
   useEffect(() => {
     const handleSubmit = async (userId: number) => {
+      setLoading(true);
       try {
         const response = await apiClient.get(
           `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`
         );
-        const sortedData = response.data.data.sort(
-          (a: any, b: any) =>
-            new Date(a.submittedDate).getTime() -
-            new Date(b.submittedDate).getTime()
-        );
-        setData(sortedData);
+        if (response.data.data) {
+          console.log("response.data.data", response.data.data);
+          const sortedData = response.data.data.sort(
+            (a: any, b: any) =>
+              new Date(a.submittedDate).getTime() -
+              new Date(b.submittedDate).getTime()
+          );
+          setData(sortedData);
+          console.log("sortedData data", sortedData);
+        }
         console.log("original data", response.data.data);
-        console.log("sortedData data", sortedData);
+        setLoading(false);
       } catch (err) {
+        setError((err as AxiosError).message);
         console.error("Submission error:", err);
+        setLoading(false);
       }
     };
     if (userId) handleSubmit(userId);
   }, [userId, refresh]);
 
+  const { data: users } = useReportHistoryUser({ refresh });
+  const { data: officers } = useOfficers({ refresh });
+  const [deputyDirectors, setdeputyDirectors] = useState<Officer[]>();
+  const [directors, setDirectors] = useState<Officer[]>();
+  const [departmentHead, setDepartmentHead] = useState<Officer>();
+
   useEffect(() => {
+    if (officers) {
+      const deputyDirectors = officers.filter(
+        (officer) => officer.roleName === "Deputy Director"
+      );
+      console.log(deputyDirectors);
+      if (deputyDirectors) setdeputyDirectors(deputyDirectors);
+
+      const directors = officers.filter(
+        (officer) => officer.roleName === "Director"
+      );
+      console.log(directors);
+      if (directors) setDirectors(directors);
+
+      const departmentHead = officers.find(
+        (officer) => officer.roleName === "Department Head"
+      );
+
+      console.log(departmentHead);
+      if (departmentHead) setDepartmentHead(departmentHead);
+    }
+  }, [officers]);
+
+  const [tabs, setTabs] = useState<Tab[]>();
+
+  useEffect(() => {
+    const tabs = [
+      // {
+      // id: 0,
+      //   label: "All",
+      //   status: -99,
+      //   reportSubmittedFrom: userId,
+      //   reportSubmittedTo: userId,
+      //   filteredData:data;
+      // },
+      {
+        id: 1,
+        label: "SUBMITTED BY (AD)",
+        status: SUBMITTED,
+        role: "deputy director",
+        reportSubmittedTo: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 2,
+        label: "SUBMITTED BY (DD)",
+        status: SUBMITTED,
+        role: "director",
+        reportSubmittedTo: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 3,
+        label: "SUBMITTED TO (DIRECTOR)",
+        status: SUBMITTED,
+        role: "deputy director",
+        reportSubmittedFrom: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 4,
+        label: "SUBMITTED TO (DG)",
+        status: SUBMITTED,
+        role: "director",
+        reportSubmittedFrom: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 5,
+        label: "SUBMITTED BY (DIRECTOR)",
+        status: SUBMITTED,
+        role: "department head",
+        reportSubmittedTo: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 6,
+        label: "APPROVED AND MARK TO (DIRECTOR)",
+        status: APPROVED,
+        role: "department head",
+        reportSubmittedFrom: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 7,
+        label: "APPROVED BY (DG)",
+        status: APPROVED,
+        role: "director",
+        reportSubmittedTo: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 8,
+        label: "APPROVED BY (DG)",
+        status: APPROVED,
+        role: "deputy director",
+        reportSubmittedTo: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 9,
+        label: "REFERBACK BY (DIRECTOR)",
+        status: REFERBACK,
+        role: "deputy director",
+        reportSubmittedTo: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 10,
+        label: "REFERBACK TO (AD)",
+        status: REFERBACK,
+        role: "deputy director",
+        reportSubmittedFrom: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 11,
+        label: "REFERBACK BY (DG)",
+        status: REFERBACK,
+        role: "director",
+        reportSubmittedTo: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 12,
+        label: "REFERBACK TO (DD)",
+        status: REFERBACK,
+        role: "director",
+        reportSubmittedFrom: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      {
+        id: 13,
+        label: "REFERBACK TO (DIRECTOR)",
+        status: REFERBACK,
+        role: "department head",
+        reportSubmittedFrom: userId,
+        count: 0,
+        filteredData: undefined,
+      },
+      // {
+      // id: 14,
+      //   label: "ISSUED",
+      //   status: ISSUED,
+      //   direction: undefined,
+      //   tabKey: `${ISSUED}`,
+      //   count: 0,
+      // },
+    ];
+
     if (data) {
-      setSelectedTab(0);
-      setFilteredData(data);
+      const updatedTabs: Tab[] = tabs.map((tab) => {
+        let count = 0;
+        let filteredData: SubmittedReport[] = [];
+
+        if (tab.reportSubmittedFrom) {
+          filteredData = data.filter(
+            (d) =>
+              d.status === tab.status &&
+              d.submittedFrom === tab.reportSubmittedFrom
+          );
+          count = filteredData.length;
+        } else if (tab.reportSubmittedTo) {
+          filteredData = data.filter(
+            (d) =>
+              d.status === tab.status && d.submittedTo === tab.reportSubmittedTo
+          );
+          count = filteredData.length;
+        }
+
+        return { ...tab, count, filteredData };
+      });
+      if (updatedTabs) setTabs(updatedTabs);
     }
   }, [data]);
 
-  const tabs = [
-    // {
-    //   label: "All",
-    //   status: -99,
-    //   reportSubmittedFrom: userId,
-    //   reportSubmittedTo: userId,
-    //   direction: "both",
-    //   tabKey: `-99-both-${userId}-${userId}`,
-    // },
-    {
-      label: "SUBMITTED BY (AD)",
-      status: SUBMITTED,
-      role: "deputy director",
-      reportSubmittedTo: userId,
-      direction: "to",
-      tabKey: `${SUBMITTED}-to-${userId}`,
-    },
-    {
-      label: "SUBMITTED BY (DD)",
-      status: SUBMITTED,
-      role: "director",
-      reportSubmittedTo: userId,
-      direction: "from",
-      tabKey: `${SUBMITTED}-to-${userId}`,
-    },
-    {
-      label: "SUBMITTED TO (DIRECTOR)",
-      status: SUBMITTED,
-      role: "deputy director",
-      reportSubmittedFrom: userId,
-      direction: "from",
-      tabKey: `${SUBMITTED}-from-${userId}`,
-    },
-    {
-      label: "SUBMITTED TO (DG)",
-      status: SUBMITTED,
-      role: "director",
-      reportSubmittedFrom: userId,
-      direction: "to",
-      tabKey: `${SUBMITTED}-to-${userId}`,
-    },
-    {
-      label: "SUBMITTED BY (DIRECTOR)",
-      status: SUBMITTED,
-      role: "director general",
-      reportSubmittedTo: userId,
-      direction: "from",
-      tabKey: `${SUBMITTED}-from-${userId}`,
-    },
-    {
-      label: "APPROVED AND MARK TO (DIRECTOR)",
-      status: APPROVED,
-      role: "director general",
-      reportSubmittedFrom: userId,
-      direction: "to",
-      tabKey: `${SUBMITTED}-to-${userId}`,
-    },
-    {
-      label: "APPROVED BY (DG)",
-      status: APPROVED,
-      role: "director",
-      reportSubmittedTo: userId,
-      direction: "from",
-      tabKey: `${APPROVED}-from-${userId}`,
-    },
-    {
-      label: "APPROVED BY (DG)",
-      status: APPROVED,
-      role: "deputy director",
-      reportSubmittedTo: userId,
-      direction: "from",
-      tabKey: `${APPROVED}-from-${userId}`,
-    },
-    {
-      label: "REFERBACK BY (DIRECTOR)",
-      status: REFERBACK,
-      role: "deputy director",
-      reportSubmittedTo: userId,
-      direction: "to",
-      tabKey: `${REFERBACK}-to-${userId}`,
-    },
-    {
-      label: "REFERBACK TO (AD)",
-      status: REFERBACK,
-      role: "deputy director",
-      reportSubmittedFrom: userId,
-      direction: "from",
-      tabKey: `${REFERBACK}-from-${userId}`,
-    },
-    {
-      label: "REFERBACK BY (DG)",
-      status: REFERBACK,
-      role: "director",
-      reportSubmittedTo: userId,
-      direction: "from",
-      tabKey: `${REFERBACK}-from-${userId}`,
-    },
-    {
-      label: "REFERBACK TO (DD)",
-      status: REFERBACK,
-      role: "director",
-      reportSubmittedFrom: userId,
-      direction: "to",
-      tabKey: `${REFERBACK}-to-${userId}`,
-    },
-    {
-      label: "REFERBACK TO (DIRECTOR)",
-      status: REFERBACK,
-      role: "director general",
-      reportSubmittedFrom: userId,
-      direction: "to",
-      tabKey: `${REFERBACK}-to-${userId}`,
-    },
-    // {
-    //   label: "ISSUED",
-    //   status: ISSUED,
-    //   direction: undefined,
-    //   tabKey: `${ISSUED}`,
-    // },
-  ];
+  useEffect(() => {
+    if (tabs) {
+      const tabWithRecord = tabs.find(
+        (tab) =>
+          tab.role === role &&
+          tab.count > 0 &&
+          // DD Tabs
+          (tab.id === 1 ||
+            tab.id === 8 ||
+            tab.id === 9 ||
+            // Director Tabs
+            tab.id === 2 ||
+            tab.id === 7 ||
+            tab.id === 11 ||
+            // Department Head Tabs
+            tab.id === 5)
+      );
+      if (tabWithRecord) {
+        setSelectedTab(tabWithRecord.id);
+        setSelectedLabel(tabWithRecord.label);
+        setFilteredData(tabWithRecord.filteredData);
+      } else {
+        setSelectedTab(0);
+        setSelectedLabel("All");
+        setFilteredData(data);
+      }
+    }
+  }, [tabs, role]);
+
+  console.log("tabs", tabs);
 
   return (
     <>
-      {userId && role && data && (
+      {isLoading ? (
+        <Loader />
+      ) : error ? (
+        <div
+          className="alert alert-danger d-flex align-items-center"
+          role="alert"
+        >
+          <BsExclamationTriangleFill size={24} className="me-2" />
+          <div>{error}, Please Try Again!</div>
+        </div>
+      ) : userId && role && data && data.length > 0 ? (
+        // ✅ render your data block here
         <div
           className={`container-fluid p-3 mt-3 mb-4 ${raleway.className}`}
           style={{
@@ -222,13 +362,13 @@ const List = () => {
             borderRadius: "15px",
           }}
         >
-          <div className="row d-flex justify-content-between m-0">
+          <div className="row d-flex justify-content-between">
             <div className="col-auto my-auto">
               <h5 className="fs18px fw-bold">List of Reports</h5>
             </div>
 
             <div className="col-auto">
-              <div className="row d-flex m-0 justify-content-end mb-3">
+              <div className="row d-flex justify-content-end mb-3">
                 <div className="col">
                   <form onSubmit={(e) => e.preventDefault()}>
                     <div className="input-group">
@@ -264,9 +404,9 @@ const List = () => {
             </div>
           </div>
           <div className="col m-auto">
-            <div className="row d-flex m-0 mb-3">
+            <div className="row d-flex mb-3">
               <div className="col">
-                <div className="row d-flex m-0">
+                <div className="row d-flex">
                   <div className="col-auto">
                     <Button
                       className={`btn shadow-none rounded-0 fw-bold position-relative ${
@@ -278,6 +418,7 @@ const List = () => {
                       }}
                       onClick={() => {
                         setSelectedTab(0);
+                        setSelectedLabel("All");
                         setFilteredData(data);
                       }}
                     >
@@ -299,108 +440,41 @@ const List = () => {
                     </Button>
                   </div>
                   {tabs
-                    .filter(
+                    ?.filter(
                       (tab) =>
                         tab.status === -99 ||
                         tab.status === 6 ||
                         tab.role === role
                     )
-                    .map((tab, i) => {
-                      const submittedId =
-                        tab.direction === "from"
-                          ? tab.reportSubmittedFrom
-                          : tab.reportSubmittedTo;
-
-                      return (
-                        <div key={i + 1} className="col-auto">
-                          <Button
-                            className={`btn shadow-none rounded-0 fw-bold position-relative ${
-                              selectedTab === i + 1
-                                ? "text-dark"
-                                : "text-secondary"
-                            }`}
-                            style={{
-                              borderBottom:
-                                selectedTab === i + 1
-                                  ? "3px solid #0c8ce9"
-                                  : "",
-                            }}
-                            onClick={() => {
-                              setSelectedTab(i + 1);
-                              if (tab.reportSubmittedFrom) {
-                                setFilteredData(
-                                  data.filter(
-                                    (d) =>
-                                      d.status === tab.status &&
-                                      d.submittedFrom ===
-                                        tab.reportSubmittedFrom
-                                  )
-                                );
-                                console.log(
-                                  "reportSubmittedFrom",
-                                  data.filter(
-                                    (d) =>
-                                      d.status === tab.status &&
-                                      d.submittedFrom ===
-                                        tab.reportSubmittedFrom
-                                  )
-                                );
-                              }
-                              if (tab.reportSubmittedTo) {
-                                setFilteredData(
-                                  data.filter(
-                                    (d) =>
-                                      d.status === tab.status &&
-                                      d.submittedTo === tab.reportSubmittedTo
-                                  )
-                                );
-                                console.log(
-                                  "reportSubmittedTo",
-                                  data.filter(
-                                    (d) =>
-                                      d.status === tab.status &&
-                                      d.submittedTo === tab.reportSubmittedTo
-                                  )
-                                );
-                              }
-                            }}
-                          >
-                            {tab.label}
-                            {(tab.reportSubmittedFrom
-                              ? data.filter(
-                                  (d) =>
-                                    d.status === tab.status &&
-                                    d.submittedFrom === tab.reportSubmittedFrom
-                                ).length
-                              : tab.reportSubmittedTo
-                              ? data.filter(
-                                  (d) =>
-                                    d.status === tab.status &&
-                                    d.submittedTo === tab.reportSubmittedTo
-                                ).length
-                              : 0) > 0 && (
-                              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {tab.reportSubmittedFrom
-                                  ? data.filter(
-                                      (d) =>
-                                        d.status === tab.status &&
-                                        d.submittedFrom ===
-                                          tab.reportSubmittedFrom
-                                    ).length
-                                  : tab.reportSubmittedTo
-                                  ? data.filter(
-                                      (d) =>
-                                        d.status === tab.status &&
-                                        d.submittedTo === tab.reportSubmittedTo
-                                    ).length
-                                  : 0}
-                              </span>
-                            )}
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  <div className="col-auto">
+                    .map((tab) => (
+                      <div key={tab.id} className="col-auto">
+                        <Button
+                          className={`btn shadow-none rounded-0 fw-bold position-relative ${
+                            selectedTab === tab.id
+                              ? "text-dark"
+                              : "text-secondary"
+                          }`}
+                          style={{
+                            borderBottom:
+                              selectedTab === tab.id ? "3px solid #0c8ce9" : "",
+                          }}
+                          onClick={() => {
+                            setSelectedTab(tab.id);
+                            setSelectedLabel(tab.label);
+                            setFilteredData(tab.filteredData);
+                            console.log("tab filteredData", tab.filteredData);
+                          }}
+                        >
+                          {tab.label}
+                          {tab.count > 0 && (
+                            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                              {tab.count}
+                            </span>
+                          )}
+                        </Button>
+                      </div>
+                    ))}
+                  {/* <div className="col-auto">
                     <Button
                       className={`btn shadow-none rounded-0 fw-bold position-relative ${
                         selectedTab === tabs.length
@@ -415,6 +489,7 @@ const List = () => {
                       }}
                       onClick={() => {
                         setSelectedTab(tabs.length);
+                        setSelectedLabel("Issued")
                         setFilteredData(
                           data?.filter((d) => d.status === ISSUED)
                         );
@@ -427,7 +502,7 @@ const List = () => {
                         </span>
                       )}
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               {/* <div className="col-lg-4 col-md-6 col-sm-12 text-auto">
@@ -457,7 +532,7 @@ const List = () => {
             </div>
           </div>
           {filteredData?.map((d, i) => (
-            <div key={i} className="col mb-2">
+            <div key={i} className="col mb-2 position-relative overflow-hidden">
               <div
                 className="col p-3"
                 style={{
@@ -487,13 +562,42 @@ const List = () => {
                     </p>
                   </div>
                   <div className="col">
-                    <p
-                      className="mb-2 fs18px fw-bold"
-                      style={{ color: "263238" }}
-                    >
-                      <span>Project: </span> {d.projectName}
-                    </p>
-                    <div className="row d-flex justify-content-between m-0">
+                    <div className="row d-flex justify-content-between align-items-center mb-2">
+                      <div className="col">
+                        <p
+                          className="fs18px fw-bold m-0"
+                          style={{ color: "263238" }}
+                        >
+                          <span>Project: </span> {d.projectName}
+                        </p>
+                      </div>
+                      <div className="col-auto px-5">&nbsp;</div>
+                      <div
+                        className="col-auto position-absolute p-0"
+                        style={{
+                          rotate: "45deg",
+                          top: 40,
+                          right: -40,
+                        }}
+                      >
+                        {d.reportType === 1 ? (
+                          <span
+                            className="badge px-5 fw-bold py-2 fs-6"
+                            style={{ backgroundColor: "#3B7C80" }}
+                          >
+                            MONITORING
+                          </span>
+                        ) : d.reportType === 0 ? (
+                          <span className="badge bg-color-evaluation-theme-blue px-5 fw-bold py-2 fs-6">
+                            EVALUATION
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="row d-flex justify-content-between">
                       <div className="col">
                         <p
                           className="mb-0 mb-2 fs18px fw-bold me-3"
@@ -534,7 +638,7 @@ const List = () => {
                         </p>
                       </div>
 
-                      {selectedTab === tabs.length && (
+                      {selectedTab === tabs?.length && (
                         <div className="col">
                           <p
                             className="mb-0 mb-2 fs18px fw-bold me-3"
@@ -556,46 +660,115 @@ const List = () => {
                         </div>
                       )}
 
-                      {/* hide comment button if status === 1 */}
-                      <div className="col d-flex justify-content-end align-items-end">
-                        <CustomModal
-                          isFullscreen={true}
-                          modalId={`comment${d.id}`}
-                          buttonColumn="col-auto"
-                          button={
-                            <Button
-                              className="btn shadow-sm py-2 px-3 fs20px rounded-pill fw-bold"
-                              style={{
-                                background: "rgba(0, 57, 206,.05)",
-                                color: "#0039CE",
-                              }}
-                            >
-                              {d.submittedTo === userId
-                                ? "Comment"
-                                : d.status === ISSUED
-                                ? "Issued"
-                                : d.status === APPROVED
-                                ? "Approved"
-                                : "Submitted"}
-                            </Button>
-                          }
-                          body={
-                            <ReportNoting
-                              data={d}
-                              setRefresh={setRefresh}
-                              refresh={refresh}
-                              role={role}
-                              userId={userId}
-                            />
-                          }
-                        />
-                      </div>
+                      {selectedTabLabel === "All" ? (
+                        <div className="col d-flex justify-content-end align-items-end pe-5">
+                          <CustomModal
+                            isFullscreen={true}
+                            modalId={`view-history${d.id}`}
+                            buttonColumn="col-auto"
+                            button={
+                              <Button
+                                className="btn shadow-sm py-2 px-3 fs20px rounded-pill fw-bold"
+                                style={{
+                                  background: "rgba(0, 57, 206,.05)",
+                                  color: "#0039CE",
+                                }}
+                              >
+                                View History
+                              </Button>
+                            }
+                            body={
+                              <div className="container-fluid p-3">
+                                <div
+                                  className="col"
+                                  style={{
+                                    backgroundImage: "url('/images/bg2.png')",
+                                    backgroundSize: "cover",
+                                    backgroundRepeat: "no-repeat",
+                                    border:
+                                      "1px solid rgba(255, 255, 255, 0.29)",
+                                    borderRadius: "15px",
+                                    height: "100%",
+                                  }}
+                                >
+                                  <div
+                                    className="col"
+                                    style={{
+                                      backgroundImage:
+                                        "linear-gradient(to bottom right, rgba(239, 239, 239,.6) , rgba(255, 255, 255,.08))",
+                                      borderRadius: "15px",
+                                      padding: "34px 50px",
+                                      width: "100%",
+                                      height: "100%",
+                                    }}
+                                  >
+                                    <ViewHistoryOnly data={d} users={users} />
+                                  </div>
+                                </div>
+                              </div>
+                            }
+                          />
+                        </div>
+                      ) : (
+                        <div className="col d-flex justify-content-end align-items-end pe-5">
+                          <CustomModal
+                            isFullscreen={true}
+                            modalId={`comment${d.id}`}
+                            buttonColumn="col-auto"
+                            button={
+                              <Button
+                                className="btn shadow-sm py-2 px-3 fs20px rounded-pill fw-bold"
+                                style={{
+                                  background: "rgba(0, 57, 206,.05)",
+                                  color: "#0039CE",
+                                }}
+                              >
+                                {d.submittedTo === userId
+                                  ? "Comment"
+                                  : d.status === ISSUED
+                                  ? "Issued"
+                                  : d.status === APPROVED
+                                  ? "Approved"
+                                  : "Submitted"}
+                              </Button>
+                            }
+                            body={
+                              <>
+                                {deputyDirectors &&
+                                  directors &&
+                                  departmentHead && (
+                                    <ReportNoting
+                                      data={d}
+                                      setRefresh={setRefresh}
+                                      role={role}
+                                      userId={userId}
+                                      selectedTabLabel={selectedTabLabel}
+                                      users={users}
+                                      deputyDirectors={deputyDirectors}
+                                      directors={directors}
+                                      departmentHead={departmentHead}
+                                      officers={officers}
+                                    />
+                                  )}
+                              </>
+                            }
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      ) : (
+        <div
+          className="alert alert-warning d-flex align-items-center"
+          role="alert"
+        >
+          <BsExclamationTriangleFill size={24} className="me-2" />
+          <div>No reports found.</div>
         </div>
       )}
     </>

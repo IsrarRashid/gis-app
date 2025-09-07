@@ -1,13 +1,16 @@
 import { ADD_RIGHTS_TO_ROLE_API, GET_RIGHTS_BY_ROLE_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
+import FormWrapper from "@/app/components/Form/FormWrapper";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import Select, { ActionMeta, MultiValue } from "react-select";
+import { ActionMeta, MultiValue } from "react-select";
 import { toast } from "react-toastify";
 import rightsBlack from "../../../public/icons/rightsBlack.svg";
 import { Option } from "./List";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 
 interface Props {
   id: number;
@@ -45,13 +48,13 @@ const GroupingForm = ({ id, options, name }: Props) => {
   }, [id, refresh]);
 
   const handleSelectGroup = (
-    newValue: MultiValue<{ value: number; label: string }>,
-    actionMeta: ActionMeta<{ value: number; label: string }>
+    newValue: MultiValue<{ value: string; label: string }>,
+    actionMeta: ActionMeta<{ value: string; label: string }>
   ) => {
     // Map selected groups to the original format (GroupOption)
     const selectedOptions = newValue
       ? newValue.map((option) => ({
-          rightId: option.value,
+          rightId: Number(option.value),
           rightName: option.label,
         }))
       : [];
@@ -86,14 +89,14 @@ const GroupingForm = ({ id, options, name }: Props) => {
   };
 
   // Prepare options for react-select in {value, label} format
-  const availableOptions = options.map((group) => ({
-    value: group.rightId,
+  const availableOptions: OptionType[] = options.map((group) => ({
+    value: group.rightId.toString(),
     label: group.rightName,
   }));
 
   // Prepare selected values for react-select in {value, label} format
-  const selectedValues = selectedOptions?.map((group) => ({
-    value: group.rightId,
+  const selectedValues: OptionType[] = selectedOptions?.map((group) => ({
+    value: group.rightId.toString(),
     label: group.rightName,
   }));
 
@@ -139,54 +142,26 @@ const GroupingForm = ({ id, options, name }: Props) => {
             className="p-0"
             style={{ background: "rgba(156,255,255,0)" }}
           >
-            <div
-              className="container-fluid pt-3 pb-3 ps-4 pe-4"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-                borderRadius: "15px",
-                border: "1.7px solid rgba(255, 255, 255, 0.6)",
-              }}
-            >
+            <FormWrapper heading="Select Rights">
               <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <div className="row d-flex">
-                    <div className="col">
-                      <p
-                        className="text-center text-white"
-                        style={{ fontSize: "1.5rem", fontWeight: "800" }}
-                      >
-                        SELECT RIGHTS
-                      </p>
-                    </div>
-                  </div>
-
-                  <Select
+                <div
+                  className="col text-start mt-0"
+                  style={{ marginBottom: "10px" }}
+                >
+                  <CustomSelect
                     id="groupSelect"
-                    isMulti
+                    isMulti={true}
                     options={availableOptions} // Correctly mapped options
                     value={selectedValues} // Correctly mapped selected values
-                    onChange={handleSelectGroup} // Correct handler
-                    styles={customStyles}
-                    closeMenuOnSelect={false}
-                    placeholder="Choose Attributes..."
+                    onChangeMulti={handleSelectGroup} // Correct handler
+                    placeholder="Choose Rights..."
                   />
                 </div>
-                <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <Button
-                    className="btn text-white w-100 border-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                      borderRadius: "12px",
-                    }}
-                    type="submit"
-                  >
-                    Done
-                  </Button>
+                <div className="col-lg-5 col-md-8 col-sm-6 mx-auto">
+                  <SubmitButton>Save Rights</SubmitButton>
                 </div>
               </form>
-            </div>
+            </FormWrapper>
           </Modal.Body>
         </Modal>
       </div>

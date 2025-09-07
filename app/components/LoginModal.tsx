@@ -38,7 +38,6 @@ const LoginModal = () => {
         className="modal fade"
         id="loginModal"
         aria-labelledby="loginModalLabel"
-        aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
           <div

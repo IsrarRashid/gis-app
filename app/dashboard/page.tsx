@@ -1,5 +1,4 @@
-import Dashboard from "./components/Dashboard";
-import DashboardEvaluation from "./components/DashboardEvaluation";
+import DashboardEvaluation from "./components/Evaluation/DashboardEvaluation";
 import DashboardMonitoring from "./components/DashboardMonitoring";
 import { DashboardType, TypeEnum } from "./types/types";
 

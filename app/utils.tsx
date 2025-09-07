@@ -86,7 +86,7 @@ export function formatDateTime(dateTimeString: string, formatType: string) {
   }
 }
 
-export const devMap = true;
+export const devMap = false;
 
 // "yyyy-MM-dd" to the desired format "dd-MMM-yyyy"
 export function formatHHLStringDate(inputDate: string): string {
@@ -142,9 +142,10 @@ export const exportToPDF = (
   const doc = new jsPDF("landscape");
   doc.setFont("helvetica", "bold"); // Set font to bold
   doc.setFontSize(16); // Set font size for the heading
-  const titleText = `${label} ${
-    getFormattedDate(selectedDate, "short") || "today"
-  }`;
+  // const titleText = `${label} ${
+  //   getFormattedDate(selectedDate, "short") || "today"
+  // }`;
+  const titleText = label;
   const pageWidth = doc.internal.pageSize.width;
   const textWidth = doc.getTextWidth(titleText);
   const xPosition = (pageWidth - textWidth) / 2;
@@ -228,9 +229,130 @@ export const exportToPDF = (
   });
 
   // Save the PDF
-  doc.save(
-    `${label}_${getFormattedDate(selectedDate, "short") || "today"}.pdf`
-  );
+  doc.save(`${label}.pdf`);
+};
+
+export const exportToPDFNew = (
+  columns: { header: string; dataKey: string }[],
+  tableRows: any[],
+  selectedDate: Date,
+  label: string
+) => {
+  const doc = new jsPDF("landscape");
+  doc.setFont("helvetica", "bold"); // Set font to bold
+  doc.setFontSize(16); // Set font size for the heading
+  // const titleText = `${label} ${
+  //   getFormattedDate(selectedDate, "short") || "today"
+  // }`;
+  const titleText = `${label}`;
+  const pageWidth = doc.internal.pageSize.width;
+  const margin = 20; // side margin
+  const wrappedTitle = doc.splitTextToSize(titleText, pageWidth - margin * 2);
+
+  // Center each line of the wrapped title
+  wrappedTitle.forEach((line: string, i: number) => {
+    const textWidth = doc.getTextWidth(line);
+    const xPosition = (pageWidth - textWidth) / 2;
+    doc.text(line, xPosition, 15 + i * 8);
+  });
+
+  // Reset font style for the rest of the content
+  doc.setFont("helvetica", "normal"); // Change font back to normal for other text
+  doc.setFontSize(16); // Set a smaller font size for the rest of the content
+
+  // Define columns and rows for the PDF table
+  // const columns = [
+  //   { header: "GS NO", dataKey: "id" },
+  //   { header: "Project Name", dataKey: "projectName" },
+  // { header: "Sr", dataKey: "userId" },
+  // { header: "Name", dataKey: "employeeName" },
+  // { header: "Designation", dataKey: "employeeDesignation" },
+  // { header: "In Time", dataKey: "punchInTime" },
+  // { header: "Punch In", dataKey: "punchInStatus" },
+  // { header: "Out Time", dataKey: "punchOutTime" },
+  // { header: "Punch Out", dataKey: "punchOutStatus" },
+  // ];
+
+  // Map over your attendance data to create rows for the table
+  // const trimDataMethod = (designation: any) => {
+  //   let updatedText = "";
+  //   let trimedText = designation.trim();
+
+  //   for (let i = 0; i < trimedText.length; i++) {
+  //     if (i !== trimedText.length - 1) {
+  //       updatedText += trimedText[i];
+  //     }
+  //   }
+
+  //   return updatedText.trim() + ")";
+  // };
+
+  // const tableRows =
+  //   attendanceData &&
+  //   attendanceData?.map((data: any, index: any) => ({
+  //     id: index + 1,
+  //     projectName: data.projectName,
+  // employeeDesignation: trimDataMethod(data.employeeDesignation),
+  // punchInTime: data.punchInTime,
+  // punchInStatus: data.punchInStatus,
+  // punchOutTime: data.punchOutTime,
+  // punchOutStatus: data.punchOutStatus,
+  // }));
+
+  // Add table to PDF using autoTable plugin
+  doc.autoTable({
+    columns,
+    body: tableRows,
+    theme: "grid", // grid gives bordered cells like Bootstrap table
+    startY: 25 + (wrappedTitle.length - 1) * 8,
+
+    // Header style (like .table thead-dark or .table-primary)
+    headStyles: {
+      fillColor: [12, 140, 233], // Bootstrap primary blue
+      textColor: [255, 255, 255], // White text
+      fontSize: 10,
+      fontStyle: "bold",
+      halign: "center",
+      valign: "middle",
+      lineWidth: 0.5,
+      lineColor: [200, 200, 200],
+    },
+
+    // Body cell styles (like .table-bordered .table-striped)
+    styles: {
+      fontSize: 9,
+      cellPadding: 3, // like Bootstrap padding
+      halign: "left",
+      valign: "middle",
+      lineWidth: 0.5,
+      lineColor: [220, 220, 220], // light border like Bootstrap
+    },
+
+    // Alternate row colors (striped)
+    alternateRowStyles: {
+      fillColor: [245, 245, 245], // light gray for stripes
+    },
+
+    // Optional: footer styling if needed
+    footStyles: {
+      fillColor: [230, 230, 230],
+      textColor: [0, 0, 0],
+      fontStyle: "bold",
+    },
+
+    // columnStyles: {
+    //   0: { cellWidth: "auto" }, // First column width set to 30
+    //   1: { cellWidth: "auto", halign: "left" }, // Second column width set to 50
+    //   2: { cellWidth: 80, overflow: "hidden" }, // Third column auto width
+    //   3: { cellWidth: 18, halign: "center" }, // Fourth column width set to 40
+    //   4: { cellWidth: "auto", halign: "center" }, // Fourth column width set to 40
+    //   5: { cellWidth: 18, halign: "center" }, // Fourth column width set to 40
+    //   6: { cellWidth: "auto", halign: "center" }, // Fourth column width set to 40
+    // },
+  });
+
+  // Save the PDF
+  doc.save(`${label}.pdf`);
 };
 
 export const addDayToFormattedDate = (formattedDate: string): string => {
@@ -421,10 +543,6 @@ export function addSpaceToCamelCase(text: string) {
   return text.replace(/([a-z])([A-Z])/g, "$1 $2");
 }
 
-export function removeFirstWordFromCamelCase(text: string) {
-  return text.replace(/^[a-z]+/, "");
-}
-
 import * as XLSX from "xlsx";
 
 export const downloadReportAnalysisToExcel = (
@@ -503,8 +621,6 @@ export interface Option {
   value: string;
 }
 
-export type OptionType = { value: string; label: string };
-
 export interface StringOption {
   label: string;
   value: string;
@@ -573,67 +689,3 @@ export function getColor(
     ? "#0c8ce9"
     : "";
 }
-
-// Custom Select Style
-export const customSelectStyles: StylesConfig<
-  OptionType,
-  false,
-  GroupBase<OptionType>
-> = {
-  control: (base, state) => ({
-    ...base,
-    fontSize: "14px",
-    borderRadius: 7,
-    background: "rgba(255, 255, 255, 0.8)",
-    border: state.isFocused
-      ? "1px solid #0c8ce9" // border on focus
-      : "1px solid #eff0f2", // default border
-    boxShadow: state.isFocused
-      ? "0 0 0 1px rgba(12, 140, 233, 0.4)" // focus glow
-      : "none",
-    "&:hover": {
-      border: "1px solid #0c8ce9", // hover border color
-      boxShadow: "0 0 0 1px rgba(12, 140, 233, 0.4)", // hover glow
-    },
-  }),
-  dropdownIndicator: (base) => ({
-    ...base,
-    padding: 10.5,
-  }),
-  clearIndicator: (base) => ({
-    ...base,
-    padding: 4,
-  }),
-  valueContainer: (base) => ({
-    ...base,
-    padding: "0 6px",
-  }),
-  input: (base) => ({
-    ...base,
-    margin: 0,
-    padding: 0,
-  }),
-  menu: (base) => ({
-    ...base,
-    zIndex: 9999,
-    padding: "4px 8px",
-    borderRadius: 14,
-    border: 0,
-    boxShadow: "0px 0px 7px 3px rgba(0,0,0,0.1)",
-  }),
-  menuPortal: (base) => ({
-    ...base,
-    zIndex: 9999,
-  }),
-  option: (base, state) => ({
-    ...base,
-    backgroundColor: state.isFocused ? "#E4EDEC" : "white",
-    color: "#333",
-    fontSize: "14px",
-    padding: "10px",
-    borderRadius: 7,
-  }),
-};
-
-export const defaultOption = { value: "", label: "Select" };
-export const defaultNumberOption = { value: "0", label: "Select" };

@@ -1,7 +1,7 @@
 import SummaryDashboard from "./components/SummaryDashboard";
 
-const SummaryDashboardPage = () => {
+const DepartmentDashboardSummary = () => {
   return <SummaryDashboard />;
 };
 
-export default SummaryDashboardPage;
+export default DepartmentDashboardSummary;

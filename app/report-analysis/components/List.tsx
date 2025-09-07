@@ -1,21 +1,24 @@
 "use client";
+import { REPORT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
-import { FiSearch } from "react-icons/fi";
-import { IoArrowForwardCircleOutline } from "react-icons/io5";
-import Form from "./Form";
-import { Modal } from "react-bootstrap";
+import CustomModal from "@/app/components/CustomModal";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import useAttributes from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import { REPORT_API } from "@/app/APIs";
+import { deleteMessage } from "@/app/utils";
+import trashImage from "@/public/images/trash.png";
+import Image from "next/image";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Modal } from "react-bootstrap";
+import { FaChevronDown } from "react-icons/fa";
+import { FiSearch } from "react-icons/fi";
+import { IoArrowForwardCircleOutline, IoClose } from "react-icons/io5";
 import { toast } from "react-toastify";
-import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
-import { exportDataToExcel } from "@/app/utils/exportToExcel";
-import { getFormattedDate } from "@/app/utils";
-import PPTSlideGenerator from "./PPTSlideGenerator/PPTSlideGenerator";
 import * as XLSX from "xlsx";
-import TimeSpentOnProjectSiteFilterMenu from "./TimeSpentOnProjectSite/TimeSpentOnProjectSiteFilterMenu";
+import Form from "./Form";
+import IssuedVsPendingReports from "./IssuedVsPendingReports";
+import PPTSlideGenerator from "./PPTSlideGenerator/PPTSlideGenerator";
 import TimeSpendOnProjectSiteData from "./TimeSpentOnProjectSite/TimeSpendOnProjectSiteData";
 
 export interface ReportTab {
@@ -31,7 +34,7 @@ const List = () => {
   const [showButtons, setShowButtons] = useState(true);
   const [isActiveTab, setActiveTab] = useState(-1);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState("0px");
+  const [height, setHeight] = useState<number>(0);
   const { data: attributes } = useAttributes();
   const [tabs, setTabs] = useState<ReportTab[]>();
   const [data, setData] = useState<ReportRun[]>([]);
@@ -39,9 +42,9 @@ const List = () => {
 
   useLayoutEffect(() => {
     if (showButtons && contentRef.current) {
-      setHeight(`${contentRef.current.scrollHeight}px`);
+      setHeight(contentRef.current.scrollHeight + 20);
     } else {
-      setHeight("0px");
+      setHeight(0);
     }
   }, [showButtons, tabs]);
 
@@ -204,6 +207,18 @@ const List = () => {
     XLSX.writeFile(workbook, `${label}.xlsx`); // Changed filename
   };
 
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await apiClient.delete(`${REPORT_API}/${id}`);
+      console.log(response);
+      toast.success(deleteMessage);
+      setRefreshTabs((prev) => !prev);
+    } catch (err) {
+      console.log(err);
+      toast.error((err as AxiosError).message);
+    }
+  };
+
   return (
     <div
       className="col px-4 py-3 bg-white"
@@ -335,8 +350,9 @@ const List = () => {
         ref={contentRef}
         className="row overflow-hidden"
         style={{
-          transition: "height 0.3s ease",
-          height,
+          transition: "all 0.3s ease",
+          height: `${height}px`,
+          paddingTop: height > 0 ? "20px" : "0px",
         }}
       >
         <div className="col-auto mb-2 pe-0">
@@ -351,10 +367,19 @@ const List = () => {
             setSelectedIndex={setActiveTab}
           />
         </div>
+        <div className="col-auto mb-2 pe-0">
+          <IssuedVsPendingReports
+            setActiveTab={setActiveTab}
+            isActiveTab={isActiveTab}
+          />
+        </div>
         {(searchTerm ? filteredTabs : tabs)?.map((tab) => (
-          <div key={tab.reportId} className="col-auto mb-2 pe-0">
+          <div
+            key={tab.reportId}
+            className="col-auto mb-2 pe-0 position-relative"
+          >
             <Button
-              className={`btn rounded-pill fw-5 fs14px ${
+              className={`btn rounded-pill fw-5 fs14px  ${
                 isActiveTab === tab.reportId
                   ? "bg-color-sea-blue text-white"
                   : ""
@@ -371,6 +396,108 @@ const List = () => {
             >
               {tab.reportName}
             </Button>
+            <div className="position-absolute top-0 start-100 translate-middle">
+              <CustomModal
+                size="lg"
+                button={
+                  <Button
+                    className="btn btn-danger rounded-circle shadow-none"
+                    style={{ padding: "0px 3px 0px 3px" }}
+                  >
+                    <IoClose size={18} />
+                  </Button>
+                }
+                modalId={tab.reportId.toString()}
+                body={(close) => (
+                  <FormWrapper>
+                    <div className="row flex-column justify-content-center mb-4">
+                      <div className="col text-center mt-4">
+                        <Image
+                          src={trashImage}
+                          alt="trash"
+                          width={110}
+                          height={110}
+                        />
+                      </div>
+                      <div className="col-lg-9 mx-auto text-center">
+                        <p className="mt-2 fs-4 fw-bold mb-4">
+                          Are you sure you want to delete this record?
+                        </p>
+                      </div>
+                      <div className="col text-center">
+                        <Button
+                          onClick={() => {
+                            handleDelete(tab.reportId);
+                            close(); // ✅ closes modal after delete
+                          }}
+                          className="btn shadow border-0 text-white px-4 fs-5"
+                          style={{
+                            backgroundImage:
+                              "linear-gradient(to bottom, #DF1130 ,#A50223)",
+                            borderRadius: "12px",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  </FormWrapper>
+                )}
+              />
+              {/* body={(close) => (
+                  <FormWrapper>
+                    <div className="row flex-column justify-content-center mb-4">
+                      <div className="col text-center mt-4">
+                        <Image
+                          src={trashImage}
+                          alt="trash"
+                          width={110}
+                          height={110}
+                        />
+                      </div>
+                      <div className="col-lg-9 mx-auto text-center">
+                        <p className="mt-2 fs-4 fw-bold mb-4">
+                          Are you sure you want to delete this record?
+                        </p>
+                      </div>
+                      <div className="col">
+                        <div className="row d-flex">
+                          <div className="col text-center">
+                            <Button
+                              onClick={() => {
+                                handleDelete(tab.reportId);
+                                close(); // ✅ closes modal after delete
+                              }}
+                              className="btn shadow border-0 text-white px-4 fs-5"
+                              style={{
+                                backgroundImage:
+                                  "linear-gradient(to bottom, #DF1130 ,#A50223)",
+                                borderRadius: "12px",
+                                boxSizing: "border-box",
+                                paddingTop: "10px",
+                                paddingBottom: "10px",
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </FormWrapper>
+                )} */}
+              {/* <Button
+                className="btn btn-danger rounded-circle shadow-none"
+                style={{ padding: "0px 3px 0px 3px" }}
+                onClick={() => {
+                  console.log("badge clicked");
+                }}
+              >
+                <IoClose size={18} />
+              </Button> */}
+            </div>
           </div>
         ))}
       </div>

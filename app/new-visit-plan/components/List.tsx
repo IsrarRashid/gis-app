@@ -1,5 +1,5 @@
 "use client";
-import { TEMP_TOUR_PLAN_API } from "@/app/APIs";
+import { EVALUATION_TEMP_TOUR_PLAN_API, TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import Loader from "@/app/components/Loader";
 import Spinner from "@/app/components/Spinner";
@@ -26,6 +26,7 @@ import Form, { COUTempTourPlan, TempCopyForm, typeStatues } from "./Form";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import * as XLSX from "xlsx";
 import { IoMdInformationCircle } from "react-icons/io";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 const inter = Inter({ subsets: ["latin"] });
 
 interface CreateVisit {
@@ -59,7 +60,7 @@ interface CreateVisit {
   submitted_to: number | null;
 }
 
-const List = () => {
+const List = ({ dashboardType }: { dashboardType?: string }) => {
   const [refresh, setRefresh] = useState(false);
   const [visitPlanGroup, setVisitPlanGroup] = useState<number>(-1);
   const { data, setData, isLoading } = useTempTourPlans({ refresh });
@@ -69,18 +70,19 @@ const List = () => {
   const { data: districts } = useDistrict();
   const { data: tours } = useTourPlans();
   const [copiedRowIndex, setCopiedRowIndex] = useState<number>(-1);
-  const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const TEMP_TOUR_PLAN_API_ENDPOINT = dashboardType
+    ? EVALUATION_TEMP_TOUR_PLAN_API
+    : TEMP_TOUR_PLAN_API;
 
   const [isSubmitting, setSubmitting] = useState(false);
   // State for search input
   const [searchTerm, setSearchTerm] = useState("");
 
-  // const [tempJsonData, setTempJsonData] = useState<CreateVisit[]>();
-  const [tempJsonData, setTempJsonData] = useState<COUTempTourPlan[]>();
+  const [tempJsonDataCreateVisit, setTempJsonDataCreateVisit] =
+    useState<CreateVisit[]>();
+  const [tempJsonDataTourPlan, setTempJsonDataTourPlan] =
+    useState<COUTempTourPlan[]>();
 
   // State for filtered data
   const [filteredData, setFilteredData] = useState<TempTourPlan[]>([]);
@@ -157,10 +159,10 @@ const List = () => {
     console.log("formsData", formsData);
     const filteredFormsData = formsData.filter((form) => form !== undefined);
     console.log("filteredFormsData", filteredFormsData);
-    setTempJsonData(filteredFormsData);
+    setTempJsonDataTourPlan(filteredFormsData);
     try {
       const response = await apiClient.post(
-        `${TEMP_TOUR_PLAN_API}/create-or-update`,
+        `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-or-update`,
         filteredFormsData
       );
       console.log(response);
@@ -212,16 +214,18 @@ const List = () => {
       submitted_to: null,
     }));
 
-    console.log(modifiedFormData);
-    // setTempJsonData(modifiedFormData);
+    console.log("crete-visit:", modifiedFormData);
+    setTempJsonDataCreateVisit(modifiedFormData);
     try {
       setSubmitting(true);
       const response = await apiClient.post(
-        `${TEMP_TOUR_PLAN_API}/create-visit`,
+        `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-visit`,
         modifiedFormData
       );
       console.log(response);
       toast.success(response.data.responseMessage);
+      setFormsData([]);
+      setRefresh((prev) => !prev);
     } catch (err) {
       setSubmitting(false);
       console.log(err);
@@ -229,33 +233,13 @@ const List = () => {
     } finally {
       setSubmitting(false); // Always run after try/catch
     }
-  };
-
-  const customStyles: StylesConfig<Option, false> = {
-    control: (base) => ({
-      ...base,
-      fontSize: "14px",
-      backgroundColor: "rgba(16, 143, 168, .1)",
-    }),
-    menu: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    menuPortal: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    option: (base, state) => ({
-      ...base,
-      // backgroundColor: state.isFocused ? "#f0f0f0" : "white",
-      // color: "#333",
-      fontSize: "14px",
-    }),
+    setFormsData([]);
+    setFilteredData([]);
   };
 
   const defaultNumberOption = { value: "-1", label: "Select" };
 
-  const tourNames = tours.map((tour) => {
+  const tourNames: OptionType[] = tours.map((tour) => {
     return {
       value: String(tour.id),
       label: tour.name,
@@ -275,8 +259,9 @@ const List = () => {
         District: item.district,
         Sectors: item.sectors,
         Cost: item.cost,
-        "Scheme Type": typeStatues.find((type) => type.value === item.type)
-          ?.label,
+        "Scheme Type": typeStatues.find(
+          (type) => Number(type.value) === item.type
+        )?.label,
         "Evaluator Name": item.meOfficerName,
         Section: item.section,
         "Date From": addDayToFormattedDate(getFormattedDate(item.dateFrom)),
@@ -340,7 +325,18 @@ const List = () => {
         <div className="col"></div>
         <div className="col">
           <h4 className="fw-bold mb-3 text-center">M&E Visit Plan</h4>
-          {/* <pre>{tempJsonData ? JSON.stringify(tempJsonData, null, 2) : ""}</pre> */}
+          {/* <p className="fw-bold">temp tour plan</p>
+          <pre>
+            {tempJsonDataTourPlan
+              ? JSON.stringify(tempJsonDataTourPlan, null, 2)
+              : ""}
+          </pre>
+          <p className="fw-bold">create visit plan</p>
+          <pre>
+            {tempJsonDataCreateVisit
+              ? JSON.stringify(tempJsonDataCreateVisit, null, 2)
+              : ""}
+          </pre> */}
         </div>
         <div className="col text-end">
           {formsData.filter((form) => form !== undefined).length > 0 && (
@@ -359,26 +355,17 @@ const List = () => {
           <label htmlFor="tours" className="form-label">
             Visit Plan
           </label>
-          {isClient && (
-            <Select
-              options={[defaultNumberOption, ...tourNames]}
-              name="tours"
-              id="tours"
-              isClearable
-              isSearchable
-              menuPlacement="auto"
-              menuPosition="absolute"
-              menuPortalTarget={document.body}
-              styles={customStyles}
-              onChange={(
-                newValue: SingleValue<{ value: string; label: string }>
-              ) => {
-                if (newValue) {
-                  setVisitPlanGroup(Number(newValue.value));
-                }
-              }}
-            />
-          )}
+          <CustomSelect
+            options={[defaultNumberOption, ...tourNames]}
+            id="tours"
+            onChangeSingle={(
+              newValue: SingleValue<{ value: string; label: string }>
+            ) => {
+              if (newValue) {
+                setVisitPlanGroup(Number(newValue.value));
+              }
+            }}
+          />
           {!visitPlanGroup ||
             (visitPlanGroup === -1 && (
               <p className="text-danger mt-1 fs14px">Please Add Visit Plan!</p>
@@ -471,6 +458,7 @@ const List = () => {
                 drivers={drivers}
                 vehicles={vehicles}
                 districts={districts}
+                formsData={formsData}
                 setFormsData={setFormsData}
                 handleDelete={() => handleDelete(d.tempId)}
                 setCopiedFormData={setCopiedFormData}

@@ -1,12 +1,12 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import more from "../../../public/icons/more.svg";
 // import { ToastContainer, toast } from "react-toastify";
 import Button from "@/app/components/Button";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import FormWrapper from "@/app/components/Form/FormWrapper";
@@ -15,6 +15,11 @@ import CustomInput from "@/app/components/Form/CustomInput";
 import CustomTextArea from "@/app/components/Form/CustomTextArea";
 import SubmitButton from "@/app/components/Form/SubmitButton";
 import CustomToggleSwitch from "@/app/components/CustomToggleSwitch";
+import { SingleValue } from "react-select";
+import CustomSelect, {
+  defaultNumberOption,
+  OptionType,
+} from "@/app/components/Form/CustomSelect";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -45,6 +50,7 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
     handleSubmit,
     setValue,
     reset,
+    control,
     formState: { errors },
   } = useForm<AttributeGroup>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
@@ -111,6 +117,13 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
     }
   };
 
+  const parentIdOptions = [...(data || [])].reverse().map((d) => {
+    return {
+      value: d.id.toString(),
+      label: d.name,
+    };
+  });
+
   return (
     <>
       <Button
@@ -157,7 +170,10 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                 className="row g-2 g-lg-3 mt-0"
                 style={{ marginBottom: "5px" }}
               >
-                <div className="col-lg-4 col-md-6 col-sm-12 col-12 mb-3 text-start">
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
                   <CustomLabel htmlFor="name">Name</CustomLabel>
                   <CustomInput
                     {...register("name")}
@@ -171,11 +187,43 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                     </p>
                   )}
                 </div>
-                <div className="col-lg-4 col-md-6 col-sm-12 col-12 mb-3 text-start">
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
                   <CustomLabel htmlFor="parentId">
                     Parent Attribute Group
                   </CustomLabel>
-                  <select
+                  <Controller
+                    name="parentId"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomSelect
+                        {...field}
+                        options={[defaultNumberOption, ...parentIdOptions]}
+                        value={
+                          parentIdOptions.find(
+                            (option) => option.value === String(field.value)
+                          )
+                            ? [
+                                parentIdOptions.find(
+                                  (option) =>
+                                    option.value === String(field.value)
+                                )!,
+                              ]
+                            : null
+                        }
+                        onChangeSingle={(selectedOption) => {
+                          const singleOption =
+                            selectedOption as SingleValue<OptionType>;
+                          field.onChange(
+                            singleOption ? Number(singleOption.value) : 0
+                          );
+                        }}
+                      />
+                    )}
+                  />
+                  {/* <select
                     id="parentId"
                     {...register("parentId", { valueAsNumber: true })}
                     className="form-select form-select-sm color-light-dark"
@@ -186,9 +234,12 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                         {d.name}
                       </option>
                     ))}
-                  </select>
+                  </select> */}
                 </div>
-                <div className="col-lg-4 col-md-6 col-sm-12 col-12 mb-3 text-start">
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
                   <CustomLabel htmlFor="sortId">Sort Id</CustomLabel>
                   <CustomInput
                     {...register("sortId", { valueAsNumber: true })}
@@ -203,7 +254,10 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                   )}
                 </div>
               </div>
-              <div className="row g-2 g-lg-3 mt-0">
+              <div
+                className="row g-2 g-lg-3 mt-0"
+                style={{ marginBottom: "5px" }}
+              >
                 <div
                   className="col-auto text-start mt-0"
                   style={{ marginBottom: "16px", padding: "0px 10px" }}
@@ -258,7 +312,10 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                   </div>
                 </div>
               </div>
-              <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
+              <div
+                className="col-lg-12 col-md-12 col-sm-12 text-start mt-0"
+                style={{ marginBottom: "10px" }}
+              >
                 <CustomLabel htmlFor="description">Description</CustomLabel>
                 <CustomTextArea
                   id="description"

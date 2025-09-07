@@ -4,7 +4,7 @@ import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useVisitsNew, { VisitNew } from "@/app/hooks/useVisitsNew";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { sort } from "fast-sort";

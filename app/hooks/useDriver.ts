@@ -1,6 +1,5 @@
 import { DRIVER_API } from "../APIs";
 import useData from "./useData";
-import Cookies from "js-cookie";
 
 export interface Driver {
   id: number;
@@ -17,11 +16,9 @@ interface Props {
 }
 
 const useDriver = ({ refresh = false }: Props = {}) => {
-  const departmentId = Cookies.get("departmentId");
-
   return useData<Driver>({
     refresh,
-    endpoint: DRIVER_API + `?deptId=${departmentId}`,
+    endpoint: DRIVER_API,
   });
 };
 

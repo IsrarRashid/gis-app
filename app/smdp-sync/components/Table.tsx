@@ -3,7 +3,7 @@ import { SMDP_SYNC_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import DeleteModal from "@/app/components/DeleteModal";
 // import DownloadPDFBtn from "@/app/components/DownloadPDFBtn";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useAttributeGroups from "@/app/hooks/useAttributeGroups";
 import useProjects, { Project } from "@/app/hooks/useProjects";
 import useSectors, { Sector } from "@/app/hooks/useSectors";

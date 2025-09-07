@@ -1,14 +1,15 @@
 "use client";
 import {
   EVALUATION_PROJECT_API,
+  EVALUATION_TEMP_TOUR_PLAN_API,
   PROJECT_API,
-  SMDP_SYNC_API,
   TEMP_TOUR_PLAN_API,
 } from "@/app/APIs";
+import Button from "@/app/components/Button";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import useProjects, { Project } from "@/app/hooks/useProjects";
 import useSectors from "@/app/hooks/useSectors";
@@ -19,6 +20,7 @@ import { sort } from "fast-sort";
 import { DM_Sans, Inter } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
 import { toast } from "react-toastify";
 import calender from "../../../public/icons/calendar.svg";
 import cancel from "../../../public/icons/cancel.svg";
@@ -26,10 +28,6 @@ import clock from "../../../public/icons/clock.svg";
 import complete from "../../../public/icons/complete.svg";
 import AssignUserForm from "./AssignUserForm";
 import GroupingForm from "./GroupingForm";
-import SmdpAllProjectsSyncForm from "./SmdpAllProjectsSyncForm";
-import SmdpSyncForm from "./SmdpSyncForm";
-import Button from "@/app/components/Button";
-import { AiOutlinePlus } from "react-icons/ai";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -49,23 +47,22 @@ export interface UserOption {
 }
 
 const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
-  const [refresh, setRefresh] = useState(false);
-  const [showData, setShowData] = useState(false);
-
   const PROJECT_API_ENDPOINT = dashboardType
     ? EVALUATION_PROJECT_API
     : PROJECT_API;
 
-  const { data, setData, setError, isLoading } = useProjects({
-    refresh,
-  });
-  const { data: sectorsData } = useSectors({ refresh });
-  const { data: superGroups } = useSuperGroups({ refresh });
-  const { data: users } = useAuthentication({ refresh });
+  const TEMP_TOUR_PLAN_API_ENDPOINT = dashboardType
+    ? EVALUATION_TEMP_TOUR_PLAN_API
+    : TEMP_TOUR_PLAN_API;
+
+  const { data, setData, setError, isLoading } = useProjects();
+  const { data: sectorsData } = useSectors();
+  const { data: superGroups } = useSuperGroups();
+  const { data: users } = useAuthentication();
   const [originalData, setOriginalData] = useState<Project[]>([]); // Store the original data
 
   const deleteMessage = "Deleted Successfully!";
-  const syncMessage = "Attribute Values synced Successfully!";
+  // const syncMessage = "Attribute Values synced Successfully!";
 
   const notifyCreate = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
@@ -96,7 +93,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
 
   useEffect(() => {
     setOriginalData(data);
-  }, [refresh, data]);
+  }, [data]);
 
   // for sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -175,7 +172,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
   const handleAddVisitPlan = async (projectId: number) => {
     try {
       const response = await apiClient.post(
-        `${TEMP_TOUR_PLAN_API}/add-tour-plan?projectid=${projectId}`
+        `${TEMP_TOUR_PLAN_API_ENDPOINT}/add-tour-plan?projectid=${projectId}`
       );
       console.log(response);
       notifyCreate(response.data?.message);
@@ -197,13 +194,13 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
           handleChange={handleChange}
           form={
             <>
-              <div className="col-auto text-end mb-2">
-                {/* <ProjectForm
+              {/* <div className="col-auto text-end mb-2">
+                <ProjectForm
               api={PROJECT_API_ENDPOINT}
               method="POST"
               setRefresh={setRefresh}
               refresh={refresh}
-            /> */}
+            />
                 <SmdpSyncForm
                   api={SMDP_SYNC_API}
                   method="POST"
@@ -212,8 +209,8 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
                   showData={showData}
                   setShowData={setShowData}
                 />
-              </div>
-              <div className="col-auto text-end">
+              </div> */}
+              {/* <div className="col-auto text-end">
                 <SmdpAllProjectsSyncForm
                   api={SMDP_SYNC_API}
                   method="POST"
@@ -222,7 +219,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
                   showData={showData}
                   setShowData={setShowData}
                 />
-              </div>
+              </div> */}
             </>
           }
         />
@@ -242,6 +239,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
             >
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
+                className="text-nowrap"
                 name="gs No"
                 handleSort={() => handleSort("gsNo")}
               />
@@ -260,7 +258,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
               {/* <th colSpan={1}>
                 <div className="text-center"></div>
               </th> */}
-              <th>ADD TO VISIT PLAN</th>
+              <th className="text-nowrap">ADD TO VISIT PLAN</th>
             </tr>
           </thead>
           <tbody>

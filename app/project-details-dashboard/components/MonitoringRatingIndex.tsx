@@ -145,19 +145,19 @@ const MonitoringRatingIndex = ({ group }: Props) => {
                               : 0}{" "}
                             Indicator={" "}
                             {g.name.toLowerCase() === "planning"
-                              ? 20
-                              : g.name.toLowerCase() === "execution"
                               ? 30
+                              : g.name.toLowerCase() === "execution"
+                              ? 35
                               : g.name.toLowerCase() === "performance"
-                              ? 50
+                              ? 45
                               : 0}
                             % ((Points Obtained in Performance/30 x 100) *
                             {g.name.toLowerCase() === "planning"
-                              ? 0.2
+                              ? 0.1
                               : g.name.toLowerCase() === "execution"
                               ? 0.3
                               : g.name.toLowerCase() === "performance"
-                              ? 0.5
+                              ? 0.6
                               : 0}
                             )
                           </div>
@@ -509,7 +509,7 @@ const MonitoringRatingIndex = ({ group }: Props) => {
                           style={{ width: "25%", color: "#414651" }}
                         >
                           <div className="pb-2 border-bottom text-center fs14px fw-normal">
-                            {option?.value}
+                            {option?.value === "-1" ? 0 : option?.value}
                           </div>
                         </td>
                         <td
@@ -517,8 +517,12 @@ const MonitoringRatingIndex = ({ group }: Props) => {
                           style={{ width: "25%", color: "#414651" }}
                         >
                           <div className="rounded-pill rounded-start pb-2 border-bottom text-center fs14px fw-normal">
-                            {option?.value === attribute?.values[0]?.value ? (
-                              option?.value
+                            {option?.value === attribute?.values[0]?.value &&
+                            attribute?.values[0]?.value === "-1" ? (
+                              0
+                            ) : option?.value ===
+                              attribute?.values[0]?.value ? (
+                              <span>{option?.value}</span>
                             ) : (
                               <span>&nbsp;</span>
                             )}

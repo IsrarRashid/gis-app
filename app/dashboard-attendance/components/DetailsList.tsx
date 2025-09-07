@@ -7,7 +7,7 @@ import { sort } from "fast-sort";
 import apiClient from "@/app/services/api-client";
 import Button from "@/app/components/Button";
 import Pagination from "@/app/components/Table/Pagination";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 
 interface Props {
   attendanceDetails: AttendanceList[];

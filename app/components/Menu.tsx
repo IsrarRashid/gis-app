@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import AnimatedCounter from "./AnimatedCounter";
 import { useEffect, useState } from "react";
 import styles from "./Menu.module.css";
+import { AutoTextSize } from "auto-text-size";
 
 interface Props {
   tideOneImage?: string;
@@ -111,17 +112,20 @@ const Menu = ({
         </div>
       )}
       <div
-        className={`row d-flex flex-wrap justify-content-center align-items-center m-0 position-relative ${
+        className={`row d-flex justify-content-center align-items-center m-0 position-relative ${
           showArrow && isGrouped
             ? "mt-1"
             : showArrow && !isGrouped
             ? "mt-2"
             : ""
         }`}
-        style={{ zIndex: 2 }}
+        style={{
+          zIndex: 2,
+          padding: showArrow && !isGrouped ? "7.6px 0px 7px 0px" : "",
+        }}
       >
         {icon && (
-          <div className="col-auto text-lg-end text-md-center text-center pe-0">
+          <div className="col text-lg-end text-md-center text-center pe-0">
             <img
               src={icon}
               alt={icon}
@@ -135,20 +139,27 @@ const Menu = ({
         )}
         {icon ? (
           <div
-            className={`col-auto text-white fw-5 text-wrap text-break ps-0 ${
-              isGrouped ? "fs-6" : "fs18px"
-            }`}
+            // className={`col-auto text-white fw-5 ps-2 ${
+            //   isGrouped ? "fs-6" : "fs18px"
+            // }`}
+            className={`col text-white fw-5 ps-2`}
           >
-            <AnimatedCounter
-              from={0}
-              to={value}
-              showValueInDecimal={showValueInDecimal}
-            />
-            {showPercentageSign && "%"}
+            <AutoTextSize
+              mode="oneline"
+              maxFontSizePx={isGrouped ? 24 : 30}
+              minFontSizePx={isGrouped ? 14 : 22}
+            >
+              <AnimatedCounter
+                from={0}
+                to={value}
+                showValueInDecimal={showValueInDecimal}
+              />
+              {showPercentageSign && "%"}
+            </AutoTextSize>
           </div>
         ) : (
           <div
-            className="col-auto text-white fw-bold ps-0 text-wrap"
+            className="col-auto text-white fw-bold text-wrap"
             style={{ fontSize: "2.5rem" }}
           >
             <AnimatedCounter
@@ -175,12 +186,12 @@ const Menu = ({
                 className="col"
                 style={{
                   position: "relative",
-                  minHeight: "20px",
-                  width: isGrouped ? "130px" : "auto",
+                  minHeight: "28px",
+                  width: isGrouped ? "100%" : "auto",
                 }}
               >
                 <p
-                  className={`${styles.labelHoverDown} fs11px mb-0 text-nowrap fw-5 mt-1`}
+                  className={`${styles.labelHoverDown} mb-0 text-nowrap fw-5`}
                   style={{
                     fontWeight: "500",
                     position: "absolute",
@@ -189,12 +200,21 @@ const Menu = ({
                     color: labelColor,
                   }}
                 >
-                  {label}
+                  <AutoTextSize
+                    maxFontSizePx={18}
+                    minFontSizePx={12}
+                    mode="oneline"
+                    style={{
+                      display: "inline-block",
+                      width: "100%",
+                      textAlign: "center",
+                    }}
+                  >
+                    {label}
+                  </AutoTextSize>
                 </p>
                 <div
-                  className={`row d-flex justify-content-between m-0 ${
-                    styles.labelHoverUp
-                  } ${isGrouped ? "fs10px" : "f12px"} mb-2 text-nowrap fw-5`}
+                  className={`row d-flex justify-content-between m-0 ${styles.labelHoverUp} mb-2 text-nowrap fw-5`}
                   style={{
                     position: "absolute",
                     left: 0,
@@ -202,20 +222,41 @@ const Menu = ({
                   }}
                 >
                   <div className="col-auto p-0" style={{ color: labelColor }}>
-                    SNE&nbsp;
-                    <AnimatedCounter
-                      from={0}
-                      to={sneCount}
-                      showValueInDecimal={showValueInDecimal}
-                    />
+                    <AutoTextSize
+                      maxFontSizePx={18}
+                      minFontSizePx={12}
+                      mode="oneline"
+                      style={{
+                        display: "inline-block",
+                        width: "100%",
+                      }}
+                    >
+                      SNE&nbsp;
+                      <AnimatedCounter
+                        from={0}
+                        to={sneCount}
+                        showValueInDecimal={showValueInDecimal}
+                      />
+                    </AutoTextSize>
                   </div>
                   <div className="col-auto p-0" style={{ color: labelColor }}>
-                    Non-SNE&nbsp;
-                    <AnimatedCounter
-                      from={0}
-                      to={nonSneCount}
-                      showValueInDecimal={showValueInDecimal}
-                    />
+                    <AutoTextSize
+                      maxFontSizePx={18}
+                      minFontSizePx={12}
+                      mode="oneline"
+                      style={{
+                        display: "inline-block",
+                        width: "100%",
+                        textAlign: "center",
+                      }}
+                    >
+                      Non-SNE&nbsp;
+                      <AnimatedCounter
+                        from={0}
+                        to={nonSneCount}
+                        showValueInDecimal={showValueInDecimal}
+                      />
+                    </AutoTextSize>
                   </div>
                 </div>
               </div>
@@ -224,13 +265,13 @@ const Menu = ({
                 className="col"
                 style={{
                   position: "relative",
-                  minHeight: "24px",
+                  minHeight: "28px",
                   minWidth: isGrouped ? "130px" : "100px",
                   maxWidth: isGrouped ? "200px" : "100%",
                 }}
               >
                 <p
-                  className={`${styles.labelHoverDown} fs11px mb-0 text-nowrap fw-5 mt-1`}
+                  className={`${styles.labelHoverDown} mb-0 text-nowrap fw-5`}
                   style={{
                     fontWeight: "500",
                     position: "absolute",
@@ -239,12 +280,21 @@ const Menu = ({
                     color: labelColor,
                   }}
                 >
-                  {label}
+                  <AutoTextSize
+                    maxFontSizePx={18}
+                    minFontSizePx={12}
+                    mode="oneline"
+                    style={{
+                      display: "inline-block",
+                      width: "100%",
+                      textAlign: "center",
+                    }}
+                  >
+                    {label}
+                  </AutoTextSize>
                 </p>
                 <div
-                  className={`row d-flex justify-content-between m-0 ${
-                    styles.labelHoverUp
-                  } ${isGrouped ? "fs10px" : "f12px"} mb-2 text-nowrap fw-5`}
+                  className={`row d-flex justify-content-between m-0 ${styles.labelHoverUp} mb-2 text-nowrap fw-5`}
                   style={{
                     position: "absolute",
                     left: 0,
@@ -252,20 +302,51 @@ const Menu = ({
                   }}
                 >
                   <div className="col-auto p-0" style={{ color: labelColor }}>
-                    SNE {sneCount}
+                    <AutoTextSize
+                      maxFontSizePx={18}
+                      minFontSizePx={12}
+                      mode="oneline"
+                      style={{
+                        display: "inline-block",
+                        width: "100%",
+                      }}
+                    >
+                      SNE {sneCount}
+                    </AutoTextSize>
                   </div>
                   <div className="col-auto p-0" style={{ color: labelColor }}>
-                    Non-SNE {nonSneCount}
+                    <AutoTextSize
+                      maxFontSizePx={18}
+                      minFontSizePx={12}
+                      mode="oneline"
+                      style={{
+                        display: "inline-block",
+                        width: "100%",
+                      }}
+                    >
+                      Non-SNE {nonSneCount}
+                    </AutoTextSize>
                   </div>
                 </div>
               </div>
             ) : (
-              <p
-                className={`mb-1 fs12px text-nowrap text-center fw-5`}
+              <div
+                className={`mb-1 text-nowrap text-center fw-5 w-100`}
                 style={{ color: labelColor }}
               >
-                {label}
-              </p>
+                <AutoTextSize
+                  maxFontSizePx={18}
+                  minFontSizePx={12}
+                  mode="oneline"
+                  style={{
+                    display: "inline-block",
+                    width: "100%",
+                    textAlign: "center",
+                  }}
+                >
+                  {label}
+                </AutoTextSize>
+              </div>
             )}
           </>
         )}

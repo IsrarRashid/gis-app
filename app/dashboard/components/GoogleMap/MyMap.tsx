@@ -22,6 +22,11 @@ import DistrictCard from "./DistrictCard";
 import ProjectCard from "./ProjectCard";
 import DistrictCardEvaluation from "./DistrictCardEvaluation";
 import "@/app/_css/InfoWindow.css";
+import {
+  adpFilters,
+  cmInitiativeFilters,
+  oldCmInitiativeFilters,
+} from "../../filters";
 
 export interface DistrictProjects {
   id: number;
@@ -44,8 +49,6 @@ interface Props {
   data: MainDashboard;
   handleSubmit: (filterData: FilterData[]) => Promise<void>;
   activeFilter: string;
-  cmInitiativeFilters: FilterData[];
-  adpFilters: FilterData[];
   otherFilters: FilterData[];
   setOtherFilters: Dispatch<SetStateAction<FilterData[]>>;
 }
@@ -54,8 +57,6 @@ const MyMap = ({
   data,
   handleSubmit,
   activeFilter,
-  cmInitiativeFilters,
-  adpFilters,
   otherFilters,
   setOtherFilters,
 }: Props) => {
@@ -149,15 +150,40 @@ const MyMap = ({
       activeFilter === "cmInitiative"
       // && districts.find((district) => district.id === districtId)?.districtName
     ) {
-      handleSubmit([
-        ...cmInitiativeFilters,
-        ...[
-          {
-            filterIdentifier: "District",
-            filterValues: districtName!,
-          },
-        ],
-      ]);
+      const yearFilter = otherFilters.find(
+        (filter) => filter.filterIdentifier === "Year"
+      );
+      if (yearFilter && yearFilter.filterValues === "2025-2026") {
+        handleSubmit([
+          ...cmInitiativeFilters,
+          ...[
+            {
+              filterIdentifier: "District",
+              filterValues: districtName!,
+            },
+          ],
+        ]);
+      } else if (!yearFilter) {
+        handleSubmit([
+          ...cmInitiativeFilters,
+          ...[
+            {
+              filterIdentifier: "District",
+              filterValues: districtName!,
+            },
+          ],
+        ]);
+      } else {
+        handleSubmit([
+          ...oldCmInitiativeFilters,
+          ...[
+            {
+              filterIdentifier: "District",
+              filterValues: districtName!,
+            },
+          ],
+        ]);
+      }
     } else {
       handleSubmit([
         ...adpFilters,
@@ -339,6 +365,20 @@ const MyMap = ({
   //   );
   // };
 
+  const [isInRange, setIsInRange] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsInRange(width <= 768);
+    };
+
+    handleResize(); // Check on initial render
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
       {showButton && (
@@ -360,7 +400,7 @@ const MyMap = ({
           className="shadow-sm"
           style={{
             width: "100%",
-            height: "135vh",
+            height: isInRange ? "200px" : "100%",
             borderRadius: "10px",
             overflow: "hidden",
           }}

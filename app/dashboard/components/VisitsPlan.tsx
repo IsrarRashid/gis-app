@@ -2,17 +2,20 @@ import { VISIT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import Loader from "@/app/components/Loader";
+import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
+import useDistrict from "@/app/hooks/useDistrict";
+import useSectors from "@/app/hooks/useSectors";
+import useUsers from "@/app/hooks/useUsers";
 import apiClient from "@/app/services/api-client";
+import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
+import { exportDataToExcel } from "@/app/utils/exportToExcel";
+import visitPlan from "@/public/icons/visitPlan.svg";
+import Cookies from "js-cookie";
 import Image from "next/image";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Accordion } from "react-bootstrap";
 import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
-import visitPlan from "@/public/icons/visitPlan.svg";
-import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
-import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
-import { exportDataToExcel } from "@/app/utils/exportToExcel";
-import styles from "./Dashboard.module.css";
 
 interface VisitsPlan {
   nameOfVisit: string;
@@ -50,6 +53,15 @@ const VisitsPlan = ({
 }: Props) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<VisitsPlan[]>();
+  const { data: districts } = useDistrict();
+  const { data: sectors } = useSectors();
+  const { data: users } = useUsers();
+  const [role, setRole] = useState<string>("");
+
+  useEffect(() => {
+    const userRole = Cookies.get("role");
+    if (userRole) setRole(userRole);
+  }, []);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -397,6 +409,10 @@ const VisitsPlan = ({
                                             >
                                               {projectsData && filteredKeys ? (
                                                 <ProjectsTable
+                                                  districts={districts}
+                                                  sectors={sectors}
+                                                  users={users}
+                                                  role={role}
                                                   label="Being Monitored Projects"
                                                   projectsData={projectsData.filter(
                                                     (project) =>

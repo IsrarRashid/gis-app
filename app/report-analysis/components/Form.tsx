@@ -18,6 +18,7 @@ import { REPORT_API } from "@/app/APIs";
 import { toast } from "react-toastify";
 import { createdMessage } from "@/app/utils";
 import Spinner from "@/app/components/Spinner";
+import CustomSelect from "@/app/components/Form/CustomSelect";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -148,12 +149,14 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
     "Project.ExecutionAgency.Name",
   ];
 
-  const orderByOptions = defaultGroupByFields.map((defaultGroupByField) => {
-    return {
-      value: defaultGroupByField,
-      label: defaultGroupByField.replaceAll(".", " "),
-    };
-  });
+  const orderByOptions: OptionType[] = defaultGroupByFields.map(
+    (defaultGroupByField) => {
+      return {
+        value: defaultGroupByField,
+        label: defaultGroupByField.replaceAll(".", " "),
+      };
+    }
+  );
 
   const [groupByFields, setGroupByFields] = useState<string[]>([]);
 
@@ -279,8 +282,12 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
                   style={{ borderRadius: "8px" }}
                   disabled={isSubmitting}
                 >
-                  Generate <IoArrowForwardCircleOutline size={24} />{" "}
-                  {isSubmitting && <Spinner color="text-light" />}
+                  Generate&nbsp;
+                  {isSubmitting ? (
+                    <Spinner color="text-light" />
+                  ) : (
+                    <IoArrowForwardCircleOutline size={24} />
+                  )}
                 </Button>
               </div>
               <div className="col-auto">
@@ -330,20 +337,21 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
               name="orderByFields"
               control={control}
               render={({ field }) => (
-                <Select
+                <CustomSelect
                   {...field}
                   options={orderByOptions} // must be in format { value, label }
                   placeholder="Select"
-                  styles={customStyles2}
-                  menuPortalTarget={document.body}
-                  isClearable
                   // Convert between react-select and raw value
                   value={
-                    orderByOptions.find(
-                      (opt) => opt.value === field.value?.[0]
-                    ) || null
+                    orderByOptions.find((opt) => opt.value === field.value?.[0])
+                      ? [
+                          orderByOptions.find(
+                            (opt) => opt.value === field.value?.[0]
+                          )!,
+                        ]
+                      : null
                   }
-                  onChange={(selectedOption) => {
+                  onChangeSingle={(selectedOption) => {
                     field.onChange(
                       selectedOption ? [selectedOption.value] : []
                     );

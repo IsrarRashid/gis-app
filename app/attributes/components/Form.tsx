@@ -1,10 +1,9 @@
 import Button from "@/app/components/Button";
 import CustomToggleSwitch from "@/app/components/CustomToggleSwitch";
+import FormWrapper from "@/app/components/Form/FormWrapper";
 import TrashIcon from "@/app/components/TrashIcon";
 import { Attribute } from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import { customSelectStyles, defaultOption, OptionType } from "@/app/utils";
-import { Manrope } from "next/font/google";
 import Image from "next/image";
 import {
   Dispatch,
@@ -17,7 +16,12 @@ import Modal from "react-bootstrap/Modal";
 import Select, { ActionMeta, SingleValue } from "react-select";
 import { toast } from "react-toastify";
 import more from "../../../public/icons/more.svg";
-import FormWrapper from "@/app/components/Form/FormWrapper";
+import CustomSelect, {
+  defaultOption,
+  OptionType,
+} from "@/app/components/Form/CustomSelect";
+import { FaPlus } from "react-icons/fa";
+import { FiPlus } from "react-icons/fi";
 interface Form {
   attributeId: number;
   attributeDataType: string;
@@ -91,14 +95,6 @@ const Form = ({
   const [activeStates, setActiveStates] = useState<{ [key: number]: boolean }>(
     {}
   );
-  const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLElement | null>(
-    null
-  );
-
-  useEffect(() => {
-    // This code only runs on the client side after the component mounts
-    setMenuPortalTarget(document.body);
-  }, []);
 
   const modalId = `formModal-${id}`;
   const handleCheckboxChange = (index: number) => {
@@ -543,18 +539,25 @@ const Form = ({
     <>
       <Button
         type="button"
-        className={`btn shadow ${
+        className={`btn ${
           method === "POST"
-            ? "text-white bg-color-sea-green"
+            ? "rounded-pill text-white fs15px fw-bold"
             : "rounded-pill ps-3 pe-3 pt-1 pb-1"
         }`}
         onClick={handleShow}
         style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
+          background: method === "POST" ? "#1C6BA6" : "rgba(255, 255, 255,.5)",
         }}
       >
         {method === "POST" ? (
-          "+ Attribute"
+          <div className="col">
+            <div className="row align-items-center">
+              <div className="col pe-0">
+                <FiPlus size={21.6} />
+              </div>
+              <div className="col ps-1">Attribute</div>
+            </div>
+          </div>
         ) : (
           <Image src={more} alt="more" width={25} height={25} />
         )}
@@ -636,22 +639,21 @@ const Form = ({
                   >
                     Attribute Data Type
                   </label>
-                  <Select
+                  <CustomSelect
                     options={attributeDataTypeOptions}
-                    name="attributeDataType"
                     id="attributeDataType"
-                    isClearable
-                    isSearchable
-                    styles={customSelectStyles}
-                    menuPlacement="auto"
-                    menuPosition="absolute"
-                    menuPortalTarget={menuPortalTarget}
                     value={
                       attributeDataTypeOptions.find(
                         (opt) => opt.value === formData.attributeDataType
-                      ) || null
+                      )
+                        ? [
+                            attributeDataTypeOptions.find(
+                              (opt) => opt.value === formData.attributeDataType
+                            )!,
+                          ]
+                        : null
                     }
-                    onChange={(nv, meta) =>
+                    onChangeSingle={(nv, meta) =>
                       handleSelectChange(
                         "attributeDataType",
                         nv,
@@ -685,22 +687,21 @@ const Form = ({
                   >
                     Attribute Type
                   </label>
-                  <Select
+                  <CustomSelect
                     options={[defaultOption, ...attributeTypeOptions]}
-                    name="attributeType"
                     id="attributeType"
-                    isClearable
-                    isSearchable
-                    styles={customSelectStyles}
-                    menuPlacement="auto"
-                    menuPosition="absolute"
-                    menuPortalTarget={menuPortalTarget}
                     value={
                       attributeTypeOptions.find(
                         (opt) => opt.value === formData.attributeType
-                      ) || null
+                      )
+                        ? [
+                            attributeTypeOptions.find(
+                              (opt) => opt.value === formData.attributeType
+                            )!,
+                          ]
+                        : null
                     }
-                    onChange={(nv, meta) =>
+                    onChangeSingle={(nv, meta) =>
                       handleSelectChange("attributeType", nv, meta, setFormData)
                     }
                   />
@@ -802,22 +803,21 @@ const Form = ({
                   >
                     Verification Type
                   </label>
-                  <Select
+                  <CustomSelect
                     options={[defaultOption, ...verificationTypeOptions]}
-                    name="verificationType"
                     id="verificationType"
-                    isClearable
-                    isSearchable
-                    styles={customSelectStyles}
-                    menuPlacement="auto"
-                    menuPosition="absolute"
-                    menuPortalTarget={menuPortalTarget}
                     value={
                       verificationTypeOptions.find(
                         (opt) => opt.value === formData.verificationType
-                      ) || null
+                      )
+                        ? [
+                            verificationTypeOptions.find(
+                              (opt) => opt.value === formData.verificationType
+                            )!,
+                          ]
+                        : null
                     }
-                    onChange={(nv, meta) =>
+                    onChangeSingle={(nv, meta) =>
                       handleSelectChange(
                         "verificationType",
                         nv,
@@ -851,22 +851,21 @@ const Form = ({
                   >
                     Smdp Identifier
                   </label>
-                  <Select
+                  <CustomSelect
                     options={[defaultOption, ...smdpIdentifierOptions]}
-                    name="smdpIdentifier"
                     id="smdpIdentifier"
-                    isClearable
-                    isSearchable
-                    styles={customSelectStyles}
-                    menuPlacement="auto"
-                    menuPosition="absolute"
-                    menuPortalTarget={menuPortalTarget}
                     value={
                       smdpIdentifierOptions.find(
                         (opt) => opt.value === formData.smdpIdentifier
-                      ) || null
+                      )
+                        ? [
+                            smdpIdentifierOptions.find(
+                              (opt) => opt.value === formData.smdpIdentifier
+                            )!,
+                          ]
+                        : null
                     }
-                    onChange={(nv, meta) =>
+                    onChangeSingle={(nv, meta) =>
                       handleSelectChange(
                         "smdpIdentifier",
                         nv,

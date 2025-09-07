@@ -1,25 +1,20 @@
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
-import { ReportHistory } from "./ReportNoting";
+import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
 import {
   convertToLocaleTimeString,
-  exportToPDF,
+  exportToPDFNew,
   getFormattedDate,
 } from "@/app/utils";
-import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
+import { ReportHistory } from "./ReportNoting";
+import { SubmittedReport } from "../list/components/List";
 
 interface Props {
   data: ReportHistory[];
   users: ReportHistoryUser[];
-  projectName: string;
-  initialUser: string;
+  submittedReport: SubmittedReport;
 }
 
-const ReportHistoryDownload = ({
-  data,
-  users,
-  projectName,
-  initialUser,
-}: Props) => {
+const ReportHistoryDownload = ({ data, users, submittedReport }: Props) => {
   // ──────────── (2) Create table rows from cards ────────────
   function cardsToTableRows(
     users: ReportHistoryUser[],
@@ -27,7 +22,12 @@ const ReportHistoryDownload = ({
   ): Array<Record<string, string>> {
     return data.map((d, i) => ({
       "Sr. No.": (i + 1).toString(),
-      From: users.find((u) => u.id === d.submittedFrom)?.fullName || "NA",
+      From:
+        `${users.find((u) => u.id === d.submittedFrom)?.fullName} ${
+          i + 1 === 1
+            ? `(${users.find((u) => u.id === d.submittedFrom)?.designation})`
+            : ""
+        }` || "NA",
       To: users.find((u) => u.id === d.submittedTo)?.fullName || "NA",
       Date:
         `${getFormattedDate(new Date(d.sDate), "short")} ` +
@@ -48,19 +48,23 @@ const ReportHistoryDownload = ({
     // { header: "Report Link", dataKey: "Report Link" },
     { header: "Comments", dataKey: "Comments" },
   ];
+
   return (
     <div>
       <DownloadDropDown
         onClickPdf={() =>
-          exportToPDF(
+          exportToPDFNew(
             columns,
             cardsToTableRows(users, data),
             new Date(),
-            "Report History - " +
-              initialUser +
-              " " +
-              projectName.substring(0, 18) +
-              "..."
+            "Report History -" +
+              `${
+                submittedReport.reportType === 1 ? "MONITORING" : "EVALUATION"
+              }` +
+              " - (GS. NO- " +
+              submittedReport.gsNo +
+              ") - " +
+              submittedReport.projectName
           )
         }
       />

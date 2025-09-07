@@ -11,6 +11,10 @@ import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import CustomInput from "@/app/components/Form/CustomInput";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -124,9 +128,6 @@ const Form = ({
 
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
       <Button
         type="button"
         className={`btn shadow ${
@@ -158,121 +159,142 @@ const Form = ({
           className="p-0"
           style={{ background: "rgba(156,255,255,0)" }}
         >
-          <div
-            className="container-fluid pt-3 pb-3 ps-4 pe-4"
-            style={{
-              backgroundImage:
-                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-              borderRadius: "15px",
-              border: "1.7px solid rgba(255, 255, 255, 0.6)",
-            }}
+          <FormWrapper
+            heading={method === "POST" ? "Add Visit Plan" : "Update Visit Plan"}
           >
-            <div className="row flex-column justify-content-center mb-4">
-              <div className="col-lg-12">
-                <p
-                  className="text-center text-white mt-4"
-                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div
+                className="row g-2 g-lg-3 mt-0"
+                style={{ marginBottom: "5px" }}
+              >
+                <div
+                  className="col-lg-6 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  {method === "POST" ? "ADD Visit Plan" : "UPDATE Visit Plan"}
-                </p>
-              </div>
-              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
-                <div className="row d-flex m-0 justify-content-between">
-                  <div className="col mb-3">
-                    <label htmlFor="name" className="form-label text-white">
-                      Name
-                    </label>
-                    <input
-                      {...register("name")}
-                      id="name"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter TourPlan Name"
-                    />
-                    {errors.name && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col mb-3">
-                    <label
-                      htmlFor="tourStartDate"
-                      className="form-label text-white"
-                    >
-                      Tour Start Date
-                    </label>
-                    <input
-                      {...register("tourStartDate")}
-                      id="tourStartDate"
-                      type="date"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Tour Start Date"
-                    />
-                    {errors.tourStartDate && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.tourStartDate.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col mb-3">
-                    <label
-                      htmlFor="tourEndDate"
-                      className="form-label text-white"
-                    >
-                      Tour End Date
-                    </label>
-                    <input
-                      {...register("tourEndDate")}
-                      id="tourEndDate"
-                      type="date"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Tour End Date"
-                    />
-                    {errors.tourEndDate && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.tourEndDate.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col mb-3">
-                    <label
-                      htmlFor="approvalDate"
-                      className="form-label text-white"
-                    >
-                      Approval Date
-                    </label>
-                    <input
-                      {...register("approvalDate")}
-                      id="approvalDate"
-                      type="date"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Approval Date"
-                    />
-                    {errors.approvalDate && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.approvalDate.message}
-                      </p>
-                    )}
-                  </div>
+                  <CustomLabel htmlFor="name">Name</CustomLabel>
+                  <CustomInput
+                    {...register("name")}
+                    id="name"
+                    type="text"
+                    placeholder="Enter Name"
+                  />
+                  {/* <label htmlFor="name" className="form-label text-white">
+                    Name
+                  </label>
+                  <input
+                    {...register("name")}
+                    id="name"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter TourPlan Name"
+                  /> */}
+                  {errors.name && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
-
-                <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <Button
-                    className="btn text-white w-100 border-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                      borderRadius: "12px",
-                    }}
-                    type="submit"
+                <div
+                  className="col-lg-6 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="tourStartDate">
+                    Tour Start Date
+                  </CustomLabel>
+                  <CustomInput
+                    {...register("tourStartDate")}
+                    id="tourStartDate"
+                    type="text"
+                    placeholder="Enter Tour Start Date"
+                  />
+                  {/* <label
+                    htmlFor="tourStartDate"
+                    className="form-label text-white"
                   >
-                    Done
-                  </Button>
+                    Tour Start Date
+                  </label>
+                  <input
+                    {...register("tourStartDate")}
+                    id="tourStartDate"
+                    type="date"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Tour Start Date"
+                  /> */}
+                  {errors.tourStartDate && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.tourStartDate.message}
+                    </p>
+                  )}
                 </div>
-              </form>
-            </div>
-          </div>
+                <div
+                  className="col-lg-6 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="tourEndDate">Tour End Date</CustomLabel>
+                  <CustomInput
+                    {...register("tourEndDate")}
+                    id="tourEndDate"
+                    type="text"
+                    placeholder="Enter Tour End Date"
+                  />
+                  {/* <label
+                    htmlFor="tourEndDate"
+                    className="form-label text-white"
+                  >
+                    Tour End Date
+                  </label>
+                  <input
+                    {...register("tourEndDate")}
+                    id="tourEndDate"
+                    type="date"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Tour End Date"
+                  /> */}
+                  {errors.tourEndDate && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.tourEndDate.message}
+                    </p>
+                  )}
+                </div>
+                <div
+                  className="col-lg-6 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="approvalDate">
+                    Approval Date
+                  </CustomLabel>
+                  <CustomInput
+                    {...register("approvalDate")}
+                    id="approvalDate"
+                    type="text"
+                    placeholder="Enter Approval Date"
+                  />
+                  {/* <label
+                    htmlFor="approvalDate"
+                    className="form-label text-white"
+                  >
+                    Approval Date
+                  </label>
+                  <input
+                    {...register("approvalDate")}
+                    id="approvalDate"
+                    type="date"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Approval Date"
+                  /> */}
+                  {errors.approvalDate && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.approvalDate.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-lg-5 col-md-8 col-sm-6 mx-auto">
+                <SubmitButton>Save Visit Plan</SubmitButton>
+              </div>
+            </form>
+          </FormWrapper>
         </Modal.Body>
       </Modal>
     </>

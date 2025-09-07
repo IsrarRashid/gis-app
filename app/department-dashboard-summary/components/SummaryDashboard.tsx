@@ -1,9 +1,9 @@
 "use client";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import useDepartments from "@/app/hooks/useDepartments";
 import useUsers from "@/app/hooks/useUsers";
-import { customSelectStyles, OptionType } from "@/app/utils";
 import { Manrope, Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -27,23 +27,15 @@ const SummaryDashboard = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const { data: users } = useUsers();
   const { data: departments } = useDepartments();
-  const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLElement | null>(
-    null
-  );
 
-  useEffect(() => {
-    // This code only runs on the client side after the component mounts
-    setMenuPortalTarget(document.body);
-  }, []);
-
-  const commissionerOptions = users?.map((d) => {
+  const commissionerOptions: OptionType[] = users?.map((d) => {
     return {
       value: d.name,
       label: d.name,
     };
   });
 
-  const departmentOptions = departments?.map((d) => {
+  const departmentOptions: OptionType[] = departments?.map((d) => {
     return {
       value: d.name,
       label: d.name,
@@ -266,20 +258,11 @@ const SummaryDashboard = () => {
                       >
                         {tab.selectLabel}
                       </label>
-                      {menuPortalTarget && (
-                        <Select
-                          options={tab.selectOptions}
-                          name="districtName"
-                          id="districtName"
-                          isClearable
-                          isSearchable
-                          styles={customSelectStyles}
-                          menuPlacement="auto"
-                          menuPosition="absolute"
-                          menuPortalTarget={menuPortalTarget}
-                          onChange={handleSelectChange}
-                        />
-                      )}
+                      <CustomSelect
+                        options={tab.selectOptions}
+                        id="districtName"
+                        onChangeSingle={handleSelectChange}
+                      />
                       {/* <select
                       className="form-select form-select-sm color-light-dark shadow-none"
                       style={{ background: "rgba(255, 255, 255, 0.8)" }}
@@ -645,7 +628,9 @@ const SummaryDashboard = () => {
                       borderBottom: "1px solid #E2E8F0",
                     }}
                     onClick={() =>
-                      router.push("/dashboard-summary/summary-detail")
+                      router.push(
+                        "/department-dashboard-summary/summary-detail"
+                      )
                     }
                   >
                     1

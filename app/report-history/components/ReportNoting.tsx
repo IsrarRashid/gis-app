@@ -2,27 +2,52 @@
 import { REPORTS_HISTORY_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import Spinner from "@/app/components/Spinner";
-import useOfficers from "@/app/hooks/useOfficers";
-import useReportHistoryUser from "@/app/hooks/useReportHistoryUsers";
+import { Officer } from "@/app/hooks/useOfficers";
+import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { triggerEscapeKeyPress } from "@/app/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import "easymde/dist/easymde.min.css";
-import Cookies from "js-cookie";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import HistoryList from "./HistoryList";
-import { APPROVED, REFERBACK, SUBMITTED } from "../statuses";
 import { SubmittedReport } from "../list/components/List";
+import { APPROVED, REFERBACK, SUBMITTED } from "../statuses";
+import HistoryList from "./HistoryList";
 
+import Loader from "@/app/components/Loader";
+import { useCallback } from "react";
+import { BsExclamationTriangleFill } from "react-icons/bs";
 import PdfIframe from "./pdf/PdfIframe";
-
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
+// EasyMDE styles (required)
+import "easymde/dist/easymde.min.css";
+
+// const RichTextEditor = dynamic(() => import("./RichTextEditor"), {
+//   ssr: false,
+// });
+
+// import { Sapling } from "@saplingai/sapling-js/observer";
+
+// export default function Editor() {
+//   useEffect(() => {
+//     Sapling.init({
+//       key: process.env.NEXT_PUBLIC_SAPLING_PUBLIC_KEY || "", // use public key
+//       endpointHostname: "https://api.sapling.ai",
+//       editPathname: "/api/v1/edits",
+//       statusBadge: true,
+//       mode: "dev",
+//     });
+
+//     const editor = document.getElementById("editor");
+//     if (editor) {
+//       Sapling.observe(editor);
+//     }
+//   }, []);
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -33,7 +58,7 @@ const schema = z.object({
   submittedTo: z
     .number({ invalid_type_error: "Please select Director!" })
     .optional(),
-  remarks: z.string().min(1, { message: "Please add Remarks!" }),
+  remarks: z.string().min(1, { message: "Please add Remarks!" }).trim(),
   reportPath: z.string().optional().default(""),
   lastStatus: z.number().optional().default(-1),
   status: z.number().optional().default(-1),
@@ -46,9 +71,14 @@ type ReportNoting = z.infer<typeof schema>;
 interface Props {
   data: SubmittedReport;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  refresh: boolean;
   role: string;
   userId: number;
+  selectedTabLabel: string;
+  users: ReportHistoryUser[];
+  deputyDirectors: Officer[];
+  directors: Officer[];
+  departmentHead: Officer;
+  officers: Officer[];
 }
 
 export interface ReportHistory {
@@ -64,20 +94,40 @@ export interface ReportHistory {
   reportType: number;
 }
 
-const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
+const ReportNoting = ({
+  data,
+  setRefresh,
+  role,
+  userId,
+  selectedTabLabel,
+  users,
+  deputyDirectors,
+  directors,
+  departmentHead,
+  officers,
+}: Props) => {
   const {
     control,
     setValue,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<ReportNoting>({ resolver: zodResolver(schema) });
+  } = useForm<ReportNoting>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      remarks: "", // 👈 make sure it starts as empty string, not undefined
+    },
+  });
   console.log(errors);
-  const { data: users } = useReportHistoryUser({ refresh });
-  const { data: officers } = useOfficers({ refresh });
-  const [reportsHistory, setReportsHistory] = useState<ReportHistory[]>();
+
+  const [descendingOrderReportsHistory, setDescendingOrderReportsHistory] =
+    useState<ReportHistory[]>();
+  const [ascendingOrderReportsHistory, setAscendingOrderReportsHistory] =
+    useState<ReportHistory[]>();
   const [isSubmitting, setSubmitting] = useState(false);
-  console.log("all officers", users);
+  const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const submittedTo = watch("submittedTo");
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -90,40 +140,59 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
   useEffect(() => {
     if (
       role === "deputy director" &&
-      reportsHistory &&
-      reportsHistory[reportsHistory?.length - 1].status === APPROVED
+      descendingOrderReportsHistory &&
+      descendingOrderReportsHistory[0].status === APPROVED
     ) {
       setValue("submittedTo", data.intiallyUserId);
     } else if (
       role === "deputy director" &&
-      reportsHistory &&
-      reportsHistory[reportsHistory?.length - 1].status === REFERBACK
+      descendingOrderReportsHistory &&
+      descendingOrderReportsHistory[0].status === REFERBACK
     ) {
       setReferback(true);
       setValue("submittedTo", data.intiallyUserId);
     } else if (
       role === "director" &&
-      reportsHistory &&
-      reportsHistory[reportsHistory?.length - 1].status === REFERBACK
+      descendingOrderReportsHistory &&
+      descendingOrderReportsHistory[0].status === REFERBACK
     ) {
       setReferback(true);
       // setValue(
       //   "submittedTo",
-      //   officers?.find(
-      //     (officer) => officer.roleName?.toLowerCase() === "deputy director"
-      //   )?.id
+      //   reportsHistory &&
+      //     reportsHistory[0].submittedFrom
       // );
     }
 
     console.log("submittedTo", submittedTo);
   }, [
     data.submittedFrom,
-    officers,
     setValue,
     submittedTo,
     role,
-    reportsHistory,
+    descendingOrderReportsHistory,
   ]);
+
+  useEffect(() => {
+    if (
+      role === "director" &&
+      descendingOrderReportsHistory &&
+      descendingOrderReportsHistory[0].status === SUBMITTED
+    ) {
+      setValue(
+        "submittedTo",
+        descendingOrderReportsHistory &&
+          descendingOrderReportsHistory[0].submittedFrom
+      );
+      setValue(
+        "submittedTo",
+        descendingOrderReportsHistory &&
+          descendingOrderReportsHistory[0].submittedFrom
+      );
+      console.log("status", REFERBACK);
+      setReferback(true);
+    }
+  }, [descendingOrderReportsHistory]);
 
   const onSubmit = async (formData: ReportNoting) => {
     console.log(errors);
@@ -154,11 +223,11 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
             ? REFERBACK
             : role === "director" && data.status === APPROVED
             ? APPROVED
-            : role === "director general" &&
+            : role === "department head" &&
               data.status === SUBMITTED &&
               !isReferback
             ? APPROVED
-            : role === "director general" &&
+            : role === "department head" &&
               data.status === SUBMITTED &&
               isReferback
             ? REFERBACK
@@ -202,33 +271,65 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
   };
 
   useEffect(() => {
-    const getReportHistory = async (visitId: number, projectId: number) => {
+    const getReportHistory = async (
+      visitId: number,
+      projectId: number,
+      reportType: number
+    ) => {
+      setLoading(true);
       try {
         const response = await apiClient.get(
-          `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}`
+          `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}&reportType=${reportType}`
         );
-        setReportsHistory(response.data.data);
+        const sorted = [...response.data.data].sort((a, b) =>
+          (b.sDate || "").localeCompare(a.sDate || "")
+        );
+
+        setDescendingOrderReportsHistory(sorted);
+        console.log("sorted", sorted);
+
+        const sortedAsc = [...response.data.data].sort((a, b) =>
+          (a.sDate || "").localeCompare(b.sDate || "")
+        );
+        setAscendingOrderReportsHistory(sortedAsc);
+
+        setLoading(false);
       } catch (err) {
+        setError((err as AxiosError).message);
         console.error("Submission error:", err);
+        setLoading(false);
+      } finally {
+        setLoading(false);
       }
     };
     console.log("visit id:", data.visitId, "project id", data.projectId);
-    getReportHistory(data.visitId, data.projectId);
+    if (data) getReportHistory(data.visitId, data.projectId, data.reportType);
   }, [data]);
 
   useEffect(() => {
-    if (reportsHistory) {
-      console.log("reportsHistory", reportsHistory);
+    if (descendingOrderReportsHistory) {
+      console.log("reportsHistory", descendingOrderReportsHistory);
       console.log(
         "test 1",
-        reportsHistory[reportsHistory?.length - 1].status === SUBMITTED
+        descendingOrderReportsHistory[0].status === SUBMITTED
       );
     }
-  }, [reportsHistory]);
+  }, [descendingOrderReportsHistory]);
 
   const [isReferback, setReferback] = useState<boolean>(false);
   const [isMarked, setMarked] = useState<boolean>(false);
   const [viewPdf, setViewPdf] = useState<boolean>(false);
+
+  // const checkGrammar = useCallback(async (text: string) => {
+  //   const res = await fetch("/api/v1/sapling", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({ text }),
+  //   });
+  //   const data = await res.json();
+  //   console.log("Sapling grammar suggestions:", data);
+  //   return data;
+  // }, []);
 
   return (
     <div className="container-fluid p-3">
@@ -254,13 +355,23 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
             height: "100%",
           }}
         >
-          {reportsHistory && (
+          {isLoading ? (
+            <Loader />
+          ) : error ? (
+            <div
+              className="alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <BsExclamationTriangleFill size={24} className="me-2" />
+              <div>{error}, Please Try Again!</div>
+            </div>
+          ) : descendingOrderReportsHistory && ascendingOrderReportsHistory ? (
             <div className="row d-flex m-0">
               {viewPdf && (
                 <div className="col-lg-6 col-md-12 col-sm-12 mb-3">
                   {/* <PdfFileViewer /> */}
                   <PdfIframe
-                    key={data.reportPath}
+                    iframeKey={data.reportPath}
                     reportPath={`${process.env.NEXT_PUBLIC_BACKEND_API}${data.reportPath}`}
                   />
                   {/* <EditPdfFileViewer
@@ -272,7 +383,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                 className={`${
                   viewPdf ? "col-lg-6" : "col-lg-12"
                 } col-md-12 col-sm-12`}
-                style={{ height: "85%", overflow: "scroll" }}
+                style={{ height: "85%", overflowY: "scroll" }}
               >
                 <Button
                   className="btn btn-primary"
@@ -281,9 +392,10 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                   {viewPdf ? "Hide" : "View"} PDF
                 </Button>
                 <HistoryList
-                  data={reportsHistory}
-                  projectName={data.projectName}
-                  initialUser={data.intiallyUser}
+                  descendingOrderData={descendingOrderReportsHistory}
+                  ascendingOrderData={ascendingOrderReportsHistory}
+                  users={users}
+                  submittedReport={data}
                 />
                 <div
                   className="col p-4 ms-1 mb-3"
@@ -293,24 +405,32 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                   }}
                 >
                   <p className="mb-4 fw-normal">
-                    <span>Project:&nbsp;&nbsp;</span> {data.projectName}
+                    <span>Project:&nbsp;&nbsp;</span> (Gs. No- {data.gsNo}){" "}
+                    {data.projectName}
                   </p>
                   <p className="mb-4 fw-normal">
                     <span>Name:&nbsp;&nbsp;</span> {data.intiallyUser}
                   </p>
                   <hr style={{ opacity: ".1" }} />
                   <>
-                    {reportsHistory[reportsHistory?.length - 1].submittedTo ===
-                      userId &&
-                    (reportsHistory[reportsHistory?.length - 1].status ===
-                      SUBMITTED ||
-                      reportsHistory[reportsHistory?.length - 1].status ===
-                        REFERBACK ||
-                      reportsHistory[reportsHistory?.length - 1].status ===
-                        APPROVED) ? (
+                    {descendingOrderReportsHistory[0].submittedTo === userId &&
+                    (selectedTabLabel === "SUBMITTED BY (AD)" ||
+                      selectedTabLabel === "APPROVED BY (DG)" ||
+                      selectedTabLabel === "REFERBACK BY (DIRECTOR)" ||
+                      selectedTabLabel === "SUBMITTED BY (DD)" ||
+                      selectedTabLabel === "REFERBACK BY (DG)" ||
+                      selectedTabLabel === "SUBMITTED BY (DIRECTOR)") &&
+                    (descendingOrderReportsHistory[0].status === SUBMITTED ||
+                      descendingOrderReportsHistory[0].status === REFERBACK ||
+                      descendingOrderReportsHistory[0].status === APPROVED) ? (
                       <>
                         <p className="mb-1 fw-normal fs18px">
-                          Description Level
+                          Description Level{" "}
+                          {errors.remarks && (
+                            <span className="text-danger mt-1 fs14px">
+                              - {errors.remarks.message}
+                            </span>
+                          )}
                         </p>
                         <form onSubmit={handleSubmit(onSubmit)}>
                           <div className="mb-2">
@@ -321,17 +441,23 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                 <SimpleMDE
                                   placeholder="Description"
                                   className="custom-editor"
-                                  {...field}
+                                  value={field.value}
+                                  onChange={field.onChange}
                                 />
                               )}
                             />
-                            {errors.remarks && (
-                              <p className="text-danger mt-1 fs14px">
-                                {errors.remarks.message}
-                              </p>
-                            )}
                           </div>
-
+                          {/* <div className="col"> */}
+                          {/* <p>new editor</p>*/}
+                          {/* <RichTextEditor />*/}
+                          {/* <MarkdownEditorWithSpellcheck /> */}
+                          {/* <ClientSideCustomEditor /> */}
+                          {/* <SaplingEditorWithHighlight /> */}
+                          {/* <SaplingEditor /> */}
+                          {/* <GrammarEditor /> */}
+                          {/* <SimpleMdeEditor /> */}
+                          {/* <QuillWithSpellChecker /> */}
+                          {/* </div> */}
                           <div className="row mx-0 mb-3">
                             {role !== "director" &&
                               (data.status === SUBMITTED ||
@@ -349,9 +475,8 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                         role === "deputy director"
                                           ? setValue(
                                               "submittedTo",
-                                              reportsHistory[
-                                                reportsHistory?.length - 1
-                                              ].status === REFERBACK
+                                              descendingOrderReportsHistory[0]
+                                                .status === REFERBACK
                                                 ? data.intiallyUserId
                                                 : data.submittedFrom
                                             )
@@ -360,6 +485,11 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                               data.submittedFrom
                                             );
                                       }}
+                                      disabled={
+                                        role === "deputy director" &&
+                                        descendingOrderReportsHistory[0]
+                                          .status === REFERBACK
+                                      }
                                     />
                                     <label
                                       className="form-check-label"
@@ -367,21 +497,9 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                     >
                                       Referback:{" "}
                                       {role === "deputy director" &&
-                                      reportsHistory[reportsHistory?.length - 1]
+                                      descendingOrderReportsHistory[0]
                                         .status === REFERBACK
-                                        ? users.find(
-                                            (user) =>
-                                              user.id === data.intiallyUserId
-                                          )?.fullName
-                                        : role === "director" &&
-                                          reportsHistory[
-                                            reportsHistory?.length - 1
-                                          ].status === REFERBACK
-                                        ? officers.find(
-                                            (officer) =>
-                                              officer.roleName?.toLowerCase() ===
-                                              "deputy director"
-                                          )?.fullName
+                                        ? data.intiallyUser
                                         : users.find(
                                             (user) =>
                                               user.id === data.submittedFrom
@@ -390,48 +508,53 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                   </div>
                                 </div>
                               )}
-                            {role === "director" && (
-                              <div className="mb-2">
-                                <select
-                                  value={submittedTo || ""}
-                                  onChange={(e) => {
-                                    handleSelectChange(e);
-                                    setReferback(true);
-                                    setMarked(false);
-                                  }}
-                                  className="form-select fs-6"
-                                  aria-label="Select Deputy Director"
-                                >
-                                  <option value="">
-                                    Select Deputy Director
-                                  </option>
-                                  {officers
-                                    .filter(
-                                      (officer) =>
-                                        officer.roleName?.toLowerCase() ===
-                                        "deputy director"
-                                    )
-                                    .map((officer) => (
-                                      <option
-                                        key={officer.id}
-                                        value={officer.id}
-                                      >
-                                        {officer.designation}
-                                      </option>
-                                    ))}
-                                </select>
-                                {errors.submittedTo && (
-                                  <p className="text-danger mt-1 fs14px">
-                                    {errors.submittedTo.message}
-                                  </p>
-                                )}
-                              </div>
-                            )}
+
                             {role === "director" &&
-                              reportsHistory[reportsHistory?.length - 1]
-                                .status !== APPROVED &&
-                              reportsHistory[reportsHistory?.length - 1]
-                                .status !== REFERBACK && (
+                              selectedTabLabel !== "APPROVED BY (DG)" && (
+                                <>
+                                  {/* <label
+                                    className="form-check-label"
+                                    htmlFor="reject"
+                                  >
+                                    Referback:
+                                  </label> */}
+                                  <div className="mb-2">
+                                    <select
+                                      value={submittedTo || ""}
+                                      onChange={(e) => {
+                                        handleSelectChange(e);
+                                        setReferback(true);
+                                        setMarked(false);
+                                      }}
+                                      className="form-select fs-6"
+                                      aria-label="Select Deputy Director"
+                                    >
+                                      <option value="">
+                                        Select Deputy Director
+                                      </option>
+                                      {deputyDirectors.map((officer) => (
+                                        <option
+                                          key={officer.id}
+                                          value={officer.id}
+                                        >
+                                          {officer.designation}
+                                        </option>
+                                      ))}
+                                    </select>
+                                    {errors.submittedTo && (
+                                      <p className="text-danger mt-1 fs14px">
+                                        {errors.submittedTo.message}
+                                      </p>
+                                    )}
+                                  </div>
+                                </>
+                              )}
+
+                            {role === "director" &&
+                              descendingOrderReportsHistory[0].status !==
+                                APPROVED &&
+                              descendingOrderReportsHistory[0].status !==
+                                REFERBACK && (
                                 <div className="col">
                                   <div className="form-check">
                                     <input
@@ -444,17 +567,17 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                         setMarked(newValue);
                                         setReferback(false);
                                         console.log(
-                                          "officer 47 index",
-                                          officers[47].designation
+                                          "departmentHead designation: ",
+                                          departmentHead.designation
                                         );
 
                                         if (newValue) {
                                           setValue(
                                             "submittedTo",
-                                            officers[47].id
-                                          ); //director general-id
+                                            departmentHead.id
+                                          ); //department head-id
                                         } else {
-                                          setValue("submittedTo", undefined); //director general-id
+                                          setValue("submittedTo", undefined); //department head-id
                                         }
                                       }}
                                     />
@@ -463,84 +586,88 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                       htmlFor="mark"
                                     >
                                       {/* Mark To: {officers[4]?.fullName} */}
-                                      Mark To: DIRECTOR GENERAL
+                                      Mark To: DEPARTMENT HEAD
                                     </label>
                                   </div>
                                 </div>
                               )}
                           </div>
 
-                          {!isReferback && !isMarked && (
-                            <>
-                              {(role === "deputy director" &&
-                                reportsHistory[reportsHistory?.length - 1]
-                                  .status === SUBMITTED) ||
-                              (role === "director" &&
-                                reportsHistory[reportsHistory?.length - 1]
-                                  .status === SUBMITTED) ||
-                              (role === "director" &&
-                                reportsHistory[reportsHistory?.length - 1]
-                                  .status === APPROVED) ||
-                              (role === "director general" &&
-                                reportsHistory[reportsHistory?.length - 1]
-                                  .status === SUBMITTED) ? (
-                                <div className="mb-2">
-                                  <select
-                                    value={submittedTo || ""}
-                                    onChange={handleSelectChange}
-                                    className="form-select fs-6"
-                                    aria-label="Select Director"
-                                  >
-                                    {role === "director" ? (
-                                      <>
-                                        <option value="">
-                                          Select Deputy Director
-                                        </option>
-                                        <option value={officers[27]?.id}>
-                                          {officers[27]?.designation}
-                                        </option>
-                                        <option value={officers[28]?.id}>
-                                          {officers[28]?.designation}
-                                        </option>
-                                        <option value={officers[48]?.id}>
-                                          {officers[48]?.designation}
-                                        </option>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <option value="">
-                                          Select Director
-                                        </option>
-                                        <option value={officers[25]?.id}>
-                                          {officers[25]?.designation}
-                                        </option>
-                                        <option value={officers[26]?.id}>
-                                          {officers[26]?.designation}
-                                        </option>
-                                        <option value={officers[49]?.id}>
-                                          {officers[49]?.fullName}
-                                        </option>
-                                      </>
+                          {!isReferback &&
+                            !isMarked &&
+                            (selectedTabLabel === "APPROVED BY (DG)" ||
+                              selectedTabLabel === "SUBMITTED BY (AD)" ||
+                              selectedTabLabel ===
+                                "SUBMITTED BY (DIRECTOR)") && (
+                              <>
+                                {/* <label
+                                  className="form-check-label"
+                                  htmlFor="reject"
+                                >
+                                  Approved:
+                                </label> */}
+                                {(role === "deputy director" &&
+                                  descendingOrderReportsHistory[0].status ===
+                                    SUBMITTED) ||
+                                (role === "director" &&
+                                  descendingOrderReportsHistory[0].status ===
+                                    SUBMITTED) ||
+                                (role === "director" &&
+                                  descendingOrderReportsHistory[0].status ===
+                                    APPROVED) ||
+                                (role === "department head" &&
+                                  descendingOrderReportsHistory[0].status ===
+                                    SUBMITTED) ? (
+                                  <div className="mb-2">
+                                    <select
+                                      value={submittedTo || ""}
+                                      onChange={handleSelectChange}
+                                      className="form-select fs-6"
+                                      aria-label="Select Director"
+                                    >
+                                      {role === "director" ? (
+                                        <>
+                                          <option value="">
+                                            Select Deputy Director
+                                          </option>
+                                          {deputyDirectors.map((officer) => (
+                                            <option
+                                              key={officer.id}
+                                              value={officer.id}
+                                            >
+                                              {officer.designation}
+                                            </option>
+                                          ))}
+                                        </>
+                                      ) : (
+                                        <>
+                                          <option value="">
+                                            Select Director
+                                          </option>
+                                          {directors.map((officer) => (
+                                            <option
+                                              key={officer.id}
+                                              value={officer.id}
+                                            >
+                                              {officer.designation}
+                                            </option>
+                                          ))}
+                                        </>
+                                      )}
+                                    </select>
+                                    {errors.submittedTo && (
+                                      <p className="text-danger mt-1 fs14px">
+                                        {errors.submittedTo.message}
+                                      </p>
                                     )}
-                                  </select>
-                                  {errors.submittedTo && (
-                                    <p className="text-danger mt-1 fs14px">
-                                      {errors.submittedTo.message}
-                                    </p>
-                                  )}
-                                </div>
-                              ) : (
-                                <p className="mb-0">
-                                  Submitted To:{" "}
-                                  {
-                                    users.find(
-                                      (user) => user.id === data.intiallyUserId
-                                    )?.fullName
-                                  }
-                                </p>
-                              )}
-                            </>
-                          )}
+                                  </div>
+                                ) : (
+                                  <p className="mb-0">
+                                    Submitted To: {data.intiallyUser}
+                                  </p>
+                                )}
+                              </>
+                            )}
                           <div className="row d-flex justify-content-end m-0">
                             {!isReferback && (
                               <>
@@ -567,7 +694,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                   </div>
                                 )}
                                 {(role === "director" ||
-                                  role === "director general") && (
+                                  role === "department head") && (
                                   <div className="col-auto">
                                     <Button
                                       disabled={isSubmitting || !submittedTo}
@@ -616,6 +743,14 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                   </>
                 </div>
               </div>
+            </div>
+          ) : (
+            <div
+              className="alert alert-warning d-flex align-items-center"
+              role="alert"
+            >
+              <BsExclamationTriangleFill size={24} className="me-2" />
+              <div>No reports found.</div>
             </div>
           )}
         </div>

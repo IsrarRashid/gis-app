@@ -4,19 +4,17 @@ import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal";
 import { setFeedbackCount } from "@/app/features/feedback/feedbackCountSlice";
 import useAuthentication from "@/app/hooks/useAuthentication";
-import useAuthorization from "@/app/hooks/useAuthorization";
 import useProjects from "@/app/hooks/useProjects";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import {
   addDayToFormattedDate,
   getDaysAgo,
   getFormattedDate,
-  SingleProjectLessData,
 } from "@/app/utils";
 import Cookies from "js-cookie";
 import { Lexend } from "next/font/google";
 import { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { IoSearch } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 
@@ -169,9 +167,6 @@ const Feedback = () => {
         borderRadius: "10px",
       }}
     >
-      <div>
-        <Toaster />
-      </div>
       {data && (
         <div className={`col ${lexend.className}`}>
           <div className="row d-flex m-0 mb-3">

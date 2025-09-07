@@ -3,7 +3,7 @@ import { GET_USER_PROJECTS_API, SMDP_SYNC_API } from "@/app/APIs";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import useProjects, { Project } from "@/app/hooks/useProjects";
 import useSectors from "@/app/hooks/useSectors";

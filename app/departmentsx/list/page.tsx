@@ -1,4 +1,3 @@
-import React from "react";
 import { DEPARTMENT_API, SECTOR_API } from "../../APIs";
 import { cookies } from "next/headers";
 import { DM_Sans, Inter } from "next/font/google";

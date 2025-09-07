@@ -10,7 +10,7 @@ const FormWrapper = ({
   heading,
   children,
 }: {
-  heading: string;
+  heading?: string;
   children: ReactNode;
 }) => {
   return (
@@ -22,15 +22,17 @@ const FormWrapper = ({
         padding: "25px 0px",
       }}
     >
-      <p
-        className="text-center color-evaluation-dark-blue fw-bold py-2 fs24px"
-        style={{
-          background: "#E4EDEC",
-          marginBottom: "25px",
-        }}
-      >
-        {heading}
-      </p>
+      {heading && (
+        <p
+          className="text-center color-evaluation-dark-blue fw-bold py-2 fs24px"
+          style={{
+            background: "#E4EDEC",
+            marginBottom: "25px",
+          }}
+        >
+          {heading}
+        </p>
+      )}
       <div
         style={{
           padding: "0px 30px",

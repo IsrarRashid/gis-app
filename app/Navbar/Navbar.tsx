@@ -63,11 +63,15 @@ const Navbar = () => {
         >
           <Image
             src="/icons/logoNew1.svg"
-            className="img-fluid object-contain"
             alt="logoNew"
-            style={{ filter: "drop-shadow(0px 0px .75px green)" }}
+            style={{
+              filter: "drop-shadow(0px 0px .75px green)",
+              width: "64px",
+              height: "64px",
+            }}
             width={64}
             height={64}
+            priority
           />
         </Link>
         <Button
@@ -109,7 +113,7 @@ const Navbar = () => {
           </ul>
 
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            {role !== "Ministers" && (
+            {role !== "Special Role" && (
               <li className="nav-item p-1 me-3 mt-1">
                 <Link href={currentTutorial} target="_blank">
                   <div
@@ -147,12 +151,15 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
-            {departmentId === 1 ? (
+            {(departmentId === 0 || departmentId === 1) &&
+            role !== "Special Role" ? (
               <li className="nav-item p-1 me-3 m-auto">
                 <Suspense fallback={<span>Loading filter...</span>}>
                   <DashboardTypeFilter />
                 </Suspense>
               </li>
+            ) : role === "Special Role" ? (
+              ""
             ) : (
               <li className="nav-item p-1 me-3 m-auto">
                 <Suspense fallback={<span>Loading filter...</span>}>

@@ -19,7 +19,6 @@ const ProjectModal = () => {
         className="modal fade"
         id="menuModal"
         aria-labelledby="menuModalLabel"
-        aria-hidden="true"
       >
         <div
           className="modal-dialog modal-fullscreen"

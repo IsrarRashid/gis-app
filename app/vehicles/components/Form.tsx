@@ -8,6 +8,10 @@ import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import CustomInput from "@/app/components/Form/CustomInput";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -137,231 +141,316 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           className="p-0"
           style={{ background: "rgba(156,255,255,0)" }}
         >
-          <div
-            className="container-fluid pt-3 pb-3 ps-4 pe-4"
-            style={{
-              backgroundImage:
-                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-              borderRadius: "15px",
-              border: "1.7px solid rgba(255, 255, 255, 0.6)",
-            }}
+          <FormWrapper
+            heading={method === "POST" ? "Add Vehicle" : "Update Vehicle"}
           >
-            <div className="row flex-column justify-content-center mb-4">
-              <div className="col-lg-12">
-                <p
-                  className="text-center text-white mt-4"
-                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div
+                className="row g-2 g-lg-3 mt-0"
+                style={{ marginBottom: "5px" }}
+              >
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  {method === "POST" ? "ADD VEHICLE" : "UPDATE VEHICLE"}
-                </p>
-              </div>
-              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
-                <div className="row d-flex justify-content-between">
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label htmlFor="name" className="form-label text-white">
-                      Name
-                    </label>
-                    <input
-                      {...register("name")}
-                      id="name"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Name"
-                    />
-                    {errors.name && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label
-                      htmlFor="description"
-                      className="form-label text-white"
-                    >
-                      Description
-                    </label>
-                    <input
-                      {...register("description")}
-                      id="description"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Description"
-                    />
-                    {errors.description && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.description.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label
-                      htmlFor="vehicleNumber"
-                      className="form-label text-white"
-                    >
-                      Vehicle Number
-                    </label>
-                    <input
-                      {...register("vehicleNumber")}
-                      id="vehicleNumber"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter vehicleNumber"
-                    />
-                    {errors.vehicleNumber && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.vehicleNumber.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label htmlFor="model" className="form-label text-white">
-                      Model
-                    </label>
-                    <input
-                      {...register("model")}
-                      id="model"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Model"
-                    />
-                    {errors.model && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.model.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label htmlFor="color" className="form-label text-white">
-                      Color
-                    </label>
-                    <input
-                      {...register("color")}
-                      id="color"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Color"
-                    />
-                    {errors.color && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.color.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label
-                      htmlFor="trasnmission"
-                      className="form-label text-white"
-                    >
-                      Trasnmission
-                    </label>
-                    <input
-                      {...register("trasnmission")}
-                      id="trasnmission"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Trasnmission"
-                    />
-                    {errors.trasnmission && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.trasnmission.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label
-                      htmlFor="seatsCapacity"
-                      className="form-label text-white"
-                    >
-                      Seats Capacity
-                    </label>
-                    <input
-                      {...register("seatsCapacity", { valueAsNumber: true })}
-                      id="seatsCapacity"
-                      type="number"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Seats Capacity"
-                    />
-                    {errors.seatsCapacity && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.seatsCapacity.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label htmlFor="fuelType" className="form-label text-white">
-                      Fuel Type
-                    </label>
-                    <input
-                      {...register("fuelType")}
-                      id="fuelType"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter fuel Type"
-                    />
-                    {errors.fuelType && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.fuelType.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label
-                      htmlFor="vehicleImage"
-                      className="form-label text-white"
-                    >
-                      vehicle Image
-                    </label>
-                    <input
-                      {...register("vehicleImage")}
-                      id="vehicleImage"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Vehicle Image"
-                    />
-                    {errors.vehicleImage && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.vehicleImage.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-lg-4 col-md-6 col-sm-12 mb-3 text-start">
-                    <label
-                      htmlFor="vehicleIcon"
-                      className="form-label text-white"
-                    >
-                      Vehicle Icon
-                    </label>
-                    <input
-                      {...register("vehicleIcon")}
-                      id="vehicleIcon"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Vehicle Icon"
-                    />
-                    {errors.vehicleIcon && (
-                      <p className="text-danger mt-1 mb-0">
-                        {errors.vehicleIcon.message}
-                      </p>
-                    )}
-                  </div>
+                  <CustomLabel htmlFor="name">Name</CustomLabel>
+                  <CustomInput
+                    {...register("name")}
+                    id="name"
+                    type="text"
+                    placeholder="Enter Name"
+                  />
+                  {/* <label htmlFor="name" className="form-label text-white">
+                    Name
+                  </label>
+                  <input
+                    {...register("name")}
+                    id="name"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Name"
+                  /> */}
+                  {errors.name && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
-                <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
-                  <Button
-                    className="btn text-white w-100 border-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                      borderRadius: "12px",
-                    }}
-                    type="submit"
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="description">Description</CustomLabel>
+                  <CustomInput
+                    {...register("description")}
+                    id="description"
+                    type="text"
+                    placeholder="Enter Description"
+                  />
+                  {/* <label
+                    htmlFor="description"
+                    className="form-label text-white"
                   >
-                    Done
-                  </Button>
+                    Description
+                  </label>
+                  <input
+                    {...register("description")}
+                    id="description"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Description"
+                  /> */}
+                  {errors.description && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.description.message}
+                    </p>
+                  )}
                 </div>
-              </form>
-            </div>
-          </div>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="vehicleNumber">
+                    Vehicle Number
+                  </CustomLabel>
+                  <CustomInput
+                    {...register("vehicleNumber")}
+                    id="vehicleNumber"
+                    type="text"
+                    placeholder="Enter Vehicle Number"
+                  />
+                  {/* <label
+                    htmlFor="vehicleNumber"
+                    className="form-label text-white"
+                  >
+                    Vehicle Number
+                  </label>
+                  <input
+                    {...register("vehicleNumber")}
+                    id="vehicleNumber"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter vehicleNumber"
+                  /> */}
+                  {errors.vehicleNumber && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.vehicleNumber.message}
+                    </p>
+                  )}
+                </div>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="model">Model</CustomLabel>
+                  <CustomInput
+                    {...register("model")}
+                    id="model"
+                    type="text"
+                    placeholder="Enter Model"
+                  />
+                  {/* <label htmlFor="model" className="form-label text-white">
+                    Model
+                  </label>
+                  <input
+                    {...register("model")}
+                    id="model"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Model"
+                  /> */}
+                  {errors.model && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.model.message}
+                    </p>
+                  )}
+                </div>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="color">Color</CustomLabel>
+                  <CustomInput
+                    {...register("color")}
+                    id="color"
+                    type="text"
+                    placeholder="Enter Color"
+                  />
+                  {/* <label htmlFor="color" className="form-label text-white">
+                    Color
+                  </label>
+                  <input
+                    {...register("color")}
+                    id="color"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Color"
+                  /> */}
+                  {errors.color && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.color.message}
+                    </p>
+                  )}
+                </div>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="trasnmission">Trasnmission</CustomLabel>
+                  <CustomInput
+                    {...register("trasnmission")}
+                    id="trasnmission"
+                    type="text"
+                    placeholder="Enter Trasnmission"
+                  />
+                  {/* <label
+                    htmlFor="trasnmission"
+                    className="form-label text-white"
+                  >
+                    Trasnmission
+                  </label>
+                  <input
+                    {...register("trasnmission")}
+                    id="trasnmission"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Trasnmission"
+                  /> */}
+                  {errors.trasnmission && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.trasnmission.message}
+                    </p>
+                  )}
+                </div>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="seatsCapacity">
+                    Seats Capacity
+                  </CustomLabel>
+                  <CustomInput
+                    {...register("seatsCapacity")}
+                    id="seatsCapacity"
+                    type="text"
+                    placeholder="Enter Seats Capacity"
+                  />
+                  {/* <label
+                    htmlFor="seatsCapacity"
+                    className="form-label text-white"
+                  >
+                    Seats Capacity
+                  </label>
+                  <input
+                    {...register("seatsCapacity", { valueAsNumber: true })}
+                    id="seatsCapacity"
+                    type="number"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Seats Capacity"
+                  /> */}
+                  {errors.seatsCapacity && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.seatsCapacity.message}
+                    </p>
+                  )}
+                </div>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="fuelType">Fuel Type</CustomLabel>
+                  <CustomInput
+                    {...register("fuelType")}
+                    id="fuelType"
+                    type="text"
+                    placeholder="Enter Fuel Type"
+                  />
+                  {/* <label htmlFor="fuelType" className="form-label text-white">
+                    Fuel Type
+                  </label>
+                  <input
+                    {...register("fuelType")}
+                    id="fuelType"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter fuel Type"
+                  /> */}
+                  {errors.fuelType && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.fuelType.message}
+                    </p>
+                  )}
+                </div>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12  text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="vehicleImage">
+                    Vehicle Image
+                  </CustomLabel>
+                  <CustomInput
+                    {...register("vehicleImage")}
+                    id="vehicleImage"
+                    type="file"
+                    placeholder="Enter Vehicle Image"
+                    disabled
+                  />
+                  {/* <label
+                    htmlFor="vehicleImage"
+                    className="form-label text-white"
+                  >
+                    vehicle Image
+                  </label>
+                  <input
+                    {...register("vehicleImage")}
+                    id="vehicleImage"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Vehicle Image"
+                  /> */}
+                  {errors.vehicleImage && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.vehicleImage.message}
+                    </p>
+                  )}
+                </div>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12  text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="vehicleIcon">Vehicle Icon</CustomLabel>
+                  <CustomInput
+                    {...register("vehicleIcon")}
+                    id="vehicleIcon"
+                    type="file"
+                    placeholder="Enter Vehicle Icon"
+                    disabled
+                  />
+                  {/* <label
+                    htmlFor="vehicleIcon"
+                    className="form-label text-white"
+                  >
+                    Vehicle Icon
+                  </label>
+                  <input
+                    {...register("vehicleIcon")}
+                    id="vehicleIcon"
+                    type="text"
+                    className="form-control form-control-sm color-light-dark"
+                    placeholder="Enter Vehicle Icon"
+                  /> */}
+                  {errors.vehicleIcon && (
+                    <p className="text-danger mt-1 mb-0">
+                      {errors.vehicleIcon.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
+                <SubmitButton>Save Vehicle</SubmitButton>
+              </div>
+            </form>
+          </FormWrapper>
         </Modal.Body>
       </Modal>
     </>

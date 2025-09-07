@@ -4,7 +4,7 @@ import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useTourPlans, { TourPlan } from "@/app/hooks/useTourPlans";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getFormattedDate } from "@/app/utils";

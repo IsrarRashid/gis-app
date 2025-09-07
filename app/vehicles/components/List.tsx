@@ -4,7 +4,7 @@ import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useVehicle, { Vehicle } from "@/app/hooks/useVehicle";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getFormattedDate } from "@/app/utils";
@@ -164,6 +164,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 handleSort={() => handleSort("description")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="vehicle Number"
                 handleSort={() => handleSort("vehicleNumber")}
               />
@@ -180,26 +181,32 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 handleSort={() => handleSort("trasnmission")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="seats Capacity"
                 handleSort={() => handleSort("seatsCapacity")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="fuel Type"
                 handleSort={() => handleSort("fuelType")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="vehicle Image"
                 handleSort={() => handleSort("vehicleImage")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="vehicle Icon"
                 handleSort={() => handleSort("vehicleIcon")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="created at"
                 handleSort={() => handleSort("createdAt")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="updated at"
                 handleSort={() => handleSort("updatedAt")}
               />

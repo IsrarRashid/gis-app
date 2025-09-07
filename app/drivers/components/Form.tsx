@@ -8,6 +8,10 @@ import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import CustomInput from "@/app/components/Form/CustomInput";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -111,7 +115,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       </Button>
 
       <Modal
-        size="lg"
         show={show}
         onHide={handleClose}
         aria-labelledby="contained-modal-title-vcenter"
@@ -123,27 +126,26 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           className="p-0"
           style={{ background: "rgba(156,255,255,0)" }}
         >
-          <div
-            className="container-fluid pt-3 pb-3 ps-4 pe-4"
-            style={{
-              backgroundImage:
-                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-              borderRadius: "15px",
-              border: "1.7px solid rgba(255, 255, 255, 0.6)",
-            }}
+          <FormWrapper
+            heading={method === "POST" ? "Add Driver" : "Update Driver"}
           >
-            <div className="col-lg-12">
-              <p
-                className="text-center text-white mt-4"
-                style={{ fontSize: "1.5rem", fontWeight: "800" }}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div
+                className="row g-2 g-lg-3 mt-0"
+                style={{ marginBottom: "5px" }}
               >
-                {method === "POST" ? "ADD DRIVER" : "UPDATE DRIVER"}
-              </p>
-            </div>
-            <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
-              <div className="row d-flex justify-content-between">
-                <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
-                  <label htmlFor="driverName" className="form-label text-white">
+                <div
+                  className="col-lg-6 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="driverName">Driver Name</CustomLabel>
+                  <CustomInput
+                    {...register("driverName")}
+                    id="driverName"
+                    type="text"
+                    placeholder="Enter Driver Name"
+                  />
+                  {/* <label htmlFor="driverName" className="form-label text-white">
                     Driver Name
                   </label>
                   <input
@@ -152,15 +154,27 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     type="text"
                     className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Driver Name"
-                  />
+                  /> */}
                   {errors.driverName && (
                     <p className="text-danger mt-1 fs14px">
                       {errors.driverName.message}
                     </p>
                   )}
                 </div>
-                <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
-                  <label
+                <div
+                  className="col-lg-6 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="mobileNumber">
+                    Mobile Number
+                  </CustomLabel>
+                  <CustomInput
+                    {...register("mobileNumber")}
+                    id="mobileNumber"
+                    type="text"
+                    placeholder="Enter Mobile Number"
+                  />
+                  {/* <label
                     htmlFor="mobileNumber"
                     className="form-label text-white"
                   >
@@ -172,15 +186,26 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     type="text"
                     className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Mobile Number"
-                  />
+                  /> */}
                   {errors.mobileNumber && (
                     <p className="text-danger mt-1 fs14px">
                       {errors.mobileNumber.message}
                     </p>
                   )}
                 </div>
-                <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
-                  <label htmlFor="user_Id" className="form-label text-white">
+                <div
+                  className="col-lg-6 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="user_Id">User Id</CustomLabel>
+                  <CustomInput
+                    {...register("user_Id", { valueAsNumber: true })}
+                    id="user_Id"
+                    type="number"
+                    placeholder="Enter User Id"
+                  />
+
+                  {/* <label htmlFor="user_Id" className="form-label text-white">
                     User Id
                   </label>
                   <input
@@ -191,15 +216,25 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     placeholder="Enter User Id"
                     disabled
                     value={0}
-                  />
+                  /> */}
                   {errors.user_Id && (
                     <p className="text-danger mt-1 fs14px">
                       {errors.user_Id.message}
                     </p>
                   )}
                 </div>
-                <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
-                  <label
+                <div
+                  className="col-lg-6 col-md-6 col-sm-12  text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="driverImage">Driver Image</CustomLabel>
+                  <CustomInput
+                    {...register("driverImage")}
+                    id="driverImage"
+                    type="file"
+                    placeholder="Choose Driver Image"
+                  />
+                  {/* <label
                     htmlFor="driverImage"
                     className="form-label text-white"
                   >
@@ -212,24 +247,14 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Driver Image"
                     disabled
-                  />
+                  /> */}
                 </div>
               </div>
-              <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
-                <Button
-                  className="btn text-white w-100 border-0"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                    borderRadius: "12px",
-                  }}
-                  type="submit"
-                >
-                  Done
-                </Button>
+              <div className="col-lg-5 col-md-6 col-sm-4 mx-auto">
+                <SubmitButton>Save Driver</SubmitButton>
               </div>
             </form>
-          </div>
+          </FormWrapper>
         </Modal.Body>
       </Modal>
     </>

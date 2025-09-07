@@ -122,11 +122,14 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
         >
           <FormWrapper
             heading={
-              method === "POST" ? "Add Super Group" : "UPDATE Super Group"
+              method === "POST" ? "Add Super Group" : "Update Super Group"
             }
           >
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
+              <div
+                className="col text-start mt-0"
+                style={{ marginBottom: "10px" }}
+              >
                 <CustomLabel htmlFor="superGroupLabel">
                   Super Group Label
                 </CustomLabel>

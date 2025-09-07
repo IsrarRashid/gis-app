@@ -5,6 +5,7 @@ export interface Department {
   id: number;
   name: string;
   logo: string;
+  shortName: string;
   address: string;
   email: string;
   phoneNumber: string;

@@ -1,72 +1,250 @@
 "use client";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import Select, {
-  Props as ReactSelectProps,
-  StylesConfig,
+  ActionMeta,
   GroupBase,
+  MultiValue,
+  SingleValue,
+  StylesConfig,
 } from "react-select";
 
-// Define the option type
-export interface OptionType {
-  value: string | number;
-  label: string;
+interface Props {
+  options: OptionType[];
+  id?: string;
+  value?: OptionType[] | null; // can be undefined for uncontrolled/react-hook-form
+  onChangeSingle?: (
+    newValue: SingleValue<OptionType>,
+    actionMeta: ActionMeta<OptionType>
+  ) => void;
+  onChangeMulti?: (
+    newValue: MultiValue<OptionType>,
+    actionMeta: ActionMeta<OptionType>
+  ) => void;
+  placeholder?: string;
+  isClearable?: boolean;
+  isSearchable?: boolean;
   isDisabled?: boolean;
+  isMulti?: boolean;
+  closeMenuOnSelect?: boolean;
+  singleSelectStyles?: StylesConfig<OptionType, false, GroupBase<OptionType>>;
+  menuPlacement?: "auto" | "bottom" | "top";
 }
 
-// Props interface that extends React Select props
-interface CustomSelectProps
-  extends Omit<
-    ReactSelectProps<OptionType, boolean, GroupBase<OptionType>>,
-    "styles"
-  > {
-  // You can override styles if needed, otherwise it uses the default
-  styles?: StylesConfig<OptionType, boolean, GroupBase<OptionType>>;
-  // Add any additional custom props here if needed
-  customClassName?: string;
-}
+export type OptionType = { value: string; label: string };
 
-const CustomSelect = ({
-  styles = customSelectStyles,
-  isClearable = true,
-  isSearchable = true,
-  menuPlacement = "auto",
-  menuPosition = "absolute",
-  customClassName,
-  ...rest
-}: CustomSelectProps) => {
-  const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLElement | null>(
-    null
-  );
+export const defaultOption = { value: "", label: "Select" };
+export const defaultNumberOption = { value: "0", label: "Select" };
+export const defaultNegativeNumberOption = { value: "-1", label: "Select" };
 
-  useEffect(() => {
-    // This code only runs on the client side after the component mounts
-    setMenuPortalTarget(document.body);
-  }, []);
+const CustomSelect = forwardRef<any, Props>(
+  (
+    {
+      options,
+      id,
+      value,
+      onChangeSingle,
+      onChangeMulti,
+      placeholder = "Select...",
+      isClearable = false,
+      isSearchable = true,
+      isDisabled = false,
+      isMulti = false,
+      closeMenuOnSelect = false,
+      singleSelectStyles,
+      menuPlacement = "auto",
+    },
+    ref
+  ) => {
+    const [menuPortalTarget, setMenuPortalTarget] =
+      useState<HTMLElement | null>(null);
+    const [isClicked, setIsClicked] = useState(false);
 
-  return (
-    <Select<OptionType, boolean, GroupBase<OptionType>>
-      menuPortalTarget={menuPortalTarget}
-      menuPlacement={menuPlacement}
-      menuPosition={menuPosition}
-      styles={styles}
-      isClearable={isClearable}
-      isSearchable={isSearchable}
-      className={customClassName}
-      {...rest}
-    />
-  );
-};
+    useEffect(() => {
+      setMenuPortalTarget(document.body);
+    }, []);
+
+    // Custom Single Select Style
+    const customSingleSelectStyles: StylesConfig<
+      OptionType,
+      false,
+      GroupBase<OptionType>
+    > = {
+      control: (base, state) => ({
+        ...base,
+        "::-webkit-scrollbar": {
+          width: "8px", // Narrower scrollbar
+          height: "8px",
+        },
+        "::-webkit-scrollbar-track": {
+          background: "#f1f1f1",
+        },
+        "::-webkit-scrollbar-thumb": {
+          background: "#22a3bd",
+          borderRadius: "10px",
+        },
+        "::-webkit-scrollbar-thumb:hover": {
+          background: "#108fa8",
+        },
+        background: "rgba(255, 255, 255, 0.8)",
+        borderRadius: 7,
+        color: "#545861",
+        fontWeight: 500,
+        fontSize: "14px",
+        border: "none",
+        boxShadow: state.isFocused
+          ? "0 0 0 1.5px #0C8CE9" // focus glow
+          : "0 0 0 1.5px #eff0f2",
+        transition: "all 0.3s",
+      }),
+      dropdownIndicator: (base) => ({
+        ...base,
+        padding: 10.5,
+      }),
+      clearIndicator: (base) => ({
+        ...base,
+        padding: 4,
+      }),
+      valueContainer: (base) => ({
+        ...base,
+        padding: "0 6px",
+      }),
+      input: (base) => ({
+        ...base,
+        margin: 0,
+        padding: 0,
+      }),
+      menu: (base) => ({
+        ...base,
+        zIndex: 9999,
+        padding: "4px 8px",
+        borderRadius: 14,
+        border: 0,
+        boxShadow: "0px 0px 7px 3px rgba(0,0,0,0.1)",
+      }),
+      menuPortal: (base) => ({
+        ...base,
+        zIndex: 9999,
+      }),
+      option: (base, state) => ({
+        ...base,
+        backgroundColor: state.isSelected
+          ? "#C2E7E4" // selected background color
+          : state.isFocused
+          ? "#E4EDEC" // hover background color
+          : "white",
+        color: "#333",
+        fontSize: "14px",
+        padding: "10px",
+        borderRadius: 7,
+      }),
+      // Styles for the dropdown menu list (this is where scrollbar lives)
+      menuList: (base) => ({
+        ...base,
+        "::-webkit-scrollbar": {
+          width: "8px",
+          height: "8px",
+        },
+        "::-webkit-scrollbar-track": {
+          background: "#f1f1f1",
+        },
+        "::-webkit-scrollbar-thumb": {
+          background: "#22a3bd",
+          borderRadius: "10px",
+        },
+        "::-webkit-scrollbar-thumb:hover": {
+          background: "#108fa8",
+        },
+      }),
+    };
+
+    return singleSelectStyles ? (
+      <Select
+        options={options}
+        name={id}
+        id={id}
+        isClearable={isClearable}
+        isSearchable={isSearchable}
+        isDisabled={isDisabled}
+        placeholder={placeholder}
+        styles={singleSelectStyles}
+        menuPlacement={menuPlacement}
+        menuPosition="absolute"
+        closeMenuOnSelect={closeMenuOnSelect}
+        menuPortalTarget={menuPortalTarget}
+        value={value}
+        onChange={onChangeSingle}
+        onFocus={() => setIsClicked(true)}
+        onBlur={() => setIsClicked(false)}
+      />
+    ) : isMulti ? (
+      <Select
+        options={options}
+        name={id}
+        id={id}
+        isMulti={isMulti}
+        isClearable={isClearable}
+        isSearchable={isSearchable}
+        isDisabled={isDisabled}
+        placeholder={placeholder}
+        styles={customMultiSelectStyles}
+        menuPlacement={menuPlacement}
+        menuPosition="absolute"
+        closeMenuOnSelect={closeMenuOnSelect}
+        menuPortalTarget={menuPortalTarget}
+        value={value}
+        onChange={onChangeMulti}
+        onFocus={() => setIsClicked(true)}
+        onBlur={() => setIsClicked(false)}
+      />
+    ) : (
+      <Select
+        options={options}
+        name={id}
+        id={id}
+        isClearable={isClearable}
+        isSearchable={isSearchable}
+        isDisabled={isDisabled}
+        placeholder={placeholder}
+        styles={customSingleSelectStyles}
+        menuPlacement={menuPlacement}
+        menuPosition="absolute"
+        closeMenuOnSelect={closeMenuOnSelect}
+        menuPortalTarget={menuPortalTarget}
+        value={value}
+        onChange={onChangeSingle}
+        onFocus={() => setIsClicked(true)}
+        onBlur={() => setIsClicked(false)}
+      />
+    );
+  }
+);
+
+CustomSelect.displayName = "CustomSelect";
 
 export default CustomSelect;
 
-// Custom Select Styles
-const customSelectStyles: StylesConfig<
+// Custom styles for react-select multi selection options
+const customMultiSelectStyles: StylesConfig<
   OptionType,
-  boolean,
+  true,
   GroupBase<OptionType>
 > = {
   control: (base, state) => ({
     ...base,
+    "::-webkit-scrollbar": {
+      width: "8px", // Narrower scrollbar
+      height: "8px",
+    },
+    "::-webkit-scrollbar-track": {
+      background: "#f1f1f1",
+    },
+    "::-webkit-scrollbar-thumb": {
+      background: "#22a3bd",
+      borderRadius: "10px",
+    },
+    "::-webkit-scrollbar-thumb:hover": {
+      background: "#108fa8",
+    },
     fontSize: "14px",
     borderRadius: 7,
     background: "rgba(255, 255, 255, 0.8)",
@@ -80,7 +258,10 @@ const customSelectStyles: StylesConfig<
       border: "1px solid #0c8ce9", // hover border color
       boxShadow: "0 0 0 1px rgba(12, 140, 233, 0.4)", // hover glow
     },
-    minHeight: "38px",
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: "#1C6BA6", // ✅ selected value text
   }),
   dropdownIndicator: (base) => ({
     ...base,
@@ -118,119 +299,27 @@ const customSelectStyles: StylesConfig<
     fontSize: "14px",
     padding: "10px",
     borderRadius: 7,
-    cursor: "pointer",
-    "&:active": {
-      backgroundColor: "#E4EDEC",
+  }),
+  // Styles for the dropdown menu list (this is where scrollbar lives)
+  menuList: (base) => ({
+    ...base,
+    "::-webkit-scrollbar": {
+      width: "8px",
+      height: "8px",
+    },
+    "::-webkit-scrollbar-track": {
+      background: "#f1f1f1",
+    },
+    "::-webkit-scrollbar-thumb": {
+      background: "#22a3bd",
+      borderRadius: "10px",
+    },
+    "::-webkit-scrollbar-thumb:hover": {
+      background: "#108fa8",
     },
   }),
-  placeholder: (base) => ({
-    ...base,
-    color: "#999",
-    fontSize: "14px",
-  }),
-  singleValue: (base) => ({
-    ...base,
-    color: "#333",
-    fontSize: "14px",
-  }),
-  multiValue: (base) => ({
-    ...base,
-    backgroundColor: "#E4EDEC",
-    borderRadius: 4,
-  }),
-  multiValueLabel: (base) => ({
-    ...base,
-    color: "#333",
-    fontSize: "12px",
-  }),
-  multiValueRemove: (base) => ({
-    ...base,
-    color: "#666",
-    "&:hover": {
-      backgroundColor: "#d1d5db",
-      color: "#333",
-    },
+  multiValue: (provided: any) => ({
+    ...provided,
+    backgroundColor: "#B0E0E6", // Light blue for selected values
   }),
 };
-
-// Usage Examples:
-
-// 1. Single Select Usage:
-/*
-import CustomSelect, { OptionType } from './CustomSelect';
-
-const singleSelectOptions: OptionType[] = [
-  { value: 'option1', label: 'Option 1' },
-  { value: 'option2', label: 'Option 2' },
-  { value: 'option3', label: 'Option 3' },
-];
-
-const [selectedValue, setSelectedValue] = useState<OptionType | null>(null);
-
-<CustomSelect
-  options={singleSelectOptions}
-  value={selectedValue}
-  onChange={(newValue) => setSelectedValue(newValue)}
-  placeholder="Select an option..."
-  name="singleSelect"
-  id="singleSelect"
-/>
-*/
-
-// 2. Multi Select Usage:
-/*
-const multiSelectOptions: OptionType[] = [
-  { value: 'tag1', label: 'Tag 1' },
-  { value: 'tag2', label: 'Tag 2' },
-  { value: 'tag3', label: 'Tag 3' },
-  { value: 'tag4', label: 'Tag 4' },
-];
-
-const [selectedValues, setSelectedValues] = useState<OptionType[]>([]);
-
-<CustomSelect
-  options={multiSelectOptions}
-  value={selectedValues}
-  onChange={(newValue) => setSelectedValues(newValue as OptionType[])}
-  placeholder="Select multiple options..."
-  isMulti
-  name="multiSelect"
-  id="multiSelect"
-  closeMenuOnSelect={false}
-/>
-*/
-
-// 3. With Custom Styles:
-/*
-const customStyles: StylesConfig<OptionType, boolean, GroupBase<OptionType>> = {
-  ...customSelectStyles,
-  control: (base, state) => ({
-    ...base,
-    borderColor: state.isFocused ? '#10b981' : '#e5e7eb',
-    boxShadow: state.isFocused ? '0 0 0 1px rgba(16, 185, 129, 0.4)' : 'none',
-  }),
-};
-
-<CustomSelect
-  options={options}
-  value={value}
-  onChange={onChange}
-  styles={customStyles}
-/>
-*/
-
-// 4. With additional props:
-/*
-<CustomSelect
-  options={options}
-  value={value}
-  onChange={onChange}
-  placeholder="Choose district..."
-  isDisabled={isLoading}
-  isLoading={isLoading}
-  loadingMessage={() => "Loading districts..."}
-  noOptionsMessage={({ inputValue }) => `No districts found for "${inputValue}"`}
-  maxMenuHeight={200}
-  customClassName="my-custom-select"
-/>
-*/

@@ -26,7 +26,6 @@ const ReportsModal: any = ({ observations }: Props) => {
         className="modal fade"
         id="reportsModal"
         aria-labelledby="reportsModalLabel"
-        aria-hidden="true"
       >
         <div
           className="modal-dialog modal-dialog-scrollable modal-lg"

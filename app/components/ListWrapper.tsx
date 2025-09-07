@@ -1,26 +1,21 @@
 import { PropsWithChildren } from "react";
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
 
 const ListWrapper = ({ children }: PropsWithChildren) => {
   return (
     <div
-      className="shadow-sm"
+      className={`container-fluid bg-white ${plusJakartaSans.className}`}
       style={{
-        backgroundImage:
-          "linear-gradient(to bottom right, rgba(255, 255, 255, 0.6) , rgba(255, 255, 255, 0.1))",
+        border: "1.08px solid #CBD5E1",
         borderRadius: "15px",
-        padding: "2.7px",
       }}
     >
-      <div
-        className="container-fluid p-1"
-        style={{
-          backgroundImage:
-            "linear-gradient(to bottom left, rgba(239, 239, 239, 0.6) , rgba(255, 255, 255, 0.08))",
-          borderRadius: "15px",
-        }}
-      >
-        <div className="px-3 py-1">{children}</div>
-      </div>
+      {children}
     </div>
   );
 };

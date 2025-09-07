@@ -4,7 +4,7 @@ import { Modal } from "react-bootstrap";
 
 interface Props {
   button: ReactNode;
-  body: ReactNode;
+  body: ReactNode | ((close: () => void) => ReactNode); // ✅ make body a function
   modalId: string;
   size?: "sm" | "lg" | "xl" | undefined;
   isFullscreen?: true | false;
@@ -13,6 +13,7 @@ interface Props {
   HeaderTopPos?: number;
   showCloseButton?: true | false;
   buttonColumn?: string; // col || col-auto
+  dialogClassName?: string;
 }
 
 const CustomModal = ({
@@ -26,11 +27,19 @@ const CustomModal = ({
   HeaderTopPos = 35,
   showCloseButton = true,
   buttonColumn = "col",
+  dialogClassName = "custom-modal",
 }: Props) => {
   const handleClose = () => setShow(false);
   const [show, setShow] = useState(false);
   const handleShow = async () => {
     if (allowOpen) setShow(true);
+  };
+
+  const renderBody = () => {
+    if (typeof body === "function") {
+      return body(handleClose);
+    }
+    return body;
   };
 
   return (
@@ -52,7 +61,7 @@ const CustomModal = ({
         onHide={handleClose}
         aria-labelledby="position-relative contained-modal-title-vcenter"
         centered
-        dialogClassName="custom-modal"
+        dialogClassName={dialogClassName}
         fullscreen={isFullscreen ? true : undefined}
       >
         {showCloseButton && (
@@ -72,7 +81,7 @@ const CustomModal = ({
           className="p-0"
           style={{ background: "rgba(156,255,255,0)" }}
         >
-          {body}
+          {renderBody()}
         </Modal.Body>
       </Modal>
     </>

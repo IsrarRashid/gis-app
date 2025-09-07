@@ -1,5 +1,8 @@
-import { TEMP_TOUR_PLAN_API } from "../APIs";
+import { useSearchParams } from "next/navigation";
+import { EVALUATION_TEMP_TOUR_PLAN_API, TEMP_TOUR_PLAN_API } from "../APIs";
 import useData from "./useData";
+import { useMemo } from "react";
+import { TypeEnum } from "../dashboard/types/types";
 
 export interface TempTourPlan {
   tempId: number;
@@ -28,10 +31,20 @@ interface Props {
   refresh?: boolean;
 }
 
-const useTempTourPlans = ({ refresh = false }: Props = {}) =>
-  useData<TempTourPlan>({
-    refresh,
-    endpoint: TEMP_TOUR_PLAN_API + "/get-tour-plan",
-  });
+const useTempTourPlans = ({ refresh = false }: Props = {}) => {
+  const serachParams = useSearchParams();
+  const dashboardType = serachParams.get("dashboardType");
 
+  // useMemo to ensure recomputation when dashboardType changes
+  const endpoint = useMemo(() => {
+    return dashboardType === TypeEnum.EVALUATION
+      ? EVALUATION_TEMP_TOUR_PLAN_API + "/get-tour-plan"
+      : TEMP_TOUR_PLAN_API + "/get-tour-plan";
+  }, [dashboardType]);
+
+  return useData<TempTourPlan>({
+    refresh,
+    endpoint,
+  });
+};
 export default useTempTourPlans;

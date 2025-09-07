@@ -3,21 +3,18 @@ import { SECTOR_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useSectors, { Sector } from "@/app/hooks/useSectors";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getFormattedDate } from "@/app/utils";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import SectorForm from "./SectorForm";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -97,7 +94,8 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
     try {
       await apiClient.delete(`${SECTOR_API}/${id}`);
       // remove the deleted item from the data array
-      setData((prevData) => prevData.filter((item) => item.id !== id));
+      // seTableDataata((prevData) => prevData.filter((item) => item.id !== id));
+      setRefresh((prev) => !prev);
       notifyCreate(deleteMessage);
       console.log("item deleted successfully");
     } catch (err) {
@@ -129,19 +127,10 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
           </div>
         }
       />
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
-        >
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
@@ -149,76 +138,84 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                 handleSort={() => handleSort("description")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="parent sector"
                 handleSort={() => handleSort("parentId")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="sort id"
                 handleSort={() => handleSort("sortId")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="created at"
                 handleSort={() => handleSort("createdAt")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="update at"
                 handleSort={() => handleSort("updateAt")}
               />
-              <th colSpan={2}></th>
+              <th
+                style={{
+                  background: "#F8FAFC",
+                  borderBottom: "1.08px solid #CBD5E1",
+                  padding: "15.17px 26px",
+                }}
+              ></th>
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.name}</td>
-                <td>{d.description}</td>
-                <td>{getParentSector(d.parentId, data)}</td>
-                <td>{d.sortId}</td>
-                <td>
+              <tr key={d.id}>
+                <RowHeader>{d.id}</RowHeader>
+                <TableData>{d.name}</TableData>
+                <TableData>{d.description}</TableData>
+                <TableData>{getParentSector(d.parentId, data)}</TableData>
+                <TableData className="text-center">{d.sortId}</TableData>
+                <TableData>
                   {d.createdAt &&
                     getFormattedDate(new Date(d.createdAt), "short")}
-                </td>
-                <td>
+                </TableData>
+                <TableData>
                   {d.updateAt &&
                     getFormattedDate(new Date(d.updateAt), "short")}
-                </td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
-                <td>
-                  <SectorForm
-                    api={SECTOR_API}
-                    method="PUT"
-                    id={d.id}
-                    setRefresh={setRefresh}
-                    refresh={refresh}
-                    setData={setData}
-                    data={data}
-                  />
-                </td>
+                </TableData>
+                <TableData>
+                  <div className="col p-0">
+                    <div className="row d-flex flex-nowrap justify-content-center">
+                      <div className="col p-0">
+                        <DeleteModal handleDelete={handleDelete} id={d.id} />
+                      </div>
+                      <div className="col p-0">
+                        <SectorForm
+                          api={SECTOR_API}
+                          method="PUT"
+                          id={d.id}
+                          setRefresh={setRefresh}
+                          refresh={refresh}
+                          setData={setData}
+                          data={data}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </TableData>
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
-        <ToastContainer />
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

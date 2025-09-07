@@ -5,9 +5,13 @@ import Image from "next/image";
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import CustomInput from "@/app/components/Form/CustomInput";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -83,9 +87,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
       <Button
         type="button"
         className={`btn shadow ${
@@ -106,6 +107,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
       </Button>
 
       <Modal
+        size="lg"
         show={show}
         onHide={handleClose}
         aria-labelledby="contained-modal-title-vcenter"
@@ -117,92 +119,99 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
           className="p-0"
           style={{ background: "rgba(156,255,255,0)" }}
         >
-          <div
-            className="container-fluid pt-3 pb-3 ps-4 pe-4"
-            style={{
-              backgroundImage:
-                "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-              borderRadius: "15px",
-              border: "1.7px solid rgba(255, 255, 255, 0.6)",
-            }}
-          >
-            <div className="row flex-column justify-content-center mb-4">
-              <div className="col-lg-12">
-                <p
-                  className="text-center text-white mt-4"
-                  style={{ fontSize: "1.5rem", fontWeight: "800" }}
+          <FormWrapper heading={method === "POST" ? "Add Role" : "Update Role"}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div
+                className="row g-2 g-lg-3 mt-0"
+                style={{ marginBottom: "5px" }}
+              >
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  {method === "POST" ? "ADD ROLE" : "UPDATE ROLE"}
-                </p>
-              </div>
-              <form className="ps-5 pe-5" onSubmit={handleSubmit(onSubmit)}>
-                <div className="col-lg-12 col-md-12 col-sm-12 mb-3 text-start">
-                  <label htmlFor="name" className="form-label text-white">
-                    Name
-                  </label>
-                  <input
+                  <CustomLabel htmlFor="name">Name</CustomLabel>
+                  <CustomInput
                     {...register("name")}
                     id="name"
                     type="text"
-                    className="form-control form-control-sm color-light-dark"
                     placeholder="Enter Role Name"
                   />
+                  {/* <label htmlFor="name" className="form-label text-white">
+                  Name
+                </label>
+                <input
+                  {...register("name")}
+                  id="name"
+                  type="text"
+                  className="form-control form-control-sm color-light-dark"
+                  placeholder="Enter Role Name"
+                /> */}
                   {errors.name && (
                     <p className="text-danger mt-1 fs14px">
                       {errors.name.message}
                     </p>
                   )}
                 </div>
-                <div className="col mb-3">
-                  <div className="row d-flex justify-content-between">
-                    <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-start">
-                      <label
-                        htmlFor="normalizedName"
-                        className="form-label text-white"
-                      >
-                        Normalized Name
-                      </label>
-                      <input
-                        {...register("normalizedName")}
-                        id="normalizedName"
-                        type="text"
-                        className="form-control form-control-sm color-light-dark"
-                        placeholder="Enter Normalized Name"
-                      />
-                    </div>
-                    <div className="col-lg-6 col-md-6 col-sm-12 text-start">
-                      <label
-                        htmlFor="concurrencyStamp"
-                        className="form-label text-white"
-                      >
-                        Concurrency Stamp
-                      </label>
-                      <input
-                        {...register("concurrencyStamp")}
-                        id="concurrencyStamp"
-                        type="text"
-                        className="form-control form-control-sm color-light-dark"
-                        placeholder="Enter Concurrency Stamp"
-                      />
-                    </div>
-                  </div>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="normalizedName">
+                    Normalized Name
+                  </CustomLabel>
+                  <CustomInput
+                    {...register("normalizedName")}
+                    id="normalizedName"
+                    type="text"
+                    placeholder="Enter Normalized Name"
+                  />
+                  {/* <label
+                      htmlFor="normalizedName"
+                      className="form-label text-white"
+                    >
+                      Normalized Name
+                    </label>
+                    <input
+                      {...register("normalizedName")}
+                      id="normalizedName"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark"
+                      placeholder="Enter Normalized Name"
+                    /> */}
                 </div>
-                <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <Button
-                    className="btn text-white w-100 border-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                      borderRadius: "12px",
-                    }}
-                    type="submit"
-                  >
-                    Done
-                  </Button>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="concurrencyStamp">
+                    Concurrency Stamp
+                  </CustomLabel>
+                  <CustomInput
+                    {...register("concurrencyStamp")}
+                    id="concurrencyStamp"
+                    type="text"
+                    placeholder="Enter Concurrency Stamp"
+                  />
+                  {/* <label
+                      htmlFor="concurrencyStamp"
+                      className="form-label text-white"
+                    >
+                      Concurrency Stamp
+                    </label>
+                    <input
+                      {...register("concurrencyStamp")}
+                      id="concurrencyStamp"
+                      type="text"
+                      className="form-control form-control-sm color-light-dark"
+                      placeholder="Enter Concurrency Stamp"
+                    /> */}
                 </div>
-              </form>
-            </div>
-          </div>
+              </div>
+              <div className="col-lg-4 col-md-6 col-sm-6 mx-auto">
+                <SubmitButton>Save Role</SubmitButton>
+              </div>
+            </form>
+          </FormWrapper>
         </Modal.Body>
       </Modal>
     </>

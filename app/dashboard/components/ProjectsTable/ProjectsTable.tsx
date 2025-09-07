@@ -1,14 +1,16 @@
 "use client";
+import { GENERATE_REPORT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import TableHeading from "@/app/components/TableHeading";
+import { defaultOption } from "@/app/components/Form/CustomSelect";
+import TableHeading from "@/app/components/Table/TableHeading";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import ProjectReportOverviewModal from "@/app/dashboard/components/projectReportOverview/ProjectReportOverviewModal";
-import useDistrict from "@/app/hooks/useDistrict";
-import useSectors from "@/app/hooks/useSectors";
-import useUsers from "@/app/hooks/useUsers";
+import { District } from "@/app/hooks/useDistrict";
+import { Sector } from "@/app/hooks/useSectors";
+import { User } from "@/app/hooks/useUsers";
+import apiClient, { AxiosError } from "@/app/services/api-client";
 import {
   addDayToFormattedDate,
-  defaultOption,
   displayStatusText,
   exportToPDF,
   formatAmountWithCommas,
@@ -37,6 +39,9 @@ import {
 } from "react-icons/md";
 import Select, { SingleValue, StylesConfig } from "react-select";
 import styles from "./ProjectsTable.module.css";
+import { ReportTypeStatusEnum } from "../../types/reportTypeStatus";
+import { toast } from "react-toastify";
+import Pagination from "@/app/components/Table/Pagination";
 
 // Define the type of the range state
 interface RangeType {
@@ -94,6 +99,10 @@ interface Props {
   setProjectsData: Dispatch<SetStateAction<ProjectsList[] | undefined>>;
   label: string;
   keys: (keyof ProjectsList)[];
+  role: string;
+  districts: District[];
+  sectors: Sector[];
+  users: User[];
   allowLink?: boolean;
 }
 
@@ -112,13 +121,12 @@ const ProjectsTable = ({
   setProjectsData,
   label,
   keys,
+  districts,
+  sectors,
+  users,
   allowLink = true,
+  role = "",
 }: Props) => {
-  const [refresh, setRefresh] = useState(false);
-  const { data: districts } = useDistrict({ refresh });
-  const { data: sectors } = useSectors({ refresh });
-  const { data: users } = useUsers({ refresh });
-
   const customStyles: StylesConfig<Option, false> = {
     control: (base) => ({
       ...base,
@@ -978,6 +986,41 @@ const ProjectsTable = ({
     setIsExpanded(!isExpanded);
   };
 
+  const reportPdfDownload = async (
+    visitId: number,
+    projectId: number,
+    reportTypeRequest: number
+  ) => {
+    try {
+      const response = await apiClient.post(
+        `${GENERATE_REPORT_API}/GetReportPath`,
+        {
+          visitId,
+          projectId,
+          reportTypeRequest,
+        }
+      );
+
+      console.log("response", response);
+
+      const fileUrl = process.env.NEXT_PUBLIC_BACKEND_API + response.data.data; // API should return full URL or relative path
+
+      if (fileUrl) {
+        // Trigger download
+        const link = document.createElement("a");
+        link.href = fileUrl;
+        link.download;
+        link.target = "_blank";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error((err as AxiosError).message);
+    }
+  };
+
   return (
     <div className="d-flex">
       <div className={`${styles.sidenav} ${isExpanded ? styles.expanded : ""}`}>
@@ -1469,7 +1512,7 @@ const ProjectsTable = ({
       <div
         className={`${styles.mainContent} ${
           isExpanded ? styles.shiftRight : ""
-        } flex-grow-1 p-3 pt-0 border border-white table-responsive`}
+        } flex-grow-1 p-3 pt-0 border border-white`}
         style={{
           borderRadius: "10px",
           background: "#CFE6F8",
@@ -1478,97 +1521,47 @@ const ProjectsTable = ({
       >
         {/* <div style={{ height: "96vh", overflow: "hidden" }}> */}
         {/* <ScrollWrapper> */}
-        <div style={{ height: "96vh" }}>
+        <div className="text-center text-white rounded bg-color-sea-blue">
+          <div className="row d-flex m-0">
+            <div className="col m-auto text-start">{/* <ImCross /> */}</div>
+            <div className="col" style={{ marginTop: "10px" }}>
+              <p className="m-0 fs12px fw-bold" style={{ letterSpacing: 1 }}>
+                List of {label}
+              </p>
+            </div>
+            <div className="col d-flex justify-content-end mt-1 mb-1">
+              <DownloadDropDown
+                onClickPdf={() =>
+                  tableRows &&
+                  exportToPDF(columns, tableRows, new Date(), label)
+                }
+                onClickExcel={exportToExcel}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="row d-flex justify-content-between p-3">
+          <div className="col-lg-6 col-md-5 col-sm-12">
+            <p>
+              Showing:{" "}
+              <span className="fw-bold">
+                {searchTerm || dropdownFilterValue.length > 0
+                  ? `${filteredData.length}/${filteredData.length}`
+                  : projectsData?.length}{" "}
+                {label}
+              </span>
+            </p>
+          </div>
+        </div>
+        <div className="table-responsive mb-2" style={{ height: "96vh" }}>
           <table
             id="my-table"
-            className="table table-hover mb-5 "
+            className="table table-hover mb-0"
             style={{
               border: ".41px solid rgba(159, 159, 159, 0.75) !important",
             }}
           >
             <thead>
-              <tr>
-                <th
-                  colSpan={keys?.length}
-                  className="p-0 text-center text-white rounded bg-color-sea-blue"
-                >
-                  <div className="row d-flex m-0">
-                    <div className="col m-auto text-start">
-                      {/* <ImCross /> */}
-                    </div>
-                    <div className="col" style={{ marginTop: "10px" }}>
-                      <p
-                        className="m-0 fs12px fw-bold"
-                        style={{ letterSpacing: 1 }}
-                      >
-                        List of {label}
-                      </p>
-                    </div>
-                    <div className="col d-flex justify-content-end mt-1 mb-1">
-                      {/* <Dropdown>
-                        <Dropdown.Toggle variant="light" id="dropdown-basic">
-                          Downloads&nbsp;
-                          <Image
-                            src={downloadLineBlack}
-                            alt="download"
-                            width={12}
-                            height={15}
-                          />
-                        </Dropdown.Toggle>
-
-                        <Dropdown.Menu>
-                          <Dropdown.Item
-                            className="text-center"
-                            onClick={() =>
-                              tableRows &&
-                              exportToPDF(columns, tableRows, new Date(), label)
-                            }
-                          >
-                            PDF&nbsp;
-                            <Image src={pdf} alt="pdf" width={24} height={24} />
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            className="text-center"
-                            onClick={exportToExcel}
-                          >
-                            Excel&nbsp;
-                            <Image
-                              src={excel}
-                              alt="excel"
-                              width={24}
-                              height={24}
-                            />
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown> */}
-                      <DownloadDropDown
-                        onClickPdf={() =>
-                          tableRows &&
-                          exportToPDF(columns, tableRows, new Date(), label)
-                        }
-                        onClickExcel={exportToExcel}
-                      />
-                    </div>
-                  </div>
-                </th>
-              </tr>
-              <tr>
-                <th colSpan={keys?.length} className="p-0">
-                  <div className="row m-0 d-flex justify-content-between p-3">
-                    <div className="col-lg-6 col-md-5 col-sm-12">
-                      <p>
-                        Showing:{" "}
-                        <span className="fw-bold">
-                          {searchTerm || dropdownFilterValue.length > 0
-                            ? `${filteredData.length}/${filteredData.length}`
-                            : projectsData?.length}{" "}
-                          {label}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </th>
-              </tr>
               <tr
                 className={`color-dark-blue cursor-pointer text-center ${inter.className}`}
                 style={{
@@ -1723,17 +1716,45 @@ const ProjectsTable = ({
                     return (
                       <td key={key}>
                         {key === "projectName" &&
-                        allowLink &&
                         d.reportStatus !== 0 &&
                         d.reportStatus !== 1 &&
                         d.reportStatus !== 2 ? (
-                          <Link
-                            target="_blank"
-                            href={`/project-details-dashboard/${d.id}/${d.visitId}`}
-                            className="text-start color-sea-blue"
-                          >
-                            {d[key]}
-                          </Link>
+                          <>
+                            {role === "Special Role" ? (
+                              // Special Role handling based on tile
+                              label === "Projects" ? (
+                                // Just plain text for first 2 tiles
+                                <p className="text-start">{d[key]}</p>
+                              ) : (
+                                // PDF click for remaining tiles
+                                <div
+                                  className="text-start color-sea-blue cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    reportPdfDownload(
+                                      d.visitId,
+                                      d.id,
+                                      ReportTypeStatusEnum.MONITORING
+                                    );
+                                  }}
+                                >
+                                  {d[key]}
+                                </div>
+                              )
+                            ) : allowLink ? (
+                              // Default: show link if allowed
+                              <Link
+                                target="_blank"
+                                href={`/project-details-dashboard/${d.id}/${d.visitId}`}
+                                className="text-start color-sea-blue"
+                              >
+                                {d[key]}
+                              </Link>
+                            ) : (
+                              // Fallback plain text
+                              <p className="text-start">{d[key]}</p>
+                            )}
+                          </>
                         ) : key === "reportCompletion" ? (
                           <ProjectReportOverviewModal
                             value={d[key]}
@@ -1812,7 +1833,7 @@ const ProjectsTable = ({
                   <td></td>
                 </tr>
               )}
-              <tr>
+              {/* <tr>
                 <td colSpan={keys.length} className="p-0">
                   <div className="row d-flex mb-2 m-0">
                     <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
@@ -1903,11 +1924,20 @@ const ProjectsTable = ({
                     </Button>
                   </div>
                 </td>
-              </tr>
+              </tr> */}
             </tbody>
           </table>
           {/* </ScrollWrapper> */}
         </div>
+        <Pagination
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={projectsData}
+          rows={rows}
+          setRows={setRows}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
     </div>
   );

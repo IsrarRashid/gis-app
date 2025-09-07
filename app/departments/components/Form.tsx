@@ -14,7 +14,6 @@ import toast from "react-hot-toast";
 import Select from "react-select";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
-import { ImCross } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
 
 const departmentSchema = z.object({
@@ -39,9 +38,10 @@ export const schema = z.object({
   departmentRights: z
     .array(departmentRightSchema)
     .default([])
-    .refine((val) => val.length >= 1, {
-      message: "Please add at least one department right.",
-    }),
+    // .refine((val) => val.length >= 1, {
+    //   message: "Please add at least one department right.",
+    // })
+    .optional(),
 });
 
 export type DepartmentWithRights = z.infer<typeof schema>;
@@ -129,7 +129,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
   useEffect(() => {
     const getFiledList = async () => {
       try {
-        const response = await apiClient.get(`${DEPARTMENT_API}/GetFiledList`);
+        const response = await apiClient.get(`${DEPARTMENT_API}/GetFieldList`);
         console.log(response);
         setFiledList(response.data.data);
       } catch (err) {
@@ -175,7 +175,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
     }
   };
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name: "departmentRights",
   });
@@ -196,21 +196,47 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
 
   const handleShow = async () => {
     setShow(true);
-    // if (method === "PUT") {
-    //   try {
-    //     const response = await apiClient.get(`${api}/${id}`);
-    //     const itemData = response.data.data;
-    //     setValue("id", itemData.id);
-    //     setValue("name", itemData.name);
-    //     setValue("logo", itemData.logo);
-    //     setValue("address", itemData.address);
-    //     setValue("email", itemData.email);
-    //     setValue("phoneNumber", itemData.phoneNumber);
-    //   } catch (err) {
-    //     console.log((err as AxiosError).message);
-    //     toast.error((err as AxiosError).message);
-    //   }
-    // }
+    if (method === "PUT") {
+      try {
+        const response = await apiClient.get(`${api}/${id}`);
+        console.log("get response", response.data);
+        const itemData: DepartmentWithRights = response.data.data;
+        setValue("department.id", itemData.department.id);
+        setValue("department.name", itemData.department.name);
+        setValue("department.shortName", itemData.department.shortName);
+        setValue("department.logo", itemData.department.logo);
+        setValue("department.address", itemData.department.address);
+        setValue("department.email", itemData.department.email);
+        setValue("department.phoneNumber", itemData.department.phoneNumber);
+
+        // Reverse map: string fieldName → numeric key
+        const reverseFiledList: Record<string, string> = {};
+        Object.entries(filedList).forEach(([key, value]) => {
+          reverseFiledList[value] = key;
+        });
+
+        if (itemData.departmentRights && itemData.departmentRights.length > 0) {
+          // Replace with numeric key instead of string label
+          const updatedRights = itemData.departmentRights.map((item) => ({
+            ...item,
+            fieldName: reverseFiledList[item.fieldName] || "", // convert to number key
+          }));
+
+          replace(updatedRights);
+
+          // Fetch options for each field
+          updatedRights.forEach((item, index) => {
+            const fieldNameId = Number(item.fieldName); // Make sure it's numeric
+            if (fieldNameId) {
+              getDataAgainstFiled(fieldNameId, index);
+            }
+          });
+        }
+      } catch (err) {
+        console.log((err as AxiosError).message);
+        toast.error((err as AxiosError).message);
+      }
+    }
   };
 
   // Options for your dropdown
@@ -252,16 +278,22 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
     console.log("Form Data:", formData);
     console.log(errors);
 
-    // const modifiedFormData = {
-    //   ...formData,
-    //   parentId: formData.parentId === 0 ? null : formData.parentId,
-    // };
+    const modifiedFormData = {
+      ...formData, // your form data
+      departmentRights: formData.departmentRights?.map((right) => ({
+        ...right,
+        fieldName:
+          filedList[right.fieldName as keyof FiledList] || right.fieldName,
+      })),
+    };
+
+    console.log("modified Form Data:", modifiedFormData);
 
     try {
       const response = await apiClient({
         method: method,
-        url: method === "POST" ? api : `${api}/${id}`,
-        data: formData,
+        url: method === "POST" ? api : `${api}/Update`,
+        data: modifiedFormData,
       });
       console.log("Response:", response);
       setRefresh((prev) => !prev);

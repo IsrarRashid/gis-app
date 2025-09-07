@@ -7,13 +7,12 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import filterBlack from "../../../public/icons/filterBlack.svg";
 import { FilterData } from "./Dashboard";
 import { Modal } from "react-bootstrap";
-
-interface Filter {
-  label: string;
-  filterIdentifier: string;
-  dataType: string;
-  filterValues: [string];
-}
+import { Filter } from "./FilterButtons";
+import {
+  adpFilters,
+  cmInitiativeFilters,
+  oldCmInitiativeFilters,
+} from "../filters";
 
 interface Props {
   otherFilters: FilterData[];
@@ -21,8 +20,7 @@ interface Props {
   handleSubmit: (filterData: FilterData[]) => Promise<void>;
   combinedFilters: FilterData[];
   activeFilter: string;
-  cmInitiativeFilters: FilterData[];
-  adpFilters: FilterData[];
+  userFiltersData: Filter[];
 }
 
 const FilterModal = ({
@@ -31,10 +29,8 @@ const FilterModal = ({
   handleSubmit,
   combinedFilters,
   activeFilter,
-  cmInitiativeFilters,
-  adpFilters,
+  userFiltersData,
 }: Props) => {
-  const [data, setData] = useState<Filter[]>();
   const [count, setCount] = useState(otherFilters.length);
   // State to hold filter data
   // const [filterData, setOtherFilters] = useState<FilterData[]>([]);
@@ -105,21 +101,6 @@ const FilterModal = ({
     });
   };
 
-  useEffect(() => {
-    const getFilters = async (userId: number) => {
-      try {
-        const response = await apiClient.get(
-          `${FILTER_SETTING_API}/GetUserFilters?userId=${userId}`
-        );
-        setData(response.data.data);
-        console.log("filtersss", response);
-      } catch (err) {
-        console.error("Submission error:", err);
-      }
-    };
-    getFilters(0);
-  }, []);
-
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -161,45 +142,49 @@ const FilterModal = ({
               >
                 <h3 className="fw-bold text-center">Filter Menu</h3>
                 <div className="row d-flex mb-3">
-                  {data &&
-                    data.map((d, i) => (
-                      <div
-                        key={i}
-                        className="col-lg-6 col-md-6 col-sm-12 text-start mb-3"
+                  {userFiltersData.map((d, i) => (
+                    <div
+                      key={i}
+                      className="col-lg-6 col-md-6 col-sm-12 text-start mb-3"
+                    >
+                      <label htmlFor={d.label} className="form-label">
+                        {d.label}
+                      </label>
+                      <select
+                        id={d.label}
+                        ref={(el) => {
+                          selectRefs.current[i] = el;
+                        }} // Type-safe ref assignment
+                        className="form-select form-select-sm"
+                        aria-label={d.label}
+                        name={d.label}
+                        style={{
+                          backgroundColor: selectedIndices[i]
+                            ? "yellow"
+                            : "white", // Change background color
+                        }}
+                        onChange={(e) =>
+                          handleSelectChange(
+                            d.filterIdentifier,
+                            e.target.value,
+                            i
+                          )
+                        }
+                        value={
+                          otherFilters.find(
+                            (f) => f.filterIdentifier === d.filterIdentifier
+                          )?.filterValues || ""
+                        }
                       >
-                        <label htmlFor={d.label} className="form-label">
-                          {d.label}
-                        </label>
-                        <select
-                          id={d.label}
-                          ref={(el) => {
-                            selectRefs.current[i] = el;
-                          }} // Type-safe ref assignment
-                          className="form-select form-select-sm"
-                          aria-label={d.label}
-                          name={d.label}
-                          style={{
-                            backgroundColor: selectedIndices[i]
-                              ? "yellow"
-                              : "white", // Change background color
-                          }}
-                          onChange={(e) =>
-                            handleSelectChange(
-                              d.filterIdentifier,
-                              e.target.value,
-                              i
-                            )
-                          }
-                        >
-                          <option value="">Select</option>
-                          {d.filterValues.map((f, j) => (
-                            <option key={j} value={f}>
-                              {f}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    ))}
+                        <option value="">Select</option>
+                        {d.filterValues.map((f, j) => (
+                          <option key={j} value={f}>
+                            {f}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ))}
                   {/* <div className="col-lg-6 col-md-6 col-sm-12 text-start mb-3">
                       <label htmlFor="sectorId" className="form-label">
                         Department
@@ -219,17 +204,34 @@ const FilterModal = ({
                   <div className="col-lg-6 col-md-6 col-sm-12 text-end">
                     <Button
                       className="btn w-50 fs-5 text-white"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
                       onClick={() => {
+                        const yearFilter = otherFilters.find(
+                          (filter) => filter.filterIdentifier === "Year"
+                        );
                         if (activeFilter === "cmInitiative") {
-                          handleSubmit([
-                            ...cmInitiativeFilters,
-                            ...otherFilters,
-                          ]);
+                          if (
+                            yearFilter &&
+                            yearFilter.filterValues === "2025-2026"
+                          ) {
+                            handleSubmit([
+                              ...cmInitiativeFilters,
+                              ...otherFilters,
+                            ]);
+                          } else if (!yearFilter) {
+                            handleSubmit([
+                              ...cmInitiativeFilters,
+                              ...otherFilters,
+                            ]);
+                          } else {
+                            handleSubmit([
+                              ...oldCmInitiativeFilters,
+                              ...otherFilters,
+                            ]);
+                          }
                         } else {
                           handleSubmit([...adpFilters, ...otherFilters]);
                         }
+                        handleClose();
                       }}
                       style={{
                         backgroundImage:
@@ -243,9 +245,10 @@ const FilterModal = ({
                   <div className="col-lg-6 col-md-6 col-sm-12 text-start">
                     <Button
                       className="btn w-50 fs-5"
-                      onClick={handleReset}
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
+                      onClick={() => {
+                        handleReset();
+                        handleClose();
+                      }}
                       style={{
                         border: "2px solid #0C8CE9",
                         color: "#0C8CE9",

@@ -1,24 +1,23 @@
 "use client";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import HirarchyFlow from "./HirarchyFlow";
-import { MarkerType, Node } from "@xyflow/react";
-import { Edge } from "@xyflow/react";
-import { HiOutlineTrash } from "react-icons/hi";
+import { DEPARTMENT_ROLES_SORTING_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import { FiArrowRightCircle } from "react-icons/fi";
-import { GoArrowLeft } from "react-icons/go";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { SlSizeFullscreen } from "react-icons/sl";
-import { getDaysAgo, getTimeAgo, hexToRgba, Option } from "@/app/utils";
-import { RxExitFullScreen } from "react-icons/rx";
-import { BsFullscreenExit } from "react-icons/bs";
-import Link from "next/link";
-import Select, { SingleValue, StylesConfig } from "react-select";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import useRoles from "@/app/hooks/useRoles";
 import apiClient from "@/app/services/api-client";
+import { getTimeAgo, hexToRgba, Option } from "@/app/utils";
+import { Edge, MarkerType, Node } from "@xyflow/react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { BsFullscreenExit } from "react-icons/bs";
+import { FiArrowRightCircle } from "react-icons/fi";
+import { GoArrowLeft } from "react-icons/go";
+import { HiOutlineTrash } from "react-icons/hi";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
+import { SlSizeFullscreen } from "react-icons/sl";
+import { SingleValue, StylesConfig } from "react-select";
 import { toast } from "react-toastify";
-import { DEPARTMENT_ROLES_SORTING_API } from "@/app/APIs";
+import HirarchyFlow from "./HirarchyFlow";
 
 interface DepartmentRolesSorting {
   roleId: number | unknown;
@@ -53,64 +52,66 @@ const HierarchyBuilder = () => {
   }, []);
 
   useEffect(() => {
-    // Convert data to nodes and edges
-    const loadedNodes: Node[] = data.map((item, index) => {
-      const id = (index + 1).toString(); // generate node ID from index
-      return {
-        id,
-        data: {
-          role: item.roleId,
-          description: item.description,
-          label: getNodeLabel(
-            item.roleId as number,
-            item.description as string,
-            index,
-            () => handleDeleteNode(id)
-          ),
-        },
-        position: { x: 50 * index, y: 110 * index },
-        style: {
-          backgroundColor: hexToRgba(selectedColor, 0.2),
-          color: "#000",
-          padding: 10,
-          borderRadius: 8,
-          fontWeight: "bold",
-          textAlign: "center",
-          border: `1px solid ${hexToRgba(selectedColor, 1)}`,
-          width: "450px",
-        },
-      };
-    });
+    if (data) {
+      // Convert data to nodes and edges
+      const loadedNodes: Node[] = data.map((item, index) => {
+        const id = (index + 1).toString(); // generate node ID from index
+        return {
+          id,
+          data: {
+            role: item.roleId,
+            description: item.description,
+            label: getNodeLabel(
+              item.roleId as number,
+              item.description as string,
+              index,
+              () => handleDeleteNode(id)
+            ),
+          },
+          position: { x: 50 * index, y: 110 * index },
+          style: {
+            backgroundColor: hexToRgba(selectedColor, 0.2),
+            color: "#000",
+            padding: 10,
+            borderRadius: 8,
+            fontWeight: "bold",
+            textAlign: "center",
+            border: `1px solid ${hexToRgba(selectedColor, 1)}`,
+            width: "450px",
+          },
+        };
+      });
 
-    const loadedEdges: Edge[] = [];
+      const loadedEdges: Edge[] = [];
 
-    for (let i = 0; i < data.length - 1; i++) {
-      loadedEdges.push({
-        id: `e${i + 1}-${i + 2}`,
-        source: (i + 1).toString(),
-        target: (i + 2).toString(),
-        type: "step",
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 20,
-          height: 20,
-          color: "#0C8CE9",
-        },
-        style: {
-          strokeWidth: 2,
-          stroke: "#939393",
-        },
+      for (let i = 0; i < data.length - 1; i++) {
+        loadedEdges.push({
+          id: `e${i + 1}-${i + 2}`,
+          source: (i + 1).toString(),
+          target: (i + 2).toString(),
+          type: "step",
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            width: 20,
+            height: 20,
+            color: "#0C8CE9",
+          },
+          style: {
+            strokeWidth: 2,
+            stroke: "#939393",
+          },
+        });
+      }
+
+      setNodes(loadedNodes);
+      setEdges(loadedEdges);
+      setNodeId(data.length + 1); // increment for new nodes later
+
+      console.log("📦 Reconstructed flow from DB", {
+        loadedNodes,
+        loadedEdges,
       });
     }
-
-    setNodes(loadedNodes);
-    setEdges(loadedEdges);
-    setNodeId(data.length + 1); // increment for new nodes later
-
-    console.log("📦 Reconstructed flow from DB", {
-      loadedNodes,
-      loadedEdges,
-    });
   }, [data]);
 
   useEffect(() => {
@@ -484,7 +485,7 @@ const HierarchyBuilder = () => {
   const { data: roles } = useRoles();
   const defaultNumberOption = { value: "-1", label: "Select" };
 
-  const roleNames = roles.map((role) => {
+  const roleNames: OptionType[] = roles.map((role) => {
     return {
       value: String(role.id),
       label: role.name,
@@ -667,17 +668,12 @@ const HierarchyBuilder = () => {
               Select Role
             </label>
             {isClient && (
-              <Select
+              <CustomSelect
                 options={[defaultNumberOption, ...roleNames]}
-                name="role"
                 id="role"
                 isClearable
                 isSearchable
-                menuPlacement="auto"
-                menuPosition="absolute"
-                menuPortalTarget={document.body}
-                styles={customStyles}
-                onChange={(
+                onChangeSingle={(
                   newValue: SingleValue<{ value: string; label: string }>
                 ) => {
                   if (newValue) {

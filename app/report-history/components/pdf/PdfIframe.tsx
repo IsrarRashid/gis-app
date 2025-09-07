@@ -1,15 +1,26 @@
+import { useEffect, useState } from "react";
+
 interface Props {
   reportPath: string;
-  key: string;
+  iframeKey: string;
 }
 
-const PdfIframe: React.FC<Props> = ({ reportPath, key }) => {
-  if (!reportPath) return <p>No report available</p>;
-  const timestamp = new Date().getTime();
-  const srcWithTimestamp = `${reportPath}?t=${timestamp}`;
+const PdfIframe: React.FC<Props> = ({ reportPath, iframeKey }) => {
+  const [timeStamp, setTimeStamp] = useState(0);
+  const [srcWithTimestamp, setSrcWithTimestamp] = useState("");
+
+  useEffect(() => {
+    const timestamp = new Date().getTime();
+    if (timestamp) setTimeStamp(timestamp);
+  }, [reportPath]);
+
+  useEffect(() => {
+    if (timeStamp) setSrcWithTimestamp(`${reportPath}?t=${timeStamp}`);
+  }, [timeStamp]);
+
   return (
     <iframe
-      key={key}
+      key={iframeKey}
       src={srcWithTimestamp}
       width="100%"
       height="600px"

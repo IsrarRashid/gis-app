@@ -7,7 +7,7 @@ import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
-import TableHeading from "@/app/components/TableHeading";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useAttributeGroups, {
   AttributeGroup,
 } from "@/app/hooks/useAttributeGroups";
@@ -158,14 +158,17 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
                 handleSort={() => handleSort("parentName")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="sort id"
                 handleSort={() => handleSort("sortId")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="created at"
                 handleSort={() => handleSort("createdAt")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="updated at"
                 handleSort={() => handleSort("updatedAt")}
               />

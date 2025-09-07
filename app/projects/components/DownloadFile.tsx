@@ -564,7 +564,7 @@ const DownloadFile = () => {
           <div className="col-12">
             <div className="col mb-5">
               <div className="row d-flex justify-content-start">
-                <div className="col-9 border border-dark border-2">
+                <div className="col-9 border-dark border-2">
                   <div className="row d-flex">
                     <div className="col"></div>
                     <div className="col">
@@ -649,7 +649,7 @@ const DownloadFile = () => {
             {/* <!--Table 01 Start--> */}
             <div className="col mb-5">
               <div className="row d-flex justify-content-start">
-                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                <div className="col-9 border-2 border-dark p-5 pt-3">
                   <h4 className="fw-bold" style={{ color: "#0070C0" }}>
                     1. Project Profile
                   </h4>
@@ -694,7 +694,7 @@ const DownloadFile = () => {
             {/* <!--Table 02 Start--> */}
             <div className="col mb-5">
               <div className="row d-flex flex-column justify-content-start align-items-start">
-                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                <div className="col-9 border-2 border-dark p-5 pt-3">
                   <>
                     <h4 className="fw-bold" style={{ color: "#0070C0" }}>
                       2. Design & Scope
@@ -973,7 +973,7 @@ const DownloadFile = () => {
             {/* <!--Table 05 Start--> */}
             <div className="col mb-5">
               <div className="row d-flex flex-column justify-content-start align-items-start">
-                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                <div className="col-9 border-2 border-dark p-5 pt-3">
                   <>
                     <h4 className="fw-bold pt-1" style={{ color: "#0070C0" }}>
                       5. Earned Value Analysis
@@ -1217,7 +1217,7 @@ const DownloadFile = () => {
             {/* <!--Table 07 Start--> */}
             <div className="col mb-5">
               <div className="row d-flex justify-content-start">
-                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                <div className="col-9 border-2 border-dark p-5 pt-3">
                   <h4
                     className="fw-bold pt-1 pb-1"
                     style={{ color: "#0070C0" }}
@@ -1270,7 +1270,7 @@ const DownloadFile = () => {
             {/* <!--Photo Gallery--> */}
             <div className="col mb-5">
               <div className="row d-flex justify-content-start">
-                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                <div className="col-9 border-2 border-dark p-5 pt-3">
                   <h4
                     className="fw-bold pt-1 pb-2"
                     style={{ color: "#0070C0" }}
@@ -1311,7 +1311,7 @@ const DownloadFile = () => {
 
             <div className="col mb-5">
               <div className="row d-flex justify-content-start">
-                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                <div className="col-9 border-2 border-dark p-5 pt-3">
                   <div className="text-center border border-dark ps-2 pe-2">
                     <Image
                       src={Picture5}
@@ -1346,7 +1346,7 @@ const DownloadFile = () => {
 
             <div className="col mb-5">
               <div className="row d-flex justify-content-start">
-                <div className="col-9 border border-2 border-dark p-5 pt-3">
+                <div className="col-9 border-2 border-dark p-5 pt-3">
                   <div className="text-center border border-dark ps-2 pe-2 mb-5">
                     <Image
                       src={Picture7}

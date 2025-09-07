@@ -1,26 +1,26 @@
 "use client";
 import Button from "@/app/components/Button";
-import useSectors from "@/app/hooks/useSectors";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import CustomSelect, {
+  defaultNumberOption,
+  OptionType,
+} from "@/app/components/Form/CustomSelect";
+import CustomTextArea from "@/app/components/Form/CustomTextArea";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { Controller, useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import { SingleValue } from "react-select";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
-import FormWrapper from "@/app/components/Form/FormWrapper";
-import CustomLabel from "@/app/components/Form/CustomLabel";
-import CustomInput from "@/app/components/Form/CustomInput";
-import CustomTextArea from "@/app/components/Form/CustomTextArea";
-import Select, { SingleValue } from "react-select";
-import {
-  customSelectStyles,
-  defaultNumberOption,
-  OptionType,
-} from "@/app/utils";
-import SubmitButton from "@/app/components/Form/SubmitButton";
+import { FiPlus } from "react-icons/fi";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -44,15 +44,7 @@ interface Props {
   setData: React.Dispatch<React.SetStateAction<Sector[]>>;
 }
 
-const SectorForm = ({
-  api,
-  method,
-  id,
-  setRefresh,
-  refresh,
-  setData,
-  data,
-}: Props) => {
+const SectorForm = ({ api, method, id, setRefresh, refresh, data }: Props) => {
   const {
     register,
     handleSubmit,
@@ -62,14 +54,6 @@ const SectorForm = ({
     formState: { errors },
   } = useForm<Sector>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
-  const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLElement | null>(
-    null
-  );
-
-  useEffect(() => {
-    // This code only runs on the client side after the component mounts
-    setMenuPortalTarget(document.body);
-  }, []);
 
   const createdMessage = "Created Successfully";
   const updatedMessage = "Updated Successfully";
@@ -124,7 +108,7 @@ const SectorForm = ({
     }
   };
 
-  const parentIdOptions = data?.map((d) => {
+  const parentIdOptions: OptionType[] = data?.map((d) => {
     return {
       value: d.id.toString(),
       label: d.name,
@@ -133,25 +117,28 @@ const SectorForm = ({
 
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
       <Button
         type="button"
-        className={`btn shadow ${
-          method === "POST"
-            ? "text-white bg-color-sea-green"
-            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
+        className={`btn shadow-none ${
+          method === "POST" && "rounded-pill text-white fs15px fw-bold"
         }`}
         onClick={handleShow}
         style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
+          background: method === "POST" ? "#1C6BA6" : "",
+          padding: method === "PUT" ? "17px" : "",
         }}
       >
         {method === "POST" ? (
-          "+ Sector"
+          <div className="col">
+            <div className="row align-items-center">
+              <div className="col pe-0">
+                <FiPlus size={21.6} />
+              </div>
+              <div className="col ps-1">Sector</div>
+            </div>
+          </div>
         ) : (
-          <Image src={more} alt="more" width={20} height={20} />
+          <HiOutlineDotsVertical size={26} style={{ color: "#475569" }} />
         )}
       </Button>
 
@@ -176,7 +163,10 @@ const SectorForm = ({
                 className="row g-2 g-lg-3 mt-0"
                 style={{ marginBottom: "5px" }}
               >
-                <div className="col-lg-4 col-md-6 col-sm-12 col-12 mb-3 text-start">
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
                   <CustomLabel htmlFor="name">Name</CustomLabel>
                   <CustomInput
                     {...register("name")}
@@ -190,27 +180,32 @@ const SectorForm = ({
                     </p>
                   )}
                 </div>
-                <div className="col-lg-4 col-md-6 col-sm-12 col-12 text-start">
-                  <CustomLabel htmlFor="parentId">Parent Sector ID</CustomLabel>
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <CustomLabel htmlFor="parentId">Parent Sector</CustomLabel>
                   <Controller
                     name="parentId"
                     control={control}
                     render={({ field }) => (
-                      <Select
+                      <CustomSelect
                         {...field}
                         options={[defaultNumberOption, ...parentIdOptions]}
-                        isClearable
-                        isSearchable
-                        styles={customSelectStyles}
-                        menuPlacement="auto"
-                        menuPosition="absolute"
-                        menuPortalTarget={menuPortalTarget}
+                        closeMenuOnSelect={true}
                         value={
                           parentIdOptions.find(
                             (option) => option.value === String(field.value)
-                          ) || null
+                          )
+                            ? [
+                                parentIdOptions.find(
+                                  (option) =>
+                                    option.value === String(field.value)
+                                )!,
+                              ]
+                            : []
                         }
-                        onChange={(selectedOption) => {
+                        onChangeSingle={(selectedOption) => {
                           const singleOption =
                             selectedOption as SingleValue<OptionType>;
                           field.onChange(
@@ -233,7 +228,10 @@ const SectorForm = ({
                     ))}
                   </select> */}
                 </div>
-                <div className="col-lg-4 col-md-6 col-sm-12 col-12 text-start">
+                <div
+                  className="col-lg-4 col-md-6 col-sm-12 col-12 text-start mt-0"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
                   <CustomLabel htmlFor="sortId">Sort ID</CustomLabel>
                   <CustomInput
                     {...register("sortId", { valueAsNumber: true })}
@@ -248,7 +246,10 @@ const SectorForm = ({
                   )}
                 </div>
               </div>
-              <div className="col mb-3 text-start">
+              <div
+                className="col text-start mt-0"
+                style={{ marginBottom: "10px" }}
+              >
                 <CustomLabel htmlFor="description">Description</CustomLabel>
                 <CustomTextArea
                   id="description"

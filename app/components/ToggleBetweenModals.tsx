@@ -4,7 +4,6 @@ const ToggleBetweenModals = () => {
       <div
         className="modal fade"
         id="exampleModalToggle"
-        aria-hidden="true"
         aria-labelledby="exampleModalToggleLabel"
         tabIndex={-1}
       >

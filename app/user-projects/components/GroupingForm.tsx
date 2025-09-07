@@ -1,13 +1,16 @@
 import { PROJECT_API, SUPER_GROUP_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
+import FormWrapper from "@/app/components/Form/FormWrapper";
 import apiClient from "@/app/services/api-client";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 import { Modal } from "react-bootstrap";
-import Select, { ActionMeta, SingleValue } from "react-select";
+import { ActionMeta, SingleValue } from "react-select";
 import { toast } from "react-toastify";
 import superGroupBlack from "../../../public/icons/superGroupBlack.svg";
 import { Option } from "./UserProjectsList";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 interface Props {
   id: number;
   options: Option[];
@@ -48,12 +51,12 @@ const GroupingForm = ({ id, options }: Props) => {
   const handleClose = () => setShow(false);
 
   const handleSelectGroup = (
-    newValue: SingleValue<{ value: number; label: string }>,
-    actionMeta: ActionMeta<{ value: number; label: string }>
+    newValue: SingleValue<{ value: string; label: string }>,
+    actionMeta: ActionMeta<{ value: string; label: string }>
   ) => {
     if (newValue) {
       const selectedOptions = {
-        id: newValue.value,
+        id: Number(newValue.value),
         superGroupLabel: newValue.label,
       };
       setSelectedOptions([selectedOptions]);
@@ -97,31 +100,16 @@ const GroupingForm = ({ id, options }: Props) => {
   };
 
   // Prepare options for react-select in {value, label} format
-  const availableOptions = options.map((group) => ({
-    value: group.id,
+  const availableOptions: OptionType[] = options.map((group) => ({
+    value: group.id.toString(),
     label: group.superGroupLabel,
   }));
 
   // Prepare selected values for react-select in {value, label} format
-  const selectedValues = selectedOptions.map((group) => ({
-    value: group.id,
+  const selectedValues: OptionType[] = selectedOptions.map((group) => ({
+    value: group.id.toString(),
     label: group.superGroupLabel,
   }));
-
-  // Custom styles for react-select options
-  const customStyles = {
-    option: (provided: any, state: any) => ({
-      ...provided,
-      backgroundColor: state.isSelected
-        ? "#B0E0E6" // Light blue for selected options
-        : provided.backgroundColor,
-      color: state.isSelected ? "#000" : provided.color,
-    }),
-    multiValue: (provided: any) => ({
-      ...provided,
-      backgroundColor: "#B0E0E6", // Light blue for selected values
-    }),
-  };
 
   return (
     <>
@@ -155,54 +143,25 @@ const GroupingForm = ({ id, options }: Props) => {
             className="p-0"
             style={{ background: "rgba(156,255,255,0)" }}
           >
-            <div
-              className="container-fluid border border-white pt-3 pb-3 ps-4 pe-4"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-                borderRadius: "15px",
-                border: "1.7px solid rgba(255, 255, 255, 0.6)",
-              }}
-            >
+            <FormWrapper heading="Select Super Group">
               <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <div className="row d-flex">
-                    <div className="col">
-                      <p
-                        className="text-center text-white"
-                        style={{ fontSize: "1.5rem", fontWeight: "800" }}
-                      >
-                        SELECT SUPER GROUP
-                      </p>
-                    </div>
-                  </div>
-
-                  <Select
+                <div
+                  className="col text-start mt-0"
+                  style={{ marginBottom: "10px" }}
+                >
+                  <CustomSelect
                     id="groupSelect"
                     options={availableOptions} // Correctly mapped options
                     value={selectedValues} // Correctly mapped selected values
-                    onChange={handleSelectGroup} // Correct handler
-                    styles={customStyles}
-                    closeMenuOnSelect={false}
+                    onChangeSingle={handleSelectGroup} // Correct handler
                     placeholder="Choose Super Group"
-                    isClearable={true}
                   />
                 </div>
-                <div className="col-lg-8 col-md-8 col-sm-6 mx-auto">
-                  <Button
-                    className="btn text-white w-100 border-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to bottom, #0C8CE9 ,#136AAA)",
-                      borderRadius: "12px",
-                    }}
-                    type="submit"
-                  >
-                    Done
-                  </Button>
+                <div className="col-lg-5 col-md-8 col-sm-6 mx-auto">
+                  <SubmitButton>Save Super Group</SubmitButton>
                 </div>
               </form>
-            </div>
+            </FormWrapper>
           </Modal.Body>
         </Modal>
       </div>

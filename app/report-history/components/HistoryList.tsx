@@ -1,21 +1,26 @@
 "use client";
-import useReportHistoryUser from "@/app/hooks/useReportHistoryUsers";
+import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
 import { convertToLocaleTimeString, getFormattedDate } from "@/app/utils";
 import Link from "next/link";
 import { Accordion } from "react-bootstrap";
 import ReactMarkDown from "react-markdown";
-import { ReportHistory } from "./ReportNoting";
 import ReportHistoryDownload from "./ReportHistoryDownload";
+import { ReportHistory } from "./ReportNoting";
+import { SubmittedReport } from "../list/components/List";
 
 interface Props {
-  data: ReportHistory[];
-  projectName: string;
-  initialUser: string;
+  descendingOrderData: ReportHistory[];
+  ascendingOrderData: ReportHistory[];
+  users: ReportHistoryUser[];
+  submittedReport: SubmittedReport;
 }
 
-const HistoryList = ({ data, projectName, initialUser }: Props) => {
-  const { data: users } = useReportHistoryUser();
-
+const HistoryList = ({
+  descendingOrderData,
+  ascendingOrderData,
+  users,
+  submittedReport,
+}: Props) => {
   return (
     <div className="mb-2 p-2">
       <Accordion flush>
@@ -28,13 +33,12 @@ const HistoryList = ({ data, projectName, initialUser }: Props) => {
             >
               <div className="col mb-2 text-end">
                 <ReportHistoryDownload
-                  data={data}
+                  data={ascendingOrderData}
                   users={users}
-                  projectName={projectName}
-                  initialUser={initialUser}
+                  submittedReport={submittedReport}
                 />
               </div>
-              {data?.map((d) => (
+              {descendingOrderData?.map((d) => (
                 <div
                   key={d.id}
                   className="col p-4 ms-1 mb-3"
