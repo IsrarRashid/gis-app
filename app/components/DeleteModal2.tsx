@@ -2,24 +2,31 @@ import Image from "next/image";
 import trashIcon from "../../public/icons/trash.svg";
 import trashImage from "../../public/images/trash.png";
 import Button from "./Button";
+import { ReactNode, useState } from "react";
+import { PiTrashSimpleBold } from "react-icons/pi";
 
 interface Props {
   handleDelete: (userName: string) => void;
   userName: string;
+  icon?: ReactNode;
 }
 
-const DeleteModal2 = ({ handleDelete, userName }: Props) => {
+const DeleteModal2 = ({ handleDelete, userName, icon }: Props) => {
+  const [isHover, setIsHover] = useState(false);
   const modalId = `deleteModal-${userName}`; // Unique modal ID
 
   return (
     <>
       <Button
         type="button"
-        className="btn btn-sm rounded-pill"
+        className="btn btn-sm rounded-pill shadow-none"
+        style={{ color: isHover ? "#ff4242" : "#475569" }}
         data-bs-toggle="modal"
         data-bs-target={`#${modalId}`}
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
       >
-        <Image src={trashIcon} alt="trash" width={20} height={20} />
+        {icon ? icon : <PiTrashSimpleBold size={26} />}
       </Button>
 
       <div

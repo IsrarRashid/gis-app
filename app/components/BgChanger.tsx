@@ -1,7 +1,8 @@
 "use client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import useBackground from "../hooks/useBackground";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import useBackground from "../hooks/useBackground";
+import { allPagesPath } from "../utils";
 
 const BgChanger = () => {
   const currentPath = usePathname();
@@ -43,15 +44,23 @@ const BgChanger = () => {
 
   const pathSegment = currentPath.split("/")[1]; // e.g., "sectors"
   const isImagePath = pagePathsForBgImage.includes(pathSegment);
+  console.log(pathSegment);
+
   // #CFE6F8
   useBackground(
     isImagePath
       ? "/images/bg2.png"
       : pathSegment === "dashboard-to" || pathSegment === "vehicle-tracking"
       ? "#7ABEF0"
+      : currentPath.startsWith("/projects-live-view/project-details-dashboard")
+      ? "#141518"
+      : !allPagesPath.some((path) => currentPath.startsWith(path))
+      ? "#fff"
       : currentType
       ? "#2377B6"
-      : "#CFE6F8",
+      : !currentType
+      ? "#CFE6F8"
+      : "",
     isImagePath // true if it's an image, false if it's a color
   );
 

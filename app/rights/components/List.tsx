@@ -13,6 +13,9 @@ import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
+import Actions from "@/app/components/Table/Actions";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -123,89 +126,82 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           </div>
         }
       />
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
-        >
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading
                 name="right id"
                 handleSort={() => handleSort("rightId")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="right name"
                 handleSort={() => handleSort("rightName")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="right Identifier"
                 handleSort={() => handleSort("rightIdentifier")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="created At"
                 handleSort={() => handleSort("createdAt")}
+                className="text-nowrap"
               />
               <TableHeading
                 name="updated At"
                 handleSort={() => handleSort("updatedAt")}
+                className="text-nowrap"
               />
-              <th colSpan={2}></th>
+              <TableHeading name="ACTIONS" textClassName="text-center" />
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.rightId}
-              >
-                <td>{d.rightId}</td>
-                <td>{d.rightName}</td>
-                <td>{d.rightIdentifier}</td>
-                <td>
+              <tr key={d.rightId}>
+                <RowHeader>{d.rightId}</RowHeader>
+                <TableData>{d.rightName}</TableData>
+                <TableData>{d.rightIdentifier}</TableData>
+                <TableData>
                   {d.createdAt &&
                     getFormattedDate(new Date(d.createdAt), "short")}
-                </td>
-                <td>
+                </TableData>
+                <TableData>
                   {d.updatedAt &&
                     getFormattedDate(new Date(d.updatedAt), "short")}
-                </td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.rightId} />
-                </td>
-                <td>
-                  <Form
-                    api={RIGHT_API}
-                    method="PUT"
-                    id={d.rightId}
-                    setRefresh={setRefresh}
-                    refresh={refresh}
+                </TableData>
+                <TableData>
+                  <Actions
+                    deleteNode={
+                      <DeleteModal handleDelete={handleDelete} id={d.rightId} />
+                    }
+                    formNode={
+                      <Form
+                        api={RIGHT_API}
+                        method="PUT"
+                        id={d.rightId}
+                        setRefresh={setRefresh}
+                        refresh={refresh}
+                      />
+                    }
                   />
-                </td>
+                </TableData>
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

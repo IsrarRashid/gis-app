@@ -13,6 +13,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
+import { FiPlus } from "react-icons/fi";
+import { HiOutlineDotsVertical } from "react-icons/hi";
+import ActionButton from "@/app/components/Table/ActionButton";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -89,24 +92,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
 
   return (
     <>
-      <Button
-        type="button"
-        className={`btn shadow ${
-          method === "POST"
-            ? "text-white bg-color-sea-green"
-            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
-        }`}
-        onClick={handleShow}
-        style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
-        }}
-      >
-        {method === "POST" ? (
-          "+ SUPER GROUP"
-        ) : (
-          <Image src={more} alt="more" width={20} height={20} />
-        )}
-      </Button>
+      <ActionButton name="Super Group" method={method} onClick={handleShow} />
 
       <Modal
         show={show}

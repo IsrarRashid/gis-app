@@ -14,6 +14,10 @@ import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
+import Actions from "@/app/components/Table/Actions";
+import Avatar from "@/app/components/Avatar";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -33,7 +37,7 @@ export interface Option {
 }
 
 const List = ({ refresh, setRefresh }: ListProps) => {
-  const { data, setData, error, setError, isLoading } = useDriver({
+  const { data, setData, setError, isLoading } = useDriver({
     refresh,
   });
 
@@ -233,107 +237,103 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           }
         />
       </>
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
-        >
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
+                className="text-nowrap"
                 name="driver name"
                 handleSort={() => handleSort("driverName")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="driver image"
                 handleSort={() => handleSort("driverImage")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="mobile number"
                 handleSort={() => handleSort("mobileNumber")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="created at"
                 handleSort={() => handleSort("createdAt")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="updated at"
                 handleSort={() => handleSort("updatedAt")}
               />
-              <th colSpan={2}>
-                <div className="text-center"></div>
-              </th>
+              <TableHeading name="ACTIONS" textClassName="text-center" />
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.driverName}</td>
-                <td>
-                  {d.driverImage && (
-                    <img
-                      className="img-fluid rounded-circle shadow-sm"
-                      style={{
-                        width: "70px",
-                        height: "70px",
-                        objectFit: "cover",
-                        objectPosition: "center top",
-                      }}
+              <tr key={d.id}>
+                <RowHeader>{d.id}</RowHeader>
+                <TableData>{d.driverName}</TableData>
+                <TableData>
+                  {d.driverImage && d.driverImage.length > 0 && (
+                    // <img
+                    //   className="img-fluid rounded-circle shadow-sm"
+                    //   style={{
+                    //     width: "70px",
+                    //     height: "70px",
+                    //     objectFit: "cover",
+                    //     objectPosition: "center top",
+                    //   }}
+                    //   src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.driverImage}`}
+                    //   alt="driverImage"
+                    // />
+                    <Avatar
                       src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.driverImage}`}
-                      alt="driverImage"
+                      width={70}
+                      height={70}
                     />
                   )}
-                </td>
-                <td>{d.mobileNumber}</td>
-                <td>
+                </TableData>
+                <TableData>{d.mobileNumber}</TableData>
+                <TableData>
                   {d.createdAt &&
                     getFormattedDate(new Date(d.createdAt), "short")}
-                </td>
-                <td>
+                </TableData>
+                <TableData>
                   {d.updatedAt &&
                     getFormattedDate(new Date(d.updatedAt), "short")}
-                </td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
-                <td>
-                  <Form
-                    api={DRIVER_API}
-                    method="PUT"
-                    id={d.id}
-                    setRefresh={setRefresh}
-                    refresh={refresh}
+                </TableData>
+                <TableData>
+                  <Actions
+                    deleteNode={
+                      <DeleteModal handleDelete={handleDelete} id={d.id} />
+                    }
+                    formNode={
+                      <Form
+                        api={DRIVER_API}
+                        method="PUT"
+                        id={d.id}
+                        setRefresh={setRefresh}
+                        refresh={refresh}
+                      />
+                    }
                   />
-                </td>
+                </TableData>
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

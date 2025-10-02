@@ -1,10 +1,16 @@
 import Button from "@/app/components/Button";
 import CustomToggleSwitch from "@/app/components/CustomToggleSwitch";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import CustomSelect, {
+  defaultOption,
+  OptionType,
+} from "@/app/components/Form/CustomSelect";
 import FormWrapper from "@/app/components/Form/FormWrapper";
+import ActionButton from "@/app/components/Table/ActionButton";
 import TrashIcon from "@/app/components/TrashIcon";
 import { Attribute } from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import Image from "next/image";
 import {
   Dispatch,
   FormEvent,
@@ -13,15 +19,8 @@ import {
   useState,
 } from "react";
 import Modal from "react-bootstrap/Modal";
-import Select, { ActionMeta, SingleValue } from "react-select";
+import { ActionMeta, SingleValue } from "react-select";
 import { toast } from "react-toastify";
-import more from "../../../public/icons/more.svg";
-import CustomSelect, {
-  defaultOption,
-  OptionType,
-} from "@/app/components/Form/CustomSelect";
-import { FaPlus } from "react-icons/fa";
-import { FiPlus } from "react-icons/fi";
 interface Form {
   attributeId: number;
   attributeDataType: string;
@@ -254,15 +253,26 @@ const Form = ({
     }));
   };
 
-  const handleDatalistSelect = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  // const handleDatalistSelect = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  // ) => {
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     // Trim the existing and new values and join them with a single space
+  //     evaluationFormula: prevData.evaluationFormula
+  //       ? `${prevData.evaluationFormula.trim()}${e.target.value.trim()}`
+  //       : e.target.value.trim(),
+  //   }));
+  // };
+
+  const handleDatalistSelect = (selected: OptionType | null) => {
+    if (!selected) return;
+
     setFormData((prevData) => ({
       ...prevData,
-      // Trim the existing and new values and join them with a single space
       evaluationFormula: prevData.evaluationFormula
-        ? `${prevData.evaluationFormula.trim()}${e.target.value.trim()}`
-        : e.target.value.trim(),
+        ? `${prevData.evaluationFormula.trim()}${selected.value.trim()}`
+        : selected.value.trim(),
     }));
   };
 
@@ -535,33 +545,26 @@ const Form = ({
     };
   });
 
+  const attributeCodeOptions = data
+    .filter((d) => d.attributeCode)
+    ?.map((d) => {
+      return {
+        value: d.attributeCode,
+        label: d.label,
+      };
+    });
+
+  // const [selectedOptions, setSelectedOptions] = useState<OptionType[]>([]);
+
+  // // Prepare selected values for react-select in {value, label} format
+  // const selectedAttributeCodeValue: OptionType[] = selectedOptions.map((option) => ({
+  //   value: option.value,
+  //   label: option.label,
+  // }));
+
   return (
     <>
-      <Button
-        type="button"
-        className={`btn ${
-          method === "POST"
-            ? "rounded-pill text-white fs15px fw-bold"
-            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
-        }`}
-        onClick={handleShow}
-        style={{
-          background: method === "POST" ? "#1C6BA6" : "rgba(255, 255, 255,.5)",
-        }}
-      >
-        {method === "POST" ? (
-          <div className="col">
-            <div className="row align-items-center">
-              <div className="col pe-0">
-                <FiPlus size={21.6} />
-              </div>
-              <div className="col ps-1">Attribute</div>
-            </div>
-          </div>
-        ) : (
-          <Image src={more} alt="more" width={25} height={25} />
-        )}
-      </Button>
+      <ActionButton onClick={handleShow} method={method} name="Attribute" />
 
       <Modal
         size="xl"
@@ -588,21 +591,13 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="label"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
-                    Label
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm color-light-dark shadow-none"
-                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                    id="label"
-                    name="label"
+                  <CustomLabel htmlFor="label">Label</CustomLabel>
+                  <CustomInput
                     value={formData.label}
                     onChange={handleChange}
+                    id="label"
+                    name="label"
+                    type="text"
                     placeholder="Enter Label"
                   />
                 </div>
@@ -610,21 +605,13 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="placeholder"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
-                    Placeholder
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm color-light-dark shadow-none"
-                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                    id="placeholder"
-                    name="placeholder"
+                  <CustomLabel htmlFor="placeholder">Placeholder</CustomLabel>
+                  <CustomInput
                     value={formData.placeholder}
                     onChange={handleChange}
+                    id="placeholder"
+                    name="placeholder"
+                    type="text"
                     placeholder="Enter Placeholder"
                   />
                 </div>
@@ -632,16 +619,13 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="attributeDataType"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
+                  <CustomLabel htmlFor="attributeDataType">
                     Attribute Data Type
-                  </label>
+                  </CustomLabel>
                   <CustomSelect
                     options={attributeDataTypeOptions}
                     id="attributeDataType"
+                    closeMenuOnSelect={true}
                     value={
                       attributeDataTypeOptions.find(
                         (opt) => opt.value === formData.attributeDataType
@@ -680,16 +664,13 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="attributeType"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
+                  <CustomLabel htmlFor="attributeType">
                     Attribute Type
-                  </label>
+                  </CustomLabel>
                   <CustomSelect
                     options={[defaultOption, ...attributeTypeOptions]}
                     id="attributeType"
+                    closeMenuOnSelect={true}
                     value={
                       attributeTypeOptions.find(
                         (opt) => opt.value === formData.attributeType
@@ -730,21 +711,13 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="unit"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
-                    Unit
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm color-light-dark shadow-none"
-                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                    id="unit"
-                    name="unit"
+                  <CustomLabel htmlFor="unit">Unit</CustomLabel>
+                  <CustomInput
                     value={formData.unit}
                     onChange={handleChange}
+                    id="unit"
+                    name="unit"
+                    type="text"
                     placeholder="Enter Unit"
                   />
                 </div>
@@ -752,43 +725,29 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="validationRegx"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
+                  <CustomLabel htmlFor="validationRegx">
                     Validation Regx
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm color-light-dark shadow-none"
-                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                    id="validationRegx"
-                    name="validationRegx"
+                  </CustomLabel>
+                  <CustomInput
                     value={formData.validationRegx}
                     onChange={handleChange}
-                    placeholder="Enter Validation Regx"
+                    id="validationRegx"
+                    name="validationRegx"
+                    type="text"
+                    placeholder="Enter validationRegx"
                   />
                 </div>
                 <div
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="sortId"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
-                    Sort Id
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control form-control-sm color-light-dark shadow-none"
-                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                    id="sortId"
-                    name="sortId"
+                  <CustomLabel htmlFor="sortId">Sort Id</CustomLabel>
+                  <CustomInput
                     value={formData.sortId}
                     onChange={handleChange}
+                    id="sortId"
+                    name="sortId"
+                    type="number"
                     placeholder="Enter Sort Id"
                   />
                 </div>
@@ -796,16 +755,14 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="verificationType"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
+                  <CustomLabel htmlFor="verificationType">
                     Verification Type
-                  </label>
+                  </CustomLabel>
+
                   <CustomSelect
                     options={[defaultOption, ...verificationTypeOptions]}
                     id="verificationType"
+                    closeMenuOnSelect={true}
                     value={
                       verificationTypeOptions.find(
                         (opt) => opt.value === formData.verificationType
@@ -844,16 +801,13 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="smdpIdentifier"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
+                  <CustomLabel htmlFor="smdpIdentifier">
                     Smdp Identifier
-                  </label>
+                  </CustomLabel>
                   <CustomSelect
                     options={[defaultOption, ...smdpIdentifierOptions]}
                     id="smdpIdentifier"
+                    closeMenuOnSelect={true}
                     value={
                       smdpIdentifierOptions.find(
                         (opt) => opt.value === formData.smdpIdentifier
@@ -895,21 +849,15 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="errorMessage"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
+                  <CustomLabel htmlFor="errorMessage">
                     Error Message
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm color-light-dark shadow-none"
-                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                    id="errorMessage"
-                    name="errorMessage"
+                  </CustomLabel>
+                  <CustomInput
                     value={formData.errorMessage}
                     onChange={handleChange}
+                    id="errorMessage"
+                    name="errorMessage"
+                    type="text"
                     placeholder="Enter Error Message"
                   />
                 </div>
@@ -917,21 +865,13 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="remarks"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
-                    Remarks
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm color-light-dark shadow-none"
-                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                    id="remarks"
-                    name="remarks"
+                  <CustomLabel htmlFor="remarks">Remarks</CustomLabel>
+                  <CustomInput
                     value={formData.remarks}
                     onChange={handleChange}
+                    id="remarks"
+                    name="remarks"
+                    type="text"
                     placeholder="Enter Remarks"
                   />
                 </div>
@@ -939,21 +879,15 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="attributeCode"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
+                  <CustomLabel htmlFor="attributeCode">
                     Attribute Code
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm color-light-dark shadow-none"
-                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                    id="attributeCode"
-                    name="attributeCode"
+                  </CustomLabel>
+                  <CustomInput
                     value={formData.attributeCode}
                     onChange={handleChange}
+                    id="attributeCode"
+                    name="attributeCode"
+                    type="text"
                     placeholder="Enter Attribute Code"
                   />
                 </div>
@@ -961,21 +895,13 @@ const Form = ({
                   className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
-                  <label
-                    htmlFor="priority"
-                    className="form-label form-label-color-black fw-5 fs14px"
-                    style={{ marginBottom: "6px" }}
-                  >
-                    Priority
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control form-control-sm color-light-dark shadow-none"
-                    style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                    id="priority"
-                    name="priority"
+                  <CustomLabel htmlFor="priority">Priority</CustomLabel>
+                  <CustomInput
                     value={formData.priority}
                     onChange={handleChange}
+                    id="priority"
+                    name="priority"
+                    type="number"
                     placeholder="Enter Priority"
                   />
                 </div>
@@ -985,65 +911,41 @@ const Form = ({
                       className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                       style={{ marginBottom: "10px", padding: "0px 10px" }}
                     >
-                      <label
-                        htmlFor="min"
-                        className="form-label form-label-color-black fw-5 fs14px"
-                        style={{ marginBottom: "6px" }}
-                      >
-                        Min
-                      </label>
-                      <input
-                        type="number"
-                        className="form-control form-control-sm color-light-dark shadow-none"
-                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                        id="min"
-                        name="min"
+                      <CustomLabel htmlFor="min">Min</CustomLabel>
+                      <CustomInput
                         value={formData.min}
                         onChange={handleChange}
-                        placeholder="Enter Min value"
+                        id="min"
+                        name="min"
+                        type="number"
+                        placeholder="Enter Min"
                       />
                     </div>
                     <div
                       className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                       style={{ marginBottom: "10px", padding: "0px 10px" }}
                     >
-                      <label
-                        htmlFor="max"
-                        className="form-label form-label-color-black fw-5 fs14px"
-                        style={{ marginBottom: "6px" }}
-                      >
-                        Max
-                      </label>
-                      <input
-                        type="number"
-                        className="form-control form-control-sm color-light-dark shadow-none"
-                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                        id="max"
-                        name="max"
+                      <CustomLabel htmlFor="max">Max</CustomLabel>
+                      <CustomInput
                         value={formData.max}
                         onChange={handleChange}
-                        placeholder="Enter Max value"
+                        id="max"
+                        name="max"
+                        type="number"
+                        placeholder="Enter Max"
                       />
                     </div>
                     <div
                       className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                       style={{ marginBottom: "10px", padding: "0px 10px" }}
                     >
-                      <label
-                        htmlFor="weightage"
-                        className="form-label form-label-color-black fw-5 fs14px"
-                        style={{ marginBottom: "6px" }}
-                      >
-                        Weightage
-                      </label>
-                      <input
-                        type="number"
-                        className="form-control form-control-sm color-light-dark shadow-none"
-                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                        id="weightage"
-                        name="weightage"
+                      <CustomLabel htmlFor="weightage">Weightage</CustomLabel>
+                      <CustomInput
                         value={formData.weightage}
                         onChange={handleChange}
+                        id="weightage"
+                        name="weightage"
+                        type="number"
                         placeholder="Enter Weightage"
                       />
                     </div>
@@ -1055,21 +957,15 @@ const Form = ({
                       className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                       style={{ marginBottom: "10px", padding: "0px 10px" }}
                     >
-                      <label
-                        htmlFor="evaluationFormula"
-                        className="form-label form-label-color-black fw-5 fs14px"
-                        style={{ marginBottom: "6px" }}
-                      >
-                        Evaluation Formula
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm color-light-dark shadow-none"
-                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                        id="evaluationFormula"
-                        name="evaluationFormula"
+                      <CustomLabel htmlFor="evaluationFormula">
+                        EvaluationFormula
+                      </CustomLabel>
+                      <CustomInput
                         value={formData.evaluationFormula}
                         onChange={handleChange}
+                        id="evaluationFormula"
+                        name="evaluationFormula"
+                        type="text"
                         placeholder="Enter Evaluation Formula"
                       />
                     </div>
@@ -1081,7 +977,16 @@ const Form = ({
                       >
                         Search Attribute Codes
                       </label>
-                      <select
+                      <CustomSelect
+                        options={attributeCodeOptions}
+                        closeMenuOnSelect={true}
+                        maxHeight={43 * 5}
+                        id="searchAttributeCodes"
+                        onChangeSingle={(newValue) => {
+                          if (newValue) handleDatalistSelect(newValue);
+                        }}
+                      />
+                      {/* <select
                         className="form-select form-select-sm color-light-dark shadow-none"
                         style={{ background: "rgba(255, 255, 255, 0.8)" }}
                         aria-label="Default select example"
@@ -1097,27 +1002,21 @@ const Form = ({
                               {d.label}
                             </option>
                           ))}
-                      </select>
+                      </select> */}
                     </div>
                     <div
                       className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 text-start mt-0"
                       style={{ marginBottom: "10px", padding: "0px 10px" }}
                     >
-                      <label
-                        htmlFor="evaluationFormulaWeightage"
-                        className="form-label form-label-color-black fw-5 fs14px"
-                        style={{ marginBottom: "6px" }}
-                      >
+                      <CustomLabel htmlFor="evaluationFormulaWeightage">
                         Evaluation Formula Weightage
-                      </label>
-                      <input
-                        type="number"
-                        className="form-control form-control-sm color-light-dark shadow-none"
-                        style={{ background: "rgba(255, 255, 255, 0.8)" }}
-                        id="evaluationFormulaWeightage"
-                        name="evaluationFormulaWeightage"
+                      </CustomLabel>
+                      <CustomInput
                         value={formData.evaluationFormulaWeightage}
                         onChange={handleChange}
+                        id="evaluationFormulaWeightage"
+                        name="evaluationFormulaWeightage"
+                        type="number"
                         placeholder="Enter Evaluation Formula Weightage"
                       />
                     </div>
@@ -1343,14 +1242,24 @@ const Form = ({
                         className="col-xl-2 col-lg-4 col-md-6 col-sm-6 text-start"
                         style={{ marginBottom: "10px", padding: "0px 10px" }}
                       >
-                        <label
+                        <CustomLabel htmlFor={`value-${index}`}>
+                          Value
+                        </CustomLabel>
+                        <CustomInput
+                          id={`value-${index}`}
+                          name="value"
+                          value={option.value}
+                          onChange={(e) => handleOptionChange(index, e)}
+                          placeholder="Enter Value"
+                        />
+                        {/* <label
                           htmlFor={`value-${index}`}
                           className="form-label form-label-color-black fw-5 fs14px"
                           style={{ marginBottom: "6px" }}
                         >
                           Value
-                        </label>
-                        <input
+                        </label> */}
+                        {/* <input
                           type="text"
                           className="form-control form-control-sm color-light-dark shadow-none"
                           style={{ background: "rgba(255, 255, 255, 0.8)" }}
@@ -1359,13 +1268,13 @@ const Form = ({
                           value={option.value}
                           onChange={(e) => handleOptionChange(index, e)}
                           placeholder="Enter Value"
-                        />
+                        /> */}
                       </div>
                       <div
                         className="col-xl-2 col-lg-4 col-md-6 col-sm-6 text-start"
                         style={{ marginBottom: "10px", padding: "0px 10px" }}
                       >
-                        <label
+                        {/* <label
                           htmlFor={`label-${index}`}
                           className="form-label form-label-color-black fw-5 fs14px"
                           style={{ marginBottom: "6px" }}
@@ -1381,13 +1290,23 @@ const Form = ({
                           value={option.label}
                           onChange={(e) => handleOptionChange(index, e)}
                           placeholder="Enter Label"
+                        /> */}
+                        <CustomLabel htmlFor={`label-${index}`}>
+                          Label
+                        </CustomLabel>
+                        <CustomInput
+                          id={`label-${index}`}
+                          name="label"
+                          value={option.label}
+                          onChange={(e) => handleOptionChange(index, e)}
+                          placeholder="Enter Label"
                         />
                       </div>
                       <div
                         className="col-xl-2 col-lg-4 col-md-6 col-sm-6 text-start"
                         style={{ marginBottom: "10px", padding: "0px 10px" }}
                       >
-                        <label
+                        {/* <label
                           htmlFor="sortId"
                           className="form-label form-label-color-black fw-5 fs14px"
                           style={{ marginBottom: "6px" }}
@@ -1403,13 +1322,24 @@ const Form = ({
                           value={option.sortId}
                           onChange={(e) => handleOptionChange(index, e)}
                           placeholder="Enter sortId value"
+                        /> */}
+                        <CustomLabel htmlFor={`sortId-${index}`}>
+                          sort Id
+                        </CustomLabel>
+                        <CustomInput
+                          id={`sortId-${index}`}
+                          name="sortId"
+                          type="number"
+                          value={option.sortId}
+                          onChange={(e) => handleOptionChange(index, e)}
+                          placeholder="Enter sortId"
                         />
                       </div>
                       <div
                         className="col-xl-2 col-lg-4 col-md-6 col-sm-6 text-start"
                         style={{ marginBottom: "10px", padding: "0px 10px" }}
                       >
-                        <label
+                        {/* <label
                           htmlFor={`condition-${index}`}
                           className="form-label form-label-color-black fw-5 fs14px"
                           style={{ marginBottom: "6px" }}
@@ -1425,13 +1355,23 @@ const Form = ({
                           value={option.condition}
                           onChange={(e) => handleOptionChange(index, e)}
                           placeholder="Enter Condition"
+                        /> */}
+                        <CustomLabel htmlFor={`condition-${index}`}>
+                          Condition
+                        </CustomLabel>
+                        <CustomInput
+                          id={`condition-${index}`}
+                          name="condition"
+                          value={option.condition}
+                          onChange={(e) => handleOptionChange(index, e)}
+                          placeholder="Enter Condition"
                         />
                       </div>
                       <div
                         className="col-xl-2 col-lg-4 col-md-6 col-sm-6 text-start"
                         style={{ marginBottom: "10px", padding: "0px 10px" }}
                       >
-                        <label
+                        {/* <label
                           htmlFor={`remarks-${index}`}
                           className="form-label form-label-color-black fw-5 fs14px"
                           style={{ marginBottom: "6px" }}
@@ -1442,6 +1382,16 @@ const Form = ({
                           type="text"
                           className="form-control form-control-sm color-light-dark shadow-none"
                           style={{ background: "rgba(255, 255, 255, 0.8)" }}
+                          id={`remarks-${index}`}
+                          name="remarks"
+                          value={option.remarks}
+                          onChange={(e) => handleOptionChange(index, e)}
+                          placeholder="Enter Description"
+                        /> */}
+                        <CustomLabel htmlFor={`remarks-${index}`}>
+                          Description
+                        </CustomLabel>
+                        <CustomInput
                           id={`remarks-${index}`}
                           name="remarks"
                           value={option.remarks}

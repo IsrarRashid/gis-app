@@ -20,13 +20,15 @@ import toast, { Toaster } from "react-hot-toast";
 import { DistrictList, FilterData, MainDashboard } from "../Dashboard";
 import DistrictCard from "./DistrictCard";
 import ProjectCard from "./ProjectCard";
-import DistrictCardEvaluation from "./DistrictCardEvaluation";
 import "@/app/_css/InfoWindow.css";
 import {
   adpFilters,
   cmInitiativeFilters,
   oldCmInitiativeFilters,
 } from "../../filters";
+import Link from "next/link";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 export interface DistrictProjects {
   id: number;
@@ -381,8 +383,8 @@ const MyMap = ({
 
   return (
     <>
-      {showButton && (
-        <div className="position-relative">
+      <div className="position-relative">
+        {showButton && (
           <button
             className="position-absolute btn bg-color-sea-green text-white fw-bold mb-3"
             onClick={handleBackButtonClick}
@@ -390,8 +392,54 @@ const MyMap = ({
           >
             Back
           </button>
-        </div>
-      )}
+        )}
+        <Link
+          href="/projects-live-view"
+          className="position-absolute badge text-decoration-none"
+          target="_blank"
+          style={{
+            zIndex: 1,
+            left: 10,
+            top: 10,
+            backgroundColor: "rgba(28, 28, 29, 0.86)",
+            padding: "10px 12px 10px 11.5px",
+            borderRadius: "10px",
+            color: "#D0D0D0",
+          }}
+        >
+          <div className="row">
+            <div className="col">
+              <span>Live Streaming</span>
+            </div>
+            <div className="col position-relative">
+              <motion.span
+                animate={{ opacity: [0, 1, 1, 0] }} // Keyframes: fade in and out
+                transition={{
+                  duration: 2, // Time for one complete cycle
+                  repeat: Infinity, // Loop animation infinitely
+                  ease: "easeInOut", // Smoother transition
+                }}
+              >
+                <Image
+                  className="position-absolute start-0"
+                  src="/icons/evaluation/liveCircle.svg"
+                  alt="liveCircle"
+                  width={14}
+                  height={14}
+                />
+              </motion.span>
+
+              <Image
+                className="position-absolute start-0"
+                src="/icons/evaluation/liveMiniCircle.svg"
+                alt="liveMiniCircle"
+                width={14}
+                height={14}
+              />
+            </div>
+          </div>
+        </Link>
+      </div>
       <div>
         <Toaster />
       </div>

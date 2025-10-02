@@ -13,6 +13,10 @@ import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
+import Actions from "@/app/components/Table/Actions";
+import Avatar from "@/app/components/Avatar";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -32,7 +36,7 @@ export interface Option {
 }
 
 const List = ({ refresh, setRefresh }: ListProps) => {
-  const { data, setData, error, setError, isLoading } = useVehicle({
+  const { data, setData, setError, isLoading } = useVehicle({
     refresh,
   });
 
@@ -143,21 +147,11 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           }
         />
       </>
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
-        >
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading name="id" handleSort={() => handleSort("id")} />
-
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
                 name="description"
@@ -210,97 +204,99 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 name="updated at"
                 handleSort={() => handleSort("updatedAt")}
               />
-              <th colSpan={2}>
-                <div className="text-center"></div>
-              </th>
+              <TableHeading name="ACTIONS" textClassName="text-center" />
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.name}</td>
-                <td>{d.description}</td>
-                <td>{d.vehicleNumber}</td>
-                <td>{d.model}</td>
-                <td>{d.color}</td>
-                <td>{d.trasnmission}</td>
-                <td>{d.seatsCapacity}</td>
-                <td>{d.fuelType}</td>
-                <td className="text-center">
-                  {d.vehicleImage && (
-                    <img
-                      className="img-fluid rounded-3"
-                      style={{
-                        width: "70px",
-                        height: "70px",
-                        objectFit: "contain",
-                      }}
+              <tr key={d.id}>
+                <RowHeader>{d.id}</RowHeader>
+                <TableData>{d.name}</TableData>
+                <TableData>{d.description}</TableData>
+                <TableData>{d.vehicleNumber}</TableData>
+                <TableData>{d.model}</TableData>
+                <TableData>{d.color}</TableData>
+                <TableData>{d.trasnmission}</TableData>
+                <TableData>{d.seatsCapacity}</TableData>
+                <TableData>{d.fuelType}</TableData>
+                <TableData className="text-center">
+                  {d.vehicleImage && d.vehicleImage.length > 0 && (
+                    <Avatar
                       src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleImage}`}
-                      alt="vehicleImage"
-                    />
-                  )}
-                </td>
-                <td className="text-center">
-                  {d.vehicleIcon && (
-                    <img
-                      className="img-fluid rounded-circle"
-                      style={{
+                      styles={{
                         width: "70px",
                         height: "70px",
                         objectFit: "contain",
                       }}
+                      defaultImagePath="/icons/car1Right.svg"
+                      width={70}
+                      height={70}
+                    />
+                    // <img
+                    //   className="img-fluid rounded-3"
+                    //   style={{
+                    //     width: "70px",
+                    //     height: "70px",
+                    //     objectFit: "contain",
+                    //   }}
+                    //   src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleImage}`}
+                    //   alt="vehicleImage"
+                    // />
+                  )}
+                </TableData>
+                <TableData className="text-center">
+                  {d.vehicleIcon && d.vehicleIcon.length > 0 && (
+                    <Avatar
                       src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleIcon}`}
-                      alt="vehicleIcon"
+                      styles={{
+                        width: "70px",
+                        height: "70px",
+                        objectFit: "contain",
+                      }}
+                      defaultImagePath="/images/carTop2.png"
+                      width={70}
+                      height={70}
                     />
                   )}
-                </td>
-                <td>
+                </TableData>
+                <TableData>
                   {d.createdAt &&
                     getFormattedDate(new Date(d.createdAt), "short")}
-                </td>
-                <td>
+                </TableData>
+                <TableData>
                   {d.updatedAt &&
                     getFormattedDate(new Date(d.updatedAt), "short")}
-                </td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
-                <td>
-                  <Form
-                    api={VEHICLE_API}
-                    method="PUT"
-                    id={d.id}
-                    setRefresh={setRefresh}
-                    refresh={refresh}
+                </TableData>
+                <TableData>
+                  <Actions
+                    deleteNode={
+                      <DeleteModal handleDelete={handleDelete} id={d.id} />
+                    }
+                    formNode={
+                      <Form
+                        api={VEHICLE_API}
+                        method="PUT"
+                        id={d.id}
+                        setRefresh={setRefresh}
+                        refresh={refresh}
+                      />
+                    }
                   />
-                </td>
+                </TableData>
               </tr>
             ))}
-
-            <tr style={{ border: "0px solid transparent" }}>
-              <td colSpan={15}>
-                <Pagination
-                  searchTerm={searchTerm}
-                  filteredData={filteredData}
-                  data={data}
-                  rows={rows}
-                  setRows={setRows}
-                  currentPage={currentPage}
-                  setCurrentPage={setCurrentPage}
-                />
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

@@ -8,6 +8,8 @@ import {
 import Button from "@/app/components/Button";
 import Loader from "@/app/components/Loader";
 import Pagination from "@/app/components/Table/Pagination";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/Table/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
@@ -17,7 +19,6 @@ import useSuperGroups from "@/app/hooks/useSuperGroups";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getName } from "@/app/utils";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -28,13 +29,7 @@ import clock from "../../../public/icons/clock.svg";
 import complete from "../../../public/icons/complete.svg";
 import AssignUserForm from "./AssignUserForm";
 import GroupingForm from "./GroupingForm";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const inter = Inter({ subsets: ["latin"] });
+import StatusBadge from "./StatusBadge";
 
 export interface Option {
   id: number;
@@ -184,17 +179,16 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
 
   return (
     <>
-      <>
-        {isLoading && <Loader />}
-        <TableHeader
-          heading="Projects"
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          handleChange={handleChange}
-          form={
-            <>
-              {/* <div className="col-auto text-end mb-2">
+      {isLoading && <Loader />}
+      <TableHeader
+        heading="Projects"
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        handleChange={handleChange}
+        form={
+          <>
+            {/* <div className="col-auto text-end mb-2">
                 <ProjectForm
               api={PROJECT_API_ENDPOINT}
               method="POST"
@@ -210,7 +204,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
                   setShowData={setShowData}
                 />
               </div> */}
-              {/* <div className="col-auto text-end">
+            {/* <div className="col-auto text-end">
                 <SmdpAllProjectsSyncForm
                   api={SMDP_SYNC_API}
                   method="POST"
@@ -220,23 +214,13 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
                   setShowData={setShowData}
                 />
               </div> */}
-            </>
-          }
-        />
-      </>
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
-        >
+          </>
+        }
+      />
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
                 className="text-nowrap"
@@ -252,31 +236,29 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
                 name="status"
                 handleSort={() => handleSort("status")}
               />
-              <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th>
+              <TableHeading name="ASSIGN USER" className="text-nowrap" />
+              <TableHeading name="SUPER GROUP" className="text-nowrap" />
+              <TableHeading name="ADD TO VISIT PLAN" className="text-nowrap" />
+              {/* <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th> */}
               {/* <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th> */}
-              <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th>
+              {/* <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th> */}
               {/* <th colSpan={1}>
                 <div className="text-center"></div>
               </th> */}
-              <th className="text-nowrap">ADD TO VISIT PLAN</th>
+              {/* <th className="text-nowrap">ADD TO VISIT PLAN</th> */}
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d, i) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.gsNo}</td>
-                <td>{d.name}</td>
-                <td>{getName(d.sectorId, sectorsData)}</td>
-                <td style={{ whiteSpace: "nowrap" }}>
-                  {d.status.toLowerCase() === "scheduled" ? (
+              <tr key={d.id}>
+                <RowHeader>{d.id}</RowHeader>
+                <TableData>{d.gsNo}</TableData>
+                <TableData>{d.name}</TableData>
+                <TableData className="text-nowrap">
+                  {getName(d.sectorId, sectorsData)}
+                </TableData>
+                <TableData className="text-nowrap">
+                  {/* {d.status.toLowerCase() === "scheduled" ? (
                     <Image
                       src={calender}
                       style={{ marginBottom: "3px" }}
@@ -321,36 +303,37 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
                   ) : (
                     ""
                   )}
-                  &nbsp;{d.status}
-                </td>
-                <td className="text-center">
+                  &nbsp; */}
+                  <StatusBadge status={d.status} />
+                </TableData>
+                <TableData className="text-center">
                   <AssignUserForm id={d.id} options={users} />
-                </td>
+                </TableData>
                 {/* <td className="text-center">
                   <SyncModal handleSubmit={handleSync} id={d.smdpProjectID} />
-                </td> */}
-                <td className="text-center">
+                </TableData> */}
+                <TableData className="text-center">
                   <GroupingForm
                     id={d.id}
                     options={superGroups}
                     dashboardType={dashboardType}
                   />
-                </td>
-                <td className="text-center">
+                </TableData>
+                <TableData className="text-center">
                   <Button
-                    className="btn"
+                    className="btn btn-sm"
                     onClick={() => handleAddVisitPlan(d.id)}
                   >
-                    <AiOutlinePlus />
+                    <AiOutlinePlus size={26} />
                   </Button>
-                </td>
-                {/* <td>
+                </TableData>
+                {/* <TableData>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td> */}
-                {/* <td>
+                </TableData> */}
+                {/* <TableData>
                   <DownloadPDFBtn />
-                </td> */}
-                {/* <td>
+                </TableData> */}
+                {/* <TableData>
                   <ProjectForm
                     api={PROJECT_API_ENDPOINT}
                     method="PUT"
@@ -358,21 +341,21 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
                     setRefresh={setRefresh}
                     refresh={refresh}
                   />
-                </td> */}
+                </TableData> */}
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

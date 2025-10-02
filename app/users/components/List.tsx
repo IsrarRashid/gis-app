@@ -18,6 +18,11 @@ import TableHeader from "@/app/components/Table/TableHeader";
 import useRoles from "@/app/hooks/useRoles";
 import GroupingForm from "./GroupingForm";
 import Image from "next/image";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
+import Link from "next/link";
+import Actions from "@/app/components/Table/Actions";
+import Avatar from "@/app/components/Avatar";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -146,19 +151,10 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           </div>
         }
       />
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
-        >
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
                 className="text-nowrap"
@@ -186,30 +182,23 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 name="phoneNumber"
                 handleSort={() => handleSort("phoneNumber")}
               />
-              <th>ROLE</th>
-              <th colSpan={2}></th>
+              <TableHeading name="ROLE" />
+              <TableHeading name="ACTIONS" />
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.userName}</td>
-                <td>{d.fullName}</td>
-                <td>
-                  {d.picture && (
-                    <a
+              <tr key={d.id}>
+                <RowHeader>{d.id}</RowHeader>
+                <TableData>{d.userName}</TableData>
+                <TableData>{d.fullName}</TableData>
+                <TableData>
+                  {d.picture && d.picture.length > 0 && (
+                    <Link
                       href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
                       target="_blank"
                     >
-                      <img
+                      {/* <img
                         className="rounded-circle shadow-sm"
                         style={{
                           objectFit: "cover",
@@ -221,8 +210,8 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                         // height={70}
                         src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
                         alt="picture"
-                      />
-                      <Image
+                      /> */}
+                      {/* <Image
                         className="rounded-circle shadow-sm"
                         style={{
                           objectFit: "cover",
@@ -234,28 +223,37 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                         height={70}
                         src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
                         alt="picture"
+                      /> */}
+                      <Avatar
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
+                        width={70}
+                        height={70}
                       />
-                    </a>
+                    </Link>
                   )}
-                </td>
-                <td>{d.designation}</td>
-                <td>{d.email}</td>
-                <td>{d.phoneNumber}</td>
-                <td>
+                </TableData>
+                <TableData>{d.designation}</TableData>
+                <TableData>{d.email}</TableData>
+                <TableData>{d.phoneNumber}</TableData>
+                <TableData className="text-center">
                   <GroupingForm
                     id={d.id}
                     options={roles}
                     userName={d.userName}
                   />
-                </td>
-                <td>
-                  <DeleteModal2
-                    handleDelete={handleDelete}
-                    userName={d.userName}
+                </TableData>
+                <TableData>
+                  <Actions
+                    deleteNode={
+                      <DeleteModal2
+                        handleDelete={handleDelete}
+                        userName={d.userName}
+                      />
+                    }
                   />
-                </td>
+                </TableData>
 
-                {/* <td>
+                {/* <TableData>
                   <Form
                     api={USER_API}
                     method="PUT"
@@ -263,21 +261,21 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                     setRefresh={setRefresh}
                     refresh={refresh}
                   />
-                </td> */}
+                </TableData> */}
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

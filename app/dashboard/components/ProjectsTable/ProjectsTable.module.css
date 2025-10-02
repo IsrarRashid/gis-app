@@ -1,8 +1,8 @@
 /* projects table */
 .mainContent {
-  margin-left: 60px; /* Collapsed sidenav width */
+  margin-left: 74.3px; /* Collapsed sidenav width */
   transition: margin-left 0.3s ease, width 0.3s ease; /* Smooth transition */
-  width: calc(100% - 60px); /* Adjust width when collapsed */
+  width: calc(100% - 74.3px); /* Adjust width when collapsed */
 }
 
 .shiftRight {
@@ -10,20 +10,20 @@
   width: calc(100% - 400px); /* Adjust width when expanded */
 }
 
-.sidenav {
+/* .sidenav {
   position: fixed;
   top: 0;
   left: 0;
   height: 100%;
-  width: 60px; /* Collapsed width */
+  width: 74.3px; 
   background-color: #111;
   overflow-x: hidden;
-  transition: width 0.3s ease; /* Smooth transition */
-  padding-top: 10px;
+  transition: width 0.3s ease; 
+  padding: 22.8px 14.86px;
   border-radius: 10px;
   margin-top: 4px;
   margin-left: 2px;
-}
+} */
 
 .sidenav.expanded {
   width: 400px; /* Expanded width */
@@ -35,11 +35,13 @@
   top: 0;
   left: 0;
   height: 100%;
-  width: 60px; /* Collapsed width */
-  background: #cfe6f8;
+  width: 74.3px; /* Collapsed width */
+  background: #f8fafc;
   overflow-x: hidden;
   transition: width 0.3s ease; /* Smooth transition */
-  padding-top: 10px;
+  padding: 22.8px 14.86px;
+  border-top-left-radius: 13.93px;
+  border-bottom-left-radius: 13.93px;
 }
 
 .sidenav.expanded {

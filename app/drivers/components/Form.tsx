@@ -1,17 +1,19 @@
 import Button from "@/app/components/Button";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
-import FormWrapper from "@/app/components/Form/FormWrapper";
-import CustomLabel from "@/app/components/Form/CustomLabel";
-import CustomInput from "@/app/components/Form/CustomInput";
-import SubmitButton from "@/app/components/Form/SubmitButton";
+import ActionButton from "@/app/components/Table/ActionButton";
+import { TbFileUpload } from "react-icons/tb";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -42,6 +44,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     formState: { errors },
   } = useForm<Driver>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File>();
 
   const createdMessage = "Created Successfully";
   const updatedMessage = "Updated Successfully";
@@ -90,29 +93,24 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     }
   };
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      console.log("Dropped file:", e.dataTransfer.files[0]);
+      setSelectedFile(e.dataTransfer.files[0]);
+      // Do your upload logic here
+    }
+  };
+
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
-      <Button
-        type="button"
-        className={`btn shadow ${
-          method === "POST"
-            ? "text-white bg-color-sea-green"
-            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
-        }`}
-        onClick={handleShow}
-        style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
-        }}
-      >
-        {method === "POST" ? (
-          "+ Driver"
-        ) : (
-          <Image src={more} alt="more" width={25} height={25} />
-        )}
-      </Button>
+      <ActionButton onClick={handleShow} method={method} name="Driver" />
 
       <Modal
         show={show}
@@ -130,6 +128,57 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             heading={method === "POST" ? "Add Driver" : "Update Driver"}
           >
             <form onSubmit={handleSubmit(onSubmit)}>
+              <div
+                className="cursor-pointer"
+                style={{
+                  padding: "10px 24px",
+                  borderRadius: "15px",
+                  background: "rgba(255, 255, 255, 0.8)",
+                  border: "1.5px solid #EFF0F2",
+                  marginBottom: "10px",
+                }}
+                onClick={handleClick}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleDrop}
+              >
+                <CustomInput
+                  ref={fileInputRef}
+                  id="profilePicture"
+                  type="file"
+                  className="d-none"
+                  placeholder="Choose Profile Picture"
+                  // onChange={handleFileChange}
+                  accept="image/*"
+                />
+                <div className="row d-flex justify-content-center ">
+                  <div className="col-auto">
+                    <div
+                      className="d-flex justify-content-center align-items-center rounded-circle"
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        background: "#EEF2FF",
+                      }}
+                    >
+                      <TbFileUpload
+                        size={24}
+                        className="color-evaluation-theme-blue"
+                      />
+                    </div>
+                  </div>
+                  <div className="col-auto">
+                    <span className="fs14px fw-bold color-evaluation-theme-blue">
+                      Click here{" "}
+                    </span>
+                    to upload your file or drag.
+                    <p className="m-0" style={{ color: "#94A3B8" }}>
+                      {selectedFile
+                        ? selectedFile.name
+                        : "Supported Format: JPG, PNG (10mb each)"}
+                    </p>
+                  </div>
+                </div>
+              </div>
               <div
                 className="row g-2 g-lg-3 mt-0"
                 style={{ marginBottom: "5px" }}
@@ -223,7 +272,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </p>
                   )}
                 </div>
-                <div
+                {/* <div
                   className="col-lg-6 col-md-6 col-sm-12  text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
@@ -234,21 +283,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     type="file"
                     placeholder="Choose Driver Image"
                   />
-                  {/* <label
-                    htmlFor="driverImage"
-                    className="form-label text-white"
-                  >
-                    Driver Image
-                  </label>
-                  <input
-                    {...register("driverImage")}
-                    id="driverImage"
-                    type="text"
-                    className="form-control form-control-sm color-light-dark"
-                    placeholder="Enter Driver Image"
-                    disabled
-                  /> */}
-                </div>
+                </div> */}
               </div>
               <div className="col-lg-5 col-md-6 col-sm-4 mx-auto">
                 <SubmitButton>Save Driver</SubmitButton>

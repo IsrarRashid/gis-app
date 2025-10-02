@@ -3,6 +3,7 @@ import useData from "./useData";
 
 export interface TourPlan {
   id: number;
+  department_Id: number;
   name: string;
   tourStartDate: string;
   tourEndDate: string;

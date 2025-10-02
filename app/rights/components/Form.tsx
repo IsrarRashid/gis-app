@@ -12,6 +12,7 @@ import FormWrapper from "@/app/components/Form/FormWrapper";
 import CustomLabel from "@/app/components/Form/CustomLabel";
 import CustomInput from "@/app/components/Form/CustomInput";
 import SubmitButton from "@/app/components/Form/SubmitButton";
+import ActionButton from "@/app/components/Table/ActionButton";
 
 const schema = z.object({
   rightId: z.number().optional().default(0),
@@ -90,24 +91,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
   return (
     <>
-      <Button
-        type="button"
-        className={`btn shadow ${
-          method === "POST"
-            ? "text-white bg-color-sea-green"
-            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
-        }`}
-        onClick={handleShow}
-        style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
-        }}
-      >
-        {method === "POST" ? (
-          "+ Right"
-        ) : (
-          <Image src={more} alt="more" width={25} height={25} />
-        )}
-      </Button>
+      <ActionButton onClick={handleShow} method={method} name="Right" />
 
       <Modal
         show={show}

@@ -447,12 +447,12 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
               >
                 <div className="row d-flex m-0">
                   <div className="col">
-                    <p className="fw-bold fs23px p-1 pt-0 m-0">
+                    <p className="fw-bold fs23px p-1 pt-0 m-0 text-nowrap">
                       Physical Progress
                     </p>
                   </div>
                   <div className="col">
-                    <p className="fw-bold fs23px p-1 pt-0 m-0">
+                    <p className="fw-bold fs23px p-1 pt-0 m-0 text-nowrap">
                       Financial Progress
                     </p>
                   </div>

@@ -22,6 +22,7 @@ import {
   exportToExcelNewOne,
 } from "@/app/utils/exportToExcel";
 import { sort } from "fast-sort";
+import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { PiCircleFill } from "react-icons/pi";
 import { SingleValue } from "react-select";
@@ -499,14 +500,14 @@ const IssuedVsPendingReports = ({ isActiveTab, setActiveTab }: Props) => {
                                 }}
                               /> */}
                             {d.profilePicture && (
-                              <a
+                              <Link
                                 href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.profilePicture}`}
                                 target="_blank"
                               >
                                 <Avatar
                                   src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.profilePicture}`}
                                 />
-                              </a>
+                              </Link>
                             )}
                           </div>
                           <div className="col-auto ps-1">

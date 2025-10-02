@@ -7,37 +7,53 @@ interface Props {
   handleSort?: () => void;
   className?: string;
   style?: CSSProperties;
+  textClassName?: string;
 }
 
-const TableHeading = ({ name, handleSort, className, style }: Props) => {
+const TableHeading = ({
+  name,
+  handleSort,
+  className,
+  style,
+  textClassName,
+}: Props) => {
   const defaultStyle: CSSProperties = {
     backgroundColor: "#F8FAFC",
     borderBottom: "1.08px solid #CBD5E1",
     padding: "15.17px 26px",
+    zIndex: "2",
   };
   return (
     <th
       scope="col"
-      className={`cursor-pointer fs15px color-dark-blue ${className || ""}`}
+      className={`${
+        handleSort ? "cursor-pointer" : ""
+      } fs15px position-sticky top-0 ${className || ""}`}
       style={{ ...defaultStyle, ...style }}
       onClick={handleSort}
     >
-      <div className="row d-flex align-items-center flex-nowrap">
-        <div
-          className="col-auto fs15px"
-          style={{ paddingRight: "13px", color: "#1E293B" }}
-        >
+      {handleSort ? (
+        <div className="row d-flex align-items-center flex-nowrap">
+          <div
+            className="col-auto fs15px"
+            style={{ paddingRight: "13px", color: "#1E293B" }}
+          >
+            {name.toUpperCase()}
+          </div>
+          <div className="col-auto ps-0">
+            <Image
+              src={CaretUpDown}
+              alt="CaretUpDown"
+              width={21.6}
+              height={21.6}
+            />
+          </div>
+        </div>
+      ) : (
+        <p className={`m-0 ${textClassName}`} style={{ color: "#1E293B" }}>
           {name.toUpperCase()}
-        </div>
-        <div className="col-auto ps-0">
-          <Image
-            src={CaretUpDown}
-            alt="CaretUpDown"
-            width={21.6}
-            height={21.6}
-          />
-        </div>
-      </div>
+        </p>
+      )}
     </th>
   );
 };

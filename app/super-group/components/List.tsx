@@ -14,6 +14,9 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
 import GroupingForm from "./GroupingForm";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
+import Actions from "@/app/components/Table/Actions";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -136,76 +139,70 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
           </div>
         }
       />
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
-        >
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
                 name="super Group Label"
                 handleSort={() => handleSort("superGroupLabel")}
               />
-              <th>
+              <TableHeading
+                name="Attribute Groups"
+                textClassName="text-nowrap text-center"
+              />
+              <TableHeading name="ACTIONS" textClassName="text-center" />
+              {/* <th>
                 <div className="text-center">Attribute Groups</div>
               </th>
               <th colSpan={2}>
                 <div className="text-center"></div>
-              </th>
+              </th> */}
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d) => (
-              <tr
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.superGroupLabel}</td>
-                <td className="text-center">
+              <tr key={d.id}>
+                <RowHeader>{d.id}</RowHeader>
+                <TableData>{d.superGroupLabel}</TableData>
+                <TableData className="text-center">
                   <GroupingForm
                     id={d.id}
                     options={attributeGroups}
                     superGroups={data}
                     dashboardType={dashboardType}
                   />
-                </td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
-                <td>
-                  <Form
-                    api={SUPER_GROUP_API_ENDPOINT}
-                    method="PUT"
-                    id={d.id}
-                    setRefresh={setRefresh}
+                </TableData>
+                <TableData>
+                  <Actions
+                    deleteNode={
+                      <DeleteModal handleDelete={handleDelete} id={d.id} />
+                    }
+                    formNode={
+                      <Form
+                        api={SUPER_GROUP_API_ENDPOINT}
+                        method="PUT"
+                        id={d.id}
+                        setRefresh={setRefresh}
+                      />
+                    }
                   />
-                </td>
+                </TableData>
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

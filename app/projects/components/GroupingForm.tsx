@@ -142,8 +142,8 @@ const GroupingForm = ({ id, options, dashboardType }: Props) => {
           <Image
             src={superGroupBlack}
             alt="superGroup"
-            width={20}
-            height={20}
+            width={26}
+            height={26}
           />
         </Button>
 
@@ -170,7 +170,7 @@ const GroupingForm = ({ id, options, dashboardType }: Props) => {
                     options={availableOptions} // Correctly mapped options
                     value={selectedValues} // Correctly mapped selected values
                     onChangeSingle={handleSelectGroup} // Correct handler
-                    closeMenuOnSelect={false}
+                    closeMenuOnSelect={true}
                     placeholder="Choose Super Group"
                   />
                 </div>

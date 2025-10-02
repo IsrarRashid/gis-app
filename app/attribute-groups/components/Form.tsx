@@ -20,6 +20,7 @@ import CustomSelect, {
   defaultNumberOption,
   OptionType,
 } from "@/app/components/Form/CustomSelect";
+import ActionButton from "@/app/components/Table/ActionButton";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -126,25 +127,11 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
 
   return (
     <>
-      <Button
-        type="button"
-        className={`btn ${
-          method === "POST"
-            ? "text-white bg-color-sea-green"
-            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
-        }`}
+      <ActionButton
         onClick={handleShow}
-        style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
-        }}
-      >
-        {method === "POST" ? (
-          "+ Attribute Group"
-        ) : (
-          <Image src={more} alt="more" width={20} height={20} />
-        )}
-      </Button>
-
+        name="Attribute Group"
+        method={method}
+      />
       <Modal
         show={show}
         onHide={handleClose}
@@ -201,6 +188,7 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                       <CustomSelect
                         {...field}
                         options={[defaultNumberOption, ...parentIdOptions]}
+                        closeMenuOnSelect={true}
                         value={
                           parentIdOptions.find(
                             (option) => option.value === String(field.value)

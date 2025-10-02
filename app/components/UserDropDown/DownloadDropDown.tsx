@@ -37,7 +37,7 @@ const DownloadDropDown = ({ onClickPdf, onClickExcel }: Props) => {
 
   return (
     <div className={styles.dropdown} ref={dropdownRef}>
-      <Button
+      {/* <Button
         className="btn btn-sm rounded-3 shadow-sm"
         onClick={() => setShow(!show)}
         style={{
@@ -49,6 +49,20 @@ const DownloadDropDown = ({ onClickPdf, onClickExcel }: Props) => {
           Downloads&nbsp;
           <Image src={downloadBlack2} alt="download" width={16} height={16} />
         </p>
+      </Button> */}
+      <Button
+        className="bg-color-evaluation-theme-blue text-white rounded-pill d-flex align-items-center fs12px fw-bold border-0"
+        style={{ padding: "8px 13px", gap: "7px" }}
+        onClick={() => setShow(!show)}
+      >
+        <Image
+          src="/icons/cloud-download.svg"
+          alt="cloud-download"
+          width={17}
+          height={17}
+          style={{ width: "17px", height: "17px" }}
+        />
+        Download
       </Button>
       <div
         className={`fs12px ${styles.dropdownContent} ${show && styles.show}`}

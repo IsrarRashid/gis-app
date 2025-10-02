@@ -114,7 +114,7 @@ const AssignUserForm = ({ id, options }: Props) => {
           data-bs-placement="top"
           title="Users"
         >
-          <Image src={user3Black} alt="user" width={20} height={20} />
+          <Image src={user3Black} alt="user" width={26} height={26} />
         </Button>
 
         <Modal

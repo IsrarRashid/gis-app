@@ -14,16 +14,17 @@ import apiClient, {
 } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FaRegEye } from "react-icons/fa";
-import { TbEyeClosed } from "react-icons/tb";
+import { TbEyeClosed, TbFileUpload } from "react-icons/tb";
 import { SingleValue } from "react-select";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
 import SubmitButton from "@/app/components/Form/SubmitButton";
+import ActionButton from "@/app/components/Table/ActionButton";
 
 const schema = z.object({
   username: z
@@ -87,12 +88,14 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
   } = useForm<User>({ resolver: zodResolver(schema) });
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [buttonType, setButtonType] = useState(true);
+  const [selectedFile, setSelectedFile] = useState<File>();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
+      setSelectedFile(file);
     }
   };
 
@@ -169,26 +172,24 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
     };
   });
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      console.log("Dropped file:", e.dataTransfer.files[0]);
+      setSelectedFile(e.dataTransfer.files[0]);
+      // Do your upload logic here
+    }
+  };
+
   return (
     <>
-      <Button
-        type="button"
-        className={`btn shadow ${
-          method === "POST"
-            ? "text-white bg-color-sea-green"
-            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
-        }`}
-        onClick={handleShow}
-        style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
-        }}
-      >
-        {method === "POST" ? (
-          "+ User"
-        ) : (
-          <Image src={more} alt="more" width={25} height={25} />
-        )}
-      </Button>
+      <ActionButton name="User" method={method} onClick={handleShow} />
 
       <Modal
         size="lg"
@@ -205,6 +206,57 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
         >
           <FormWrapper heading={method === "POST" ? "Add User" : "Update User"}>
             <form onSubmit={handleSubmit(onSubmit)}>
+              <div
+                className="cursor-pointer"
+                style={{
+                  padding: "10px 24px",
+                  borderRadius: "15px",
+                  background: "rgba(255, 255, 255, 0.8)",
+                  border: "1.5px solid #EFF0F2",
+                  marginBottom: "10px",
+                }}
+                onClick={handleClick}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleDrop}
+              >
+                <CustomInput
+                  ref={fileInputRef}
+                  id="profilePicture"
+                  type="file"
+                  className="d-none"
+                  placeholder="Choose Profile Picture"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                />
+                <div className="row d-flex justify-content-center ">
+                  <div className="col-auto">
+                    <div
+                      className="d-flex justify-content-center align-items-center rounded-circle"
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        background: "#EEF2FF",
+                      }}
+                    >
+                      <TbFileUpload
+                        size={24}
+                        className="color-evaluation-theme-blue"
+                      />
+                    </div>
+                  </div>
+                  <div className="col-auto">
+                    <span className="fs14px fw-bold color-evaluation-theme-blue">
+                      Click here{" "}
+                    </span>
+                    to upload your file or drag.
+                    <p className="m-0" style={{ color: "#94A3B8" }}>
+                      {selectedFile
+                        ? selectedFile.name
+                        : "Supported Format: JPG, PNG (10mb each)"}
+                    </p>
+                  </div>
+                </div>
+              </div>
               <div
                 className="row g-2 g-lg-3 mt-0"
                 style={{ marginBottom: "5px" }}
@@ -360,6 +412,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                       <CustomSelect
                         {...field}
                         options={[defaultOption, ...roleIdOptions]}
+                        closeMenuOnSelect={true}
                         value={
                           roleIdOptions.find(
                             (option) => option.value === String(field.value)
@@ -462,7 +515,9 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                       <CustomSelect
                         {...field}
                         id="userProfile.bps"
+                        closeMenuOnSelect={true}
                         options={[defaultNumberOption, ...bpsOptions]}
+                        maxHeight={43 * 4}
                         value={
                           bpsOptions.find(
                             (option) => option.value === String(field.value)
@@ -522,6 +577,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                       <CustomSelect
                         {...field}
                         id="userProfile.section"
+                        closeMenuOnSelect={true}
                         options={[defaultOption, ...sectionOptions]}
                         value={
                           sectionOptions.find(
@@ -563,7 +619,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                     </p>
                   )}
                 </div>
-                <div
+                {/* <div
                   className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
@@ -577,20 +633,6 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                     onChange={handleFileChange}
                     accept="image/*"
                   />
-                  {/* <label
-                      htmlFor="profilePicture"
-                      className="form-label text-white"
-                    >
-                      Profile Picture
-                    </label>
-                    <input
-                      id="profilePicture"
-                      type="file"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Select Profile Picture"
-                      onChange={handleFileChange}
-                      accept="image/*"
-                    /> */}
                   {errors?.userProfile?.profilePicture && (
                     <p className="text-danger mt-1 fs14px">
                       {errors.userProfile.profilePicture.message}
@@ -610,7 +652,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                       }}
                     />
                   )}
-                </div>
+                </div> */}
               </div>
 
               <div className="col-lg-4 col-md-5 col-sm-6 mx-auto">

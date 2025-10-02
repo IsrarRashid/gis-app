@@ -2,7 +2,10 @@
 import { DEPARTMENT_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
+import Actions from "@/app/components/Table/Actions";
 import Pagination from "@/app/components/Table/Pagination";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/Table/TableHeading";
 import useDepartments, { Department } from "@/app/hooks/useDepartments";
@@ -121,32 +124,24 @@ const List = ({ refresh, setRefresh }: Props) => {
           </div>
         }
       />
-      <div
-        className="table-responsive p-0"
-        style={{
-          border: ".41px solid rgba(81,81,81,0.20)",
-        }}
-      >
-        <table className="table table-hover mb-5">
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
-                name="shortName"
+                name="short Name"
+                className="text-nowrap"
                 handleSort={() => handleSort("shortName")}
               />
               <TableHeading
                 name="department name"
+                className="text-nowrap"
                 handleSort={() => handleSort("name")}
               />
               <TableHeading
                 name="phone no."
+                className="text-nowrap"
                 handleSort={() => handleSort("phoneNumber")}
               />
               <TableHeading
@@ -159,52 +154,49 @@ const List = ({ refresh, setRefresh }: Props) => {
                 handleSort={() => handleSort("address")}
               />
               <TableHeading name="logo" handleSort={() => handleSort("logo")} />
-              <th colSpan={2}>ACTION</th>
+              <TableHeading name="ACTIONS" textClassName="text-center" />
             </tr>
           </thead>
           <tbody>
             {data?.map((d) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.shortName}</td>
-                <td>{d.name}</td>
-                <td>{d.phoneNumber}</td>
-                <td>{d.email}</td>
-                <td>{d.address}</td>
-                <td>{d.logo}</td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
-                <td>
-                  <Form
-                    api={DEPARTMENT_API}
-                    method="PUT"
-                    id={d.id}
-                    setRefresh={setRefresh}
-                    refresh={refresh}
+              <tr key={d.id}>
+                <RowHeader>{d.id}</RowHeader>
+                <TableData>{d.shortName}</TableData>
+                <TableData>{d.name}</TableData>
+                <TableData>{d.phoneNumber}</TableData>
+                <TableData>{d.email}</TableData>
+                <TableData>{d.address}</TableData>
+                <TableData>{d.logo}</TableData>
+                <TableData>
+                  <Actions
+                    deleteNode={
+                      <DeleteModal handleDelete={handleDelete} id={d.id} />
+                    }
+                    formNode={
+                      <Form
+                        api={DEPARTMENT_API}
+                        method="PUT"
+                        id={d.id}
+                        setRefresh={setRefresh}
+                        refresh={refresh}
+                      />
+                    }
                   />
-                </td>
+                </TableData>
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

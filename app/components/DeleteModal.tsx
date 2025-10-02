@@ -19,7 +19,7 @@ const DeleteModal = ({ handleDelete, id, icon }: Props) => {
       <Button
         type="button"
         className="btn btn-sm rounded-pill shadow-none"
-        style={{ padding: "17px", color: isHover ? "#ff4242" : "#475569" }}
+        style={{ color: isHover ? "#ff4242" : "#475569" }}
         data-bs-toggle="modal"
         data-bs-target={`#${modalId}`}
         onMouseEnter={() => setIsHover(true)}

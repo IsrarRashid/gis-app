@@ -1,7 +1,7 @@
 @import "leaflet/dist/leaflet.css";
 
 main {
-  min-height: calc(100vh - 100px);
+  min-height: calc(100vh - 106px);
 }
 
 #map {
@@ -245,6 +245,10 @@ select {
   font-size: 0.813rem;
 }
 
+.fs12-5px {
+  font-size: 0.781rem !important;
+}
+
 .fs12px {
   font-size: 0.75rem !important;
 }
@@ -275,6 +279,10 @@ select {
 
 .fw-6 {
   font-weight: 600;
+}
+
+.fw-8 {
+  font-weight: 800;
 }
 
 .login-input {

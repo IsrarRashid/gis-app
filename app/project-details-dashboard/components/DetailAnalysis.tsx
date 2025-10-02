@@ -6,9 +6,7 @@ import DistributedColumnChart2 from "./DistributedColumnChart2";
 import LinearChart from "./LinearChart";
 
 const DetailAnalysis = ({ data }: { data: DetailedAnalysis[] }) => {
-  const labels = data.map((d) =>
-    addDayToFormattedDate(getFormattedDate(d.visitDate))
-  );
+  const labels = data.map((d) => new Date(d.visitDate).toDateString());
   const planned = data.map((d) => Number(d.actualPlannedProject));
   const financial = data.map((d) => Number(d.actualFinancialProgress));
   const physical = data.map((d) => Number(d.actualPhysicalProgress));

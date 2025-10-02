@@ -1,17 +1,19 @@
 import Button from "@/app/components/Button";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
-import FormWrapper from "@/app/components/Form/FormWrapper";
-import CustomLabel from "@/app/components/Form/CustomLabel";
-import CustomInput from "@/app/components/Form/CustomInput";
-import SubmitButton from "@/app/components/Form/SubmitButton";
+import ActionButton from "@/app/components/Table/ActionButton";
+import { TbFileUpload } from "react-icons/tb";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -50,6 +52,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     formState: { errors },
   } = useForm<Vehicle>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File>();
 
   const createdMessage = "Created Successfully";
   const updatedMessage = "Updated Successfully";
@@ -104,29 +107,24 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
     }
   };
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      console.log("Dropped file:", e.dataTransfer.files[0]);
+      setSelectedFile(e.dataTransfer.files[0]);
+      // Do your upload logic here
+    }
+  };
+
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
-      <Button
-        type="button"
-        className={`btn shadow ${
-          method === "POST"
-            ? "text-white bg-color-sea-green"
-            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
-        }`}
-        onClick={handleShow}
-        style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
-        }}
-      >
-        {method === "POST" ? (
-          "+ Vehicle"
-        ) : (
-          <Image src={more} alt="more" width={25} height={25} />
-        )}
-      </Button>
+      <ActionButton onClick={handleShow} method={method} name="Vehicle" />
 
       <Modal
         size="lg"
@@ -145,6 +143,116 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
             heading={method === "POST" ? "Add Vehicle" : "Update Vehicle"}
           >
             <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="row g-2 g-lg-3 mt-0">
+                <div
+                  className="col-12 col-sm-12 col-md-6 col-lg-8"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <div
+                    className="cursor-pointer"
+                    style={{
+                      padding: "10px 24px",
+                      borderRadius: "15px",
+                      background: "rgba(255, 255, 255, 0.8)",
+                      border: "1.5px solid #EFF0F2",
+                      marginBottom: "10px",
+                    }}
+                    onClick={handleClick}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={handleDrop}
+                  >
+                    <CustomInput
+                      ref={fileInputRef}
+                      id="profilePicture"
+                      type="file"
+                      className="d-none"
+                      placeholder="Choose Profile Picture"
+                      // onChange={handleFileChange}
+                      accept="image/*"
+                    />
+                    <div className="row d-flex justify-content-center ">
+                      <div className="col-auto">
+                        <div
+                          className="d-flex justify-content-center align-items-center rounded-circle"
+                          style={{
+                            width: "48px",
+                            height: "48px",
+                            background: "#EEF2FF",
+                          }}
+                        >
+                          <TbFileUpload
+                            size={24}
+                            className="color-evaluation-theme-blue"
+                          />
+                        </div>
+                      </div>
+                      <div className="col-auto">
+                        <span className="fs14px fw-bold color-evaluation-theme-blue">
+                          Choose Vehicle Image{" "}
+                        </span>
+                        <p className="m-0" style={{ color: "#94A3B8" }}>
+                          {selectedFile
+                            ? selectedFile.name
+                            : "Supported: JPG, PNG (10mb each)"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="col-12 col-sm-12 col-md-6 col-lg-4"
+                  style={{ marginBottom: "10px", padding: "0px 10px" }}
+                >
+                  <div
+                    className="cursor-pointer"
+                    style={{
+                      padding: "10px 24px",
+                      borderRadius: "15px",
+                      background: "rgba(255, 255, 255, 0.8)",
+                      border: "1.5px solid #EFF0F2",
+                      marginBottom: "10px",
+                    }}
+                    onClick={handleClick}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={handleDrop}
+                  >
+                    <CustomInput
+                      ref={fileInputRef}
+                      id="profilePicture"
+                      type="file"
+                      className="d-none"
+                      placeholder="Choose Profile Picture"
+                      // onChange={handleFileChange}
+                      accept="image/*"
+                    />
+                    <div className="row d-flex justify-content-center ">
+                      <div className="col-auto">
+                        <div
+                          className="d-flex justify-content-center align-items-center rounded-circle"
+                          style={{
+                            width: "48px",
+                            height: "48px",
+                            background: "#EEF2FF",
+                          }}
+                        >
+                          <TbFileUpload
+                            size={24}
+                            className="color-evaluation-theme-blue"
+                          />
+                        </div>
+                      </div>
+                      <div className="col-auto">
+                        <span className="fs14px fw-bold color-evaluation-theme-blue">
+                          Choose Icon{" "}
+                        </span>
+                        <p className="m-0" style={{ color: "#94A3B8" }}>
+                          {selectedFile ? selectedFile.name : "Format: PNG"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div
                 className="row g-2 g-lg-3 mt-0"
                 style={{ marginBottom: "5px" }}
@@ -330,9 +438,9 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     Seats Capacity
                   </CustomLabel>
                   <CustomInput
-                    {...register("seatsCapacity")}
+                    {...register("seatsCapacity", { valueAsNumber: true })}
                     id="seatsCapacity"
-                    type="text"
+                    type="number"
                     placeholder="Enter Seats Capacity"
                   />
                   {/* <label
@@ -381,7 +489,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     </p>
                   )}
                 </div>
-                <div
+                {/* <div
                   className="col-lg-4 col-md-6 col-sm-12  text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
@@ -395,19 +503,6 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     placeholder="Enter Vehicle Image"
                     disabled
                   />
-                  {/* <label
-                    htmlFor="vehicleImage"
-                    className="form-label text-white"
-                  >
-                    vehicle Image
-                  </label>
-                  <input
-                    {...register("vehicleImage")}
-                    id="vehicleImage"
-                    type="text"
-                    className="form-control form-control-sm color-light-dark"
-                    placeholder="Enter Vehicle Image"
-                  /> */}
                   {errors.vehicleImage && (
                     <p className="text-danger mt-1 mb-0">
                       {errors.vehicleImage.message}
@@ -426,25 +521,12 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     placeholder="Enter Vehicle Icon"
                     disabled
                   />
-                  {/* <label
-                    htmlFor="vehicleIcon"
-                    className="form-label text-white"
-                  >
-                    Vehicle Icon
-                  </label>
-                  <input
-                    {...register("vehicleIcon")}
-                    id="vehicleIcon"
-                    type="text"
-                    className="form-control form-control-sm color-light-dark"
-                    placeholder="Enter Vehicle Icon"
-                  /> */}
                   {errors.vehicleIcon && (
                     <p className="text-danger mt-1 mb-0">
                       {errors.vehicleIcon.message}
                     </p>
                   )}
-                </div>
+                </div> */}
               </div>
               <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
                 <SubmitButton>Save Vehicle</SubmitButton>

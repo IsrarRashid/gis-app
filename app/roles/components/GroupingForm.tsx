@@ -127,7 +127,7 @@ const GroupingForm = ({ id, options, name }: Props) => {
           data-bs-placement="top"
           title="Rights"
         >
-          <Image src={rightsBlack} alt="rightsBlack" width={20} height={20} />
+          <Image src={rightsBlack} alt="rightsBlack" width={26} height={26} />
         </Button>
 
         <Modal

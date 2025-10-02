@@ -488,6 +488,8 @@ const DashboardMonitoring = () => {
               />
               <CustomModal
                 buttonColumn="col p-0"
+                HeaderRightPos={15}
+                HeaderTopPos={0}
                 isFullscreen={true}
                 size="xl"
                 modalId={"noOfVisits"}
@@ -522,7 +524,7 @@ const DashboardMonitoring = () => {
                 }
                 body={
                   <>
-                    <div className="container-fluid border-0 p-1">
+                    <div className="container-fluid p-0">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
                           districts={districts}

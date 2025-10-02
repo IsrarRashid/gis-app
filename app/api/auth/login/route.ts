@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    const tokenCookie = serialize("token", token, {
+    const tokenCookie = serialize("token", `Bearer ${token}`, {
       httpOnly: true, // THIS IS THE KEY!
       secure: process.env.NODE_ENV === "production", // Use secure in production (HTTPS)
       path: "/", // Make it available across the whole site

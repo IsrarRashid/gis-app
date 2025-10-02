@@ -124,5 +124,6 @@ export const config = {
     "/report-analysis/:path*",
     "/new-visit-plan",
     "/process",
+    "/projects-live-view/:path*",
   ],
 };

@@ -14,6 +14,9 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
 import useAuthentication from "@/app/hooks/useAuthentication";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
+import Actions from "@/app/components/Table/Actions";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -127,120 +130,113 @@ const List = ({ refresh, setRefresh }: Props) => {
           </div>
         }
       />
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
-        >
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
                 name="tour Start Date"
+                className="text-nowrap"
                 handleSort={() => handleSort("tourStartDate")}
               />
               <TableHeading
                 name="tour End Date"
+                className="text-nowrap"
                 handleSort={() => handleSort("tourEndDate")}
               />
               <TableHeading
                 name="approval Date"
+                className="text-nowrap"
                 handleSort={() => handleSort("approvalDate")}
               />
               <TableHeading
                 name="created Date"
+                className="text-nowrap"
                 handleSort={() => handleSort("createdDate")}
               />
               <TableHeading
                 name="updated Date"
+                className="text-nowrap"
                 handleSort={() => handleSort("updatedDate")}
               />
               <TableHeading
                 name="created By"
+                className="text-nowrap"
                 handleSort={() => handleSort("createdBy")}
               />
               <TableHeading
                 name="updated By"
+                className="text-nowrap"
                 handleSort={() => handleSort("updatedBy")}
               />
-              <th colSpan={2}></th>
+              <TableHeading name="ACTIONS" textClassName="text-center" />
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.name}</td>
-                <td>
+              <tr key={d.id}>
+                <RowHeader>{d.id}</RowHeader>
+                <TableData>{d.name}</TableData>
+                <TableData>
                   {d.tourStartDate &&
                     getFormattedDate(new Date(d.tourStartDate), "short")}
-                </td>
-                <td>
+                </TableData>
+                <TableData>
                   {d.tourEndDate &&
                     getFormattedDate(new Date(d.tourEndDate), "short")}
-                </td>
-                <td>
+                </TableData>
+                <TableData>
                   {d.approvalDate &&
                     getFormattedDate(new Date(d.approvalDate), "short")}
-                </td>
-                <td>
+                </TableData>
+                <TableData>
                   {d.createdDate &&
                     getFormattedDate(new Date(d.createdDate), "short")}
-                </td>
-                <td>
+                </TableData>
+                <TableData>
                   {d.updatedDate &&
                     getFormattedDate(new Date(d.updatedDate), "short")}
-                </td>
-                <td>
-                  {d.createdBy &&
-                    getFormattedDate(new Date(d.createdBy), "short")}
-                </td>
-                <td>
-                  {d.updatedBy &&
-                    getFormattedDate(new Date(d.updatedBy), "short")}
-                </td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
-                <td>
-                  <Form
-                    api={TOUR_PLAN_API}
-                    method="PUT"
-                    id={d.id}
-                    setRefresh={setRefresh}
-                    refresh={refresh}
-                    setData={setData}
-                    users={users}
+                </TableData>
+                <TableData>
+                  {users.find((user) => user.id === d.createdBy)?.fullName}
+                </TableData>
+                <TableData>
+                  {users.find((user) => user.id === d.updatedBy)?.fullName}
+                </TableData>
+                <TableData>
+                  <Actions
+                    deleteNode={
+                      <DeleteModal handleDelete={handleDelete} id={d.id} />
+                    }
+                    formNode={
+                      <Form
+                        api={TOUR_PLAN_API}
+                        method="PUT"
+                        id={d.id}
+                        setRefresh={setRefresh}
+                        refresh={refresh}
+                        setData={setData}
+                        users={users}
+                      />
+                    }
                   />
-                </td>
+                </TableData>
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

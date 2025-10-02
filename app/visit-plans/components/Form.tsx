@@ -1,23 +1,23 @@
 "use client";
-import Button from "@/app/components/Button";
+import CustomCalendar from "@/app/components/Form/CustomCalender";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import SubmitButton from "@/app/components/Form/SubmitButton";
+import ActionButton from "@/app/components/Table/ActionButton";
 import { Authentication } from "@/app/hooks/useAuthentication";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
-import Image from "next/image";
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { z } from "zod";
-import more from "../../../public/icons/more.svg";
-import FormWrapper from "@/app/components/Form/FormWrapper";
-import CustomLabel from "@/app/components/Form/CustomLabel";
-import CustomInput from "@/app/components/Form/CustomInput";
-import SubmitButton from "@/app/components/Form/SubmitButton";
 
 const schema = z.object({
   id: z.number().optional().default(0),
+  department_Id: z.number().optional().default(1),
   name: z.string().min(1, { message: "Please add Name!" }),
   tourStartDate: z.string().optional().default(new Date().toISOString()),
   tourEndDate: z.string().optional().default(new Date().toISOString()),
@@ -55,6 +55,7 @@ const Form = ({
     setValue,
     reset,
     formState: { errors },
+    control,
   } = useForm<TourPlan>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
 
@@ -91,7 +92,7 @@ const Form = ({
         setValue("approvalDate", itemData.approvalDate);
         setValue("createdDate", itemData.createdAt);
         setValue("updatedDate", new Date().toISOString());
-        setValue("createdBy", itemData.userId ? itemData.userId : userId);
+        setValue("createdBy", itemData.userId ? itemData.userId : 0);
         setValue("updatedBy", userId);
       } catch (err) {
         console.log((err as AxiosError).message);
@@ -106,7 +107,6 @@ const Form = ({
 
     const modifiedFormData = {
       ...formData,
-      createdBy: userId,
       updatedBy: userId,
     };
     console.log("modifiedFormData", modifiedFormData);
@@ -128,24 +128,7 @@ const Form = ({
 
   return (
     <>
-      <Button
-        type="button"
-        className={`btn shadow ${
-          method === "POST"
-            ? "text-white bg-color-sea-green"
-            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
-        }`}
-        onClick={handleShow}
-        style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
-        }}
-      >
-        {method === "POST" ? (
-          "+ VisitPlan"
-        ) : (
-          <Image src={more} alt="more" width={20} height={20} />
-        )}
-      </Button>
+      <ActionButton onClick={handleShow} method={method} name="Visit Plan" />
 
       <Modal
         show={show}
@@ -201,11 +184,16 @@ const Form = ({
                   <CustomLabel htmlFor="tourStartDate">
                     Tour Start Date
                   </CustomLabel>
-                  <CustomInput
-                    {...register("tourStartDate")}
-                    id="tourStartDate"
-                    type="text"
-                    placeholder="Enter Tour Start Date"
+                  <Controller
+                    name="tourStartDate"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomCalendar
+                        {...field}
+                        value={field.value}
+                        onChange={(date) => field.onChange(date.toISOString())}
+                      />
+                    )}
                   />
                   {/* <label
                     htmlFor="tourStartDate"
@@ -231,11 +219,16 @@ const Form = ({
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
                   <CustomLabel htmlFor="tourEndDate">Tour End Date</CustomLabel>
-                  <CustomInput
-                    {...register("tourEndDate")}
-                    id="tourEndDate"
-                    type="text"
-                    placeholder="Enter Tour End Date"
+                  <Controller
+                    name="tourEndDate"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomCalendar
+                        {...field}
+                        value={field.value}
+                        onChange={(date) => field.onChange(date.toISOString())}
+                      />
+                    )}
                   />
                   {/* <label
                     htmlFor="tourEndDate"
@@ -263,11 +256,16 @@ const Form = ({
                   <CustomLabel htmlFor="approvalDate">
                     Approval Date
                   </CustomLabel>
-                  <CustomInput
-                    {...register("approvalDate")}
-                    id="approvalDate"
-                    type="text"
-                    placeholder="Enter Approval Date"
+                  <Controller
+                    name="approvalDate"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomCalendar
+                        {...field}
+                        value={field.value}
+                        onChange={(date) => field.onChange(date.toISOString())}
+                      />
+                    )}
                   />
                   {/* <label
                     htmlFor="approvalDate"

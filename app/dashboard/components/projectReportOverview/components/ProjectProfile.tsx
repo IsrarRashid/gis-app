@@ -35,6 +35,8 @@ const ProjectProfile = ({ group }: Props) => {
                     )
                   : attribute.label.toLowerCase() === "pc-i cost"
                   ? `${Math.round(parseFloat(attribute?.values[0]?.value))} M`
+                  : attribute.label.toLowerCase() === "Gestation Period"
+                  ? `${attribute?.values[0]?.value} Months`
                   : attribute?.values[0]?.value}
               </p>
             </div>

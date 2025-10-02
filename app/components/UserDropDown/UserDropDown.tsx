@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import apiClient from "@/app/services/api-client";
 import { FEEDBACK_API } from "@/app/APIs";
 import { Feedback } from "@/app/feedback/components/Feedback";
+import Spinner from "../Spinner";
 
 const UserDropDown = () => {
   const [show, setShow] = useState(false);
@@ -111,95 +112,105 @@ const UserDropDown = () => {
   }, [userId]);
 
   return (
-    <div className={styles.dropdown} ref={dropdownRef}>
-      <Button
-        className="btn btn-sm badge rounded-pill shadow-sm p-0 position-relative"
-        onClick={() => setShow(!show)}
-        style={{
-          padding: "5px 15px 5px 8px",
-          background: "rgba(255, 255, 255, 0.62)",
-        }}
-      >
-        <div className="row d-flex">
-          <div className="col m-auto ms-1 mt-1 mb-1">
-            <img
-              className="img-fluid rounded-circle m-0"
-              src="/icons/logoNew.svg"
-              style={{ objectFit: "cover" }}
-              alt="profilePic"
-              width={70}
-              height={70}
-            />
-          </div>
-          <div className="col p-0 m-auto">
-            <p className="m-0 text-dark text-start fs13px fw-6">{userName}</p>
-            <p
-              className="m-0 text-start mt-1 fs11px fw-normal"
-              style={{ color: "#575757" }}
-            >
-              {/* {currentTime} */}
-              {firstName} {lastName}
-            </p>
-          </div>
-          <div className="col ps-2 pe-3 m-auto">
-            <Image src={downArrowBold} alt="downArrowBold" />
-          </div>
-        </div>
-        {role === "director" && (
-          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {data && data.length > 0
-              ? data.filter((d) => d.status === 0).length
-              : ""}
-          </span>
-        )}
-      </Button>
-      <div
-        className={`fs12px ${styles.dropdownContent} ${show && styles.show}`}
-        style={{ zIndex: 3 }}
-      >
-        <div className="row d-flex m-0 pt-1">
-          <div className="col-lg-3 col-md-3 col-sm-12 m-auto ms-1 mt-1 mb-1 p-0">
-            <img
-              className="img-fluid rounded-circle m-0"
-              src="/icons/logoNew.svg"
-              style={{ objectFit: "cover" }}
-              alt="profilePic"
-              width={70}
-              height={70}
-            />
-          </div>
-          <div className="col p-0 m-auto ms-1 p-1">
-            <p className="m-0 text-dark fs13px fw-6 text-break text-wrap">
-              {userName}
-            </p>
-            <p
-              className="fs11px text-start text-wrap text-break"
-              style={{ color: "#575757", marginTop: "-2px", marginBottom: 0 }}
-            >
-              {userEmail}
-            </p>
-          </div>
-        </div>
-        {role === "director" && (
-          <Link href="/feedback" target="_blank" className="fw-normal">
-            <div className="position-relative">
-              <Image
-                src={feedback}
-                alt="feedback"
-                width={20}
-                height={20}
-                className="me-2 mb-1"
-              />
-              FeedBack
+    <>
+      {userName ? (
+        <div className={styles.dropdown} ref={dropdownRef}>
+          <Button
+            className="btn btn-sm badge rounded-pill shadow-sm p-0 position-relative"
+            onClick={() => setShow(!show)}
+            style={{
+              padding: "5px 15px 5px 8px",
+              background: "rgba(255, 255, 255, 0.62)",
+            }}
+          >
+            <div className="row d-flex">
+              <div className="col m-auto ms-1 mt-1 mb-1">
+                <img
+                  className="img-fluid rounded-circle m-0"
+                  src="/icons/logoNew.svg"
+                  style={{ objectFit: "cover" }}
+                  alt="profilePic"
+                  width={70}
+                  height={70}
+                />
+              </div>
+              <div className="col p-0 m-auto">
+                <p className="m-0 text-dark text-start fs13px fw-6">
+                  {userName}
+                </p>
+                <p
+                  className="m-0 text-start mt-1 fs11px fw-normal"
+                  style={{ color: "#575757" }}
+                >
+                  {/* {currentTime} */}
+                  {firstName} {lastName}
+                </p>
+              </div>
+              <div className="col ps-2 pe-3 m-auto">
+                <Image src={downArrowBold} alt="downArrowBold" />
+              </div>
+            </div>
+            {role === "director" && (
               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                 {data && data.length > 0
                   ? data.filter((d) => d.status === 0).length
                   : ""}
               </span>
+            )}
+          </Button>
+          <div
+            className={`fs12px ${styles.dropdownContent} ${
+              show && styles.show
+            }`}
+            style={{ zIndex: 3 }}
+          >
+            <div className="row d-flex m-0 pt-1">
+              <div className="col-lg-3 col-md-3 col-sm-12 m-auto ms-1 mt-1 mb-1 p-0">
+                <img
+                  className="img-fluid rounded-circle m-0"
+                  src="/icons/logoNew.svg"
+                  style={{ objectFit: "cover" }}
+                  alt="profilePic"
+                  width={70}
+                  height={70}
+                />
+              </div>
+              <div className="col p-0 m-auto ms-1 p-1">
+                <p className="m-0 text-dark fs13px fw-6 text-break text-wrap">
+                  {userName}
+                </p>
+                <p
+                  className="fs11px text-start text-wrap text-break"
+                  style={{
+                    color: "#575757",
+                    marginTop: "-2px",
+                    marginBottom: 0,
+                  }}
+                >
+                  {userEmail}
+                </p>
+              </div>
             </div>
-          </Link>
-        )}
-        {/* <Link href="" className="fw-normal">
+            {role === "director" && (
+              <Link href="/feedback" target="_blank" className="fw-normal">
+                <div className="position-relative">
+                  <Image
+                    src={feedback}
+                    alt="feedback"
+                    width={20}
+                    height={20}
+                    className="me-2 mb-1"
+                  />
+                  FeedBack
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {data && data.length > 0
+                      ? data.filter((d) => d.status === 0).length
+                      : ""}
+                  </span>
+                </div>
+              </Link>
+            )}
+            {/* <Link href="" className="fw-normal">
           <Image
             src={settingBlack}
             alt="settingBlack"
@@ -209,21 +220,29 @@ const UserDropDown = () => {
           />
           Settings
         </Link> */}
-        <div className="pt-0 pb-0 ps-3 pe-3">
-          <div className="dropdown-divider m-0"></div>
+            <div className="pt-0 pb-0 ps-3 pe-3">
+              <div className="dropdown-divider m-0"></div>
+            </div>
+            <Link href="/login" className="fw-normal" onClick={handleLogout}>
+              <Image
+                src={signOut}
+                alt="signOut"
+                width={20}
+                height={20}
+                className="me-2 mb-1"
+              />
+              Sign out
+            </Link>
+          </div>
         </div>
-        <Link href="/login" className="fw-normal" onClick={handleLogout}>
-          <Image
-            src={signOut}
-            alt="signOut"
-            width={20}
-            height={20}
-            className="me-2 mb-1"
-          />
-          Sign out
-        </Link>
-      </div>
-    </div>
+      ) : !userName ? (
+        ""
+      ) : (
+        <div className="d-flex align-items-center justify-content-center h-100">
+          <Spinner color="text-light" />
+        </div>
+      )}
+    </>
   );
 };
 

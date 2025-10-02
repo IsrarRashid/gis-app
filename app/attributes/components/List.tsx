@@ -16,6 +16,9 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useAttributes, { Attribute } from "../../hooks/useAttributes";
 import Form from "./Form";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
+import Actions from "@/app/components/Table/Actions";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -164,19 +167,10 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
           </div>
         }
       />
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".5px solid #858585" }}
-        >
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading
                 name="attribute Id"
                 handleSort={() => handleSort("attributeId")}
@@ -297,91 +291,82 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
                 handleSort={() => handleSort("priority")}
                 className="text-nowrap"
               />
-
-              <th colSpan={2}></th>
+              <TableHeading name="Actions" textClassName="text-center" />
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d, i) => (
-              <tr
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={i}
-              >
-                <th
-                  style={{
-                    borderBottom: "1.08px solid #E2E8F0",
-                    padding: "28px 26px",
-                  }}
-                >
-                  {d.attributeId}
-                </th>
-                <td>{d.sortId}</td>
-                <td>{d.attributeDataType}</td>
-                <td>{d.multiselect}</td>
-                <td>{d.label}</td>
-                <td>{d.validationRegx}</td>
-                <td>{d.attributeCode}</td>
-                <td>{d.min}</td>
-                <td>{d.max}</td>
-                <td>{d.required}</td>
-                <td>{d.status}</td>
-                <td>{d.hidden}</td>
-                <td>{d.placeholder}</td>
-                <td>{d.attributeType}</td>
-                <td>{d.unit}</td>
-                <td>{d.errorMessage}</td>
-                <td>{d.verificationType}</td>
-                <td>{d.evaluationFormula}</td>
-                <td>{d.weightage}</td>
-                <td>{d.remarks}</td>
-                <td>{d.removeable}</td>
-                <td>
+              <tr key={i}>
+                <RowHeader>{d.attributeId}</RowHeader>
+                <TableData className="text-center">{d.sortId}</TableData>
+                <TableData className="text-center">
+                  {d.attributeDataType}
+                </TableData>
+                <TableData className="text-center">{d.multiselect}</TableData>
+                <TableData>{d.label}</TableData>
+                <TableData>{d.validationRegx}</TableData>
+                <TableData>{d.attributeCode}</TableData>
+                <TableData className="text-center">{d.min}</TableData>
+                <TableData className="text-center">{d.max}</TableData>
+                <TableData className="text-center">{d.required}</TableData>
+                <TableData className="text-center">{d.status}</TableData>
+                <TableData className="text-center">{d.hidden}</TableData>
+                <TableData>{d.placeholder}</TableData>
+                <TableData>{d.attributeType}</TableData>
+                <TableData>{d.unit}</TableData>
+                <TableData>{d.errorMessage}</TableData>
+                <TableData>{d.verificationType}</TableData>
+                <TableData>{d.evaluationFormula}</TableData>
+                <TableData className="text-center">{d.weightage}</TableData>
+                <TableData>{d.remarks}</TableData>
+                <TableData className="text-center">{d.removeable}</TableData>
+                <TableData>
                   {d.options?.map((option: any, i) => (
                     <span key={i}>
                       {option.label}
                       ,&nbsp;
                     </span>
                   ))}
-                </td>
-                <td>
+                </TableData>
+                <TableData className="text-center">
                   {d.isMaster === 0 || d.isMaster === null ? "No" : "Yes"}
-                </td>
-                <td>{d.priority}</td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.attributeId} />
-                </td>
-                <td>
-                  <Form
-                    api={ATTRIBUTES_API_ENDPOINT}
-                    method="PUT"
-                    id={d.attributeId}
-                    setRefresh={setRefresh}
-                    refresh={refresh}
-                    projectDetailKeys={projectDetailKeys}
-                    data={data}
+                </TableData>
+                <TableData className="text-center">{d.priority}</TableData>
+                <TableData>
+                  <Actions
+                    deleteNode={
+                      <DeleteModal
+                        handleDelete={handleDelete}
+                        id={d.attributeId}
+                      />
+                    }
+                    formNode={
+                      <Form
+                        api={ATTRIBUTES_API_ENDPOINT}
+                        method="PUT"
+                        id={d.attributeId}
+                        setRefresh={setRefresh}
+                        refresh={refresh}
+                        projectDetailKeys={projectDetailKeys}
+                        data={data}
+                      />
+                    }
                   />
-                </td>
+                </TableData>
               </tr>
             ))}
-            <tr>
-              <td colSpan={26}>
-                <Pagination
-                  searchTerm={searchTerm}
-                  filteredData={filteredData}
-                  data={data}
-                  rows={rows}
-                  setRows={setRows}
-                  currentPage={currentPage}
-                  setCurrentPage={setCurrentPage}
-                />
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

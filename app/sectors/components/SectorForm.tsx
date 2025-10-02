@@ -21,6 +21,7 @@ import { z } from "zod";
 import more from "../../../public/icons/more.svg";
 import { FiPlus } from "react-icons/fi";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import ActionButton from "@/app/components/Table/ActionButton";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -117,30 +118,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh, data }: Props) => {
 
   return (
     <>
-      <Button
-        type="button"
-        className={`btn shadow-none ${
-          method === "POST" && "rounded-pill text-white fs15px fw-bold"
-        }`}
-        onClick={handleShow}
-        style={{
-          background: method === "POST" ? "#1C6BA6" : "",
-          padding: method === "PUT" ? "17px" : "",
-        }}
-      >
-        {method === "POST" ? (
-          <div className="col">
-            <div className="row align-items-center">
-              <div className="col pe-0">
-                <FiPlus size={21.6} />
-              </div>
-              <div className="col ps-1">Sector</div>
-            </div>
-          </div>
-        ) : (
-          <HiOutlineDotsVertical size={26} style={{ color: "#475569" }} />
-        )}
-      </Button>
+      <ActionButton name="Sector" method={method} onClick={handleShow} />
 
       <Modal
         size="lg"

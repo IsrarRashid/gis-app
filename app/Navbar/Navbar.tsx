@@ -4,16 +4,17 @@ import { Lexend } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { FaPlay, FaYoutube } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import Button from "../components/Button";
 import GISMenu from "../components/GISMenu";
+import Spinner from "../components/Spinner";
 import UserDropDown from "../components/UserDropDown/UserDropDown";
 import DashboardTypeFilter from "../dashboard/components/DashboardTypeFilter";
+import DepartmentCategoryFilter from "../dashboard/components/DepartmentCategoryFilter";
 import { RootState } from "../store";
 import styles from "./Navbar.module.css";
-import DepartmentCategoryFilter from "../dashboard/components/DepartmentCategoryFilter";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -154,15 +155,27 @@ const Navbar = () => {
             {(departmentId === 0 || departmentId === 1) &&
             role !== "Special Role" ? (
               <li className="nav-item p-1 me-3 m-auto">
-                <Suspense fallback={<span>Loading filter...</span>}>
+                <Suspense
+                  fallback={
+                    <div className="d-flex align-items-center justify-content-center h-100">
+                      <Spinner color="text-light" />
+                    </div>
+                  }
+                >
                   <DashboardTypeFilter />
                 </Suspense>
               </li>
-            ) : role === "Special Role" ? (
+            ) : role === "Special Role" || !role || !departmentId ? (
               ""
             ) : (
               <li className="nav-item p-1 me-3 m-auto">
-                <Suspense fallback={<span>Loading filter...</span>}>
+                <Suspense
+                  fallback={
+                    <div className="d-flex align-items-center justify-content-center h-100">
+                      <Spinner color="text-light" />
+                    </div>
+                  }
+                >
                   <DepartmentCategoryFilter />
                 </Suspense>
               </li>

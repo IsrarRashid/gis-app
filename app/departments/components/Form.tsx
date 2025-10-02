@@ -15,6 +15,7 @@ import Select from "react-select";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
 import { RxCross2 } from "react-icons/rx";
+import ActionButton from "@/app/components/Table/ActionButton";
 
 const departmentSchema = z.object({
   id: z.number().optional().default(0),
@@ -320,24 +321,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
 
   return (
     <>
-      <Button
-        type="button"
-        className={`btn shadow ${
-          method === "POST"
-            ? "text-white bg-color-sea-green"
-            : "rounded-pill ps-3 pe-3 pt-1 pb-1"
-        }`}
-        onClick={handleShow}
-        style={{
-          background: method === "POST" ? "" : "rgba(255, 255, 255,.5)",
-        }}
-      >
-        {method === "POST" ? (
-          "+ Department"
-        ) : (
-          <Image src={more} alt="more" width={20} height={20} />
-        )}
-      </Button>
+      <ActionButton onClick={handleShow} method={method} name="Department" />
 
       <Modal
         show={show}
@@ -349,7 +333,6 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
         id={`formModal-${id}`}
       >
         <Modal.Header
-          // className="bg-blur py-0 px-4"
           className="py-0 px-4"
           style={{ borderTopLeftRadius: "12px", borderTopRightRadius: "12px" }}
           closeButton

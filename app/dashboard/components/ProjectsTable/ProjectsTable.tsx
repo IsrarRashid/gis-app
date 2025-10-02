@@ -1,7 +1,14 @@
 "use client";
 import { GENERATE_REPORT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import { defaultOption } from "@/app/components/Form/CustomSelect";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomSelect, {
+  defaultOption,
+  OptionType,
+} from "@/app/components/Form/CustomSelect";
+import { paginationSelectStyles } from "@/app/components/Table/Pagination";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
 import TableHeading from "@/app/components/Table/TableHeading";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import ProjectReportOverviewModal from "@/app/dashboard/components/projectReportOverview/ProjectReportOverviewModal";
@@ -20,7 +27,7 @@ import {
 import { exportDataToExcel } from "@/app/utils/exportToExcel";
 import { format } from "date-fns";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -28,20 +35,16 @@ import { Accordion } from "react-bootstrap";
 import { DateRange, RangeKeyDict } from "react-date-range";
 import "react-date-range/dist/styles.css"; // Main style file
 import "react-date-range/dist/theme/default.css"; // Theme CSS
-import { FaRegClock, FaSearch, FaUser } from "react-icons/fa";
-import { IoSearch } from "react-icons/io5";
-import {
-  MdFirstPage,
-  MdLastPage,
-  MdNavigateBefore,
-  MdNavigateNext,
-  MdOutlineDateRange,
-} from "react-icons/md";
+import { FiSearch } from "react-icons/fi";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { IoSearch, IoSearchOutline } from "react-icons/io5";
+import { LuUserRound } from "react-icons/lu";
+import { PiCircleFill } from "react-icons/pi";
+import { VscCheckAll } from "react-icons/vsc";
 import Select, { SingleValue, StylesConfig } from "react-select";
-import styles from "./ProjectsTable.module.css";
-import { ReportTypeStatusEnum } from "../../types/reportTypeStatus";
 import { toast } from "react-toastify";
-import Pagination from "@/app/components/Table/Pagination";
+import { ReportTypeStatusEnum } from "../../types/reportTypeStatus";
+import styles from "./ProjectsTable.module.css";
 
 // Define the type of the range state
 interface RangeType {
@@ -50,12 +53,10 @@ interface RangeType {
   key: string;
 }
 
-const dmSans = DM_Sans({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
-
-const inter = Inter({ subsets: ["latin"] });
 
 export interface ProjectsList {
   id: number;
@@ -111,11 +112,6 @@ interface Option {
   value: string;
 }
 
-interface NumberOption {
-  label: string;
-  value: number;
-}
-
 const ProjectsTable = ({
   projectsData,
   setProjectsData,
@@ -127,6 +123,8 @@ const ProjectsTable = ({
   allowLink = true,
   role = "",
 }: Props) => {
+  const [selectedOptions, setSelectedOptions] = useState<OptionType[]>([]);
+
   const customStyles: StylesConfig<Option, false> = {
     control: (base) => ({
       ...base,
@@ -356,8 +354,13 @@ const ProjectsTable = ({
   const [rows, setRows] = useState(10); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
-  const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRows(parseInt(e?.target.value, 10));
+  // const handleRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setRows(parseInt(e?.target.value, 10));
+  //   setCurrentPage(1);
+  // };
+
+  const handleRowsPerPage = (count: number) => {
+    setRows(count);
     setCurrentPage(1);
   };
 
@@ -774,46 +777,59 @@ const ProjectsTable = ({
 
     if (startPage > 1) {
       pageNumbers.push(
-        <Button
-          key="ellipsis-start"
-          className="btn bg-color-sea-green shadow me-2"
-          disabled
-          style={{ border: "1px solid #445E84" }}
-        >
-          ...
-        </Button>
+        <div className="col p-0" key="ellipsis-start">
+          <Button
+            className="btn btn-sm bg-color-evaluation-theme-blue rounded-circle text-white border-0 d-flex justify-content-center align-items-center"
+            disabled
+            style={{
+              width: "27px",
+              height: "27px",
+              padding: 0, // remove extra padding from btn-sm
+            }}
+          >
+            <HiOutlineDotsHorizontal />
+          </Button>
+        </div>
       );
     }
 
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(
-        <Button
-          key={i}
-          className={`btn ${
-            i === currentPage
-              ? "bg-color-matte-light-blue text-dark"
-              : "bg-color-sea-green shadow text-white"
-          } me-2`}
-          onClick={() => handlePageChange(i)}
-          style={{
-            border: "1px solid #445E84",
-          }}
-        >
-          {i}
-        </Button>
+        <div key={i} className="col p-0">
+          <Button
+            className={`btn btn-sm rounded-circle border-0 d-flex justify-content-center align-items-center shadow-none fs-6 ${
+              i === currentPage
+                ? " fw-bold mb-2 color-dark-gray"
+                : "fw-6 color-evaluation-theme-blue"
+            }`}
+            onClick={() => handlePageChange(i)}
+            style={{
+              width: "27px",
+              height: "27px",
+              padding: 0, // remove extra padding from btn-sm
+            }}
+          >
+            {i}
+          </Button>
+        </div>
       );
     }
 
     if (endPage < totalPages) {
       pageNumbers.push(
-        <Button
-          key="ellipsis-end"
-          className="btn bg-color-sea-green shadow me-2 text-white"
-          disabled
-          style={{ border: "1px solid #445E84" }}
-        >
-          ...
-        </Button>
+        <div className="col p-0" key="ellipsis-end">
+          <Button
+            className="btn btn-sm bg-color-evaluation-theme-blue rounded-circle text-white border-0 d-flex justify-content-center align-items-center"
+            disabled
+            style={{
+              width: "27px",
+              height: "27px",
+              padding: 0, // remove extra padding from btn-sm
+            }}
+          >
+            <HiOutlineDotsHorizontal />
+          </Button>
+        </div>
       );
     }
 
@@ -1021,28 +1037,33 @@ const ProjectsTable = ({
     }
   };
 
+  const rowCounts = [10, 20, 30, 40, 50];
+  const rowCountOptions: OptionType[] = rowCounts.map((d) => {
+    return {
+      value: d.toString(),
+      label: d.toString(),
+    };
+  });
+
+  useEffect(() => {
+    setSelectedOptions([rowCountOptions[0]]);
+    handleRowsPerPage(parseInt(rowCountOptions[0].value));
+  }, []);
+
   return (
-    <div className="d-flex">
-      <div className={`${styles.sidenav} ${isExpanded ? styles.expanded : ""}`}>
-        <ul className="list-group p-0">
-          <li className="list-group-item border-0 bg-transparent">
+    <div className={`d-flex ${plusJakartaSans.className}`}>
+      <div
+        className={`${styles.sidenav} ${isExpanded ? styles.expanded : ""}`}
+        style={{ borderRight: "1px solid #CBD5E1", zIndex: 3 }}
+      >
+        <ul className="list-group p-0" style={{ marginBottom: "29.71px" }}>
+          <li className="list-group-item border-0 bg-transparent p-0">
             <Button
-              className="btn mb-5 p-0"
+              className="btn"
               onClick={toggleSidenav}
               aria-label="Toggle navigation"
             >
-              <Image
-                src="/icons/collapseArrow.svg"
-                alt="collapseArrow"
-                width={20}
-                height={20}
-                style={{
-                  transform: `${
-                    isExpanded ? "rotate(180deg)" : "rotate(0deg)"
-                  }`,
-                  transition: "transform .3s",
-                }}
-              />
+              <Image src="/icons/box.svg" alt="box" width={22} height={22} />
             </Button>
           </li>
         </ul>
@@ -1447,63 +1468,126 @@ const ProjectsTable = ({
           )}
         </div>
         <div className={`col p-0 ${isExpanded && "d-none"}`}>
-          <ul className="list-group p-0">
+          <ul className="list-group p-0" style={{ marginBottom: "18.57px" }}>
             <li
-              className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+              className="list-group-item border-0 bg-transparent cursor-pointer p-0"
+              style={{ marginBottom: "14.86px" }}
               onClick={toggleSidenav}
             >
-              <FaSearch className="img-fluid" />
+              {/* <FaSearch className="img-fluid" /> */}
+              <div
+                className="d-flex justify-content-center align-items-center rounded-circle bg-white"
+                style={{
+                  width: "44.57px",
+                  height: "44.57px",
+                }}
+              >
+                <FiSearch size={22} style={{ color: "#475569" }} />
+              </div>
             </li>
+          </ul>
+          <ul className="list-group p-0">
             {keys.includes("districtName") && (
               <li
-                className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+                className="list-group-item border-0 bg-transparent cursor-pointer p-0"
+                style={{ marginBottom: "23.21px" }}
                 onClick={toggleSidenav}
               >
-                <Image
-                  className="img-fluid"
-                  src="/icons/districtBlack.svg"
-                  alt="districtBlack"
-                  width={20}
-                  height={20}
-                />
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{
+                    width: "44.57px",
+                    height: "44.57px",
+                  }}
+                >
+                  <Image
+                    className="img-fluid"
+                    src="/icons/city-01.svg"
+                    alt="city-01"
+                    width={22}
+                    height={22}
+                  />
+                </div>
               </li>
             )}
             {keys.includes("visitStartDate") && (
               <li
-                className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+                className="list-group-item border-0 bg-transparent cursor-pointer p-0"
+                style={{ marginBottom: "23.21px" }}
                 onClick={toggleSidenav}
               >
-                <MdOutlineDateRange className="img-fluid" />
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{
+                    width: "44.57px",
+                    height: "44.57px",
+                  }}
+                >
+                  <Image
+                    className="img-fluid"
+                    src="/icons/calendar-02.svg"
+                    alt="calendar-02"
+                    width={22}
+                    height={22}
+                  />
+                </div>
               </li>
             )}
             {keys.includes("sectorName") && (
               <li
-                className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+                className="list-group-item border-0 bg-transparent cursor-pointer p-0"
+                style={{ marginBottom: "23.21px" }}
                 onClick={toggleSidenav}
               >
-                <FaRegClock className="img-fluid" />
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{
+                    width: "44.57px",
+                    height: "44.57px",
+                  }}
+                >
+                  <Image
+                    className="img-fluid"
+                    src="/icons/setup-01.svg"
+                    alt="setup-01"
+                    width={22}
+                    height={22}
+                  />
+                </div>
               </li>
             )}
             {keys.includes("userName") && (
               <li
-                className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+                className="list-group-item border-0 bg-transparent cursor-pointer p-0"
+                style={{ marginBottom: "23.21px" }}
                 onClick={toggleSidenav}
               >
-                <FaUser className="img-fluid" />
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{
+                    width: "44.57px",
+                    height: "44.57px",
+                  }}
+                >
+                  <LuUserRound size={22} style={{ color: "#475569" }} />
+                </div>
               </li>
             )}
             {keys.includes("deadline") && (
               <li
-                className="list-group-item border-0 bg-transparent cursor-pointer mb-3"
+                className="list-group-item border-0 bg-transparent cursor-pointer p-0"
+                style={{ marginBottom: "23.21px" }}
                 onClick={toggleSidenav}
               >
-                <Image
-                  className="img-fluid"
-                  src="/icons/submittedReport.svg"
-                  alt="dates"
-                  width={20}
-                  height={20}
-                />
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{
+                    width: "44.57px",
+                    height: "44.57px",
+                  }}
+                >
+                  <VscCheckAll size={22} style={{ color: "#475569" }} />
+                </div>
               </li>
             )}
           </ul>
@@ -1512,24 +1596,98 @@ const ProjectsTable = ({
       <div
         className={`${styles.mainContent} ${
           isExpanded ? styles.shiftRight : ""
-        } flex-grow-1 p-3 pt-0 border border-white`}
+        } flex-grow-1 p-3 pt-0 bg-white`}
         style={{
-          borderRadius: "10px",
-          background: "#CFE6F8",
+          borderTopRightRadius: "13.93px",
+          borderBottomRightRadius: "13.93px",
           marginTop: "0px",
+          border: "1px solid #CBD5E1",
+          borderLeft: "0px",
         }}
       >
         {/* <div style={{ height: "96vh", overflow: "hidden" }}> */}
         {/* <ScrollWrapper> */}
-        <div className="text-center text-white rounded bg-color-sea-blue">
-          <div className="row d-flex m-0">
-            <div className="col m-auto text-start">{/* <ImCross /> */}</div>
-            <div className="col" style={{ marginTop: "10px" }}>
-              <p className="m-0 fs12px fw-bold" style={{ letterSpacing: 1 }}>
-                List of {label}
-              </p>
+
+        <div
+          className="row d-flex align-items-center"
+          style={{ padding: "17.33px 26px" }}
+        >
+          <div className="col p-0">
+            <div className="row align-items-center">
+              <div className="col-auto mb-1 mb-lg-0">
+                <h4 className="m-0" style={{ fontWeight: 800 }}>
+                  {label}
+                </h4>
+              </div>
+              <div className="col-auto mb-2 mb-lg-0">
+                <span
+                  className="badge rounded-pill fs13px fw-6"
+                  style={{ color: "#1C6BA6", border: "1.08px solid #1C6BA6" }}
+                >
+                  <div className="row align-items-center">
+                    <div className="col-auto pe-0">
+                      <PiCircleFill
+                        size={8}
+                        style={{ color: "#1C6BA6", marginBottom: "2px" }}
+                      />
+                    </div>
+                    <div className="col ps-1">
+                      {searchTerm || dropdownFilterValue.length > 0
+                        ? filteredData.length
+                        : projectsData?.length}{" "}
+                      {label}
+                    </div>
+                  </div>
+                </span>
+              </div>
             </div>
-            <div className="col d-flex justify-content-end mt-1 mb-1">
+          </div>
+
+          {handleChange && (
+            <div className="col-12 col-sm-12 col-md-5 col-lg-4 col-xl-3">
+              <form onSubmit={(e) => e.preventDefault()}>
+                <div className="input-group">
+                  <button
+                    className="btn rounded-end rounded-pill text-white shadow-none border-end-0 pe-0"
+                    type="submit"
+                    style={{
+                      border: "1.08px solid #CBD5E1",
+                    }}
+                  >
+                    <IoSearchOutline size={21.6} style={{ color: "#475569" }} />
+                  </button>
+                  <CustomInput
+                    type="text"
+                    className="form-control fw-bold border-start-0 rounded-pill rounded-start shadow-none fs15px bg-transparent py-2 placeholder-bold"
+                    style={{
+                      border: "1px solid #CBD5E1",
+                    }}
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={handleChange}
+                    id="search"
+                  />
+                </div>
+              </form>
+            </div>
+          )}
+          <div className="col-auto">
+            <DownloadDropDown
+              onClickPdf={() =>
+                tableRows && exportToPDF(columns, tableRows, new Date(), label)
+              }
+              onClickExcel={exportToExcel}
+            />
+          </div>
+        </div>
+        {/* <TableHeader
+          heading={label}
+          searchTerm={searchTerm}
+          filteredData={filteredData}
+          data={projectsData}
+          handleChange={dropdownFilterValue.length > 0 ? undefined : handleChange}
+          form={
+            <div className="col-auto">
               <DownloadDropDown
                 onClickPdf={() =>
                   tableRows &&
@@ -1538,39 +1696,15 @@ const ProjectsTable = ({
                 onClickExcel={exportToExcel}
               />
             </div>
-          </div>
-        </div>
-        <div className="row d-flex justify-content-between p-3">
-          <div className="col-lg-6 col-md-5 col-sm-12">
-            <p>
-              Showing:{" "}
-              <span className="fw-bold">
-                {searchTerm || dropdownFilterValue.length > 0
-                  ? `${filteredData.length}/${filteredData.length}`
-                  : projectsData?.length}{" "}
-                {label}
-              </span>
-            </p>
-          </div>
-        </div>
-        <div className="table-responsive mb-2" style={{ height: "96vh" }}>
-          <table
-            id="my-table"
-            className="table table-hover mb-0"
-            style={{
-              border: ".41px solid rgba(159, 159, 159, 0.75) !important",
-            }}
-          >
+          }
+        /> */}
+        <div className="table-responsive mb-2" style={{ margin: "0px -17px" }}>
+          <table className="table table-hover mb-0">
             <thead>
-              <tr
-                className={`color-dark-blue cursor-pointer text-center ${inter.className}`}
-                style={{
-                  border: ".41px solid rgba(159, 159, 159, 0.75) !important",
-                  fontSize: ".85rem",
-                }}
-              >
+              <tr>
                 {keys.map((k, i) => (
                   <TableHeading
+                    className="text-nowrap"
                     key={k + i}
                     name={
                       k.toLowerCase() === "id"
@@ -1590,62 +1724,20 @@ const ProjectsTable = ({
                     handleSort={() => handleSort(`${k}`)}
                   />
                 ))}
-                {/* <TableHeading
-                  name="project Name"
-                  handleSort={() => handleSort("projectName")}
-                />
-                <TableHeading
-                  name="sector Name"
-                  handleSort={() => handleSort("sectorName")}
-                />
-                <TableHeading
-                  name="district Name"
-                  handleSort={() => handleSort("districtName")}
-                />
-                <TableHeading
-                  name="no. of Visits"
-                  handleSort={() => handleSort("visitCount")}
-                />
-                <TableHeading
-                  name="user Name"
-                  handleSort={() => handleSort("userName")}
-                />
-                <TableHeading
-                  name="report Completion"
-                  handleSort={() => handleSort("reportCompletion")}
-                />
-                <TableHeading
-                  name="visit Date"
-                  handleSort={() => handleSort("visitStartDate")}
-                />
-                <TableHeading
-                  name="completed Date"
-                  handleSort={() => handleSort("completedDate")}
-                />
-                <TableHeading
-                  name="deadline"
-                  handleSort={() => handleSort("deadline")}
-                />
-                <TableHeading
-                  name="report generated"
-                  handleSort={() => handleSort("fileGenrated")}
-                /> */}
               </tr>
             </thead>
             <tbody>
               {paginatedData?.map((d, i) => (
-                <tr
-                  key={i}
-                  className={`fs13px text-center ${dmSans.className}`}
-                  style={{
-                    border: ".41px solid rgba(81,81,81,0.20) !important",
-                  }}
-                >
+                <tr key={i}>
                   {keys.map((key) => {
+                    if (key === "gSno") {
+                      // Handle visitStartDate and visitEndDate together
+                      return <RowHeader key="gSno">{d.gSno}</RowHeader>;
+                    }
                     if (key === "visitStartDate") {
                       // Handle visitStartDate and visitEndDate together
                       return (
-                        <td key="visitDates">
+                        <TableData key="visitDates">
                           {d.visitStartDate && d.visitEndDate ? (
                             <>
                               {addDayToFormattedDate(
@@ -1672,7 +1764,7 @@ const ProjectsTable = ({
                           ) : (
                             "NA"
                           )}
-                        </td>
+                        </TableData>
                       );
                     }
                     if (key === "deadline") {
@@ -1680,7 +1772,7 @@ const ProjectsTable = ({
                       const deadlineTime = new Date(d.deadline);
 
                       return (
-                        <td key="deadline">
+                        <TableData key="deadline">
                           {d.deadline && d.submittedDate ? (
                             <>
                               <div
@@ -1709,12 +1801,12 @@ const ProjectsTable = ({
                           ) : (
                             "NA"
                           )}
-                        </td>
+                        </TableData>
                       );
                     }
                     // For other keys
                     return (
-                      <td key={key}>
+                      <TableData key={key}>
                         {key === "projectName" &&
                         d.reportStatus !== 0 &&
                         d.reportStatus !== 1 &&
@@ -1790,154 +1882,335 @@ const ProjectsTable = ({
                         ) : (
                           d[key]
                         )}
-                      </td>
+                      </TableData>
                     );
                   })}
                 </tr>
               ))}
               {keys.includes("cost") && (
-                <tr className="bg-color-sea-blue text-light text-center">
-                  <td className="rounded-start" colSpan={4}>
-                    Total
-                  </td>
-                  <td className="text-nowrap">
-                    {formatAmountWithCommas(
-                      projectsData.reduce((sum, d) => sum + (d.cost || 0), 0)
-                    )}
-                  </td>
-                  <td className="text-nowrap">
-                    {formatAmountWithCommas(
-                      projectsData.reduce(
-                        (sum, d) => sum + (d.revisedAllocation || 0),
-                        0
-                      )
-                    )}
-                  </td>
-                  <td className="text-nowrap">
-                    {formatAmountWithCommas(
-                      projectsData.reduce(
-                        (sum, d) => sum + (d.pnDReleases || 0),
-                        0
-                      )
-                    )}
-                  </td>
-                  <td className="rounded-end text-nowrap">
-                    {formatAmountWithCommas(
-                      projectsData.reduce(
-                        (sum, d) => sum + (d.utilization || 0),
-                        0
-                      )
-                    )}
-                  </td>
-                  <td></td>
-                  <td></td>
-                </tr>
+                <>
+                  <tr className="bg-color-sea-blue">
+                    <RowHeader className="rounded-start text-light" colSpan={4}>
+                      Total
+                    </RowHeader>
+                    <TableData className="text-light">
+                      {formatAmountWithCommas(
+                        paginatedData.reduce((sum, d) => sum + (d.cost || 0), 0)
+                      )}
+                    </TableData>
+                    <TableData className="text-light">
+                      {formatAmountWithCommas(
+                        paginatedData.reduce(
+                          (sum, d) => sum + (d.revisedAllocation || 0),
+                          0
+                        )
+                      )}
+                    </TableData>
+                    <TableData className="text-light">
+                      {formatAmountWithCommas(
+                        paginatedData.reduce(
+                          (sum, d) => sum + (d.pnDReleases || 0),
+                          0
+                        )
+                      )}
+                    </TableData>
+                    <TableData className="rounded-end text-light">
+                      {formatAmountWithCommas(
+                        paginatedData.reduce(
+                          (sum, d) => sum + (d.utilization || 0),
+                          0
+                        )
+                      )}
+                    </TableData>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                  </tr>
+                  <tr className="bg-color-sea-blue">
+                    <RowHeader className="rounded-start text-light" colSpan={4}>
+                      Grand Total
+                    </RowHeader>
+                    <TableData className="text-light">
+                      {formatAmountWithCommas(
+                        projectsData.reduce((sum, d) => sum + (d.cost || 0), 0)
+                      )}
+                    </TableData>
+                    <TableData className="text-light">
+                      {formatAmountWithCommas(
+                        projectsData.reduce(
+                          (sum, d) => sum + (d.revisedAllocation || 0),
+                          0
+                        )
+                      )}
+                    </TableData>
+                    <TableData className="text-light">
+                      {formatAmountWithCommas(
+                        projectsData.reduce(
+                          (sum, d) => sum + (d.pnDReleases || 0),
+                          0
+                        )
+                      )}
+                    </TableData>
+                    <TableData className="rounded-end text-light">
+                      {formatAmountWithCommas(
+                        projectsData.reduce(
+                          (sum, d) => sum + (d.utilization || 0),
+                          0
+                        )
+                      )}
+                    </TableData>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </>
               )}
-              {/* <tr>
-                <td colSpan={keys.length} className="p-0">
-                  <div className="row d-flex mb-2 m-0">
-                    <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
-                      {indexOfFirstRow + 1} -{" "}
-                      {Math.min(indexOfLastRow, projectsData.length)} of{" "}
-                      {projectsData.length}
-                    </div>
-                    <div className="col-lg-6 col-md-9 col-sm-12">
-                      <div className="row d-flex m-0 me-2 justify-content-end align-items-center">
-                        <div className="col-lg-2 col-md-1 col"></div>
-                        <div className="col-lg-5 col-md-4 col text-end">
-                          <label
-                            htmlFor="rowPerPage"
-                            className="form-label mt-2"
-                          >
-                            Rows Per Page:
-                          </label>
-                        </div>
-                        <div className="col-lg-1 col-md-3 col text-start p-0">
-                          <select
-                            className="rounded bg-color-sea-green text-white shadow p-2"
-                            style={{
-                              color: "#fff",
-                              border: "1px solid #445E84",
-                              outline: "none",
-                            }}
-                            aria-label="Rows per page"
-                            name="rowPerPage"
-                            id="rowPerPage"
-                            value={rows}
-                            onChange={handleRowsPerPage}
-                          >
-                            {[10, 20, 30, 40, 50].map((num) => (
-                              <option key={num} value={num}>
-                                &nbsp;{num}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td colSpan={keys?.length} className="p-0">
-                  <div className="col text-center">
-                    <Button
-                      className="btn bg-color-sea-green shadow me-2 text-white"
-                      onClick={handleFirstPage}
-                      disabled={currentPage === 1}
-                      style={{
-                        border: "1px solid #445E84",
-                      }}
-                    >
-                      <MdFirstPage size={20} />
-                    </Button>
-                    <Button
-                      className="btn bg-color-sea-green shadow me-2 text-white"
-                      onClick={handlePreviousPage}
-                      disabled={currentPage === 1}
-                      style={{
-                        border: "1px solid #445E84",
-                      }}
-                    >
-                      <MdNavigateBefore size={20} />
-                    </Button>
-                    {renderPageNumbers()}
-                    <Button
-                      className="btn bg-color-sea-green shadow me-2 text-white"
-                      onClick={handleNextPage}
-                      disabled={currentPage === totalPages}
-                      style={{
-                        border: "1px solid #445E84",
-                      }}
-                    >
-                      <MdNavigateNext size={20} />
-                    </Button>
-                    <Button
-                      className="btn bg-color-sea-green shadow text-white"
-                      onClick={handleLastPage}
-                      disabled={currentPage === totalPages}
-                      style={{
-                        border: "1px solid #445E84",
-                      }}
-                    >
-                      <MdLastPage size={20} />
-                    </Button>
-                  </div>
-                </td>
-              </tr> */}
             </tbody>
           </table>
           {/* </ScrollWrapper> */}
         </div>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={projectsData}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
+
+        <div className="row m-0 justify-content-between align-items-center pb-2">
+          <div className="col-auto">
+            <div className="row align-items-center">
+              <div className="col-auto pe-0 color-evaluation-theme-blue fw-6">
+                {indexOfFirstRow + 1} -{" "}
+                {Math.min(indexOfLastRow, projectsData.length)} of{" "}
+                {projectsData.length}
+              </div>
+              <div className="col-auto">
+                <span
+                  className="badge rounded-pill fs13px fw-6 color-evaluation-theme-blue"
+                  style={{
+                    border: "1.08px solid #1C6BA6",
+                    paddingBottom: "2px",
+                  }}
+                >
+                  <div className="row align-items-center">
+                    <div
+                      className="col-auto pe-0"
+                      style={{ paddingBottom: "4px" }}
+                    >
+                      <PiCircleFill
+                        size={8}
+                        className="color-evaluation-theme-blue"
+                      />
+                    </div>
+                    <div className="col ps-1 color-evaluation-theme-blue">
+                      10
+                    </div>
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="col-auto">
+            <div className="row align-items-center">
+              <div className="col ps-0" style={{ paddingRight: "10px" }}>
+                <Button
+                  className={`btn btn-sm rounded-circle text-white border-0 d-flex justify-content-center align-items-center m-1 ${
+                    currentPage === 1
+                      ? "bg-color-light-gray "
+                      : "bg-color-evaluation-theme-blue"
+                  }`}
+                  onClick={handleFirstPage}
+                  disabled={currentPage === 1}
+                  style={{
+                    width: "27px",
+                    height: "27px",
+                    padding: 0, // remove extra padding from btn-sm
+                  }}
+                >
+                  <Image
+                    src="/icons/evaluation/doubleArrowLeft.svg"
+                    alt="doubleArrowLeft"
+                    width={13}
+                    height={13}
+                  />
+                </Button>
+              </div>
+              <div className="col ps-0" style={{ paddingRight: "10px" }}>
+                <Button
+                  className={`btn btn-sm rounded-circle text-white border-0 d-flex justify-content-center align-items-center m-1 ${
+                    currentPage === 1
+                      ? "bg-color-light-gray "
+                      : "bg-color-evaluation-theme-blue"
+                  }`}
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  style={{
+                    width: "27px",
+                    height: "27px",
+                    padding: 0, // remove extra padding from btn-sm
+                  }}
+                >
+                  <Image
+                    src="/icons/evaluation/singleArrowLeft.svg"
+                    alt="singleArrowLeft"
+                    width={13}
+                    height={13}
+                  />
+                </Button>
+              </div>
+              {renderPageNumbers()}
+              <div className="col ps-0" style={{ paddingRight: "10px" }}>
+                <Button
+                  className={`btn btn-sm rounded-circle text-white border-0 d-flex justify-content-center align-items-center m-1 ${
+                    currentPage === totalPages
+                      ? "bg-color-light-gray "
+                      : "bg-color-evaluation-theme-blue"
+                  }`}
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  style={{
+                    width: "27px",
+                    height: "27px",
+                    padding: 0, // remove extra padding from btn-sm
+                  }}
+                >
+                  <Image
+                    src="/icons/evaluation/singleArrowLeft.svg"
+                    alt="singleArrowLeft"
+                    width={13}
+                    height={13}
+                    style={{ rotate: "180deg" }}
+                  />
+                </Button>
+              </div>
+              <div className="col ps-0" style={{ paddingRight: "10px" }}>
+                <Button
+                  className={`btn btn-sm rounded-circle text-white border-0 d-flex justify-content-center align-items-center m-1 ${
+                    currentPage === totalPages
+                      ? "bg-color-light-gray "
+                      : "bg-color-evaluation-theme-blue"
+                  }`}
+                  onClick={handleLastPage}
+                  disabled={currentPage === totalPages}
+                  style={{
+                    width: "27px",
+                    height: "27px",
+                    padding: 0, // remove extra padding from btn-sm
+                  }}
+                >
+                  <Image
+                    src="/icons/evaluation/doubleArrowLeft.svg"
+                    alt="doubleArrowLeft"
+                    width={13}
+                    height={13}
+                    style={{ rotate: "180deg" }}
+                  />
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="col-auto">
+            <CustomSelect
+              menuPlacement="top"
+              isClearable={false}
+              options={rowCountOptions}
+              isSearchable={false}
+              closeMenuOnSelect={true}
+              singleSelectStyles={paginationSelectStyles}
+              value={selectedOptions}
+              onChangeSingle={(
+                newValue: SingleValue<{ value: string; label: string }>
+              ) => {
+                if (newValue) {
+                  handleRowsPerPage(Number(newValue.value));
+                  setSelectedOptions([
+                    {
+                      label: newValue.label,
+                      value: newValue.value,
+                    },
+                  ]);
+                }
+              }}
+            />
+          </div>
+        </div>
+
+        {/* <div className="row d-flex mb-2 m-0">
+          <div className="col-lg-6 col-md-3 col-sm-12 mt-2">
+            {indexOfFirstRow + 1} -{" "}
+            {Math.min(indexOfLastRow, projectsData.length)} of{" "}
+            {projectsData.length}
+          </div>
+          <div className="col-lg-6 col-md-9 col-sm-12">
+            <div className="row d-flex m-0 me-2 justify-content-end align-items-center">
+              <div className="col-lg-2 col-md-1 col"></div>
+              <div className="col-lg-5 col-md-4 col text-end">
+                <label htmlFor="rowPerPage" className="form-label mt-2">
+                  Rows Per Page:
+                </label>
+              </div>
+              <div className="col-lg-1 col-md-3 col text-start p-0">
+                <select
+                  className="rounded bg-color-sea-green text-white shadow p-2"
+                  style={{
+                    color: "#fff",
+                    border: "1px solid #445E84",
+                    outline: "none",
+                  }}
+                  aria-label="Rows per page"
+                  name="rowPerPage"
+                  id="rowPerPage"
+                  value={rows}
+                  onChange={handleRowsPerPage}
+                >
+                  {[10, 20, 30, 40, 50].map((num) => (
+                    <option key={num} value={num}>
+                      &nbsp;{num}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col text-center">
+          <Button
+            className="btn bg-color-sea-green shadow me-2 text-white"
+            onClick={handleFirstPage}
+            disabled={currentPage === 1}
+            style={{
+              border: "1px solid #445E84",
+            }}
+          >
+            <MdFirstPage size={20} />
+          </Button>
+          <Button
+            className="btn bg-color-sea-green shadow me-2 text-white"
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            style={{
+              border: "1px solid #445E84",
+            }}
+          >
+            <MdNavigateBefore size={20} />
+          </Button>
+          {renderPageNumbers()}
+          <Button
+            className="btn bg-color-sea-green shadow me-2 text-white"
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            style={{
+              border: "1px solid #445E84",
+            }}
+          >
+            <MdNavigateNext size={20} />
+          </Button>
+          <Button
+            className="btn bg-color-sea-green shadow text-white"
+            onClick={handleLastPage}
+            disabled={currentPage === totalPages}
+            style={{
+              border: "1px solid #445E84",
+            }}
+          >
+            <MdLastPage size={20} />
+          </Button>
+        </div> */}
       </div>
     </div>
   );

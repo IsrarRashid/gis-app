@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Cookies from "js-cookie";
+import axios from "axios";
 import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -9,12 +9,10 @@ import { TbEyeClosed } from "react-icons/tb";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import bgVideoNew from "../../public/video/bgVideoNew.mp4";
-import { LOGIN_API } from "../APIs";
-import apiClient, { AxiosError, ErrorResponse } from "../services/api-client";
-import Button from "./Button";
-import ErrorMessage from "./ErrorMessage";
-import Spinner from "./Spinner";
-import Link from "next/link";
+import { AxiosError, ErrorResponse } from "../../services/api-client";
+import Button from "../../components/Button";
+import ErrorMessage from "../../components/ErrorMessage";
+import Spinner from "../../components/Spinner";
 
 const schema = z.object({
   username: z.string().min(1, { message: "Please add Username!" }),
@@ -48,7 +46,7 @@ interface Props {
   };
 }
 
-const Login = () => {
+const LoginNew = () => {
   // const [userName, setUserName] = useState("super_admin");
   // const [password, setPassword] = useState("Rtmes@1122");
   const {
@@ -59,7 +57,6 @@ const Login = () => {
   const [buttonType, setButtonType] = useState(true);
   const [isSubmitting, setSubmitting] = useState(false);
   const [isCookiesSaved, setCookiesSaved] = useState(false);
-  const [activePrivacyLink, setActivePrivacyLink] = useState(false);
 
   const createdMessage = "Logged In Successfully!";
   const errorMessage = "Username or Password is not Correct!";
@@ -71,77 +68,13 @@ const Login = () => {
     console.log("Form Data:", formData);
     try {
       setSubmitting(true);
-      const response = await apiClient.post<Props>(LOGIN_API, formData);
-
-      if (response.data.responseCode === 200) {
+      console.log("api url", "/api/auth/login", formData);
+      const response = await axios.post<Props>(`/api/auth/login`, formData);
+      console.log("response", response);
+      if (response.status === 200) {
         console.log("responseCode", response.data.responseCode);
         console.log("responseMessage", response.data.responseMessage);
         console.log("user logged in successfully", response);
-        // console.log("token: ", response.data.data.token);
-        // const expires = new Date(new Date().getTime() + 5 * 60 * 1000); // 5 minutes from now
-        // if (Cookies.get("token")) Cookies.remove("token");
-        // if (Cookies.get("email")) Cookies.remove("email");
-        // if (Cookies.get("userName")) Cookies.remove("userName");
-        // if (Cookies.get("userId")) Cookies.remove("userId");
-        // if (Cookies.get("role")) Cookies.remove("role");
-        // if (Cookies.get("rights")) Cookies.remove("rights");
-        if (!isCookiesSaved) {
-          setCookiesSaved(true);
-          Cookies.set("token", response.data.data.token, {
-            expires: new Date(response.data.data.expiration),
-          });
-          Cookies.set("userName", response.data.data.userData.userName, {
-            expires: new Date(response.data.data.expiration),
-          });
-          Cookies.set("userId", response.data.data.userData.id.toString(), {
-            expires: new Date(response.data.data.expiration),
-          });
-          Cookies.set("email", response.data.data.userData.email, {
-            expires: new Date(response.data.data.expiration),
-          });
-          Cookies.set(
-            "departmentId",
-            response.data.data.userProfile.department_Id.toString(),
-            {
-              expires: new Date(response.data.data.expiration),
-            }
-          );
-          Cookies.set(
-            "deptUserFirstName",
-            response.data.data.userProfile.firstName,
-            {
-              expires: new Date(response.data.data.expiration),
-            }
-          );
-          Cookies.set(
-            "deptUserLastName",
-            response.data.data.userProfile.lastName,
-            {
-              expires: new Date(response.data.data.expiration),
-            }
-          );
-          console.log("role", response.data.data.role);
-          if (response.data.data.role.length > 0) {
-            Cookies.set("role", response.data.data.role[0], {
-              expires: new Date(response.data.data.expiration),
-            });
-          }
-          console.log(
-            "rights",
-            response.data.data.rights.map((rights) => rights.rightName)
-          );
-          if (response.data.data.rights.length > 0) {
-            Cookies.set(
-              "rights",
-              JSON.stringify(
-                response.data.data.rights.map((rights) => rights.rightName)
-              ),
-              {
-                expires: new Date(response.data.data.expiration),
-              }
-            );
-          }
-        }
 
         window.location.href = "/";
         notifyCreate(createdMessage);
@@ -172,7 +105,7 @@ const Login = () => {
           bottom: "0",
           minWidth: "100%",
           minHeight: "100%",
-          zIndex: "1",
+          zIndex: "0",
         }}
       >
         <source src={bgVideoNew} type="video/mp4" />
@@ -186,14 +119,14 @@ const Login = () => {
           width: "100%",
           height: "100%",
           backgroundColor: "rgba(0,0,0,0.6)",
-          zIndex: 1,
+          zIndex: 0,
         }}
       ></div>
       <div
         className="container"
         style={{
           position: "relative",
-          zIndex: "2",
+          zIndex: "1",
         }}
       >
         <div className="row d-flex justify-content-center">
@@ -224,7 +157,7 @@ const Login = () => {
             <div className="row m-0">
               <div className="col text-center">
                 <h3
-                  className="text-white fw-6"
+                  className="text-white fw-bold"
                   style={{ marginBottom: "20px" }}
                 >
                   Directorate General Monitoring & Evaluation
@@ -271,7 +204,6 @@ const Login = () => {
                         background: "rgba(255, 255, 255, 0.7)",
                       }}
                       id="username"
-                      autoComplete="username"
                     />
                   </div>
                   {errors.username && (
@@ -315,7 +247,6 @@ const Login = () => {
                       }}
                       placeholder="Enter your Password"
                       id="password"
-                      autoComplete="current-password"
                     />
                     <Button
                       className="btn position-absolute rounded-3"
@@ -356,7 +287,7 @@ const Login = () => {
                   )}
                 </div>
               </div>
-              {/* <div className="form-check" style={{ marginBottom: "20px" }}>
+              <div className="form-check" style={{ marginBottom: "20px" }}>
                 <input
                   type="checkbox"
                   className="form-check-input"
@@ -368,8 +299,8 @@ const Login = () => {
                 >
                   Remember Me
                 </label>
-              </div> */}
-              <div className="row d-flex flex-colum justify-content-center mb-3">
+              </div>
+              <div className="row d-flex flex-colum justify-content-center">
                 <div className="col">
                   <Button
                     type="submit"
@@ -390,21 +321,6 @@ const Login = () => {
                   </Button>
                 </div>
               </div>
-              <div className="text-center">
-                <Link
-                  href="/privacy-policy"
-                  target="_blank"
-                  className={`w-100 fw-5 fs14px ${
-                    activePrivacyLink
-                      ? "text-white"
-                      : "text-decoration-none color-sea-blue "
-                  }`}
-                  onMouseEnter={() => setActivePrivacyLink(true)}
-                  onMouseLeave={() => setActivePrivacyLink(false)}
-                >
-                  Privacy Policy
-                </Link>
-              </div>
             </form>
           </div>
         </div>
@@ -413,4 +329,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginNew;

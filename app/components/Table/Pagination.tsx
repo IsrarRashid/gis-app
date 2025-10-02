@@ -16,6 +16,7 @@ interface Props {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   status?: string;
   rowCounts?: number[];
+  setPageLimit: Dispatch<SetStateAction<boolean>>;
 }
 
 const Pagination = ({
@@ -28,6 +29,7 @@ const Pagination = ({
   setCurrentPage,
   status,
   rowCounts = [10, 20, 30, 40, 50],
+  setPageLimit,
 }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<OptionType[]>([]);
 
@@ -75,9 +77,8 @@ const Pagination = ({
 
     if (startPage > 1) {
       pageNumbers.push(
-        <div className="col p-0">
+        <div className="col p-0" key="ellipsis-start">
           <Button
-            key="ellipsis-start"
             className="btn btn-sm bg-color-evaluation-theme-blue rounded-circle text-white border-0 d-flex justify-content-center align-items-center"
             disabled
             style={{
@@ -96,7 +97,6 @@ const Pagination = ({
       pageNumbers.push(
         <div key={i} className="col p-0">
           <Button
-            key={i}
             className={`btn btn-sm rounded-circle border-0 d-flex justify-content-center align-items-center shadow-none fs-6 ${
               i === currentPage
                 ? " fw-bold mb-2 color-dark-gray"
@@ -117,9 +117,8 @@ const Pagination = ({
 
     if (endPage < totalPages) {
       pageNumbers.push(
-        <div className="col p-0">
+        <div className="col p-0" key="ellipsis-end">
           <Button
-            key="ellipsis-end"
             className="btn btn-sm bg-color-evaluation-theme-blue rounded-circle text-white border-0 d-flex justify-content-center align-items-center"
             disabled
             style={{
@@ -141,6 +140,8 @@ const Pagination = ({
     setCurrentPage(pageNumber);
   };
 
+  const defaultOption = { value: "0", label: "Select" };
+
   const rowCountOptions: OptionType[] = rowCounts.map((d) => {
     return {
       value: d.toString(),
@@ -148,10 +149,10 @@ const Pagination = ({
     };
   });
 
-  useEffect(() => {
-    setSelectedOptions([rowCountOptions[0]]);
-    handleRowsPerPage(parseInt(rowCountOptions[0].value));
-  }, []);
+  // useEffect(() => {
+  //   setSelectedOptions([rowCountOptions[0]]);
+  //   handleRowsPerPage(parseInt(rowCountOptions[0].value));
+  // }, []);
 
   return (
     <>
@@ -289,22 +290,27 @@ const Pagination = ({
           <CustomSelect
             menuPlacement="top"
             isClearable={false}
-            options={rowCountOptions}
+            options={[defaultOption, ...rowCountOptions]}
             isSearchable={false}
             closeMenuOnSelect={true}
-            singleSelectStyles={singleSelectStyles}
+            singleSelectStyles={paginationSelectStyles}
             value={selectedOptions}
             onChangeSingle={(
               newValue: SingleValue<{ value: string; label: string }>
             ) => {
               if (newValue) {
-                handleRowsPerPage(Number(newValue.value));
-                setSelectedOptions([
-                  {
-                    label: newValue.label,
-                    value: newValue.value,
-                  },
-                ]);
+                if (Number(newValue.value) === 0) {
+                  setPageLimit(false);
+                } else {
+                  setPageLimit(true);
+                  handleRowsPerPage(Number(newValue.value));
+                  setSelectedOptions([
+                    {
+                      label: newValue.label,
+                      value: newValue.value,
+                    },
+                  ]);
+                }
               }
             }}
           />
@@ -336,7 +342,7 @@ const Pagination = ({
 export default Pagination;
 
 // Custom Single Select Style
-const singleSelectStyles: StylesConfig<
+export const paginationSelectStyles: StylesConfig<
   OptionType,
   false,
   GroupBase<OptionType>

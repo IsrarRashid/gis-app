@@ -3,33 +3,9 @@
 import EarthLoading from "@/app/earthLoading.json";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const Loader = () => {
-  const colors = [
-    "primary",
-    "secondary",
-    "info",
-    "warning",
-    "danger",
-    "dark",
-    "success",
-  ];
-
-  const getRandomColor = (colors: string[]): string => {
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
-  };
-
-  const [color, setColor] = useState<string>("");
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const randomColor = getRandomColor(colors);
-    setColor(randomColor);
-  }, []);
-
   return (
     <>
       <div

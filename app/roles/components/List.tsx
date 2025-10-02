@@ -14,6 +14,9 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
 import GroupingForm from "./GroupingForm";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
+import Actions from "@/app/components/Table/Actions";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -142,76 +145,66 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           </div>
         }
       />
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
-        >
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading name="name" handleSort={() => handleSort("name")} />
               <TableHeading
+                className="text-nowrap"
                 name="normalized Name"
                 handleSort={() => handleSort("normalizedName")}
               />
               <TableHeading
+                className="text-nowrap"
                 name="concurrency Stamp"
                 handleSort={() => handleSort("concurrencyStamp")}
               />
-              <th>RIGHTS</th>
-              <th colSpan={2}></th>
+              <TableHeading name="RIGHTS" textClassName="text-center" />
+              <TableHeading name="ACTIONS" textClassName="text-center" />
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.name}</td>
-                <td>{d.normalizedName}</td>
-                <td>{d.concurrencyStamp}</td>
-                <td>
+              <tr key={d.id}>
+                <RowHeader>{d.id}</RowHeader>
+                <TableData>{d.name}</TableData>
+                <TableData>{d.normalizedName}</TableData>
+                <TableData>{d.concurrencyStamp}</TableData>
+                <TableData className="text-center">
                   <GroupingForm id={d.id} name={d.name} options={rights} />
-                </td>
-                <td>
-                  <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td>
-                <td>
-                  <Form
-                    api={ROLE_API}
-                    method="PUT"
-                    id={d.id}
-                    setRefresh={setRefresh}
-                    refresh={refresh}
+                </TableData>
+                <TableData>
+                  <Actions
+                    deleteNode={
+                      <DeleteModal handleDelete={handleDelete} id={d.id} />
+                    }
+                    formNode={
+                      <Form
+                        api={ROLE_API}
+                        method="PUT"
+                        id={d.id}
+                        setRefresh={setRefresh}
+                        refresh={refresh}
+                      />
+                    }
                   />
-                </td>
+                </TableData>
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

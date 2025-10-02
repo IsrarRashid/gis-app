@@ -1,15 +1,29 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { CSSProperties, ReactNode, useState } from "react";
 
 interface Props {
   src: string;
   alt?: string;
   width?: number;
   height?: number;
+  defaultImagePath?: string;
+  styles?: CSSProperties;
 }
 
-const Avatar = ({ src, alt = "picture", width = 30, height = 30 }: Props) => {
+const Avatar = ({
+  src,
+  alt = "picture",
+  width = 30,
+  height = 30,
+  defaultImagePath = "/images/dp1.png",
+  styles = {
+    objectFit: "cover",
+    objectPosition: "center top",
+    width: `${width}px`,
+    height: `${height}px`,
+  },
+}: Props) => {
   const [imgSrc, setImgSrc] = useState(src);
 
   return (
@@ -19,13 +33,8 @@ const Avatar = ({ src, alt = "picture", width = 30, height = 30 }: Props) => {
       width={width}
       height={height}
       className="rounded-circle shadow-sm"
-      style={{
-        objectFit: "cover",
-        objectPosition: "center top",
-        width: `${width}px`,
-        height: `${height}px`,
-      }}
-      onError={() => setImgSrc("/images/dp1.png")}
+      style={styles}
+      onError={() => setImgSrc(defaultImagePath)}
     />
   );
 };

@@ -22,7 +22,7 @@ interface Props {
 }
 
 const Button = ({
-  type,
+  type = "button",
   style,
   className,
   onClick = () => {},

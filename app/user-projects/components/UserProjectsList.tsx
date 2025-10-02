@@ -21,6 +21,9 @@ import cancel from "../../../public/icons/cancel.svg";
 import clock from "../../../public/icons/clock.svg";
 import complete from "../../../public/icons/complete.svg";
 import GroupingForm from "./GroupingForm";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
+import StatusBadge from "@/app/projects/components/StatusBadge";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -138,16 +141,15 @@ const UserProjectsList = ({ refresh }: ListProps) => {
 
   return (
     <>
-      <>
-        <TableHeader
-          heading="User Projects"
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          handleChange={handleChange}
-          form={
-            <>
-              {/* <div className="col text-end mb-2">
+      <TableHeader
+        heading="User Projects"
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        handleChange={handleChange}
+        form={
+          <>
+            {/* <div className="col text-end mb-2">
                 <SmdpSyncForm
                   api={SMDP_SYNC_API}
                   method="POST"
@@ -157,7 +159,7 @@ const UserProjectsList = ({ refresh }: ListProps) => {
                   setShowData={setShowData}
                 />
               </div> */}
-              {/* <div className="col text-end mb-2">
+            {/* <div className="col text-end mb-2">
                 <SmdpAllProjectsSyncForm
                   api={SMDP_SYNC_API}
                   method="POST"
@@ -167,32 +169,33 @@ const UserProjectsList = ({ refresh }: ListProps) => {
                   setShowData={setShowData}
                 />
               </div> */}
-              <div className="col-12 col-sm-8 col-md-5 col-lg-4 col-xl-3">
-                <form>
-                  <div className="col text-start">
-                    {userOptions && (
-                      <CustomSelect
-                        options={userOptions}
-                        id="user"
-                        value={
-                          userOptions.find(
-                            (opt) => opt.value === String(selectedUserId)
-                          )
-                            ? [
-                                userOptions.find(
-                                  (opt) => opt.value === String(selectedUserId)
-                                )!,
-                              ]
-                            : null
+            <div className="col-12 col-sm-8 col-md-5 col-lg-4 col-xl-3">
+              <form>
+                <div className="col text-start">
+                  {userOptions && (
+                    <CustomSelect
+                      options={userOptions}
+                      id="user"
+                      closeMenuOnSelect={true}
+                      value={
+                        userOptions.find(
+                          (opt) => opt.value === String(selectedUserId)
+                        )
+                          ? [
+                              userOptions.find(
+                                (opt) => opt.value === String(selectedUserId)
+                              )!,
+                            ]
+                          : null
+                      }
+                      onChangeSingle={(nv) => {
+                        if (nv) {
+                          handleSubmit(Number(nv.value));
                         }
-                        onChangeSingle={(nv) => {
-                          if (nv) {
-                            handleSubmit(Number(nv.value));
-                          }
-                        }}
-                      />
-                    )}
-                    {/* <select
+                      }}
+                    />
+                  )}
+                  {/* <select
                       className="color-light-dark pt-1 pb-2"
                       aria-label="Select User"
                       name="user"
@@ -209,26 +212,16 @@ const UserProjectsList = ({ refresh }: ListProps) => {
                         </option>
                       ))}
                     </select> */}
-                  </div>
-                </form>
-              </div>
-            </>
-          }
-        />
-      </>
-      <div className="table-responsive">
-        <table
-          className="table table-hover mb-5"
-          style={{ border: ".41px solid rgba(81,81,81,0.20) !important" }}
-        >
+                </div>
+              </form>
+            </div>
+          </>
+        }
+      />
+      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
+        <table className="table table-hover mb-0">
           <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer ${inter.className}`}
-              style={{
-                border: ".41px solid rgba(81,81,81,0.20) !important",
-                fontSize: ".85rem",
-              }}
-            >
+            <tr>
               <TableHeading name="id" handleSort={() => handleSort("id")} />
               <TableHeading
                 className="text-nowrap"
@@ -244,27 +237,22 @@ const UserProjectsList = ({ refresh }: ListProps) => {
                 name="status"
                 handleSort={() => handleSort("status")}
               />
-              <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th>
+              <TableHeading name="ASSIGN USER" className="text-nowrap" />
+              <TableHeading name="SUPER GROUP" className="text-nowrap" />
+              {/* <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th> */}
               {/* <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th> */}
-              <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th>
+              {/* <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th> */}
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((d) => (
-              <tr
-                className={dmSans.className}
-                style={{
-                  border: ".41px solid rgba(81,81,81,0.20) !important",
-                  fontSize: ".85rem",
-                }}
-                key={d.id}
-              >
-                <td>{d.id}</td>
-                <td>{d.gsNo}</td>
-                <td>{d.name}</td>
-                <td>{getName(d.sectorId, sectorsData)}</td>
-                <td style={{ whiteSpace: "nowrap" }}>
-                  {d.status === "scheduled" || d.status === "Scheduled" ? (
+              <tr key={d.id}>
+                <RowHeader>{d.id}</RowHeader>
+                <TableData>{d.gsNo}</TableData>
+                <TableData>{d.name}</TableData>
+                <TableData>{getName(d.sectorId, sectorsData)}</TableData>
+                <TableData className="text-nowrap">
+                  {/* {d.status === "scheduled" || d.status === "Scheduled" ? (
                     <Image
                       src={calender}
                       style={{ marginBottom: "3px" }}
@@ -311,24 +299,25 @@ const UserProjectsList = ({ refresh }: ListProps) => {
                   ) : (
                     ""
                   )}
-                  &nbsp;{d.status}
-                </td>
-                <td className="text-center">
+                  &nbsp;{d.status} */}
+                  <StatusBadge status={d.status} />
+                </TableData>
+                <TableData className="text-center">
                   <AssignUserForm id={d.id} options={users} />
-                </td>
+                </TableData>
                 {/* <td className="text-center">
                   <SyncModal handleSubmit={handleSync} id={d.smdpProjectID} />
-                </td> */}
-                <td className="text-center">
+                </TableData> */}
+                <TableData className="text-center">
                   <GroupingForm id={d.id} options={superGroups} />
-                </td>
-                {/* <td>
+                </TableData>
+                {/* <TableData>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
-                </td> */}
-                {/* <td>
+                </TableData> */}
+                {/* <TableData>
                   <DownloadPDFBtn />
-                </td> */}
-                {/* <td>
+                </TableData> */}
+                {/* <TableData>
                   <ProjectForm
                     api={PROJECT_API}
                     method="PUT"
@@ -336,21 +325,21 @@ const UserProjectsList = ({ refresh }: ListProps) => {
                     setRefresh={setRefresh}
                     refresh={refresh}
                   />
-                </td> */}
+                </TableData> */}
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          searchTerm={searchTerm}
-          filteredData={filteredData}
-          data={data}
-          rows={rows}
-          setRows={setRows}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
       </div>
+      <Pagination
+        searchTerm={searchTerm}
+        filteredData={filteredData}
+        data={data}
+        rows={rows}
+        setRows={setRows}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

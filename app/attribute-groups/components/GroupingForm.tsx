@@ -125,7 +125,7 @@ const GroupingForm = ({ id, options, dashboardType }: Props) => {
           data-bs-placement="top"
           title="Attributes"
         >
-          <Image src={dbGrey} alt="dbGrey" width={20} height={20} />
+          <Image src={dbGrey} alt="dbGrey" width={26} height={26} />
         </Button>
 
         <Modal

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 interface Props {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   colSpan?: number;
 }
@@ -11,7 +11,7 @@ const TableData = ({ children, className, colSpan }: Props) => {
     <td
       className={`fs15px fw-5 align-middle ${className || ""}`}
       style={{
-        padding: "7px 15px 7px 20px",
+        padding: "8px 15px 8px 20px",
         color: "#475569",
       }}
       colSpan={colSpan}
