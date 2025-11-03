@@ -131,9 +131,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                   </p>
                 )}
               </div>
-              <div className="col-xxl-5 col-xl-7 col-lg-6 col-md-6 col-sm-6 col-10 mx-auto">
-                <SubmitButton>Save Super Group</SubmitButton>
-              </div>
+              <SubmitButton>Save Super Group</SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

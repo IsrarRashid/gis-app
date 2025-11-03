@@ -2,7 +2,7 @@
 
 import { GENERATE_REPORT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import Spinner from "@/app/components/Spinner";
 import apiClient, {
   AxiosError,

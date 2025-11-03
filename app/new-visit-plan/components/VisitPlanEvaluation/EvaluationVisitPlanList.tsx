@@ -1,8 +1,12 @@
 "use client";
 import { EVALUATION_TEMP_TOUR_PLAN_API, TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import Loader from "@/app/components/Loader";
 import Spinner from "@/app/components/Spinner";
+import TableHeading from "@/app/components/Table/TableHeading";
+import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import useDistrict from "@/app/hooks/useDistrict";
 import useDriver from "@/app/hooks/useDriver";
@@ -14,18 +18,16 @@ import {
   addDayToFormattedDate,
   deleteMessage,
   getFormattedDate,
-  Option,
 } from "@/app/utils";
 import { AxiosError } from "axios";
 import { sort } from "fast-sort";
 import { Inter } from "next/font/google";
-import { useEffect, useState } from "react";
-import Select, { SingleValue, StylesConfig } from "react-select";
-import { toast } from "react-toastify";
-import Form, { COUTempTourPlan, TempCopyForm, typeStatues } from "./Form";
-import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
-import * as XLSX from "xlsx";
+import { useState } from "react";
 import { IoMdInformationCircle } from "react-icons/io";
+import { SingleValue } from "react-select";
+import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
+import Form, { COUTempTourPlan, TempCopyForm, typeStatues } from "./Form";
 const inter = Inter({ subsets: ["latin"] });
 
 interface CreateVisit {
@@ -38,7 +40,7 @@ interface CreateVisit {
   longitude: string | null;
   vehicleID: number;
   districtID: number;
-  mriValue: number | null;
+  eriValue: number | null;
   driverID: number;
   fromDate: string;
   toDate: string;
@@ -48,18 +50,18 @@ interface CreateVisit {
   submitted_at: string | null;
   issued_at: string | null;
   tracking_status: boolean;
-  is_Contractor: number | null;
-  is_ResidentEngineer: number | null;
-  is_Tpv: number | null;
+  isFocalPerson: boolean;
   visitPlanGroup: number;
-  one_pager_status: string | null;
   cancel_reason: string | null;
-  op_submitted_at: string | null;
   submitted_from: number | null;
   submitted_to: number | null;
 }
 
-const List = ({ dashboardType }: { dashboardType?: string }) => {
+const EvaluationVisitPlanList = ({
+  dashboardType,
+}: {
+  dashboardType?: string;
+}) => {
   const [refresh, setRefresh] = useState(false);
   const [visitPlanGroup, setVisitPlanGroup] = useState<number>(-1);
   const { data, setData, isLoading } = useTempTourPlans({ refresh });
@@ -69,27 +71,24 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
   const { data: districts } = useDistrict();
   const { data: tours } = useTourPlans();
   const [copiedRowIndex, setCopiedRowIndex] = useState<number>(-1);
-  const [isClient, setIsClient] = useState(false);
 
   const TEMP_TOUR_PLAN_API_ENDPOINT = dashboardType
     ? EVALUATION_TEMP_TOUR_PLAN_API
     : TEMP_TOUR_PLAN_API;
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   const [isSubmitting, setSubmitting] = useState(false);
   // State for search input
   const [searchTerm, setSearchTerm] = useState("");
 
-  // const [tempJsonData, setTempJsonData] = useState<CreateVisit[]>();
-  const [tempJsonData, setTempJsonData] = useState<COUTempTourPlan[]>();
+  // const [tempJsonDataCreateVisit, setTempJsonDataCreateVisit] =
+  //   useState<CreateVisit[]>();
+  // const [tempJsonDataTourPlan, setTempJsonDataTourPlan] =
+  //   useState<COUTempTourPlan[]>();
 
   // State for filtered data
-  const [filteredData, setFilteredData] = useState<TempTourPlan[]>();
+  const [filteredData, setFilteredData] = useState<TempTourPlan[]>([]);
 
-  const [formsData, setFormsData] = useState<COUTempTourPlan[]>();
+  const [formsData, setFormsData] = useState<COUTempTourPlan[]>([]);
   const [copiedFormData, setCopiedFormData] = useState<
     TempCopyForm | undefined
   >();
@@ -152,31 +151,33 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
   // Paginate data to display only the current page's rows
-  // const paginatedData = (searchTerm ? filteredData : data).slice(
-  //   (currentPage - 1) * rows,
-  //   currentPage * rows
-  // );
+  const paginatedData = (searchTerm ? filteredData : data).slice(
+    (currentPage - 1) * rows,
+    currentPage * rows
+  );
 
   const saveFormsData = async (formsData: COUTempTourPlan[]) => {
-    if (!visitPlanGroup || visitPlanGroup === -1) {
-      toast.error("Please select visit plan");
-      return;
-    }
     console.log("formsData", formsData);
     const filteredFormsData = formsData.filter((form) => form !== undefined);
     console.log("filteredFormsData", filteredFormsData);
-    setTempJsonData(filteredFormsData);
+    // setTempJsonDataTourPlan(filteredFormsData);
     try {
       const response = await apiClient.post(
         `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-or-update`,
         filteredFormsData
       );
-      console.log(response);
+
       toast.success(response.data.message);
+
+      // If backend returns updated records with real IDs, replace state
+      if (response.data.data) {
+        setFormsData(response.data.data); // or reset([...response.data.data])
+      }
+
       setRefresh((prev) => !prev);
     } catch (err) {
-      console.log(err);
-      toast.error((err as AxiosError).message);
+      console.log("err", err);
+      toast.error((err as AxiosError)?.response?.data as string);
     }
   };
 
@@ -199,7 +200,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
       longitude: "", // default or calculate if needed
       vehicleID: form.vehicalId,
       districtID: form.district_Id,
-      mriValue: 0, // provide default or calculate
+      eriValue: 0, // provide default or calculate
       driverID: form.driverId,
       fromDate: form.dateFrom,
       toDate: form.dateTo,
@@ -209,19 +210,15 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
       submitted_at: null,
       issued_at: null,
       tracking_status: false,
-      is_Contractor: null,
-      is_ResidentEngineer: null,
-      is_Tpv: null,
+      isFocalPerson: false,
       visitPlanGroup,
-      one_pager_status: null,
       cancel_reason: null,
-      op_submitted_at: null,
       submitted_from: null,
       submitted_to: null,
     }));
 
     console.log("crete-visit:", modifiedFormData);
-    // setTempJsonData(modifiedFormData);
+    // setTempJsonDataCreateVisit(modifiedFormData);
     try {
       setSubmitting(true);
       const response = await apiClient.post(
@@ -230,6 +227,8 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
       );
       console.log(response);
       toast.success(response.data.responseMessage);
+      setFormsData([]);
+      setRefresh((prev) => !prev);
     } catch (err) {
       setSubmitting(false);
       console.log(err);
@@ -237,33 +236,13 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
     } finally {
       setSubmitting(false); // Always run after try/catch
     }
-  };
-
-  const customStyles: StylesConfig<Option, false> = {
-    control: (base) => ({
-      ...base,
-      fontSize: "14px",
-      backgroundColor: "rgba(16, 143, 168, .1)",
-    }),
-    menu: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    menuPortal: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    option: (base, state) => ({
-      ...base,
-      // backgroundColor: state.isFocused ? "#f0f0f0" : "white",
-      // color: "#333",
-      fontSize: "14px",
-    }),
+    setFormsData([]);
+    setFilteredData([]);
   };
 
   const defaultNumberOption = { value: "-1", label: "Select" };
 
-  const tourNames = tours.map((tour) => {
+  const tourNames: OptionType[] = tours.map((tour) => {
     return {
       value: String(tour.id),
       label: tour.name,
@@ -314,11 +293,9 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
       await apiClient.delete(`${TEMP_TOUR_PLAN_API}/${tempId}`);
       // remove the deleted item from the data array
       setRefresh((prev) => !prev);
-      if (formsData && formsData.length > 0) {
-        setFormsData((prevData) =>
-          prevData!.filter((item) => item !== undefined && item.id !== tempId)
-        );
-      }
+      setFormsData((prevData) =>
+        prevData.filter((item) => item !== undefined && item.id !== tempId)
+      );
       toast.success(deleteMessage);
       console.log("item deleted successfully");
     } catch (err) {
@@ -328,7 +305,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
   };
 
   return (
-    <>
+    <div className="py-2">
       {isLoading && <Loader />}
       {/* <TableHeader
         heading="M&E Visit Plan for the month of May-2025"
@@ -350,47 +327,46 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
       <div className="row m-0">
         <div className="col"></div>
         <div className="col">
-          <h4 className="fw-bold mb-3 text-center">M&E Visit Plan</h4>
-          <pre>{tempJsonData ? JSON.stringify(tempJsonData, null, 2) : ""}</pre>
+          <h4 className="fw-bold mb-3 text-center">Evalution Visit Plan</h4>
+          {/* <p className="fw-bold">temp tour plan</p>
+          <pre>
+            {tempJsonDataTourPlan
+              ? JSON.stringify(tempJsonDataTourPlan, null, 2)
+              : ""}
+          </pre>
+          <p className="fw-bold">create visit plan</p>
+          <pre>
+            {tempJsonDataCreateVisit
+              ? JSON.stringify(tempJsonDataCreateVisit, null, 2)
+              : ""}
+          </pre> */}
         </div>
         <div className="col text-end">
-          {formsData &&
-            formsData.filter((form) => form !== undefined).length > 0 && (
-              <Button
-                className="btn btn-sm bg-color-sea-blue text-white"
-                disabled={isSubmitting}
-                onClick={() => createVisit(formsData)}
-              >
-                Create Visit {isSubmitting && <Spinner color="text-light" />}
-              </Button>
-            )}
+          {formsData.filter((form) => form !== undefined).length > 0 && (
+            <Button
+              className="btn rounded-pill bg-color-evaluation-theme-blue text-white fs15px fw-bold"
+              disabled={isSubmitting}
+              onClick={() => createVisit(formsData)}
+            >
+              Create Visit {isSubmitting && <Spinner color="text-light" />}
+            </Button>
+          )}
         </div>
       </div>
       <div className="row">
         <div className="col-12 col-sm-10 col-md-6 col-lg-8 col-xl-5 mb-3">
-          <label htmlFor="tours" className="form-label">
-            Visit Plan
-          </label>
-          {isClient && (
-            <Select
-              options={[defaultNumberOption, ...tourNames]}
-              name="tours"
-              id="tours"
-              isClearable
-              isSearchable
-              menuPlacement="auto"
-              menuPosition="absolute"
-              menuPortalTarget={document.body}
-              styles={customStyles}
-              onChange={(
-                newValue: SingleValue<{ value: string; label: string }>
-              ) => {
-                if (newValue) {
-                  setVisitPlanGroup(Number(newValue.value));
-                }
-              }}
-            />
-          )}
+          <CustomLabel htmlFor="tours">Visit Plan</CustomLabel>
+          <CustomSelect
+            options={[defaultNumberOption, ...tourNames]}
+            id="tours"
+            onChangeSingle={(
+              newValue: SingleValue<{ value: string; label: string }>
+            ) => {
+              if (newValue) {
+                setVisitPlanGroup(Number(newValue.value));
+              }
+            }}
+          />
           {!visitPlanGroup ||
             (visitPlanGroup === -1 && (
               <p className="text-danger mt-1 fs14px">Please Add Visit Plan!</p>
@@ -412,68 +388,44 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
         
       </div> */}
 
-      <div className="table-responsive rounded-3 shadow-sm mb-3">
-        <table
-          className="table table-bordered mb-3 rounded-3 overflow-hidden table-hover"
-          style={{ borderColor: "#B9B9B9" }}
+      <div className="table-responsive mb-2" style={{ margin: "0 -12px" }}>
+        <div
+          style={{
+            height: `calc(100vh - ${
+              formsData.filter((form) => form !== undefined).length === 0
+                ? "395px"
+                : "355px"
+            })`,
+            overflow: "auto",
+          }}
         >
-          <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer fs14px ${inter.className}`}
-            >
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Sr. No.
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Project ID
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                GS No
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Name of Scheme
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                District
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Sectors
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Cost
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Type
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                M&E Officer Name
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Section
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Date From
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Date To
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Driver Name
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Vehicle Number
-              </th>
-              <th
-                colSpan={4}
-                className="bg-color-sea-green text-white fw-6 text-center text-nowrap"
-              >
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* {data &&
-              data.map((d, i) => (
+          <table className="table table-hover mb-0">
+            <thead>
+              <tr>
+                <TableHeading name="Sr. No." className="text-nowrap" />
+                <TableHeading name="Project ID" className="text-nowrap" />
+                <TableHeading name="GS No" className="text-nowrap" />
+                <TableHeading name="Name of Scheme" className="text-nowrap" />
+                <TableHeading name="District" />
+                <TableHeading name="Sectors" />
+                <TableHeading name="Cost" />
+                <TableHeading name="Type" />
+                <TableHeading name="M&E Officer Name" className="text-nowrap" />
+                <TableHeading name="Section" />
+                <TableHeading name="Date From" className="text-nowrap" />
+                <TableHeading name="Date To" className="text-nowrap" />
+                <TableHeading name="Driver Name" className="text-nowrap" />
+                <TableHeading name="Vehicle Number" className="text-nowrap" />
+                <TableHeading name="Is Focal Person" className="text-nowrap" />
+                <TableHeading
+                  name="Actions"
+                  colSpan={4}
+                  className="text-center"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              {data?.map((d, i) => (
                 <Form
                   copiedRowIndex={copiedRowIndex}
                   setCopiedRowIndex={setCopiedRowIndex}
@@ -490,12 +442,12 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
                   setCopiedFormData={setCopiedFormData}
                   copiedFormData={copiedFormData}
                 />
-              ))} */}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      {formsData &&
-      formsData.filter((form) => form !== undefined).length > 0 ? (
+      {formsData.filter((form) => form !== undefined).length > 0 ? (
         <div className="col text-end">
           <Button
             onClick={() => saveFormsData(formsData)}
@@ -516,8 +468,8 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
           Plans!
         </div>
       )}
-    </>
+    </div>
   );
 };
 
-export default List;
+export default EvaluationVisitPlanList;

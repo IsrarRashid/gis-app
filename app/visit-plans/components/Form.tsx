@@ -288,9 +288,7 @@ const Form = ({
                 </div>
               </div>
 
-              <div className="col-lg-5 col-md-8 col-sm-6 mx-auto">
-                <SubmitButton>Save Visit Plan</SubmitButton>
-              </div>
+              <SubmitButton>Save Visit Plan</SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

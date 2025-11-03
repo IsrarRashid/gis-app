@@ -13,7 +13,7 @@ import StaffTracking from "./StaffTracking";
 import VehicleTracking from "./VehicleTracking";
 // import Menu from "./Menu";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import Menu from "@/app/components/Menu";
 import { setTutorial } from "@/app/features/tutorial/tutorialSlice";
 import { devMap } from "@/app/utils";

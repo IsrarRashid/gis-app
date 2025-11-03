@@ -1,7 +1,7 @@
 "use client";
 import { VISIT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
 import TableHeading from "@/app/components/Table/TableHeading";

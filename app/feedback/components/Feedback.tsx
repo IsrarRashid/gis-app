@@ -1,7 +1,7 @@
 "use client";
 import { FEEDBACK_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import { setFeedbackCount } from "@/app/features/feedback/feedbackCountSlice";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import useProjects from "@/app/hooks/useProjects";

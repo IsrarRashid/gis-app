@@ -17,6 +17,7 @@ import RowHeader from "@/app/components/Table/RowHeader";
 import TableData from "@/app/components/Table/TableData";
 import Actions from "@/app/components/Table/Actions";
 import Avatar from "@/app/components/Avatar";
+import TableWrapper from "@/app/components/Table/TableWrapper";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const { data, setData, setError, isLoading } = useVehicle({
     refresh,
   });
+  const [isPageLimit, setPageLimit] = useState(false);
 
   const deleteMessage = "Deleted Successfully!";
 
@@ -147,147 +149,157 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           }
         />
       </>
-      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <TableHeading name="id" handleSort={() => handleSort("id")} />
-              <TableHeading name="name" handleSort={() => handleSort("name")} />
-              <TableHeading
-                name="description"
-                handleSort={() => handleSort("description")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="vehicle Number"
-                handleSort={() => handleSort("vehicleNumber")}
-              />
-              <TableHeading
-                name="model"
-                handleSort={() => handleSort("model")}
-              />
-              <TableHeading
-                name="color"
-                handleSort={() => handleSort("color")}
-              />
-              <TableHeading
-                name="transmission"
-                handleSort={() => handleSort("trasnmission")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="seats Capacity"
-                handleSort={() => handleSort("seatsCapacity")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="fuel Type"
-                handleSort={() => handleSort("fuelType")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="vehicle Image"
-                handleSort={() => handleSort("vehicleImage")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="vehicle Icon"
-                handleSort={() => handleSort("vehicleIcon")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="created at"
-                handleSort={() => handleSort("createdAt")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="updated at"
-                handleSort={() => handleSort("updatedAt")}
-              />
-              <TableHeading name="ACTIONS" textClassName="text-center" />
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((d) => (
-              <tr key={d.id}>
-                <RowHeader>{d.id}</RowHeader>
-                <TableData>{d.name}</TableData>
-                <TableData>{d.description}</TableData>
-                <TableData>{d.vehicleNumber}</TableData>
-                <TableData>{d.model}</TableData>
-                <TableData>{d.color}</TableData>
-                <TableData>{d.trasnmission}</TableData>
-                <TableData>{d.seatsCapacity}</TableData>
-                <TableData>{d.fuelType}</TableData>
-                <TableData className="text-center">
-                  {d.vehicleImage && d.vehicleImage.length > 0 && (
-                    <Avatar
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleImage}`}
-                      styles={{
-                        width: "70px",
-                        height: "70px",
-                        objectFit: "contain",
-                      }}
-                      defaultImagePath="/icons/car1Right.svg"
-                      width={70}
-                      height={70}
-                    />
-                    // <img
-                    //   className="img-fluid rounded-3"
-                    //   style={{
-                    //     width: "70px",
-                    //     height: "70px",
-                    //     objectFit: "contain",
-                    //   }}
-                    //   src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleImage}`}
-                    //   alt="vehicleImage"
-                    // />
-                  )}
-                </TableData>
-                <TableData className="text-center">
-                  {d.vehicleIcon && d.vehicleIcon.length > 0 && (
-                    <Avatar
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleIcon}`}
-                      styles={{
-                        width: "70px",
-                        height: "70px",
-                        objectFit: "contain",
-                      }}
-                      defaultImagePath="/images/carTop2.png"
-                      width={70}
-                      height={70}
-                    />
-                  )}
-                </TableData>
-                <TableData>
-                  {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "short")}
-                </TableData>
-                <TableData>
-                  {d.updatedAt &&
-                    getFormattedDate(new Date(d.updatedAt), "short")}
-                </TableData>
-                <TableData>
-                  <Actions
-                    deleteNode={
-                      <DeleteModal handleDelete={handleDelete} id={d.id} />
-                    }
-                    formNode={
-                      <Form
-                        api={VEHICLE_API}
-                        method="PUT"
-                        id={d.id}
-                        setRefresh={setRefresh}
-                        refresh={refresh}
-                      />
-                    }
-                  />
-                </TableData>
+      <TableWrapper
+        setRows={setRows}
+        currentPage={currentPage}
+        data={data}
+        isPageLimit={isPageLimit}
+      >
+        {(firstRowRef) => (
+          <>
+            <thead>
+              <tr>
+                <TableHeading name="id" handleSort={() => handleSort("id")} />
+                <TableHeading
+                  name="name"
+                  handleSort={() => handleSort("name")}
+                />
+                <TableHeading
+                  name="description"
+                  handleSort={() => handleSort("description")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="vehicle Number"
+                  handleSort={() => handleSort("vehicleNumber")}
+                />
+                <TableHeading
+                  name="model"
+                  handleSort={() => handleSort("model")}
+                />
+                <TableHeading
+                  name="color"
+                  handleSort={() => handleSort("color")}
+                />
+                <TableHeading
+                  name="transmission"
+                  handleSort={() => handleSort("trasnmission")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="seats Capacity"
+                  handleSort={() => handleSort("seatsCapacity")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="fuel Type"
+                  handleSort={() => handleSort("fuelType")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="vehicle Image"
+                  handleSort={() => handleSort("vehicleImage")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="vehicle Icon"
+                  handleSort={() => handleSort("vehicleIcon")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="created at"
+                  handleSort={() => handleSort("createdAt")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="updated at"
+                  handleSort={() => handleSort("updatedAt")}
+                />
+                <TableHeading name="ACTIONS" textClassName="text-center" />
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {paginatedData.map((d, i) => (
+                <tr key={i} ref={i === 0 ? firstRowRef : null}>
+                  <RowHeader>{d.id}</RowHeader>
+                  <TableData>{d.name}</TableData>
+                  <TableData>{d.description}</TableData>
+                  <TableData>{d.vehicleNumber}</TableData>
+                  <TableData>{d.model}</TableData>
+                  <TableData>{d.color}</TableData>
+                  <TableData>{d.trasnmission}</TableData>
+                  <TableData>{d.seatsCapacity}</TableData>
+                  <TableData>{d.fuelType}</TableData>
+                  <TableData className="text-center">
+                    {d.vehicleImage && d.vehicleImage.length > 0 && (
+                      <Avatar
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleImage}`}
+                        styles={{
+                          width: "70px",
+                          height: "70px",
+                          objectFit: "contain",
+                        }}
+                        defaultImagePath="/icons/car1Right.svg"
+                        width={70}
+                        height={70}
+                      />
+                      // <img
+                      //   className="img-fluid rounded-3"
+                      //   style={{
+                      //     width: "70px",
+                      //     height: "70px",
+                      //     objectFit: "contain",
+                      //   }}
+                      //   src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleImage}`}
+                      //   alt="vehicleImage"
+                      // />
+                    )}
+                  </TableData>
+                  <TableData className="text-center">
+                    {d.vehicleIcon && d.vehicleIcon.length > 0 && (
+                      <Avatar
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.vehicleIcon}`}
+                        styles={{
+                          width: "70px",
+                          height: "70px",
+                          objectFit: "contain",
+                        }}
+                        defaultImagePath="/images/carTop2.png"
+                        width={70}
+                        height={70}
+                      />
+                    )}
+                  </TableData>
+                  <TableData>
+                    {d.createdAt &&
+                      getFormattedDate(new Date(d.createdAt), "short")}
+                  </TableData>
+                  <TableData>
+                    {d.updatedAt &&
+                      getFormattedDate(new Date(d.updatedAt), "short")}
+                  </TableData>
+                  <TableData>
+                    <Actions
+                      deleteNode={
+                        <DeleteModal handleDelete={handleDelete} id={d.id} />
+                      }
+                      formNode={
+                        <Form
+                          api={VEHICLE_API}
+                          method="PUT"
+                          id={d.id}
+                          setRefresh={setRefresh}
+                          refresh={refresh}
+                        />
+                      }
+                    />
+                  </TableData>
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
+      </TableWrapper>
       <Pagination
         searchTerm={searchTerm}
         filteredData={filteredData}
@@ -296,6 +308,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
         setRows={setRows}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        setPageLimit={setPageLimit}
       />
     </>
   );

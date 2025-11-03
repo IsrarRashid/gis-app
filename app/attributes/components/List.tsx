@@ -19,11 +19,13 @@ import Form from "./Form";
 import RowHeader from "@/app/components/Table/RowHeader";
 import TableData from "@/app/components/Table/TableData";
 import Actions from "@/app/components/Table/Actions";
+import TableWrapper from "@/app/components/Table/TableWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const List = ({ dashboardType }: { dashboardType?: string }) => {
   const [refresh, setRefresh] = useState(false);
+  const [isPageLimit, setPageLimit] = useState(false);
 
   const { data, setData, setError, error, isLoading } = useAttributes({
     refresh,
@@ -167,197 +169,205 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
           </div>
         }
       />
-      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <TableHeading
-                name="attribute Id"
-                handleSort={() => handleSort("attributeId")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="sort Id"
-                handleSort={() => handleSort("sortId")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="attribute data type"
-                handleSort={() => handleSort("attributeDataType")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="multiselect"
-                handleSort={() => handleSort("multiselect")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="label"
-                handleSort={() => handleSort("label")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="validation regx"
-                handleSort={() => handleSort("validationRegx")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="attribute code"
-                handleSort={() => handleSort("attributeCode")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="min"
-                handleSort={() => handleSort("min")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="max"
-                handleSort={() => handleSort("max")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="required"
-                handleSort={() => handleSort("required")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="status"
-                handleSort={() => handleSort("status")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="hidden"
-                handleSort={() => handleSort("hidden")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="placeholder"
-                handleSort={() => handleSort("placeholder")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="attribute type"
-                handleSort={() => handleSort("attributeType")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="unit"
-                handleSort={() => handleSort("unit")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="error message"
-                handleSort={() => handleSort("errorMessage")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="verification type"
-                handleSort={() => handleSort("verificationType")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="evaluation formula"
-                handleSort={() => handleSort("evaluationFormula")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="weightage"
-                handleSort={() => handleSort("weightage")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="remarks"
-                handleSort={() => handleSort("remarks")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="removeable"
-                handleSort={() => handleSort("removeable")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="options"
-                handleSort={() => handleSort("options")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="Master"
-                handleSort={() => handleSort("isMaster")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                name="priority"
-                handleSort={() => handleSort("priority")}
-                className="text-nowrap"
-              />
-              <TableHeading name="Actions" textClassName="text-center" />
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((d, i) => (
-              <tr key={i}>
-                <RowHeader>{d.attributeId}</RowHeader>
-                <TableData className="text-center">{d.sortId}</TableData>
-                <TableData className="text-center">
-                  {d.attributeDataType}
-                </TableData>
-                <TableData className="text-center">{d.multiselect}</TableData>
-                <TableData>{d.label}</TableData>
-                <TableData>{d.validationRegx}</TableData>
-                <TableData>{d.attributeCode}</TableData>
-                <TableData className="text-center">{d.min}</TableData>
-                <TableData className="text-center">{d.max}</TableData>
-                <TableData className="text-center">{d.required}</TableData>
-                <TableData className="text-center">{d.status}</TableData>
-                <TableData className="text-center">{d.hidden}</TableData>
-                <TableData>{d.placeholder}</TableData>
-                <TableData>{d.attributeType}</TableData>
-                <TableData>{d.unit}</TableData>
-                <TableData>{d.errorMessage}</TableData>
-                <TableData>{d.verificationType}</TableData>
-                <TableData>{d.evaluationFormula}</TableData>
-                <TableData className="text-center">{d.weightage}</TableData>
-                <TableData>{d.remarks}</TableData>
-                <TableData className="text-center">{d.removeable}</TableData>
-                <TableData>
-                  {d.options?.map((option: any, i) => (
-                    <span key={i}>
-                      {option.label}
-                      ,&nbsp;
-                    </span>
-                  ))}
-                </TableData>
-                <TableData className="text-center">
-                  {d.isMaster === 0 || d.isMaster === null ? "No" : "Yes"}
-                </TableData>
-                <TableData className="text-center">{d.priority}</TableData>
-                <TableData>
-                  <Actions
-                    deleteNode={
-                      <DeleteModal
-                        handleDelete={handleDelete}
-                        id={d.attributeId}
-                      />
-                    }
-                    formNode={
-                      <Form
-                        api={ATTRIBUTES_API_ENDPOINT}
-                        method="PUT"
-                        id={d.attributeId}
-                        setRefresh={setRefresh}
-                        refresh={refresh}
-                        projectDetailKeys={projectDetailKeys}
-                        data={data}
-                      />
-                    }
-                  />
-                </TableData>
+      <TableWrapper
+        setRows={setRows}
+        currentPage={currentPage}
+        data={data}
+        isPageLimit={isPageLimit}
+      >
+        {(firstRowRef) => (
+          <>
+            <thead>
+              <tr>
+                <TableHeading
+                  name="attribute Id"
+                  handleSort={() => handleSort("attributeId")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="sort Id"
+                  handleSort={() => handleSort("sortId")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="attribute data type"
+                  handleSort={() => handleSort("attributeDataType")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="multiselect"
+                  handleSort={() => handleSort("multiselect")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="label"
+                  handleSort={() => handleSort("label")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="validation regx"
+                  handleSort={() => handleSort("validationRegx")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="attribute code"
+                  handleSort={() => handleSort("attributeCode")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="min"
+                  handleSort={() => handleSort("min")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="max"
+                  handleSort={() => handleSort("max")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="required"
+                  handleSort={() => handleSort("required")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="status"
+                  handleSort={() => handleSort("status")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="hidden"
+                  handleSort={() => handleSort("hidden")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="placeholder"
+                  handleSort={() => handleSort("placeholder")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="attribute type"
+                  handleSort={() => handleSort("attributeType")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="unit"
+                  handleSort={() => handleSort("unit")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="error message"
+                  handleSort={() => handleSort("errorMessage")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="verification type"
+                  handleSort={() => handleSort("verificationType")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="evaluation formula"
+                  handleSort={() => handleSort("evaluationFormula")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="weightage"
+                  handleSort={() => handleSort("weightage")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="remarks"
+                  handleSort={() => handleSort("remarks")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="removeable"
+                  handleSort={() => handleSort("removeable")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="options"
+                  handleSort={() => handleSort("options")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="Master"
+                  handleSort={() => handleSort("isMaster")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  name="priority"
+                  handleSort={() => handleSort("priority")}
+                  className="text-nowrap"
+                />
+                <TableHeading name="Actions" textClassName="text-center" />
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {paginatedData.map((d, i) => (
+                <tr key={i} ref={i === 0 ? firstRowRef : null}>
+                  <RowHeader>{d.attributeId}</RowHeader>
+                  <TableData className="text-center">{d.sortId}</TableData>
+                  <TableData className="text-center">
+                    {d.attributeDataType}
+                  </TableData>
+                  <TableData className="text-center">{d.multiselect}</TableData>
+                  <TableData>{d.label}</TableData>
+                  <TableData>{d.validationRegx}</TableData>
+                  <TableData>{d.attributeCode}</TableData>
+                  <TableData className="text-center">{d.min}</TableData>
+                  <TableData className="text-center">{d.max}</TableData>
+                  <TableData className="text-center">{d.required}</TableData>
+                  <TableData className="text-center">{d.status}</TableData>
+                  <TableData className="text-center">{d.hidden}</TableData>
+                  <TableData>{d.placeholder}</TableData>
+                  <TableData>{d.attributeType}</TableData>
+                  <TableData>{d.unit}</TableData>
+                  <TableData>{d.errorMessage}</TableData>
+                  <TableData>{d.verificationType}</TableData>
+                  <TableData>{d.evaluationFormula}</TableData>
+                  <TableData className="text-center">{d.weightage}</TableData>
+                  <TableData>{d.remarks}</TableData>
+                  <TableData className="text-center">{d.removeable}</TableData>
+                  <TableData>
+                    {d.options?.map((option: any, i) => (
+                      <span key={i}>
+                        {option.label}
+                        ,&nbsp;
+                      </span>
+                    ))}
+                  </TableData>
+                  <TableData className="text-center">
+                    {d.isMaster === 0 || d.isMaster === null ? "No" : "Yes"}
+                  </TableData>
+                  <TableData className="text-center">{d.priority}</TableData>
+                  <TableData>
+                    <Actions
+                      deleteNode={
+                        <DeleteModal
+                          handleDelete={handleDelete}
+                          id={d.attributeId}
+                        />
+                      }
+                      formNode={
+                        <Form
+                          api={ATTRIBUTES_API_ENDPOINT}
+                          method="PUT"
+                          id={d.attributeId}
+                          setRefresh={setRefresh}
+                          refresh={refresh}
+                          projectDetailKeys={projectDetailKeys}
+                          data={data}
+                        />
+                      }
+                    />
+                  </TableData>
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
+      </TableWrapper>
+
       <Pagination
         searchTerm={searchTerm}
         filteredData={filteredData}
@@ -366,6 +376,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
         setRows={setRows}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        setPageLimit={setPageLimit}
       />
     </>
   );

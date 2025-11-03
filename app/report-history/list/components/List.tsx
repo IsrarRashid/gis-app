@@ -1,7 +1,7 @@
 "use client";
 import { REPORTS_HISTORY_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import Loader from "@/app/components/Loader";
 import useOfficers, { Officer } from "@/app/hooks/useOfficers";
 import useReportHistoryUser from "@/app/hooks/useReportHistoryUsers";

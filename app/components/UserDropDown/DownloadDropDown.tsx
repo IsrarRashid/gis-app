@@ -11,9 +11,14 @@ import styles from "./UserDropDown.module.css";
 interface Props {
   onClickPdf?: () => void;
   onClickExcel?: () => void;
+  styleVarient?: 1 | 2;
 }
 
-const DownloadDropDown = ({ onClickPdf, onClickExcel }: Props) => {
+const DownloadDropDown = ({
+  onClickPdf,
+  onClickExcel,
+  styleVarient = 1,
+}: Props) => {
   const [show, setShow] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -50,20 +55,42 @@ const DownloadDropDown = ({ onClickPdf, onClickExcel }: Props) => {
           <Image src={downloadBlack2} alt="download" width={16} height={16} />
         </p>
       </Button> */}
-      <Button
-        className="bg-color-evaluation-theme-blue text-white rounded-pill d-flex align-items-center fs12px fw-bold border-0"
-        style={{ padding: "8px 13px", gap: "7px" }}
-        onClick={() => setShow(!show)}
-      >
-        <Image
-          src="/icons/cloud-download.svg"
-          alt="cloud-download"
-          width={17}
-          height={17}
-          style={{ width: "17px", height: "17px" }}
-        />
-        Download
-      </Button>
+      {styleVarient === 1 ? (
+        <Button
+          className="bg-color-evaluation-theme-blue text-white rounded-pill d-flex align-items-center fs15px fw-bold border-0"
+          style={{ padding: "8px 13px", gap: "7px" }}
+          onClick={() => setShow(!show)}
+        >
+          <Image
+            src="/icons/cloud-download.svg"
+            alt="cloud-download"
+            width={22}
+            height={22}
+            style={{ width: "22px", height: "22px" }}
+          />
+          Download
+        </Button>
+      ) : (
+        <Button
+          className="bg-white rounded-pill d-flex align-items-center fs15px fw-bold"
+          style={{
+            padding: "8px 13px",
+            gap: "7px",
+            border: "1px solid #CBD5E1",
+            color: "#475569",
+          }}
+          onClick={() => setShow(!show)}
+        >
+          <Image
+            src="/icons/download-03.svg"
+            alt="download-03"
+            width={22}
+            height={22}
+            style={{ width: "22px", height: "22px" }}
+          />
+          Download
+        </Button>
+      )}
       <div
         className={`fs12px ${styles.dropdownContent} ${show && styles.show}`}
       >

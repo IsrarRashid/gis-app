@@ -7,6 +7,7 @@ import CustomSelect, {
   OptionType,
 } from "@/app/components/Form/CustomSelect";
 import FormWrapper from "@/app/components/Form/FormWrapper";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 import ActionButton from "@/app/components/Table/ActionButton";
 import TrashIcon from "@/app/components/TrashIcon";
 import { Attribute } from "@/app/hooks/useAttributes";
@@ -320,12 +321,10 @@ const Form = ({
   };
 
   useEffect(() => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       evaluationFormula:
-        formData.attributeType === "formula"
-          ? formData.evaluationFormula
-          : (formData.evaluationFormula = ""),
+        prev.attributeType === "formula" ? prev.evaluationFormula : "",
       required: isRequired ? 1 : 0,
       multiselect: isMultiSelect ? 1 : 0,
       status: isStatus ? 1 : 0,
@@ -333,7 +332,7 @@ const Form = ({
       readOnly: isReadOnly ? 1 : 0,
       removeable: isRemoveable ? 1 : 0,
       isMaster: isMaster ? 1 : 0,
-    });
+    }));
   }, [
     isRequired,
     isMultiSelect,
@@ -342,7 +341,7 @@ const Form = ({
     isReadOnly,
     isRemoveable,
     isMaster,
-    formData.attributeType,
+    formData.attributeType, // ✅ only include this specific key
   ]);
 
   // Update optionsData state when activeStates change
@@ -1458,20 +1457,7 @@ const Form = ({
               ) : (
                 ""
               )}
-              <div className="col-lg-4 col-md-6 col-sm-4 mx-auto mt-3">
-                <Button
-                  className="btn text-white w-100 border-0 fw-bold fs14px"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(to bottom, #0C8CE9 ,#074F83)",
-                    borderRadius: "10px",
-                    padding: "11px 16px",
-                  }}
-                  type="submit"
-                >
-                  Save Attribute
-                </Button>
-              </div>
+              <SubmitButton>Save Attribute</SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

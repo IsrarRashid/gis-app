@@ -528,9 +528,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   )}
                 </div> */}
               </div>
-              <div className="col-lg-4 col-md-6 col-sm-4 mx-auto">
-                <SubmitButton>Save Vehicle</SubmitButton>
-              </div>
+              <SubmitButton>Save Vehicle</SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

@@ -157,9 +157,7 @@ const GroupingForm = ({ id, options, name }: Props) => {
                     placeholder="Choose Rights..."
                   />
                 </div>
-                <div className="col-lg-5 col-md-8 col-sm-6 mx-auto">
-                  <SubmitButton>Save Rights</SubmitButton>
-                </div>
+                <SubmitButton>Save Rights</SubmitButton>
               </form>
             </FormWrapper>
           </Modal.Body>

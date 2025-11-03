@@ -1,8 +1,12 @@
 "use client";
 import { EVALUATION_TEMP_TOUR_PLAN_API, TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import Loader from "@/app/components/Loader";
 import Spinner from "@/app/components/Spinner";
+import TableHeading from "@/app/components/Table/TableHeading";
+import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import useDistrict from "@/app/hooks/useDistrict";
 import useDriver from "@/app/hooks/useDriver";
@@ -14,19 +18,16 @@ import {
   addDayToFormattedDate,
   deleteMessage,
   getFormattedDate,
-  Option,
 } from "@/app/utils";
 import { AxiosError } from "axios";
 import { sort } from "fast-sort";
 import { Inter } from "next/font/google";
-import { useEffect, useState } from "react";
-import Select, { SingleValue, StylesConfig } from "react-select";
-import { toast } from "react-toastify";
-import Form, { COUTempTourPlan, TempCopyForm, typeStatues } from "./Form";
-import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
-import * as XLSX from "xlsx";
+import { useState } from "react";
 import { IoMdInformationCircle } from "react-icons/io";
-import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
+import { SingleValue } from "react-select";
+import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
+import Form, { COUTempTourPlan, TempCopyForm, typeStatues } from "./Form";
 const inter = Inter({ subsets: ["latin"] });
 
 interface CreateVisit {
@@ -60,7 +61,11 @@ interface CreateVisit {
   submitted_to: number | null;
 }
 
-const List = ({ dashboardType }: { dashboardType?: string }) => {
+const MonitoringVisitPlanList = ({
+  dashboardType,
+}: {
+  dashboardType?: string;
+}) => {
   const [refresh, setRefresh] = useState(false);
   const [visitPlanGroup, setVisitPlanGroup] = useState<number>(-1);
   const { data, setData, isLoading } = useTempTourPlans({ refresh });
@@ -79,10 +84,10 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
   // State for search input
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [tempJsonDataCreateVisit, setTempJsonDataCreateVisit] =
-    useState<CreateVisit[]>();
-  const [tempJsonDataTourPlan, setTempJsonDataTourPlan] =
-    useState<COUTempTourPlan[]>();
+  // const [tempJsonDataCreateVisit, setTempJsonDataCreateVisit] =
+  //   useState<CreateVisit[]>();
+  // const [tempJsonDataTourPlan, setTempJsonDataTourPlan] =
+  //   useState<COUTempTourPlan[]>();
 
   // State for filtered data
   const [filteredData, setFilteredData] = useState<TempTourPlan[]>([]);
@@ -159,7 +164,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
     console.log("formsData", formsData);
     const filteredFormsData = formsData.filter((form) => form !== undefined);
     console.log("filteredFormsData", filteredFormsData);
-    setTempJsonDataTourPlan(filteredFormsData);
+    // setTempJsonDataTourPlan(filteredFormsData);
     try {
       const response = await apiClient.post(
         `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-or-update`,
@@ -215,7 +220,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
     }));
 
     console.log("crete-visit:", modifiedFormData);
-    setTempJsonDataCreateVisit(modifiedFormData);
+    // setTempJsonDataCreateVisit(modifiedFormData);
     try {
       setSubmitting(true);
       const response = await apiClient.post(
@@ -302,7 +307,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
   };
 
   return (
-    <>
+    <div className="py-2">
       {isLoading && <Loader />}
       {/* <TableHeader
         heading="M&E Visit Plan for the month of May-2025"
@@ -324,7 +329,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
       <div className="row m-0">
         <div className="col"></div>
         <div className="col">
-          <h4 className="fw-bold mb-3 text-center">M&E Visit Plan</h4>
+          <h4 className="fw-bold mb-3 text-center">Monitoring Visit Plan</h4>
           {/* <p className="fw-bold">temp tour plan</p>
           <pre>
             {tempJsonDataTourPlan
@@ -341,7 +346,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
         <div className="col text-end">
           {formsData.filter((form) => form !== undefined).length > 0 && (
             <Button
-              className="btn btn-sm bg-color-sea-blue text-white"
+              className="btn bg-color-evaluation-theme-blue rounded-pill text-white fs15px fw-bold"
               disabled={isSubmitting}
               onClick={() => createVisit(formsData)}
             >
@@ -352,9 +357,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
       </div>
       <div className="row">
         <div className="col-12 col-sm-10 col-md-6 col-lg-8 col-xl-5 mb-3">
-          <label htmlFor="tours" className="form-label">
-            Visit Plan
-          </label>
+          <CustomLabel htmlFor="tours">Visit Plan</CustomLabel>
           <CustomSelect
             options={[defaultNumberOption, ...tourNames]}
             id="tours"
@@ -387,86 +390,63 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
         
       </div> */}
 
-      <div className="table-responsive rounded-3 shadow-sm mb-3">
-        <table
-          className="table table-bordered mb-3 rounded-3 overflow-hidden table-hover"
-          style={{ borderColor: "#B9B9B9" }}
+      <div className="table-responsive mb-2" style={{ margin: "0 -12px" }}>
+        <div
+          style={{
+            height: `calc(100vh - ${
+              formsData.filter((form) => form !== undefined).length === 0
+                ? "395px"
+                : "355px"
+            })`,
+            overflow: "auto",
+          }}
         >
-          <thead>
-            <tr
-              className={`color-dark-blue cursor-pointer fs14px ${inter.className}`}
-            >
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Sr. No.
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Project ID
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                GS No
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Name of Scheme
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                District
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Sectors
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Cost
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Type
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                M&E Officer Name
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Section
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Date From
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Date To
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Driver Name
-              </th>
-              <th className="bg-color-sea-green text-white fw-6 text-center text-nowrap">
-                Vehicle Number
-              </th>
-              <th
-                colSpan={4}
-                className="bg-color-sea-green text-white fw-6 text-center text-nowrap"
-              >
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.map((d, i) => (
-              <Form
-                copiedRowIndex={copiedRowIndex}
-                setCopiedRowIndex={setCopiedRowIndex}
-                key={d.tempId}
-                planData={d}
-                index={i + 1}
-                users={users}
-                drivers={drivers}
-                vehicles={vehicles}
-                districts={districts}
-                formsData={formsData}
-                setFormsData={setFormsData}
-                handleDelete={() => handleDelete(d.tempId)}
-                setCopiedFormData={setCopiedFormData}
-                copiedFormData={copiedFormData}
-              />
-            ))}
-          </tbody>
-        </table>
+          <table className="table table-hover mb-0">
+            <thead>
+              <tr>
+                <TableHeading name="Sr. No." className="text-nowrap" />
+                <TableHeading name="Project ID" className="text-nowrap" />
+                <TableHeading name="GS No" className="text-nowrap" />
+                <TableHeading name="Name of Scheme" className="text-nowrap" />
+                <TableHeading name="District" />
+                <TableHeading name="Sectors" />
+                <TableHeading name="Cost" />
+                <TableHeading name="Type" />
+                <TableHeading name="M&E Officer Name" className="text-nowrap" />
+                <TableHeading name="Section" />
+                <TableHeading name="Date From" className="text-nowrap" />
+                <TableHeading name="Date To" className="text-nowrap" />
+                <TableHeading name="Driver Name" className="text-nowrap" />
+                <TableHeading name="Vehicle Number" className="text-nowrap" />
+                <TableHeading
+                  name="Actions"
+                  colSpan={4}
+                  className="text-center"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              {data?.map((d, i) => (
+                <Form
+                  copiedRowIndex={copiedRowIndex}
+                  setCopiedRowIndex={setCopiedRowIndex}
+                  key={d.tempId}
+                  planData={d}
+                  index={i + 1}
+                  users={users}
+                  drivers={drivers}
+                  vehicles={vehicles}
+                  districts={districts}
+                  formsData={formsData}
+                  setFormsData={setFormsData}
+                  handleDelete={() => handleDelete(d.tempId)}
+                  setCopiedFormData={setCopiedFormData}
+                  copiedFormData={copiedFormData}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       {formsData.filter((form) => form !== undefined).length > 0 ? (
         <div className="col text-end">
@@ -489,8 +469,8 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
           Plans!
         </div>
       )}
-    </>
+    </div>
   );
 };
 
-export default List;
+export default MonitoringVisitPlanList;

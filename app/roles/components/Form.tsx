@@ -1,18 +1,15 @@
-import Button from "@/app/components/Button";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import SubmitButton from "@/app/components/Form/SubmitButton";
+import ActionButton from "@/app/components/Table/ActionButton";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import more from "../../../public/icons/more.svg";
-import FormWrapper from "@/app/components/Form/FormWrapper";
-import CustomLabel from "@/app/components/Form/CustomLabel";
-import CustomInput from "@/app/components/Form/CustomInput";
-import SubmitButton from "@/app/components/Form/SubmitButton";
-import ActionButton from "@/app/components/Table/ActionButton";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -191,9 +188,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                     /> */}
                 </div>
               </div>
-              <div className="col-lg-4 col-md-6 col-sm-6 mx-auto">
-                <SubmitButton>Save Role</SubmitButton>
-              </div>
+              <SubmitButton>Save Role</SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

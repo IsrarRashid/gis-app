@@ -1,7 +1,7 @@
 import { REPORT_API } from "@/app/APIs";
 import Avatar from "@/app/components/Avatar";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import CustomSelect, {
   defaultNegativeNumberOption,
   defaultOption,

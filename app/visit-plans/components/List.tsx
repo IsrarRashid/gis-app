@@ -2,28 +2,21 @@
 import { TOUR_PLAN_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
+import Actions from "@/app/components/Table/Actions";
 import Pagination from "@/app/components/Table/Pagination";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/Table/TableHeading";
+import useAuthentication from "@/app/hooks/useAuthentication";
 import useTourPlans, { TourPlan } from "@/app/hooks/useTourPlans";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getFormattedDate } from "@/app/utils";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
-import useAuthentication from "@/app/hooks/useAuthentication";
-import RowHeader from "@/app/components/Table/RowHeader";
-import TableData from "@/app/components/Table/TableData";
-import Actions from "@/app/components/Table/Actions";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const inter = Inter({ subsets: ["latin"] });
+import TableWrapper from "@/app/components/Table/TableWrapper";
 
 interface Props {
   refresh: boolean;
@@ -31,6 +24,7 @@ interface Props {
 }
 
 const List = ({ refresh, setRefresh }: Props) => {
+  const [isPageLimit, setPageLimit] = useState(false);
   const { data, setData, setError, isLoading } = useTourPlans({ refresh });
   const { data: users } = useAuthentication({ refresh });
 
@@ -130,104 +124,114 @@ const List = ({ refresh, setRefresh }: Props) => {
           </div>
         }
       />
-      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <TableHeading name="id" handleSort={() => handleSort("id")} />
-              <TableHeading name="name" handleSort={() => handleSort("name")} />
-              <TableHeading
-                name="tour Start Date"
-                className="text-nowrap"
-                handleSort={() => handleSort("tourStartDate")}
-              />
-              <TableHeading
-                name="tour End Date"
-                className="text-nowrap"
-                handleSort={() => handleSort("tourEndDate")}
-              />
-              <TableHeading
-                name="approval Date"
-                className="text-nowrap"
-                handleSort={() => handleSort("approvalDate")}
-              />
-              <TableHeading
-                name="created Date"
-                className="text-nowrap"
-                handleSort={() => handleSort("createdDate")}
-              />
-              <TableHeading
-                name="updated Date"
-                className="text-nowrap"
-                handleSort={() => handleSort("updatedDate")}
-              />
-              <TableHeading
-                name="created By"
-                className="text-nowrap"
-                handleSort={() => handleSort("createdBy")}
-              />
-              <TableHeading
-                name="updated By"
-                className="text-nowrap"
-                handleSort={() => handleSort("updatedBy")}
-              />
-              <TableHeading name="ACTIONS" textClassName="text-center" />
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((d) => (
-              <tr key={d.id}>
-                <RowHeader>{d.id}</RowHeader>
-                <TableData>{d.name}</TableData>
-                <TableData>
-                  {d.tourStartDate &&
-                    getFormattedDate(new Date(d.tourStartDate), "short")}
-                </TableData>
-                <TableData>
-                  {d.tourEndDate &&
-                    getFormattedDate(new Date(d.tourEndDate), "short")}
-                </TableData>
-                <TableData>
-                  {d.approvalDate &&
-                    getFormattedDate(new Date(d.approvalDate), "short")}
-                </TableData>
-                <TableData>
-                  {d.createdDate &&
-                    getFormattedDate(new Date(d.createdDate), "short")}
-                </TableData>
-                <TableData>
-                  {d.updatedDate &&
-                    getFormattedDate(new Date(d.updatedDate), "short")}
-                </TableData>
-                <TableData>
-                  {users.find((user) => user.id === d.createdBy)?.fullName}
-                </TableData>
-                <TableData>
-                  {users.find((user) => user.id === d.updatedBy)?.fullName}
-                </TableData>
-                <TableData>
-                  <Actions
-                    deleteNode={
-                      <DeleteModal handleDelete={handleDelete} id={d.id} />
-                    }
-                    formNode={
-                      <Form
-                        api={TOUR_PLAN_API}
-                        method="PUT"
-                        id={d.id}
-                        setRefresh={setRefresh}
-                        refresh={refresh}
-                        setData={setData}
-                        users={users}
-                      />
-                    }
-                  />
-                </TableData>
+      <TableWrapper
+        setRows={setRows}
+        currentPage={currentPage}
+        data={data}
+        isPageLimit={isPageLimit}
+      >
+        {(firstRowRef) => (
+          <>
+            <thead>
+              <tr>
+                <TableHeading name="id" handleSort={() => handleSort("id")} />
+                <TableHeading
+                  name="name"
+                  handleSort={() => handleSort("name")}
+                />
+                <TableHeading
+                  name="tour Start Date"
+                  className="text-nowrap"
+                  handleSort={() => handleSort("tourStartDate")}
+                />
+                <TableHeading
+                  name="tour End Date"
+                  className="text-nowrap"
+                  handleSort={() => handleSort("tourEndDate")}
+                />
+                <TableHeading
+                  name="approval Date"
+                  className="text-nowrap"
+                  handleSort={() => handleSort("approvalDate")}
+                />
+                <TableHeading
+                  name="created Date"
+                  className="text-nowrap"
+                  handleSort={() => handleSort("createdDate")}
+                />
+                <TableHeading
+                  name="updated Date"
+                  className="text-nowrap"
+                  handleSort={() => handleSort("updatedDate")}
+                />
+                <TableHeading
+                  name="created By"
+                  className="text-nowrap"
+                  handleSort={() => handleSort("createdBy")}
+                />
+                <TableHeading
+                  name="updated By"
+                  className="text-nowrap"
+                  handleSort={() => handleSort("updatedBy")}
+                />
+                <TableHeading name="ACTIONS" textClassName="text-center" />
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {paginatedData.map((d, i) => (
+                <tr key={i} ref={i === 0 ? firstRowRef : null}>
+                  <RowHeader>{d.id}</RowHeader>
+                  <TableData>{d.name}</TableData>
+                  <TableData>
+                    {d.tourStartDate &&
+                      getFormattedDate(new Date(d.tourStartDate), "short")}
+                  </TableData>
+                  <TableData>
+                    {d.tourEndDate &&
+                      getFormattedDate(new Date(d.tourEndDate), "short")}
+                  </TableData>
+                  <TableData>
+                    {d.approvalDate &&
+                      getFormattedDate(new Date(d.approvalDate), "short")}
+                  </TableData>
+                  <TableData>
+                    {d.createdDate &&
+                      getFormattedDate(new Date(d.createdDate), "short")}
+                  </TableData>
+                  <TableData>
+                    {d.updatedDate &&
+                      getFormattedDate(new Date(d.updatedDate), "short")}
+                  </TableData>
+                  <TableData>
+                    {users.find((user) => user.id === d.createdBy)?.fullName}
+                  </TableData>
+                  <TableData>
+                    {users.find((user) => user.id === d.updatedBy)?.fullName}
+                  </TableData>
+                  <TableData>
+                    <Actions
+                      deleteNode={
+                        <DeleteModal handleDelete={handleDelete} id={d.id} />
+                      }
+                      formNode={
+                        <Form
+                          api={TOUR_PLAN_API}
+                          method="PUT"
+                          id={d.id}
+                          setRefresh={setRefresh}
+                          refresh={refresh}
+                          setData={setData}
+                          users={users}
+                        />
+                      }
+                    />
+                  </TableData>
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
+      </TableWrapper>
       <Pagination
         searchTerm={searchTerm}
         filteredData={filteredData}
@@ -236,6 +240,7 @@ const List = ({ refresh, setRefresh }: Props) => {
         setRows={setRows}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        setPageLimit={setPageLimit}
       />
     </>
   );

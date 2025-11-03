@@ -158,9 +158,7 @@ const GroupingForm = ({ id, options }: Props) => {
                     placeholder="Choose Super Group"
                   />
                 </div>
-                <div className="col-lg-5 col-md-8 col-sm-6 mx-auto">
-                  <SubmitButton>Save Super Group</SubmitButton>
-                </div>
+                <SubmitButton>Save Super Group</SubmitButton>
               </form>
             </FormWrapper>
           </Modal.Body>

@@ -62,7 +62,7 @@ const MasterReport = () => {
         style={{
           border: "1px solid #E2E4E5",
           borderRadius: "10px",
-          height: "89vh",
+          height: "calc(100vh - 125px)",
         }}
       >
         <p className="fw-6" style={{ fontSize: "2.25rem" }}>

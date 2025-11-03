@@ -91,7 +91,7 @@ const DistributedColumnChart = () => {
 
       return () => chart.destroy();
     }
-  }, [series, categories, calculatedData]);
+  }, [series, categories, calculatedData, astarik]);
 
   return (
     <>

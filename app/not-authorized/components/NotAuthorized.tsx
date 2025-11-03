@@ -1,17 +1,11 @@
-import { Plus_Jakarta_Sans } from "next/font/google";
 import { PiWarningBold } from "react-icons/pi";
 import BackButton from "./BackButton";
 import HomeButton from "./HomeButton";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
 const NotAuthorized = () => {
   return (
     <div
-      className={`container ${plusJakartaSans}`}
+      className={`container`}
       style={{
         position: "relative",
         zIndex: "2",

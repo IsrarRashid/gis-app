@@ -8,7 +8,15 @@ interface Props {
   className?: string;
   style?: CSSProperties;
   textClassName?: string;
+  colSpan?: number;
 }
+
+export const defaultStyle: CSSProperties = {
+  backgroundColor: "#F8FAFC",
+  borderBottom: "1.08px solid #CBD5E1",
+  padding: "15.17px 26px",
+  zIndex: "2",
+};
 
 const TableHeading = ({
   name,
@@ -16,16 +24,12 @@ const TableHeading = ({
   className,
   style,
   textClassName,
+  colSpan,
 }: Props) => {
-  const defaultStyle: CSSProperties = {
-    backgroundColor: "#F8FAFC",
-    borderBottom: "1.08px solid #CBD5E1",
-    padding: "15.17px 26px",
-    zIndex: "2",
-  };
   return (
     <th
       scope="col"
+      colSpan={colSpan}
       className={`${
         handleSort ? "cursor-pointer" : ""
       } fs15px position-sticky top-0 ${className || ""}`}

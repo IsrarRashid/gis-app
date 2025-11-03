@@ -235,9 +235,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                   placeholder="Write Brief Description..."
                 />
               </div>
-              <div className="col-xxl-4 col-xl-5 col-lg-4 col-md-5 col-sm-5 col-8 mx-auto">
-                <SubmitButton>Save Sector</SubmitButton>
-              </div>
+              <SubmitButton>Save Sector</SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

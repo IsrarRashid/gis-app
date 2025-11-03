@@ -24,6 +24,7 @@ import GroupingForm from "./GroupingForm";
 import RowHeader from "@/app/components/Table/RowHeader";
 import TableData from "@/app/components/Table/TableData";
 import StatusBadge from "@/app/projects/components/StatusBadge";
+import TableWrapper from "@/app/components/Table/TableWrapper";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -56,6 +57,7 @@ const UserProjectsList = ({ refresh }: ListProps) => {
   const [data, setData] = useState<Project[]>([]); // Store the original data
   const [userOptions, setUserOptions] = useState<OptionType[]>(); // Store the original data
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [isPageLimit, setPageLimit] = useState(false);
 
   // State for search input
   const [searchTerm, setSearchTerm] = useState("");
@@ -103,7 +105,7 @@ const UserProjectsList = ({ refresh }: ListProps) => {
   };
 
   // for selecting rows per page
-  const [rows, setRows] = useState(10); // Default to 11 rows per page
+  const [rows, setRows] = useState(15); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
   // Paginate data to display only the current page's rows
@@ -218,41 +220,50 @@ const UserProjectsList = ({ refresh }: ListProps) => {
           </>
         }
       />
-      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <TableHeading name="id" handleSort={() => handleSort("id")} />
-              <TableHeading
-                className="text-nowrap"
-                name="gs No"
-                handleSort={() => handleSort("gsNo")}
-              />
-              <TableHeading name="name" handleSort={() => handleSort("name")} />
-              <TableHeading
-                name="sector"
-                handleSort={() => handleSort("sectorId")}
-              />
-              <TableHeading
-                name="status"
-                handleSort={() => handleSort("status")}
-              />
-              <TableHeading name="ASSIGN USER" className="text-nowrap" />
-              <TableHeading name="SUPER GROUP" className="text-nowrap" />
-              {/* <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th> */}
-              {/* <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th> */}
-              {/* <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th> */}
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((d) => (
-              <tr key={d.id}>
-                <RowHeader>{d.id}</RowHeader>
-                <TableData>{d.gsNo}</TableData>
-                <TableData>{d.name}</TableData>
-                <TableData>{getName(d.sectorId, sectorsData)}</TableData>
-                <TableData className="text-nowrap">
-                  {/* {d.status === "scheduled" || d.status === "Scheduled" ? (
+      <TableWrapper
+        setRows={setRows}
+        currentPage={currentPage}
+        data={data}
+        isPageLimit={isPageLimit}
+      >
+        {(firstRowRef) => (
+          <>
+            <thead>
+              <tr>
+                <TableHeading name="id" handleSort={() => handleSort("id")} />
+                <TableHeading
+                  className="text-nowrap"
+                  name="gs No"
+                  handleSort={() => handleSort("gsNo")}
+                />
+                <TableHeading
+                  name="name"
+                  handleSort={() => handleSort("name")}
+                />
+                <TableHeading
+                  name="sector"
+                  handleSort={() => handleSort("sectorId")}
+                />
+                <TableHeading
+                  name="status"
+                  handleSort={() => handleSort("status")}
+                />
+                <TableHeading name="ASSIGN USER" className="text-nowrap" />
+                <TableHeading name="SUPER GROUP" className="text-nowrap" />
+                {/* <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th> */}
+                {/* <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th> */}
+                {/* <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th> */}
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedData.map((d, i) => (
+                <tr key={d.id} ref={i === 0 ? firstRowRef : null}>
+                  <RowHeader>{d.id}</RowHeader>
+                  <TableData>{d.gsNo}</TableData>
+                  <TableData>{d.name}</TableData>
+                  <TableData>{getName(d.sectorId, sectorsData)}</TableData>
+                  <TableData className="text-nowrap">
+                    {/* {d.status === "scheduled" || d.status === "Scheduled" ? (
                     <Image
                       src={calender}
                       style={{ marginBottom: "3px" }}
@@ -300,24 +311,24 @@ const UserProjectsList = ({ refresh }: ListProps) => {
                     ""
                   )}
                   &nbsp;{d.status} */}
-                  <StatusBadge status={d.status} />
-                </TableData>
-                <TableData className="text-center">
-                  <AssignUserForm id={d.id} options={users} />
-                </TableData>
-                {/* <td className="text-center">
+                    <StatusBadge status={d.status} />
+                  </TableData>
+                  <TableData className="text-center">
+                    <AssignUserForm id={d.id} options={users} />
+                  </TableData>
+                  {/* <td className="text-center">
                   <SyncModal handleSubmit={handleSync} id={d.smdpProjectID} />
                 </TableData> */}
-                <TableData className="text-center">
-                  <GroupingForm id={d.id} options={superGroups} />
-                </TableData>
-                {/* <TableData>
+                  <TableData className="text-center">
+                    <GroupingForm id={d.id} options={superGroups} />
+                  </TableData>
+                  {/* <TableData>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
                 </TableData> */}
-                {/* <TableData>
+                  {/* <TableData>
                   <DownloadPDFBtn />
                 </TableData> */}
-                {/* <TableData>
+                  {/* <TableData>
                   <ProjectForm
                     api={PROJECT_API}
                     method="PUT"
@@ -326,11 +337,13 @@ const UserProjectsList = ({ refresh }: ListProps) => {
                     refresh={refresh}
                   />
                 </TableData> */}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
+      </TableWrapper>
+
       <Pagination
         searchTerm={searchTerm}
         filteredData={filteredData}
@@ -339,6 +352,7 @@ const UserProjectsList = ({ refresh }: ListProps) => {
         setRows={setRows}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        setPageLimit={setPageLimit}
       />
     </>
   );

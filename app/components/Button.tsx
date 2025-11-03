@@ -19,6 +19,8 @@ interface Props {
   title?: string;
   onMouseEnter?: MouseEventHandler<HTMLButtonElement> | undefined;
   onMouseLeave?: MouseEventHandler<HTMLButtonElement> | undefined;
+  onMouseDown?: MouseEventHandler<HTMLButtonElement> | undefined;
+  onMouseUp?: MouseEventHandler<HTMLButtonElement> | undefined;
 }
 
 const Button = ({

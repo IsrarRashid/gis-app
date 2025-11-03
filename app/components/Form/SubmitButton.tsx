@@ -1,19 +1,27 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 import Button from "../Button";
 
-const SubmitButton = ({ children }: PropsWithChildren) => {
+interface Props {
+  children: ReactNode;
+  disabled?: boolean;
+}
+
+const SubmitButton = ({ children, disabled }: Props) => {
   return (
-    <Button
-      className="btn text-white w-100 border-0 fw-bold fs14px"
-      style={{
-        backgroundImage: "linear-gradient(to bottom, #0C8CE9 ,#074F83)",
-        borderRadius: "10px",
-        padding: "11px 16px",
-      }}
-      type="submit"
-    >
-      {children}
-    </Button>
+    <div className="col-lg-5 col-md-6 col-sm-4 mx-auto mt-3">
+      <Button
+        className="btn text-white w-100 border-0 fw-bold fs14px text-nowrap"
+        style={{
+          backgroundImage: "linear-gradient(to bottom, #0C8CE9 ,#074F83)",
+          borderRadius: "10px",
+          padding: "11px 16px",
+        }}
+        disabled={disabled}
+        type="submit"
+      >
+        {children}
+      </Button>
+    </div>
   );
 };
 

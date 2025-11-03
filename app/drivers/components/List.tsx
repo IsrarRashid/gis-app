@@ -1,30 +1,23 @@
 "use client";
 import { DRIVER_API } from "@/app/APIs";
+import Avatar from "@/app/components/Avatar";
 import Button from "@/app/components/Button";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
+import Actions from "@/app/components/Table/Actions";
 import Pagination from "@/app/components/Table/Pagination";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/Table/TableHeading";
 import useDriver, { Driver } from "@/app/hooks/useDriver";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getFormattedDate } from "@/app/utils";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
-import RowHeader from "@/app/components/Table/RowHeader";
-import TableData from "@/app/components/Table/TableData";
-import Actions from "@/app/components/Table/Actions";
-import Avatar from "@/app/components/Avatar";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const inter = Inter({ subsets: ["latin"] });
+import TableWrapper from "@/app/components/Table/TableWrapper";
 
 interface ListProps {
   refresh: boolean;
@@ -40,6 +33,8 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const { data, setData, setError, isLoading } = useDriver({
     refresh,
   });
+
+  const [isPageLimit, setPageLimit] = useState(false);
 
   const deleteMessage = "Deleted Successfully!";
 
@@ -237,94 +232,101 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           }
         />
       </>
-      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <TableHeading name="id" handleSort={() => handleSort("id")} />
-              <TableHeading
-                className="text-nowrap"
-                name="driver name"
-                handleSort={() => handleSort("driverName")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="driver image"
-                handleSort={() => handleSort("driverImage")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="mobile number"
-                handleSort={() => handleSort("mobileNumber")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="created at"
-                handleSort={() => handleSort("createdAt")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="updated at"
-                handleSort={() => handleSort("updatedAt")}
-              />
-              <TableHeading name="ACTIONS" textClassName="text-center" />
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((d) => (
-              <tr key={d.id}>
-                <RowHeader>{d.id}</RowHeader>
-                <TableData>{d.driverName}</TableData>
-                <TableData>
-                  {d.driverImage && d.driverImage.length > 0 && (
-                    // <img
-                    //   className="img-fluid rounded-circle shadow-sm"
-                    //   style={{
-                    //     width: "70px",
-                    //     height: "70px",
-                    //     objectFit: "cover",
-                    //     objectPosition: "center top",
-                    //   }}
-                    //   src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.driverImage}`}
-                    //   alt="driverImage"
-                    // />
-                    <Avatar
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.driverImage}`}
-                      width={70}
-                      height={70}
-                    />
-                  )}
-                </TableData>
-                <TableData>{d.mobileNumber}</TableData>
-                <TableData>
-                  {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "short")}
-                </TableData>
-                <TableData>
-                  {d.updatedAt &&
-                    getFormattedDate(new Date(d.updatedAt), "short")}
-                </TableData>
-                <TableData>
-                  <Actions
-                    deleteNode={
-                      <DeleteModal handleDelete={handleDelete} id={d.id} />
-                    }
-                    formNode={
-                      <Form
-                        api={DRIVER_API}
-                        method="PUT"
-                        id={d.id}
-                        setRefresh={setRefresh}
-                        refresh={refresh}
-                      />
-                    }
-                  />
-                </TableData>
+      <TableWrapper
+        setRows={setRows}
+        currentPage={currentPage}
+        data={data}
+        isPageLimit={isPageLimit}
+      >
+        {(firstRowRef) => (
+          <>
+            <thead>
+              <tr>
+                <TableHeading name="id" handleSort={() => handleSort("id")} />
+                <TableHeading
+                  className="text-nowrap"
+                  name="driver name"
+                  handleSort={() => handleSort("driverName")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="driver image"
+                  handleSort={() => handleSort("driverImage")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="mobile number"
+                  handleSort={() => handleSort("mobileNumber")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="created at"
+                  handleSort={() => handleSort("createdAt")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="updated at"
+                  handleSort={() => handleSort("updatedAt")}
+                />
+                <TableHeading name="ACTIONS" textClassName="text-center" />
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {paginatedData.map((d, i) => (
+                <tr key={i} ref={i === 0 ? firstRowRef : null}>
+                  <RowHeader>{d.id}</RowHeader>
+                  <TableData>{d.driverName}</TableData>
+                  <TableData>
+                    {d.driverImage && d.driverImage.length > 0 && (
+                      // <img
+                      //   className="img-fluid rounded-circle shadow-sm"
+                      //   style={{
+                      //     width: "70px",
+                      //     height: "70px",
+                      //     objectFit: "cover",
+                      //     objectPosition: "center top",
+                      //   }}
+                      //   src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.driverImage}`}
+                      //   alt="driverImage"
+                      // />
+                      <Avatar
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.driverImage}`}
+                        width={70}
+                        height={70}
+                      />
+                    )}
+                  </TableData>
+                  <TableData>{d.mobileNumber}</TableData>
+                  <TableData>
+                    {d.createdAt &&
+                      getFormattedDate(new Date(d.createdAt), "short")}
+                  </TableData>
+                  <TableData>
+                    {d.updatedAt &&
+                      getFormattedDate(new Date(d.updatedAt), "short")}
+                  </TableData>
+                  <TableData>
+                    <Actions
+                      deleteNode={
+                        <DeleteModal handleDelete={handleDelete} id={d.id} />
+                      }
+                      formNode={
+                        <Form
+                          api={DRIVER_API}
+                          method="PUT"
+                          id={d.id}
+                          setRefresh={setRefresh}
+                          refresh={refresh}
+                        />
+                      }
+                    />
+                  </TableData>
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
+      </TableWrapper>
       <Pagination
         searchTerm={searchTerm}
         filteredData={filteredData}
@@ -333,6 +335,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
         setRows={setRows}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        setPageLimit={setPageLimit}
       />
     </>
   );

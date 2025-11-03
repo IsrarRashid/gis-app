@@ -1,19 +1,16 @@
-import Button from "@/app/components/Button";
 import CustomInput from "@/app/components/Form/CustomInput";
 import CustomLabel from "@/app/components/Form/CustomLabel";
 import FormWrapper from "@/app/components/Form/FormWrapper";
 import SubmitButton from "@/app/components/Form/SubmitButton";
+import ActionButton from "@/app/components/Table/ActionButton";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { z } from "zod";
-import more from "../../../public/icons/more.svg";
-import ActionButton from "@/app/components/Table/ActionButton";
 import { TbFileUpload } from "react-icons/tb";
+import { z } from "zod";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -114,6 +111,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
 
       <Modal
         show={show}
+        size="lg"
         onHide={handleClose}
         aria-labelledby="contained-modal-title-vcenter"
         centered
@@ -184,7 +182,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                 style={{ marginBottom: "5px" }}
               >
                 <div
-                  className="col-lg-6 col-md-6 col-sm-12 text-start mt-0"
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
                   <CustomLabel htmlFor="driverName">Driver Name</CustomLabel>
@@ -211,7 +209,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   )}
                 </div>
                 <div
-                  className="col-lg-6 col-md-6 col-sm-12 text-start mt-0"
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
                   <CustomLabel htmlFor="mobileNumber">
@@ -243,7 +241,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   )}
                 </div>
                 <div
-                  className="col-lg-6 col-md-6 col-sm-12 text-start mt-0"
+                  className="col-lg-4 col-md-6 col-sm-12 text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
                   <CustomLabel htmlFor="user_Id">User Id</CustomLabel>
@@ -273,7 +271,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   )}
                 </div>
                 {/* <div
-                  className="col-lg-6 col-md-6 col-sm-12  text-start mt-0"
+                  className="col-lg-4 col-md-6 col-sm-12  text-start mt-0"
                   style={{ marginBottom: "10px", padding: "0px 10px" }}
                 >
                   <CustomLabel htmlFor="driverImage">Driver Image</CustomLabel>
@@ -285,9 +283,7 @@ const Form = ({ api, method, id, setRefresh, refresh }: Props) => {
                   />
                 </div> */}
               </div>
-              <div className="col-lg-5 col-md-6 col-sm-4 mx-auto">
-                <SubmitButton>Save Driver</SubmitButton>
-              </div>
+              <SubmitButton>Save Driver</SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

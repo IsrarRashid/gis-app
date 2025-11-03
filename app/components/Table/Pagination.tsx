@@ -16,7 +16,7 @@ interface Props {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   status?: string;
   rowCounts?: number[];
-  setPageLimit: Dispatch<SetStateAction<boolean>>;
+  setPageLimit?: Dispatch<SetStateAction<boolean>>;
 }
 
 const Pagination = ({
@@ -260,7 +260,7 @@ const Pagination = ({
                 />
               </Button>
             </div>
-            <div className="col ps-0" style={{ paddingRight: "10px" }}>
+            {/* <div className="col ps-0" style={{ paddingRight: "10px" }}>
               <Button
                 className={`btn btn-sm rounded-circle text-white border-0 d-flex justify-content-center align-items-center m-1 ${
                   currentPage === totalPages
@@ -283,37 +283,39 @@ const Pagination = ({
                   style={{ rotate: "180deg" }}
                 />
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="col-auto">
-          <CustomSelect
-            menuPlacement="top"
-            isClearable={false}
-            options={[defaultOption, ...rowCountOptions]}
-            isSearchable={false}
-            closeMenuOnSelect={true}
-            singleSelectStyles={paginationSelectStyles}
-            value={selectedOptions}
-            onChangeSingle={(
-              newValue: SingleValue<{ value: string; label: string }>
-            ) => {
-              if (newValue) {
-                if (Number(newValue.value) === 0) {
-                  setPageLimit(false);
-                } else {
-                  setPageLimit(true);
-                  handleRowsPerPage(Number(newValue.value));
-                  setSelectedOptions([
-                    {
-                      label: newValue.label,
-                      value: newValue.value,
-                    },
-                  ]);
+          {setPageLimit && (
+            <CustomSelect
+              menuPlacement="top"
+              isClearable={false}
+              options={[defaultOption, ...rowCountOptions]}
+              isSearchable={false}
+              closeMenuOnSelect={true}
+              singleSelectStyles={paginationSelectStyles}
+              value={selectedOptions}
+              onChangeSingle={(
+                newValue: SingleValue<{ value: string; label: string }>
+              ) => {
+                if (newValue) {
+                  if (Number(newValue.value) === 0) {
+                    setPageLimit(false);
+                  } else {
+                    setPageLimit(true);
+                    handleRowsPerPage(Number(newValue.value));
+                    setSelectedOptions([
+                      {
+                        label: newValue.label,
+                        value: newValue.value,
+                      },
+                    ]);
+                  }
                 }
-              }
-            }}
-          />
+              }}
+            />
+          )}
 
           {/* <select
             className="rounded bg-color-evaluation-theme-blue text-white p-2"

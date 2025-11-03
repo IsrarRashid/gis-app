@@ -6,7 +6,7 @@ import {
   VISIT_API,
 } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import { setContent } from "@/app/features/content/contentSlice";
 import { setTutorial } from "@/app/features/tutorial/tutorialSlice";
 import useAuthentication from "@/app/hooks/useAuthentication";

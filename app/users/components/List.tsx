@@ -23,6 +23,7 @@ import TableData from "@/app/components/Table/TableData";
 import Link from "next/link";
 import Actions from "@/app/components/Table/Actions";
 import Avatar from "@/app/components/Avatar";
+import TableWrapper from "@/app/components/Table/TableWrapper";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -45,6 +46,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const { data, setData, setError, isLoading } = useAuthentication({
     refresh,
   });
+  const [isPageLimit, setPageLimit] = useState(false);
   const { data: roles } = useRoles({ refresh });
   const deleteMessage = "Deleted Successfully!";
 
@@ -151,54 +153,60 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           </div>
         }
       />
-      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <TableHeading name="id" handleSort={() => handleSort("id")} />
-              <TableHeading
-                className="text-nowrap"
-                name="user name"
-                handleSort={() => handleSort("userName")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="full Name"
-                handleSort={() => handleSort("fullName")}
-              />
-              <TableHeading
-                name="picture"
-                handleSort={() => handleSort("picture")}
-              />
-              <TableHeading
-                name="designation"
-                handleSort={() => handleSort("designation")}
-              />
-              <TableHeading
-                name="email"
-                handleSort={() => handleSort("email")}
-              />
-              <TableHeading
-                name="phoneNumber"
-                handleSort={() => handleSort("phoneNumber")}
-              />
-              <TableHeading name="ROLE" />
-              <TableHeading name="ACTIONS" />
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((d) => (
-              <tr key={d.id}>
-                <RowHeader>{d.id}</RowHeader>
-                <TableData>{d.userName}</TableData>
-                <TableData>{d.fullName}</TableData>
-                <TableData>
-                  {d.picture && d.picture.length > 0 && (
-                    <Link
-                      href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
-                      target="_blank"
-                    >
-                      {/* <img
+      <TableWrapper
+        setRows={setRows}
+        currentPage={currentPage}
+        data={data}
+        isPageLimit={isPageLimit}
+      >
+        {(firstRowRef) => (
+          <>
+            <thead>
+              <tr>
+                <TableHeading name="id" handleSort={() => handleSort("id")} />
+                <TableHeading
+                  className="text-nowrap"
+                  name="user name"
+                  handleSort={() => handleSort("userName")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="full Name"
+                  handleSort={() => handleSort("fullName")}
+                />
+                <TableHeading
+                  name="picture"
+                  handleSort={() => handleSort("picture")}
+                />
+                <TableHeading
+                  name="designation"
+                  handleSort={() => handleSort("designation")}
+                />
+                <TableHeading
+                  name="email"
+                  handleSort={() => handleSort("email")}
+                />
+                <TableHeading
+                  name="phoneNumber"
+                  handleSort={() => handleSort("phoneNumber")}
+                />
+                <TableHeading name="ROLE" />
+                <TableHeading name="ACTIONS" />
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedData.map((d, i) => (
+                <tr key={i} ref={i === 0 ? firstRowRef : null}>
+                  <RowHeader>{d.id}</RowHeader>
+                  <TableData>{d.userName}</TableData>
+                  <TableData>{d.fullName}</TableData>
+                  <TableData>
+                    {d.picture && d.picture.length > 0 && (
+                      <Link
+                        href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
+                        target="_blank"
+                      >
+                        {/* <img
                         className="rounded-circle shadow-sm"
                         style={{
                           objectFit: "cover",
@@ -211,7 +219,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                         src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
                         alt="picture"
                       /> */}
-                      {/* <Image
+                        {/* <Image
                         className="rounded-circle shadow-sm"
                         style={{
                           objectFit: "cover",
@@ -224,36 +232,36 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                         src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
                         alt="picture"
                       /> */}
-                      <Avatar
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
-                        width={70}
-                        height={70}
-                      />
-                    </Link>
-                  )}
-                </TableData>
-                <TableData>{d.designation}</TableData>
-                <TableData>{d.email}</TableData>
-                <TableData>{d.phoneNumber}</TableData>
-                <TableData className="text-center">
-                  <GroupingForm
-                    id={d.id}
-                    options={roles}
-                    userName={d.userName}
-                  />
-                </TableData>
-                <TableData>
-                  <Actions
-                    deleteNode={
-                      <DeleteModal2
-                        handleDelete={handleDelete}
-                        userName={d.userName}
-                      />
-                    }
-                  />
-                </TableData>
+                        <Avatar
+                          src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
+                          width={70}
+                          height={70}
+                        />
+                      </Link>
+                    )}
+                  </TableData>
+                  <TableData>{d.designation}</TableData>
+                  <TableData>{d.email}</TableData>
+                  <TableData>{d.phoneNumber}</TableData>
+                  <TableData className="text-center">
+                    <GroupingForm
+                      id={d.id}
+                      options={roles}
+                      userName={d.userName}
+                    />
+                  </TableData>
+                  <TableData>
+                    <Actions
+                      deleteNode={
+                        <DeleteModal2
+                          handleDelete={handleDelete}
+                          userName={d.userName}
+                        />
+                      }
+                    />
+                  </TableData>
 
-                {/* <TableData>
+                  {/* <TableData>
                   <Form
                     api={USER_API}
                     method="PUT"
@@ -262,11 +270,13 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                     refresh={refresh}
                   />
                 </TableData> */}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
+      </TableWrapper>
+
       <Pagination
         searchTerm={searchTerm}
         filteredData={filteredData}
@@ -275,6 +285,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
         setRows={setRows}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        setPageLimit={setPageLimit}
       />
     </>
   );

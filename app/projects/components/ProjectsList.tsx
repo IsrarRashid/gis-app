@@ -20,7 +20,7 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getName } from "@/app/utils";
 import { sort } from "fast-sort";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { toast } from "react-toastify";
 import calender from "../../../public/icons/calendar.svg";
@@ -30,6 +30,7 @@ import complete from "../../../public/icons/complete.svg";
 import AssignUserForm from "./AssignUserForm";
 import GroupingForm from "./GroupingForm";
 import StatusBadge from "./StatusBadge";
+import TableWrapper from "@/app/components/Table/TableWrapper";
 
 export interface Option {
   id: number;
@@ -55,6 +56,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
   const { data: superGroups } = useSuperGroups();
   const { data: users } = useAuthentication();
   const [originalData, setOriginalData] = useState<Project[]>([]); // Store the original data
+  const [isPageLimit, setPageLimit] = useState(false);
 
   const deleteMessage = "Deleted Successfully!";
   // const syncMessage = "Attribute Values synced Successfully!";
@@ -126,7 +128,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
   };
 
   // for selecting rows per page
-  const [rows, setRows] = useState(10); // Default to 11 rows per page
+  const [rows, setRows] = useState(11); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
   // Determine the data to display for the current page
@@ -217,48 +219,60 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
           </>
         }
       />
-      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <TableHeading name="id" handleSort={() => handleSort("id")} />
-              <TableHeading
-                className="text-nowrap"
-                name="gs No"
-                handleSort={() => handleSort("gsNo")}
-              />
-              <TableHeading name="name" handleSort={() => handleSort("name")} />
-              <TableHeading
-                name="sector"
-                handleSort={() => handleSort("sectorId")}
-              />
-              <TableHeading
-                name="status"
-                handleSort={() => handleSort("status")}
-              />
-              <TableHeading name="ASSIGN USER" className="text-nowrap" />
-              <TableHeading name="SUPER GROUP" className="text-nowrap" />
-              <TableHeading name="ADD TO VISIT PLAN" className="text-nowrap" />
-              {/* <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th> */}
-              {/* <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th> */}
-              {/* <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th> */}
-              {/* <th colSpan={1}>
+      <TableWrapper
+        setRows={setRows}
+        currentPage={currentPage}
+        data={data}
+        isPageLimit={isPageLimit}
+      >
+        {(firstRowRef) => (
+          <>
+            <thead>
+              <tr>
+                <TableHeading name="id" handleSort={() => handleSort("id")} />
+                <TableHeading
+                  className="text-nowrap"
+                  name="gs No"
+                  handleSort={() => handleSort("gsNo")}
+                />
+                <TableHeading
+                  name="name"
+                  handleSort={() => handleSort("name")}
+                />
+                <TableHeading
+                  name="sector"
+                  handleSort={() => handleSort("sectorId")}
+                />
+                <TableHeading
+                  name="status"
+                  handleSort={() => handleSort("status")}
+                />
+                <TableHeading name="ASSIGN USER" className="text-nowrap" />
+                <TableHeading name="SUPER GROUP" className="text-nowrap" />
+                <TableHeading
+                  name="ADD TO VISIT PLAN"
+                  className="text-nowrap"
+                />
+                {/* <th style={{ whiteSpace: "nowrap" }}>ASSIGN USER</th> */}
+                {/* <th style={{ whiteSpace: "nowrap" }}>SYNC ATTRIBUTES</th> */}
+                {/* <th style={{ whiteSpace: "nowrap" }}>SUPER GROUP</th> */}
+                {/* <th colSpan={1}>
                 <div className="text-center"></div>
               </th> */}
-              {/* <th className="text-nowrap">ADD TO VISIT PLAN</th> */}
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((d, i) => (
-              <tr key={d.id}>
-                <RowHeader>{d.id}</RowHeader>
-                <TableData>{d.gsNo}</TableData>
-                <TableData>{d.name}</TableData>
-                <TableData className="text-nowrap">
-                  {getName(d.sectorId, sectorsData)}
-                </TableData>
-                <TableData className="text-nowrap">
-                  {/* {d.status.toLowerCase() === "scheduled" ? (
+                {/* <th className="text-nowrap">ADD TO VISIT PLAN</th> */}
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedData.map((d, i) => (
+                <tr key={d.id} ref={i === 0 ? firstRowRef : null}>
+                  <RowHeader>{d.id}</RowHeader>
+                  <TableData>{d.gsNo}</TableData>
+                  <TableData>{d.name}</TableData>
+                  <TableData className="text-nowrap">
+                    {getName(d.sectorId, sectorsData)}
+                  </TableData>
+                  <TableData className="text-nowrap">
+                    {/* {d.status.toLowerCase() === "scheduled" ? (
                     <Image
                       src={calender}
                       style={{ marginBottom: "3px" }}
@@ -304,36 +318,36 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
                     ""
                   )}
                   &nbsp; */}
-                  <StatusBadge status={d.status} />
-                </TableData>
-                <TableData className="text-center">
-                  <AssignUserForm id={d.id} options={users} />
-                </TableData>
-                {/* <td className="text-center">
+                    <StatusBadge status={d.status} />
+                  </TableData>
+                  <TableData className="text-center">
+                    <AssignUserForm id={d.id} options={users} />
+                  </TableData>
+                  {/* <td className="text-center">
                   <SyncModal handleSubmit={handleSync} id={d.smdpProjectID} />
                 </TableData> */}
-                <TableData className="text-center">
-                  <GroupingForm
-                    id={d.id}
-                    options={superGroups}
-                    dashboardType={dashboardType}
-                  />
-                </TableData>
-                <TableData className="text-center">
-                  <Button
-                    className="btn btn-sm"
-                    onClick={() => handleAddVisitPlan(d.id)}
-                  >
-                    <AiOutlinePlus size={26} />
-                  </Button>
-                </TableData>
-                {/* <TableData>
+                  <TableData className="text-center">
+                    <GroupingForm
+                      id={d.id}
+                      options={superGroups}
+                      dashboardType={dashboardType}
+                    />
+                  </TableData>
+                  <TableData className="text-center">
+                    <Button
+                      className="btn btn-sm"
+                      onClick={() => handleAddVisitPlan(d.id)}
+                    >
+                      <AiOutlinePlus size={26} />
+                    </Button>
+                  </TableData>
+                  {/* <TableData>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />
                 </TableData> */}
-                {/* <TableData>
+                  {/* <TableData>
                   <DownloadPDFBtn />
                 </TableData> */}
-                {/* <TableData>
+                  {/* <TableData>
                   <ProjectForm
                     api={PROJECT_API_ENDPOINT}
                     method="PUT"
@@ -342,11 +356,12 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
                     refresh={refresh}
                   />
                 </TableData> */}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
+      </TableWrapper>
       <Pagination
         searchTerm={searchTerm}
         filteredData={filteredData}
@@ -355,6 +370,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
         setRows={setRows}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        setPageLimit={setPageLimit}
       />
     </>
   );

@@ -1,53 +1,54 @@
-import { Plus_Jakarta_Sans } from "next/font/google";
-import ProjectDetailsDashboard from "./components/ProjectDetailsDashboard";
-import ProjectDetailsDashboardOldPreview from "./components/ProjectDetailsDashboardOldPreview";
+"use client";
+
+import { useEffect, useState } from "react";
+import ProjectDetailsDashboard, {
+  SingleProjectDashboard,
+} from "../../components/ProjectDetailsDashboard";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { SINGLE_PROJECT_DASHBOARD_API } from "@/app/APIs";
+import Loader from "@/app/components/Loader";
 
 interface Props {
   params: { id: string; visitId: number }; // Change to string to match the routing expectations
 }
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
 
-const SingleProjectDashboard = ({ params }: Props) => {
+const SingleProjectDashboardPage = ({ params }: Props) => {
   const { id, visitId } = params; // Use the id as a string here, if necessary convert it later
-  return (
-    <div
-      className={`col ${plusJakartaSans.className}`}
-      // style={{
-      //   padding: "139px 200px 0px 138px",
-      // }}
-    >
-      <ProjectDetailsDashboardOldPreview id={id} visitId={visitId} />
-    </div>
-  );
+  const [data, setData] = useState<SingleProjectDashboard>();
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    console.log("check id", id);
+    console.log("check visit", visitId);
+  }, [id, visitId]);
+
+  useEffect(() => {
+    const handleSubmit = async (projectId: number, visitId: number) => {
+      setLoading(true);
+      try {
+        const response = await apiClient.get(
+          `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`
+        );
+        setData(response.data.data);
+        console.log(
+          `check now: projectid=${projectId}&visit=${visitId}`,
+          response
+        );
+        setLoading(false);
+      } catch (err) {
+        console.error("Submission error:", err);
+        setError((err as AxiosError).message);
+        setLoading(false);
+      }
+    };
+
+    handleSubmit(parseInt(id), visitId);
+  }, [id]);
+
+  if (isLoading) return <Loader />;
+  if (data) return <ProjectDetailsDashboard data={data} />;
+  if (error) return error;
 };
 
-export default SingleProjectDashboard;
-
-// uncomment below code for export build
-// export async function generateStaticParams() {
-//   let ids: String[] = [];
-//   for (let i = 0; i <= 7300; i++) {
-//     ids.push(String(i));
-//   }
-//   return ids.map((id) => ({ id })); // Keep id as a string
-// }
-
-// Replace with actual data fetching
-// const ids = [
-//   "1",
-//   "2",
-//   "3",
-//   "4",
-//   "5",
-//   "6",
-//   "7",
-//   "8",
-//   "9",
-//   "10",
-//   "11",
-//   "12",
-//   "13",
-// ]; // List of IDs to statically generate pages for
+export default SingleProjectDashboardPage;

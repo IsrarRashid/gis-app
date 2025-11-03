@@ -1,16 +1,16 @@
-import { ROLE_API, UPDATE_USER_ROLE_API } from "@/app/APIs";
+import { UPDATE_USER_ROLE_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import apiClient from "@/app/services/api-client";
-import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
-import { Modal } from "react-bootstrap";
-import Select, { ActionMeta, SingleValue } from "react-select";
-import { toast } from "react-toastify";
-import rolesBlack from "../../../public/icons/rolesBlack.svg";
-import { Option } from "./List";
 import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import FormWrapper from "@/app/components/Form/FormWrapper";
 import SubmitButton from "@/app/components/Form/SubmitButton";
+import apiClient from "@/app/services/api-client";
+import Image from "next/image";
+import { FormEvent, useState } from "react";
+import { Modal } from "react-bootstrap";
+import { ActionMeta, SingleValue } from "react-select";
+import { toast } from "react-toastify";
+import rolesBlack from "../../../public/icons/rolesBlack.svg";
+import { Option } from "./List";
 interface Props {
   id: number;
   options: Option[];
@@ -162,9 +162,7 @@ const GroupingForm = ({ id, options, userName }: Props) => {
                     placeholder="Choose Role"
                   />
                 </div>
-                <div className="col-lg-5 col-md-8 col-sm-6 mx-auto">
-                  <SubmitButton>Save Role</SubmitButton>
-                </div>
+                <SubmitButton>Save Role</SubmitButton>
               </form>
             </FormWrapper>
           </Modal.Body>

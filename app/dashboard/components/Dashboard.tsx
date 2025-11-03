@@ -2,7 +2,7 @@
 import { MAIN_DASHBOARD_API } from "@/app/APIs";
 import AnimatedCounter from "@/app/components/AnimatedCounter";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import DashboardWrapper from "@/app/components/DashboardWrapper";
 import Loader from "@/app/components/Loader";
 // import Menu from "@/app/components/Menu";

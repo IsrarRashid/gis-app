@@ -155,9 +155,7 @@ const GroupingForm = ({ id, options, dashboardType }: Props) => {
                     placeholder="Choose Attributes..."
                   />
                 </div>
-                <div className="col-lg-6 col-md-8 col-sm-6 col-9 mx-auto">
-                  <SubmitButton>Save Attributes</SubmitButton>
-                </div>
+                <SubmitButton>Save Attributes</SubmitButton>
               </form>
             </FormWrapper>
           </Modal.Body>

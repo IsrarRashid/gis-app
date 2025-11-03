@@ -1,7 +1,7 @@
 "use client";
 import { REPORT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import FormWrapper from "@/app/components/Form/FormWrapper";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import useAttributes from "@/app/hooks/useAttributes";
@@ -13,13 +13,21 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { FaChevronDown } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
-import { IoArrowForwardCircleOutline, IoClose } from "react-icons/io5";
+import {
+  IoArrowForwardCircleOutline,
+  IoClose,
+  IoSearchOutline,
+} from "react-icons/io5";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import Form from "./Form";
 import IssuedVsPendingReports from "./IssuedVsPendingReports";
 import PPTSlideGenerator from "./PPTSlideGenerator/PPTSlideGenerator";
 import TimeSpendOnProjectSiteData from "./TimeSpentOnProjectSite/TimeSpendOnProjectSiteData";
+import ActionButton from "@/app/components/Table/ActionButton";
+import TableHeading from "@/app/components/Table/TableHeading";
+import TableData from "@/app/components/Table/TableData";
+import CustomInput from "@/app/components/Form/CustomInput";
 
 export interface ReportTab {
   reportId: number;
@@ -31,7 +39,7 @@ interface ReportRun {
 }
 
 const List = () => {
-  const [showButtons, setShowButtons] = useState(true);
+  const [expandArea, setExpandArea] = useState(false);
   const [isActiveTab, setActiveTab] = useState(-1);
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState<number>(0);
@@ -41,12 +49,12 @@ const List = () => {
   const [refreshTabs, setRefreshTabs] = useState(false);
 
   useLayoutEffect(() => {
-    if (showButtons && contentRef.current) {
+    if (expandArea && contentRef.current) {
       setHeight(contentRef.current.scrollHeight + 20);
     } else {
-      setHeight(0);
+      setHeight(78);
     }
-  }, [showButtons, tabs]);
+  }, [expandArea, tabs]);
 
   useEffect(() => {
     const handleSubmit = async () => {
@@ -225,20 +233,49 @@ const List = () => {
       style={{
         border: "1px solid #E2E4E5",
         borderRadius: "10px",
+        height: "calc(100vh - 125px)",
+        overflow: "auto",
       }}
     >
-      <div className="row">
-        <div className="col">
+      <div className="row justify-content-end align-items-center">
+        <div className="col-auto">
           <p className="fw-6" style={{ fontSize: "2.25rem" }}>
             Report Analysis
           </p>
         </div>
 
         <div className="col text-end">
-          <div className="row">
-            <div className="col text-end mb-2">
+          <div className="row justify-content-end align-items-center">
+            <div className="col-auto">
+              <form onSubmit={(e) => e.preventDefault()}>
+                <div className="input-group">
+                  <button
+                    className="btn rounded-end rounded-pill text-white shadow-none border-end-0 pe-0"
+                    type="submit"
+                    style={{
+                      border: "1.08px solid #CBD5E1",
+                    }}
+                  >
+                    <IoSearchOutline size={21.6} style={{ color: "#475569" }} />
+                  </button>
+                  <CustomInput
+                    type="text"
+                    className="form-control fw-bold border-start-0 rounded-pill rounded-start shadow-none fs15px bg-transparent py-2 placeholder-bold"
+                    style={{
+                      border: "1px solid #CBD5E1",
+                    }}
+                    placeholder="Search Reports"
+                    value={searchTerm}
+                    onChange={handleChange}
+                    id="search"
+                  />
+                </div>
+              </form>
+            </div>
+            <div className="col-auto">
               {tabs && (
                 <DownloadDropDown
+                  styleVarient={2}
                   onClickExcel={() =>
                     exportToExcel(
                       data,
@@ -250,16 +287,27 @@ const List = () => {
               )}
             </div>
             <div className="col-auto">
-              <Button
+              <ActionButton
+                name="Create New Form"
+                method="POST"
+                onClick={handleShow}
+              />
+              {/* <Button
                 className="btn bg-color-sea-blue text-white"
                 style={{ borderRadius: "8px" }}
                 onClick={handleShow}
               >
                 Create New Form <IoArrowForwardCircleOutline size={24} />
-              </Button>
+              </Button> */}
             </div>
           </div>
-          <Modal show={show} onHide={handleClose} fullscreen={true}>
+
+          <Modal
+            show={show}
+            onHide={handleClose}
+            fullscreen={true}
+            dialogClassName="gismenu-modal"
+          >
             <Modal.Body>
               <Form
                 handleClose={handleClose}
@@ -286,43 +334,120 @@ const List = () => {
           /> */}
         </div>
       </div>
-      <div className="row d-flex justify-content-between mb-2">
-        <div className="col-12 col-sm-12 col-md-8 col-lg-6 col-xl-5">
-          <form className="row g-3" onSubmit={(e) => e.preventDefault()}>
-            <div className="col-auto">
-              <label htmlFor="inputPassword6" className="col-form-label">
-                Search Report
-              </label>
-            </div>
-            <div className="col-12 col-sm-6 col-md-6 col-md-8 col-lg-6 col-xl-5 position-relative">
-              <input
-                type="text"
-                id="inputPassword6"
-                className="form-control rounded-pill pe-5"
-                value={searchTerm}
-                onChange={handleChange}
-                style={{
-                  background: "#F5F5F5",
-                  boxShadow: "inset 0 0px 5px rgba(0, 0, 0, 0.25)",
-                }}
-                aria-describedby="passwordHelpInline"
-                placeholder="Search for Report"
+      <div className="row d-flex justify-content-between align-items-center mb-2">
+        <div className="col">
+          <div
+            ref={contentRef}
+            className="row overflow-hidden"
+            style={{
+              transition: "all 0.3s ease",
+              height: `${height}px`,
+              paddingTop: height > 0 ? "20px" : "0px",
+            }}
+          >
+            <div className="col-auto mb-2 pe-0">
+              <PPTSlideGenerator
+                setActiveTab={setActiveTab}
+                isActiveTab={isActiveTab}
               />
-              <div
-                className="col position-absolute"
-                style={{ top: 7, right: 25 }}
-              >
-                <FiSearch size={22} style={{ color: "#656565" }} />
-              </div>
             </div>
-          </form>
+            <div className="col-auto mb-2 pe-0">
+              <TimeSpendOnProjectSiteData
+                selectedIndex={isActiveTab}
+                setSelectedIndex={setActiveTab}
+              />
+            </div>
+            <div className="col-auto mb-2 pe-0">
+              <IssuedVsPendingReports
+                setActiveTab={setActiveTab}
+                isActiveTab={isActiveTab}
+              />
+            </div>
+
+            {(searchTerm ? filteredTabs : tabs)?.map((tab) => (
+              <div
+                key={tab.reportId}
+                className="col-auto mb-2 pe-0 position-relative"
+              >
+                <Button
+                  className={`btn rounded-pill fw-5 fs14px  ${
+                    isActiveTab === tab.reportId
+                      ? "bg-color-sea-blue text-white"
+                      : ""
+                  }`}
+                  style={{
+                    border: "1px solid #EDF1F3",
+                    padding: "14px",
+                    boxShadow: "0px 3px 5px rgba(228, 229, 231, 0.24)",
+                  }}
+                  onClick={() => {
+                    setActiveTab(tab.reportId);
+                    handleSubmit(tab.reportId);
+                  }}
+                >
+                  {tab.reportName}
+                </Button>
+                <div className="position-absolute top-0 start-100 translate-middle">
+                  <CustomModal
+                    size="lg"
+                    button={
+                      <Button
+                        className="btn btn-danger rounded-circle shadow-none"
+                        style={{ padding: "0px 3px 0px 3px" }}
+                      >
+                        <IoClose size={18} />
+                      </Button>
+                    }
+                    modalId={tab.reportId.toString()}
+                    body={(close) => (
+                      <FormWrapper>
+                        <div className="row flex-column justify-content-center mb-4">
+                          <div className="col text-center mt-4">
+                            <Image
+                              src={trashImage}
+                              alt="trash"
+                              width={110}
+                              height={110}
+                            />
+                          </div>
+                          <div className="col-lg-9 mx-auto text-center">
+                            <p className="mt-2 fs-4 fw-bold mb-4">
+                              Are you sure you want to delete this record?
+                            </p>
+                          </div>
+                          <div className="col text-center">
+                            <Button
+                              onClick={() => {
+                                handleDelete(tab.reportId);
+                                close(); // ✅ closes modal after delete
+                              }}
+                              className="btn shadow border-0 text-white px-4 fs-5"
+                              style={{
+                                backgroundImage:
+                                  "linear-gradient(to bottom, #DF1130 ,#A50223)",
+                                borderRadius: "12px",
+                                paddingTop: "10px",
+                                paddingBottom: "10px",
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </FormWrapper>
+                    )}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="col-auto">
           <div className="row">
             <div className="col-auto text-end">
               <Button
-                className="btn color-sea-blue fw-6 shadow-none"
-                onClick={() => setShowButtons(!showButtons)}
+                className="btn fw-6 shadow-none"
+                onClick={() => setExpandArea(!expandArea)}
               >
                 <span className="pe-2">
                   {isActiveTab !== -1
@@ -333,7 +458,7 @@ const List = () => {
                 <FaChevronDown
                   style={{
                     transition: "all .3s",
-                    rotate: `${showButtons ? "180deg" : "0deg"}`,
+                    rotate: `${expandArea ? "180deg" : "0deg"}`,
                   }}
                 />
               </Button>
@@ -346,201 +471,54 @@ const List = () => {
           </div>
         </div>
       </div>
-      <div
-        ref={contentRef}
-        className="row overflow-hidden"
-        style={{
-          transition: "all 0.3s ease",
-          height: `${height}px`,
-          paddingTop: height > 0 ? "20px" : "0px",
-        }}
-      >
-        <div className="col-auto mb-2 pe-0">
-          <PPTSlideGenerator
-            setActiveTab={setActiveTab}
-            isActiveTab={isActiveTab}
-          />
-        </div>
-        <div className="col-auto mb-2 pe-0">
-          <TimeSpendOnProjectSiteData
-            selectedIndex={isActiveTab}
-            setSelectedIndex={setActiveTab}
-          />
-        </div>
-        <div className="col-auto mb-2 pe-0">
-          <IssuedVsPendingReports
-            setActiveTab={setActiveTab}
-            isActiveTab={isActiveTab}
-          />
-        </div>
-        {(searchTerm ? filteredTabs : tabs)?.map((tab) => (
-          <div
-            key={tab.reportId}
-            className="col-auto mb-2 pe-0 position-relative"
-          >
-            <Button
-              className={`btn rounded-pill fw-5 fs14px  ${
-                isActiveTab === tab.reportId
-                  ? "bg-color-sea-blue text-white"
-                  : ""
-              }`}
-              style={{
-                border: "1px solid #EDF1F3",
-                padding: "14px",
-                boxShadow: "0px 3px 5px rgba(228, 229, 231, 0.24)",
-              }}
-              onClick={() => {
-                setActiveTab(tab.reportId);
-                handleSubmit(tab.reportId);
-              }}
-            >
-              {tab.reportName}
-            </Button>
-            <div className="position-absolute top-0 start-100 translate-middle">
-              <CustomModal
-                size="lg"
-                button={
-                  <Button
-                    className="btn btn-danger rounded-circle shadow-none"
-                    style={{ padding: "0px 3px 0px 3px" }}
-                  >
-                    <IoClose size={18} />
-                  </Button>
-                }
-                modalId={tab.reportId.toString()}
-                body={(close) => (
-                  <FormWrapper>
-                    <div className="row flex-column justify-content-center mb-4">
-                      <div className="col text-center mt-4">
-                        <Image
-                          src={trashImage}
-                          alt="trash"
-                          width={110}
-                          height={110}
-                        />
-                      </div>
-                      <div className="col-lg-9 mx-auto text-center">
-                        <p className="mt-2 fs-4 fw-bold mb-4">
-                          Are you sure you want to delete this record?
-                        </p>
-                      </div>
-                      <div className="col text-center">
-                        <Button
-                          onClick={() => {
-                            handleDelete(tab.reportId);
-                            close(); // ✅ closes modal after delete
-                          }}
-                          className="btn shadow border-0 text-white px-4 fs-5"
-                          style={{
-                            backgroundImage:
-                              "linear-gradient(to bottom, #DF1130 ,#A50223)",
-                            borderRadius: "12px",
-                            paddingTop: "10px",
-                            paddingBottom: "10px",
-                          }}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  </FormWrapper>
-                )}
-              />
-              {/* body={(close) => (
-                  <FormWrapper>
-                    <div className="row flex-column justify-content-center mb-4">
-                      <div className="col text-center mt-4">
-                        <Image
-                          src={trashImage}
-                          alt="trash"
-                          width={110}
-                          height={110}
-                        />
-                      </div>
-                      <div className="col-lg-9 mx-auto text-center">
-                        <p className="mt-2 fs-4 fw-bold mb-4">
-                          Are you sure you want to delete this record?
-                        </p>
-                      </div>
-                      <div className="col">
-                        <div className="row d-flex">
-                          <div className="col text-center">
-                            <Button
-                              onClick={() => {
-                                handleDelete(tab.reportId);
-                                close(); // ✅ closes modal after delete
-                              }}
-                              className="btn shadow border-0 text-white px-4 fs-5"
-                              style={{
-                                backgroundImage:
-                                  "linear-gradient(to bottom, #DF1130 ,#A50223)",
-                                borderRadius: "12px",
-                                boxSizing: "border-box",
-                                paddingTop: "10px",
-                                paddingBottom: "10px",
-                              }}
-                            >
-                              Delete
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </FormWrapper>
-                )} */}
-              {/* <Button
-                className="btn btn-danger rounded-circle shadow-none"
-                style={{ padding: "0px 3px 0px 3px" }}
-                onClick={() => {
-                  console.log("badge clicked");
-                }}
-              >
-                <IoClose size={18} />
-              </Button> */}
-            </div>
-          </div>
-        ))}
-      </div>
+
       {data && data.length > 0 && (
-        <div className="table-responsive rounded-3">
-          <table
-            className="table table-bordered mb-3 rounded-3 overflow-hidden"
-            style={{ borderColor: "#B9B9B9" }}
-          >
-            <thead>
-              <tr className="fs14px">
-                <th className="bg-color-sea-blue text-white fw-bold text-center border-0 text-nowrap">
-                  Sr. No.
-                </th>
-                {Object.keys(data[0])?.map((key, i) => (
-                  <th
-                    key={i}
-                    className="bg-color-sea-blue text-white fw-bold text-center border-0 text-nowrap"
-                  >
-                    {key}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data?.map((row, rowIndex) => (
-                <tr key={rowIndex} className={`fs12px`}>
-                  <td className="fw-5 text-center" style={{ color: "#404040" }}>
-                    {rowIndex + 1}
-                  </td>
-                  {Object.keys(data[0]).map((key, i) => (
-                    <td
-                      key={i}
-                      className="fw-5 text-center"
-                      style={{ color: "#404040" }}
-                    >
-                      {row[key]}
-                    </td>
+        <div className="table-responsive mb-2">
+          <div style={{ height: "calc(100vh - 325px)", overflow: "auto" }}>
+            <table className="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <TableHeading name="Sr. No." className="text-nowrap" />
+                  {Object.keys(data[0])?.map((key, i) => (
+                    <TableHeading name={key} key={i} className="text-nowrap" />
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data?.map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    <TableData>{rowIndex + 1}</TableData>
+                    {Object.keys(data[0]).map((key, i) => (
+                      <TableData key={i}>{row[key]}</TableData>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      {data.length === 0 && (
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "75%" }}
+        >
+          <div className="text-center">
+            <Image
+              src="/images/corrupted-file.png"
+              alt="corrupted-file"
+              width={130}
+              height={130}
+              style={{
+                width: "130px",
+                height: "130px",
+                marginBottom: "20px",
+              }}
+            />
+            <p className="m-0 fw-bold fs20px" style={{ color: "#475569" }}>
+              Please Select Any Generated Reports
+            </p>
+          </div>
         </div>
       )}
     </div>

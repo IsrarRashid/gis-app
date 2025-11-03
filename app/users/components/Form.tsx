@@ -7,13 +7,14 @@ import CustomSelect, {
   OptionType,
 } from "@/app/components/Form/CustomSelect";
 import FormWrapper from "@/app/components/Form/FormWrapper";
+import SubmitButton from "@/app/components/Form/SubmitButton";
+import ActionButton from "@/app/components/Table/ActionButton";
 import { Role } from "@/app/hooks/useRoles";
 import apiClient, {
   AxiosError,
   ErrorResponse,
 } from "@/app/services/api-client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { Controller, useForm } from "react-hook-form";
@@ -22,9 +23,6 @@ import { FaRegEye } from "react-icons/fa";
 import { TbEyeClosed, TbFileUpload } from "react-icons/tb";
 import { SingleValue } from "react-select";
 import { z } from "zod";
-import more from "../../../public/icons/more.svg";
-import SubmitButton from "@/app/components/Form/SubmitButton";
-import ActionButton from "@/app/components/Table/ActionButton";
 
 const schema = z.object({
   username: z
@@ -655,9 +653,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                 </div> */}
               </div>
 
-              <div className="col-lg-4 col-md-5 col-sm-6 mx-auto">
-                <SubmitButton>Save User</SubmitButton>
-              </div>
+              <SubmitButton>Save User</SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

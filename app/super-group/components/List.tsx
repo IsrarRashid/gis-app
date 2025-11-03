@@ -17,6 +17,7 @@ import GroupingForm from "./GroupingForm";
 import RowHeader from "@/app/components/Table/RowHeader";
 import TableData from "@/app/components/Table/TableData";
 import Actions from "@/app/components/Table/Actions";
+import TableWrapper from "@/app/components/Table/TableWrapper";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
   const { data, setData, setError, error, isLoading } = useSuperGroups({
     refresh,
   });
+  const [isPageLimit, setPageLimit] = useState(false);
 
   const SUPER_GROUP_API_ENDPOINT = dashboardType
     ? EVALUATION_SUPER_GROUP_API
@@ -111,7 +113,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
   };
 
   // for selecting rows per page
-  const [rows, setRows] = useState(10); // Default to 11 rows per page
+  const [rows, setRows] = useState(15); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
   // Paginate data to display only the current page's rows
@@ -139,61 +141,68 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
           </div>
         }
       />
-      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <TableHeading name="id" handleSort={() => handleSort("id")} />
-              <TableHeading
-                name="super Group Label"
-                handleSort={() => handleSort("superGroupLabel")}
-              />
-              <TableHeading
-                name="Attribute Groups"
-                textClassName="text-nowrap text-center"
-              />
-              <TableHeading name="ACTIONS" textClassName="text-center" />
-              {/* <th>
+      <TableWrapper
+        setRows={setRows}
+        currentPage={currentPage}
+        data={data}
+        isPageLimit={isPageLimit}
+      >
+        {(firstRowRef) => (
+          <>
+            <thead>
+              <tr>
+                <TableHeading name="id" handleSort={() => handleSort("id")} />
+                <TableHeading
+                  name="super Group Label"
+                  handleSort={() => handleSort("superGroupLabel")}
+                />
+                <TableHeading
+                  name="Attribute Groups"
+                  textClassName="text-nowrap text-center"
+                />
+                <TableHeading name="ACTIONS" textClassName="text-center" />
+                {/* <th>
                 <div className="text-center">Attribute Groups</div>
               </th>
               <th colSpan={2}>
                 <div className="text-center"></div>
               </th> */}
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((d) => (
-              <tr key={d.id}>
-                <RowHeader>{d.id}</RowHeader>
-                <TableData>{d.superGroupLabel}</TableData>
-                <TableData className="text-center">
-                  <GroupingForm
-                    id={d.id}
-                    options={attributeGroups}
-                    superGroups={data}
-                    dashboardType={dashboardType}
-                  />
-                </TableData>
-                <TableData>
-                  <Actions
-                    deleteNode={
-                      <DeleteModal handleDelete={handleDelete} id={d.id} />
-                    }
-                    formNode={
-                      <Form
-                        api={SUPER_GROUP_API_ENDPOINT}
-                        method="PUT"
-                        id={d.id}
-                        setRefresh={setRefresh}
-                      />
-                    }
-                  />
-                </TableData>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {paginatedData.map((d, i) => (
+                <tr key={d.id} ref={i === 0 ? firstRowRef : null}>
+                  <RowHeader>{d.id}</RowHeader>
+                  <TableData>{d.superGroupLabel}</TableData>
+                  <TableData className="text-center">
+                    <GroupingForm
+                      id={d.id}
+                      options={attributeGroups}
+                      superGroups={data}
+                      dashboardType={dashboardType}
+                    />
+                  </TableData>
+                  <TableData>
+                    <Actions
+                      deleteNode={
+                        <DeleteModal handleDelete={handleDelete} id={d.id} />
+                      }
+                      formNode={
+                        <Form
+                          api={SUPER_GROUP_API_ENDPOINT}
+                          method="PUT"
+                          id={d.id}
+                          setRefresh={setRefresh}
+                        />
+                      }
+                    />
+                  </TableData>
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
+      </TableWrapper>
       <Pagination
         searchTerm={searchTerm}
         filteredData={filteredData}
@@ -202,6 +211,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
         setRows={setRows}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        setPageLimit={setPageLimit}
       />
     </>
   );

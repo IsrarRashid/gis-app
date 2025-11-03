@@ -20,8 +20,8 @@ import Spinner from "../Spinner";
 const UserDropDown = () => {
   const [show, setShow] = useState(false);
   const [userEmail, setUserEmail] = useState("");
-  const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState<number>();
+  const [userName, setUserName] = useState("");
   const [role, setRole] = useState<string>();
   const [firstName, setFirstName] = useState<string>();
   const [lastName, setLastName] = useState<string>();

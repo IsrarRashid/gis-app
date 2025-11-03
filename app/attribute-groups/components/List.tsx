@@ -23,6 +23,7 @@ import GroupingForm from "./GroupingForm";
 import RowHeader from "@/app/components/Table/RowHeader";
 import TableData from "@/app/components/Table/TableData";
 import Actions from "@/app/components/Table/Actions";
+import TableWrapper from "@/app/components/Table/TableWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,6 +34,7 @@ export interface Option {
 
 const List = ({ dashboardType }: { dashboardType?: string }) => {
   const [refresh, setRefresh] = useState(false);
+  const [isPageLimit, setPageLimit] = useState(false);
 
   const { data, setData, setError, error, isLoading } = useAttributeGroups({
     refresh,
@@ -137,85 +139,96 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
           </div>
         }
       />
-      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <TableHeading name="id" handleSort={() => handleSort("id")} />
-              <TableHeading name="name" handleSort={() => handleSort("name")} />
-              <TableHeading
-                name="description"
-                handleSort={() => handleSort("description")}
-              />
-              <TableHeading
-                name="parent name"
-                handleSort={() => handleSort("parentName")}
-                className="text-nowrap"
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="sort id"
-                handleSort={() => handleSort("sortId")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="created at"
-                handleSort={() => handleSort("createdAt")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="updated at"
-                handleSort={() => handleSort("updatedAt")}
-              />
-              <TableHeading name="Attributes" textClassName="text-center" />
-              <TableHeading name="Actions" textClassName="text-center" />
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((d) => (
-              <tr key={d.id}>
-                <RowHeader>{d.id}</RowHeader>
-                <TableData>{d.name}</TableData>
-                <TableData>{d.description}</TableData>
-                <TableData>{d.parentName}</TableData>
-                <TableData className="text-center">{d.sortId}</TableData>
-                <TableData>
-                  {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "short")}
-                </TableData>
-                <TableData>
-                  {d.updatedAt &&
-                    getFormattedDate(new Date(d.updatedAt), "short")}
-                </TableData>
-                <TableData className="text-center">
-                  <GroupingForm
-                    id={d.id}
-                    options={attributes}
-                    dashboardType={dashboardType}
-                  />
-                </TableData>
-                <TableData>
-                  <Actions
-                    deleteNode={
-                      <DeleteModal handleDelete={handleDelete} id={d.id} />
-                    }
-                    formNode={
-                      <Form
-                        api={ATTRIBUTE_GROUPS_API_ENDPOINT}
-                        method="PUT"
-                        id={d.id}
-                        setRefresh={setRefresh}
-                        refresh={refresh}
-                        data={data}
-                      />
-                    }
-                  />
-                </TableData>
+      <TableWrapper
+        setRows={setRows}
+        currentPage={currentPage}
+        data={data}
+        isPageLimit={isPageLimit}
+      >
+        {(firstRowRef) => (
+          <>
+            <thead>
+              <tr>
+                <TableHeading name="id" handleSort={() => handleSort("id")} />
+                <TableHeading
+                  name="name"
+                  handleSort={() => handleSort("name")}
+                />
+                <TableHeading
+                  name="description"
+                  handleSort={() => handleSort("description")}
+                />
+                <TableHeading
+                  name="parent name"
+                  handleSort={() => handleSort("parentName")}
+                  className="text-nowrap"
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="sort id"
+                  handleSort={() => handleSort("sortId")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="created at"
+                  handleSort={() => handleSort("createdAt")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="updated at"
+                  handleSort={() => handleSort("updatedAt")}
+                />
+                <TableHeading name="Attributes" textClassName="text-center" />
+                <TableHeading name="Actions" textClassName="text-center" />
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {paginatedData.map((d, i) => (
+                <tr key={d.id} ref={i === 0 ? firstRowRef : null}>
+                  <RowHeader>{d.id}</RowHeader>
+                  <TableData>{d.name}</TableData>
+                  <TableData>{d.description}</TableData>
+                  <TableData>{d.parentName}</TableData>
+                  <TableData className="text-center">{d.sortId}</TableData>
+                  <TableData>
+                    {d.createdAt &&
+                      getFormattedDate(new Date(d.createdAt), "short")}
+                  </TableData>
+                  <TableData>
+                    {d.updatedAt &&
+                      getFormattedDate(new Date(d.updatedAt), "short")}
+                  </TableData>
+                  <TableData className="text-center">
+                    <GroupingForm
+                      id={d.id}
+                      options={attributes}
+                      dashboardType={dashboardType}
+                    />
+                  </TableData>
+                  <TableData>
+                    <Actions
+                      deleteNode={
+                        <DeleteModal handleDelete={handleDelete} id={d.id} />
+                      }
+                      formNode={
+                        <Form
+                          api={ATTRIBUTE_GROUPS_API_ENDPOINT}
+                          method="PUT"
+                          id={d.id}
+                          setRefresh={setRefresh}
+                          refresh={refresh}
+                          data={data}
+                        />
+                      }
+                    />
+                  </TableData>
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
+      </TableWrapper>
+
       <Pagination
         searchTerm={searchTerm}
         filteredData={filteredData}
@@ -224,6 +237,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
         setRows={setRows}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        setPageLimit={setPageLimit}
       />
     </>
   );

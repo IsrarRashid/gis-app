@@ -2,28 +2,21 @@
 import { ROLE_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
 import Loader from "@/app/components/Loader";
+import Actions from "@/app/components/Table/Actions";
 import Pagination from "@/app/components/Table/Pagination";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/Table/TableHeading";
+import TableWrapper from "@/app/components/Table/TableWrapper";
 import useRights from "@/app/hooks/useRights";
 import useRoles, { Role } from "@/app/hooks/useRoles";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
 import GroupingForm from "./GroupingForm";
-import RowHeader from "@/app/components/Table/RowHeader";
-import TableData from "@/app/components/Table/TableData";
-import Actions from "@/app/components/Table/Actions";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const inter = Inter({ subsets: ["latin"] });
 
 interface ListProps {
   refresh: boolean;
@@ -36,6 +29,7 @@ export interface Option {
 }
 
 const List = ({ refresh, setRefresh }: ListProps) => {
+  const [isPageLimit, setPageLimit] = useState(false);
   const { data, setData, setError, error, isLoading } = useRoles({ refresh });
   const { data: rights } = useRights({ refresh });
   const deleteMessage = "Deleted Successfully!";
@@ -116,7 +110,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   };
 
   // for selecting rows per page
-  const [rows, setRows] = useState(10); // Default to 11 rows per page
+  const [rows, setRows] = useState(15); // Default to 11 rows per page
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
 
   // Paginate data to display only the current page's rows
@@ -145,57 +139,68 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           </div>
         }
       />
-      <div className="table-responsive mb-2" style={{ margin: "0px -12px" }}>
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <TableHeading name="id" handleSort={() => handleSort("id")} />
-              <TableHeading name="name" handleSort={() => handleSort("name")} />
-              <TableHeading
-                className="text-nowrap"
-                name="normalized Name"
-                handleSort={() => handleSort("normalizedName")}
-              />
-              <TableHeading
-                className="text-nowrap"
-                name="concurrency Stamp"
-                handleSort={() => handleSort("concurrencyStamp")}
-              />
-              <TableHeading name="RIGHTS" textClassName="text-center" />
-              <TableHeading name="ACTIONS" textClassName="text-center" />
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((d) => (
-              <tr key={d.id}>
-                <RowHeader>{d.id}</RowHeader>
-                <TableData>{d.name}</TableData>
-                <TableData>{d.normalizedName}</TableData>
-                <TableData>{d.concurrencyStamp}</TableData>
-                <TableData className="text-center">
-                  <GroupingForm id={d.id} name={d.name} options={rights} />
-                </TableData>
-                <TableData>
-                  <Actions
-                    deleteNode={
-                      <DeleteModal handleDelete={handleDelete} id={d.id} />
-                    }
-                    formNode={
-                      <Form
-                        api={ROLE_API}
-                        method="PUT"
-                        id={d.id}
-                        setRefresh={setRefresh}
-                        refresh={refresh}
-                      />
-                    }
-                  />
-                </TableData>
+      <TableWrapper
+        setRows={setRows}
+        currentPage={currentPage}
+        data={data}
+        isPageLimit={isPageLimit}
+      >
+        {(firstRowRef) => (
+          <>
+            <thead>
+              <tr>
+                <TableHeading name="id" handleSort={() => handleSort("id")} />
+                <TableHeading
+                  name="name"
+                  handleSort={() => handleSort("name")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="normalized Name"
+                  handleSort={() => handleSort("normalizedName")}
+                />
+                <TableHeading
+                  className="text-nowrap"
+                  name="concurrency Stamp"
+                  handleSort={() => handleSort("concurrencyStamp")}
+                />
+                <TableHeading name="RIGHTS" textClassName="text-center" />
+                <TableHeading name="ACTIONS" textClassName="text-center" />
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {paginatedData.map((d, i) => (
+                <tr key={i} ref={i === 0 ? firstRowRef : null}>
+                  <RowHeader>{d.id}</RowHeader>
+                  <TableData>{d.name}</TableData>
+                  <TableData>{d.normalizedName}</TableData>
+                  <TableData>{d.concurrencyStamp}</TableData>
+                  <TableData className="text-center">
+                    <GroupingForm id={d.id} name={d.name} options={rights} />
+                  </TableData>
+                  <TableData>
+                    <Actions
+                      deleteNode={
+                        <DeleteModal handleDelete={handleDelete} id={d.id} />
+                      }
+                      formNode={
+                        <Form
+                          api={ROLE_API}
+                          method="PUT"
+                          id={d.id}
+                          setRefresh={setRefresh}
+                          refresh={refresh}
+                        />
+                      }
+                    />
+                  </TableData>
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
+      </TableWrapper>
+
       <Pagination
         searchTerm={searchTerm}
         filteredData={filteredData}
@@ -204,6 +209,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
         setRows={setRows}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        setPageLimit={setPageLimit}
       />
     </>
   );

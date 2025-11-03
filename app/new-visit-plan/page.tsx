@@ -1,6 +1,7 @@
 import ListWrapper from "../components/ListWrapper";
 import { DashboardType, TypeEnum } from "../dashboard/types/types";
-import List from "./components/List";
+import EvaluationVisitPlanList from "./components/VisitPlanEvaluation/EvaluationVisitPlanList";
+import MonitoringVisitPlanList from "./components/VisitPlanMonitoring/MonitoringVisitPlanList";
 
 interface Props {
   searchParams: Promise<{
@@ -18,7 +19,11 @@ const NewVisitPlanPage = async ({ searchParams }: Props) => {
 
   return (
     <ListWrapper>
-      <List dashboardType={currentType} />
+      {currentType ? (
+        <EvaluationVisitPlanList dashboardType={currentType} />
+      ) : (
+        <MonitoringVisitPlanList dashboardType={currentType} />
+      )}
     </ListWrapper>
   );
 };

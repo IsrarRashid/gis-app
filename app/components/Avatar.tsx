@@ -32,7 +32,7 @@ const Avatar = ({
       alt={alt}
       width={width}
       height={height}
-      className="rounded-circle shadow-sm"
+      className="rounded-circle"
       style={styles}
       onError={() => setImgSrc(defaultImagePath)}
     />

@@ -13,7 +13,7 @@ import makeAnimated from "react-select/animated";
 interface Props {
   options: OptionType[];
   id?: string;
-  value?: OptionType[] | null; // can be undefined for uncontrolled/react-hook-form
+  value?: OptionType | OptionType[] | null; // can be undefined for uncontrolled/react-hook-form
   onChangeSingle?: (
     newValue: SingleValue<OptionType>,
     actionMeta: ActionMeta<OptionType>
@@ -31,6 +31,8 @@ interface Props {
   singleSelectStyles?: StylesConfig<OptionType, false, GroupBase<OptionType>>;
   menuPlacement?: "auto" | "bottom" | "top";
   maxHeight?: number;
+  defaultValue?: OptionType | OptionType[] | null;
+  radius?: "pill" | undefined;
 }
 
 export type OptionType = { value: string; label: string };
@@ -56,6 +58,8 @@ const CustomSelect = forwardRef<any, Props>(
       singleSelectStyles,
       menuPlacement = "auto",
       maxHeight = 43 * 6,
+      defaultValue,
+      radius = undefined,
     },
     ref
   ) => {
@@ -90,7 +94,7 @@ const CustomSelect = forwardRef<any, Props>(
           background: "#108fa8",
         },
         background: "rgba(255, 255, 255, 0.8)",
-        borderRadius: 7,
+        borderRadius: radius ? 50 : 7,
         color: "#545861",
         fontWeight: 500,
         fontSize: "14px",
@@ -293,6 +297,7 @@ const CustomSelect = forwardRef<any, Props>(
         onChange={onChangeSingle}
         onFocus={() => setIsClicked(true)}
         onBlur={() => setIsClicked(false)}
+        defaultValue={defaultValue}
       />
     ) : isMulti ? (
       <Select
@@ -314,6 +319,7 @@ const CustomSelect = forwardRef<any, Props>(
         onChange={onChangeMulti}
         onFocus={() => setIsClicked(true)}
         onBlur={() => setIsClicked(false)}
+        defaultValue={defaultValue}
       />
     ) : (
       <Select
@@ -333,6 +339,7 @@ const CustomSelect = forwardRef<any, Props>(
         onChange={onChangeSingle}
         onFocus={() => setIsClicked(true)}
         onBlur={() => setIsClicked(false)}
+        defaultValue={defaultValue}
       />
     );
   }

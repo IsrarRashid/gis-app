@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import { Calendar } from "react-date-range";
 import CustomCalendar from "@/app/components/Form/CustomCalender";
+import TableData from "@/app/components/Table/TableData";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -339,29 +340,29 @@ const Form = ({
   };
 
   return (
-    <tr
-      className={dmSans.className}
-      style={{
-        border: ".41px solid rgba(81,81,81,0.20) !important",
-        fontSize: ".85rem",
-      }}
-    >
-      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+    <tr>
+      <TableData
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+      >
         {index}
-      </td>
-      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+      </TableData>
+      <TableData
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+      >
         {planData.projectId}
-      </td>
-      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+      </TableData>
+      <TableData
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+      >
         {planData.gsNo}
-      </td>
-      <td
+      </TableData>
+      <TableData
         className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
         style={{ minWidth: "220px" }}
       >
         {planData.projectName}
-      </td>
-      <td
+      </TableData>
+      <TableData
         className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
         style={{ minWidth: "220px" }}
       >
@@ -416,14 +417,18 @@ const Form = ({
             </p>
           )}
         </div>
-      </td>
-      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+      </TableData>
+      <TableData
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+      >
         {planData.sectors}
-      </td>
-      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+      </TableData>
+      <TableData
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+      >
         {planData.cost}
-      </td>
-      <td
+      </TableData>
+      <TableData
         className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
         style={{ minWidth: "220px" }}
       >
@@ -477,8 +482,8 @@ const Form = ({
             <p className="text-danger mt-1 fs14px">{errors.type.message}</p>
           )}
         </div>
-      </td>
-      <td
+      </TableData>
+      <TableData
         className={`col ${index === copiedRowIndex && "bg-color-light-gray"}`}
         style={{ minWidth: "240px" }}
       >
@@ -531,11 +536,13 @@ const Form = ({
             <p className="text-danger mt-1 fs14px">{errors.userId.message}</p>
           )}
         </div>
-      </td>
-      <td className={`${index === copiedRowIndex && "bg-color-light-gray"}`}>
+      </TableData>
+      <TableData
+        className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
+      >
         {planData.section}
-      </td>
-      <td
+      </TableData>
+      <TableData
         className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
         style={{ minWidth: "220px" }}
       >
@@ -565,8 +572,8 @@ const Form = ({
             <p className="text-danger mt-1 fs14px">{errors.dateFrom.message}</p>
           )}
         </div>
-      </td>
-      <td
+      </TableData>
+      <TableData
         className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
         style={{ minWidth: "220px" }}
       >
@@ -595,8 +602,8 @@ const Form = ({
             <p className="text-danger mt-1 fs14px">{errors.dateTo.message}</p>
           )}
         </div>
-      </td>
-      <td
+      </TableData>
+      <TableData
         className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
         style={{ minWidth: "220px" }}
       >
@@ -664,8 +671,8 @@ const Form = ({
             <p className="text-danger mt-1 fs14px">{errors.driverId.message}</p>
           )}
         </div>
-      </td>
-      <td
+      </TableData>
+      <TableData
         className={`${index === copiedRowIndex && "bg-color-light-gray"}`}
         style={{ minWidth: "220px" }}
       >
@@ -732,8 +739,8 @@ const Form = ({
             <p className="text-danger mt-1 fs14px">{errors.driverId.message}</p>
           )}
         </div>
-      </td>
-      <td>
+      </TableData>
+      <TableData>
         <Button
           className="btn btn-sm bg-color-sea-green text-white "
           disabled={!isVehicleVerified || !isDriverVerified}
@@ -741,14 +748,14 @@ const Form = ({
         >
           Verify
         </Button>
-      </td>
-      <td>
+      </TableData>
+      <TableData>
         <DeleteModal
           handleDelete={() => handleDelete(planData.tempId)}
           id={index}
         />
-      </td>
-      <td>
+      </TableData>
+      <TableData>
         <Button
           onClick={copyFormData}
           className={`btn rounded-circle ${
@@ -757,8 +764,8 @@ const Form = ({
         >
           <MdContentCopy />
         </Button>
-      </td>
-      <td>
+      </TableData>
+      <TableData>
         {copiedFormData ? (
           <Button
             onClick={() => pasteFormData(copiedFormData)}
@@ -771,7 +778,7 @@ const Form = ({
             <FaPaste />
           </Button>
         )}
-      </td>
+      </TableData>
     </tr>
   );
 };

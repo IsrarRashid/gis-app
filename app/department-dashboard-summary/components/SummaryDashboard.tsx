@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import useDepartments from "@/app/hooks/useDepartments";
 import useUsers from "@/app/hooks/useUsers";

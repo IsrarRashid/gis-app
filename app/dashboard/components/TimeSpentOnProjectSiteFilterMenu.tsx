@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import Spinner from "@/app/components/Spinner";
 import {
   Dispatch,

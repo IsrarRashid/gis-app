@@ -14,8 +14,11 @@ const NavbarToggle = () => {
   ) {
     return <Navbar />;
   } else {
-    return <div style={{ height: "68px" }}></div>;
+    return <div></div>;
   }
 };
 
 export default NavbarToggle;
+{
+  /* <div style={{ height: "68px" }}></div> */
+}

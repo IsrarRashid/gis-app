@@ -11,11 +11,16 @@ import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import Select from "react-select";
+import Select, { SingleValue } from "react-select";
 import { z } from "zod";
 import more from "../../../public/icons/more.svg";
 import { RxCross2 } from "react-icons/rx";
 import ActionButton from "@/app/components/Table/ActionButton";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 
 const departmentSchema = z.object({
   id: z.number().optional().default(0),
@@ -325,281 +330,283 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
 
       <Modal
         show={show}
-        size="lg"
+        size="xl"
         onHide={handleClose}
         aria-labelledby="contained-modal-title-vcenter"
         centered
         dialogClassName="new-custom-modal"
         id={`formModal-${id}`}
       >
-        <Modal.Header
-          className="py-0 px-4"
-          style={{ borderTopLeftRadius: "12px", borderTopRightRadius: "12px" }}
-          closeButton
-        >
-          <Modal.Title>
-            <p className="text-center mt-4 fs18px fw-6">
-              {method === "POST" ? "ADD NEW DEPARTMENT" : "UPDATE DEPARTMENT"}
-            </p>
-          </Modal.Title>
-        </Modal.Header>
         <Modal.Body
           className="p-0"
           style={{ background: "rgba(156,255,255,0)" }}
         >
-          <div
-            // className="container-fluid pt-3 pb-3 ps-4 pe-4 bg-blur"
-            className="container-fluid pt-3 pb-3 ps-4 pe-4"
-            style={
-              {
-                // backgroundImage:
-                //   "linear-gradient(to bottom right, rgba(239, 239, 239, 0.6) ,rgba(255, 255, 255, 0.08))",
-                // borderRadius: "12px",
-                // border: "1.7px solid rgba(255, 255, 255, 0.6)",
-              }
+          <FormWrapper
+            heading={
+              method === "POST" ? "Add New Department" : "Update Department"
             }
           >
-            <div className="row flex-column justify-content-center">
-              <div className="col-lg-12"></div>
-              <form className="px-2" onSubmit={handleSubmit(onSubmit)}>
-                <div className="row m-0">
-                  <div className="col-12 col col-sm-12 col-md-12 col-lg-6 mb-3 text-start">
-                    <label htmlFor="name" className="form-label fs14px fw-5">
-                      Department Name
-                    </label>
-                    <input
-                      {...register("department.name")}
-                      id="name"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Department Name"
-                    />
-                    {errors.department?.name && (
-                      <p className="text-danger mt-1 fs14px">
-                        {errors.department.name.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-12 col col-sm-12 col-md-12 col-lg-6 mb-3 text-start">
-                    <label
-                      htmlFor="shortName"
-                      className="form-label fs14px fw-5"
-                    >
-                      Short Name
-                    </label>
-                    <input
-                      {...register("department.shortName")}
-                      id="shortName"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="e.g. DGME"
-                    />
-                    {errors.department?.shortName && (
-                      <p className="text-danger mt-1 fs14px">
-                        {errors.department.shortName.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-12 col col-sm-12 col-md-12 col-lg-6 mb-3 text-start">
-                    <label
-                      htmlFor="phoneNumber"
-                      className="form-label fs14px fw-5"
-                    >
-                      Phone Number
-                    </label>
-                    <input
-                      {...register("department.phoneNumber")}
-                      id="phoneNumber"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter Phone Number"
-                    />
-                    {errors.department?.phoneNumber && (
-                      <p className="text-danger mt-1 fs14px">
-                        {errors.department.phoneNumber.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-12 col col-sm-12 col-md-12 col-lg-6 mb-3 text-start">
-                    <label htmlFor="address" className="form-label fs14px fw-5">
-                      Addresss
-                    </label>
-                    <input
-                      {...register("department.address")}
-                      id="address"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="Enter your Addresss"
-                    />
-                    {errors.department?.address && (
-                      <p className="text-danger mt-1 fs14px">
-                        {errors.department.address.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-12 col col-sm-12 col-md-12 col-lg-6 mb-3 text-start">
-                    <label htmlFor="email" className="form-label fs14px fw-5">
-                      Email
-                    </label>
-                    <input
-                      {...register("department.email")}
-                      id="email"
-                      type="text"
-                      className="form-control form-control-sm color-light-dark"
-                      placeholder="your@company.com"
-                    />
-                    {errors.department?.email && (
-                      <p className="text-danger mt-1 fs14px">
-                        {errors.department.email.message}
-                      </p>
-                    )}
-                  </div>
-                  <>
-                    <div className="row d-flex justify-content-between align-items-center m-0 p-0">
-                      <div className="col-auto">
-                        <h5 className="fs18px fw-6 m-0">Add Rights</h5>
-                      </div>
-                      <div className="col-auto">
-                        <Button
-                          type="button"
-                          onClick={addNewRole}
-                          className="btn text-white w-100 border-0 rounded-pill fs13px"
-                          style={{
-                            backgroundImage:
-                              "linear-gradient(to right, #0C8CE9 ,#1A67A0)",
-                            paddingTop: "9px",
-                            paddingBottom: "9px",
-                          }}
-                        >
-                          Add More +
-                        </Button>
-                      </div>
-                      {errors.departmentRights && (
-                        <p className="text-danger mt-1 fs14px">
-                          {errors.departmentRights.message}
-                        </p>
-                      )}
+            <form className="px-2" onSubmit={handleSubmit(onSubmit)}>
+              <div
+                className="row g-2 g-lg-3 mt-0"
+                style={{ marginBottom: "5px" }}
+              >
+                <div className="col-12 col col-sm-12 col-md-12 col-lg-4 mb-3 text-start">
+                  <CustomLabel htmlFor="name">Department Name</CustomLabel>
+                  <CustomInput
+                    {...register("department.name")}
+                    id="name"
+                    type="text"
+                    placeholder="Enter Department Name"
+                  />
+                  {errors.department?.name && (
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.department.name.message}
+                    </p>
+                  )}
+                </div>
+                <div className="col-12 col col-sm-12 col-md-12 col-lg-4 mb-3 text-start">
+                  <CustomLabel htmlFor="shortName">Short Name</CustomLabel>
+                  <CustomInput
+                    {...register("department.shortName")}
+                    id="shortName"
+                    type="text"
+                    placeholder="e.g. DGME"
+                  />
+                  {errors.department?.shortName && (
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.department.shortName.message}
+                    </p>
+                  )}
+                </div>
+                <div className="col-12 col col-sm-12 col-md-12 col-lg-4 mb-3 text-start">
+                  <CustomLabel htmlFor="phoneNumber">Phone Number</CustomLabel>
+                  <CustomInput
+                    {...register("department.phoneNumber")}
+                    id="phoneNumber"
+                    type="text"
+                    placeholder="Enter Phone Number"
+                  />
+                  {errors.department?.phoneNumber && (
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.department.phoneNumber.message}
+                    </p>
+                  )}
+                </div>
+                <div className="col-12 col col-sm-12 col-md-12 col-lg-4 mb-3 text-start">
+                  <CustomLabel htmlFor="address">Addresss</CustomLabel>
+                  <CustomInput
+                    {...register("department.address")}
+                    id="address"
+                    type="text"
+                    placeholder="Enter your Addresss"
+                  />
+                  {errors.department?.address && (
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.department.address.message}
+                    </p>
+                  )}
+                </div>
+                <div className="col-12 col col-sm-12 col-md-12 col-lg-4 mb-3 text-start">
+                  <CustomLabel htmlFor="email">Email</CustomLabel>
+                  <CustomInput
+                    {...register("department.email")}
+                    id="email"
+                    type="text"
+                    placeholder="Enter your Email"
+                  />
+                  {errors.department?.email && (
+                    <p className="text-danger mt-1 fs14px">
+                      {errors.department.email.message}
+                    </p>
+                  )}
+                </div>
+                <>
+                  <div className="row d-flex justify-content-between align-items-center m-0 p-0">
+                    <div className="col-auto">
+                      <h5 className="fs18px fw-6 m-0">Add Rights</h5>
                     </div>
-                    <hr />
-
-                    {/* Rights Fields */}
-                    {fields?.map((field, index) => (
-                      <div className="row mb-2 m-0" key={field.id}>
-                        <div className="col-md-6 ps-0">
-                          <select
-                            {...register(
-                              `departmentRights.${index}.fieldName`,
-                              {
-                                onChange: (e) => {
-                                  const selectedId = Number(e.target.value);
-                                  if (!selectedId) {
-                                    setFieldValueOptionsMap((prev) => ({
-                                      ...prev,
-                                      [index]: [],
-                                    }));
-                                    return;
-                                  }
-
-                                  // Fetch new options if a valid field is selected
-                                  getDataAgainstFiled(selectedId, index);
-                                },
-                              }
-                            )}
-                            className="form-select form-select-sm"
-                          >
-                            <option value="">Select Field Name</option>
-                            {Object.entries(filedList)?.map(([key, value]) => (
-                              <option key={key} value={key}>
-                                {value}
-                              </option>
-                            ))}
-                          </select>
-                          {errors.departmentRights?.[index]?.fieldName && (
-                            <p className="text-danger mt-1 fs14px">
-                              {
-                                errors.departmentRights?.[index]?.fieldName
-                                  .message
-                              }
-                            </p>
-                          )}
-                        </div>
-                        <div className="col-md-6 pe-0">
-                          <Controller
-                            name={`departmentRights.${index}.fieldValue`}
-                            control={control}
-                            render={({ field }) => (
-                              <Select
-                                {...field}
-                                isMulti
-                                closeMenuOnSelect={false}
-                                options={fieldValueOptionsMap[index] || []}
-                                classNamePrefix="react-select"
-                                onChange={(selectedOptions) => {
-                                  // Store as comma-separated string or JSON depending on backend
-                                  field.onChange(
-                                    selectedOptions
-                                      .map((opt) => opt.value)
-                                      .join(",")
-                                  );
-                                }}
-                                value={(
-                                  fieldValueOptionsMap[index] || []
-                                ).filter((opt) =>
-                                  field.value?.split(",")?.includes(opt.value)
-                                )}
-                                styles={{
-                                  control: (base) => ({
-                                    ...base,
-                                    padding: "2px",
-                                  }),
-                                }}
-                              />
-                            )}
-                          />
-                          {errors.departmentRights?.[index]?.fieldValue && (
-                            <p className="text-danger mt-1 fs14px">
-                              {
-                                errors.departmentRights?.[index]?.fieldValue
-                                  .message
-                              }
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-
-                    {/* Centralized Remove Buttons */}
-                    {fields.length > 0 && (
-                      <div className="row mt-2 mb-4 m-0">
-                        <div className="col ps-0">
-                          {/* <h6 className="fs16px fw-6 mb-2">Remove Rights</h6> */}
-                          {fields.map((field, index) => {
-                            const id = 0;
-                            // Get current fieldName value from form state
-                            const selectedFieldNameId = watch(
-                              `departmentRights.${index}.fieldName`
-                            );
-                            const selectedFieldNameLabel =
-                              filedList?.[
-                                selectedFieldNameId as keyof FiledList
-                              ] || `Right #${index + 1}`;
-
-                            return (
-                              <Button
-                                key={field.id}
-                                className="me-2 mb-2 btn rounded-pill btn-outline-danger fs13px"
-                                onClick={() => remove(index)}
-                              >
-                                {/* Remove Right #{index + 1} */}
-                                {selectedFieldNameLabel} <RxCross2 />
-                              </Button>
-                            );
-                          })}
-                        </div>
-                      </div>
+                    <div className="col-auto">
+                      <Button
+                        type="button"
+                        onClick={addNewRole}
+                        className="btn text-white w-100 border-0 rounded-pill fs13px"
+                        style={{
+                          backgroundImage:
+                            "linear-gradient(to right, #0C8CE9 ,#1A67A0)",
+                          paddingTop: "9px",
+                          paddingBottom: "9px",
+                        }}
+                      >
+                        Add More +
+                      </Button>
+                    </div>
+                    {errors.departmentRights && (
+                      <p className="text-danger mt-1 fs14px">
+                        {errors.departmentRights.message}
+                      </p>
                     )}
-                  </>
-                  {/* <div className="col mb-3">
+                  </div>
+                  <hr />
+
+                  {/* Rights Fields */}
+                  {fields?.map((field, index) => (
+                    <div className="row mb-2 m-0" key={field.id}>
+                      <div className="col-md-6 ps-0">
+                        <Controller
+                          name={`departmentRights.${index}.fieldName`}
+                          control={control}
+                          render={({ field }) => (
+                            <CustomSelect
+                              {...field}
+                              options={Object.entries(filedList).map(
+                                ([key, value]) => ({
+                                  value: key,
+                                  label: value,
+                                })
+                              )}
+                              closeMenuOnSelect={true}
+                              value={
+                                field.value
+                                  ? [
+                                      {
+                                        value: field.value,
+                                        label:
+                                          filedList[
+                                            field.value as keyof FiledList
+                                          ] || "Unknown",
+                                      },
+                                    ]
+                                  : []
+                              }
+                              onChangeSingle={(selectedOption) => {
+                                const singleOption =
+                                  selectedOption as SingleValue<OptionType>;
+
+                                const selectedId = singleOption
+                                  ? Number(singleOption.value)
+                                  : 0;
+                                field.onChange(
+                                  singleOption ? singleOption.value : ""
+                                );
+
+                                if (!selectedId) {
+                                  setFieldValueOptionsMap((prev) => ({
+                                    ...prev,
+                                    [index]: [],
+                                  }));
+                                  return;
+                                }
+
+                                // Fetch new options if a valid field is selected
+                                getDataAgainstFiled(selectedId, index);
+                              }}
+                            />
+                          )}
+                        />
+                        {/* <select
+                          {...register(`departmentRights.${index}.fieldName`, {
+                            onChange: (e) => {
+                              const selectedId = Number(e.target.value);
+                              if (!selectedId) {
+                                setFieldValueOptionsMap((prev) => ({
+                                  ...prev,
+                                  [index]: [],
+                                }));
+                                return;
+                              }
+
+                              // Fetch new options if a valid field is selected
+                              getDataAgainstFiled(selectedId, index);
+                            },
+                          })}
+                          className="form-select form-select-sm"
+                        >
+                          <option value="">Select Field Name</option>
+                          {Object.entries(filedList)?.map(([key, value]) => (
+                            <option key={key} value={key}>
+                              {value}
+                            </option>
+                          ))}
+                        </select> */}
+                        {errors.departmentRights?.[index]?.fieldName && (
+                          <p className="text-danger mt-1 fs14px">
+                            {
+                              errors.departmentRights?.[index]?.fieldName
+                                .message
+                            }
+                          </p>
+                        )}
+                      </div>
+                      <div className="col-md-6 pe-0">
+                        <Controller
+                          name={`departmentRights.${index}.fieldValue`}
+                          control={control}
+                          render={({ field }) => (
+                            <CustomSelect
+                              {...field}
+                              isMulti={true}
+                              closeMenuOnSelect={false}
+                              options={fieldValueOptionsMap[index] || []}
+                              onChangeMulti={(selectedOptions) => {
+                                // Store as comma-separated string or JSON depending on backend
+                                field.onChange(
+                                  selectedOptions
+                                    .map((opt) => opt.value)
+                                    .join(",")
+                                );
+                              }}
+                              value={(fieldValueOptionsMap[index] || []).filter(
+                                (opt) =>
+                                  field.value?.split(",")?.includes(opt.value)
+                              )}
+                            />
+                          )}
+                        />
+                        {errors.departmentRights?.[index]?.fieldValue && (
+                          <p className="text-danger mt-1 fs14px">
+                            {
+                              errors.departmentRights?.[index]?.fieldValue
+                                .message
+                            }
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Centralized Remove Buttons */}
+                  {fields.length > 0 && (
+                    <div className="row mt-2 m-0">
+                      <div className="col ps-0">
+                        {/* <h6 className="fs16px fw-6 mb-2">Remove Rights</h6> */}
+                        {fields.map((field, index) => {
+                          const id = 0;
+                          // Get current fieldName value from form state
+                          const selectedFieldNameId = watch(
+                            `departmentRights.${index}.fieldName`
+                          );
+                          const selectedFieldNameLabel =
+                            filedList?.[
+                              selectedFieldNameId as keyof FiledList
+                            ] || `Right #${index + 1}`;
+
+                          return (
+                            <Button
+                              key={field.id}
+                              className="me-2 mb-2 btn rounded-pill btn-outline-danger fs13px"
+                              onClick={() => remove(index)}
+                            >
+                              {/* Remove Right #{index + 1} */}
+                              {selectedFieldNameLabel} <RxCross2 />
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
+                {/* <div className="col mb-3">
                     <p className="mt-4 fs18px fw-6 ">Add Roles</p>
                     <div className="row">
                       <div className="col-6 text-start">
@@ -624,7 +631,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                       </div>
                     </div>
                   </div> */}
-                  {/* <div className="col-12 col col-sm-12 col-md-12 col-lg-6 mb-3 text-start">
+                {/* <div className="col-12 col col-sm-12 col-md-12 col-lg-4 mb-3 text-start">
                     <label htmlFor="logo" className="form-label fs14px fw-5">
                       Logo
                     </label>
@@ -639,35 +646,35 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                       <p className="text-danger mt-1 fs14px">{errors.logo.message}</p>
                     )}
                   </div> */}
+              </div>
+              {/* <div className="row d-flex justify-content-center">
+                <div className="col col-12 col-sm-12 col-md-4 col-lg-3 mb-2">
+                  <Button
+                    className="btn btn-light w-100 border rounded-pill fs13px"
+                    style={{ paddingTop: "9px", paddingBottom: "9px" }}
+                    onClick={handleClose}
+                  >
+                    Cancel
+                  </Button>
                 </div>
-                <div className="row d-flex justify-content-center">
-                  <div className="col col-12 col-sm-12 col-md-4 col-lg-3 mb-2">
-                    <Button
-                      className="btn btn-light w-100 border rounded-pill fs13px"
-                      style={{ paddingTop: "9px", paddingBottom: "9px" }}
-                      onClick={handleClose}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                  <div className="col col-12 col-sm-12 col-md-4 col-lg-3">
-                    <Button
-                      className="btn text-white w-100 border-0 rounded-pill fs13px"
-                      style={{
-                        backgroundImage:
-                          "linear-gradient(to right, #0C8CE9 ,#1A67A0)",
-                        paddingTop: "9px",
-                        paddingBottom: "9px",
-                      }}
-                      type="submit"
-                    >
-                      Save
-                    </Button>
-                  </div>
+                <div className="col col-12 col-sm-12 col-md-4 col-lg-3">
+                  <Button
+                    className="btn text-white w-100 border-0 rounded-pill fs13px"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to right, #0C8CE9 ,#1A67A0)",
+                      paddingTop: "9px",
+                      paddingBottom: "9px",
+                    }}
+                    type="submit"
+                  >
+                    Save
+                  </Button>
                 </div>
-              </form>
-            </div>
-          </div>
+              </div> */}
+              <SubmitButton>Save Department</SubmitButton>
+            </form>
+          </FormWrapper>
         </Modal.Body>
       </Modal>
     </>

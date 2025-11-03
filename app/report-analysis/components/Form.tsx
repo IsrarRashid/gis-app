@@ -1,24 +1,31 @@
 "use client";
 
+import { REPORT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import { Plus_Jakarta_Sans } from "next/font/google";
-import { FaCheck, FaRegTrashAlt } from "react-icons/fa";
-import { IoArrowForwardCircleOutline, IoClose } from "react-icons/io5";
-import { FiPlus, FiSearch } from "react-icons/fi";
-import Select, { StylesConfig } from "react-select";
-import { useRouter } from "next/navigation";
-import { AiOutlineClose } from "react-icons/ai";
-import { z } from "zod";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import CustomInput from "@/app/components/Form/CustomInput";
+import CustomSelect from "@/app/components/Form/CustomSelect";
+import Spinner from "@/app/components/Spinner";
+import TableData from "@/app/components/Table/TableData";
+import TableHeading, {
+  defaultStyle,
+} from "@/app/components/Table/TableHeading";
 import { Attribute } from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import { REPORT_API } from "@/app/APIs";
-import { toast } from "react-toastify";
 import { createdMessage } from "@/app/utils";
-import Spinner from "@/app/components/Spinner";
-import CustomSelect from "@/app/components/Form/CustomSelect";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { AiOutlineClose } from "react-icons/ai";
+import { FaCheck } from "react-icons/fa";
+import { FiPlus } from "react-icons/fi";
+import { IoClose } from "react-icons/io5";
+import { LuSearch } from "react-icons/lu";
+import { PiTrashSimpleBold } from "react-icons/pi";
+import { toast } from "react-toastify";
+import { z } from "zod";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -64,71 +71,6 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
   const [isSubmitting, setSubmitting] = useState(false);
 
   const router = useRouter();
-
-  const customStyles: StylesConfig<OptionType, false> = {
-    control: (base) => ({
-      ...base,
-      fontSize: "14px",
-      boxShadow: "none",
-      border: "none",
-    }),
-    dropdownIndicator: (base) => ({
-      ...base,
-      padding: 4,
-    }),
-    clearIndicator: (base) => ({
-      ...base,
-      padding: 4,
-    }),
-    valueContainer: (base) => ({
-      ...base,
-      padding: "0 6px",
-    }),
-    input: (base) => ({
-      ...base,
-      margin: 0,
-      padding: 0,
-    }),
-    menu: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    menuPortal: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    option: (base, state) => ({
-      ...base,
-      backgroundColor: state.isFocused ? "#f0f0f0" : "white",
-      color: "#333",
-      fontSize: "14px",
-    }),
-  };
-
-  const customStyles2: StylesConfig<OptionType, false> = {
-    control: (base) => ({
-      ...base,
-      fontSize: "14px",
-      border: "1px solid #EDF1F3",
-      boxShadow: "0px 3px 5px rgba(228, 229, 231, 0.24)",
-      borderRadius: "10px",
-      height: "41.19px",
-    }),
-    menu: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    menuPortal: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    option: (base, state) => ({
-      ...base,
-      backgroundColor: state.isFocused ? "#f0f0f0" : "white",
-      color: "#333",
-      fontSize: "14px",
-    }),
-  };
 
   const functionStatuses = [
     { value: "NONE", label: "NONE" },
@@ -258,7 +200,7 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
       }}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="row d-flex justify-content-between">
+        <div className="row d-flex align-items-center justify-content-between">
           <div className="col-auto">
             <p
               className="fw-6 d-none d-md-block"
@@ -273,97 +215,91 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
               Master Report Form
             </p>
           </div>
-          <div className="col-auto">
-            <div className="row">
-              <div className="col-auto text-end">
-                <Button
-                  type="submit"
-                  className="btn bg-color-sea-blue text-white"
-                  style={{ borderRadius: "8px" }}
-                  disabled={isSubmitting}
-                >
-                  Generate&nbsp;
-                  {isSubmitting ? (
-                    <Spinner color="text-light" />
-                  ) : (
-                    <IoArrowForwardCircleOutline size={24} />
+          <div className="col">
+            <div className="row align-items-center justify-content-end">
+              <div className="col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                <CustomInput
+                  {...register("reportName")}
+                  id="reportName"
+                  type="text"
+                  style={{ borderRadius: "50px" }}
+                  placeholder="Enter Report Name"
+                />
+
+                {errors.reportName && (
+                  <p className="text-danger mt-1 fs14px">
+                    {errors.reportName.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                <Controller
+                  name="orderByFields"
+                  control={control}
+                  render={({ field }) => (
+                    <CustomSelect
+                      {...field}
+                      options={orderByOptions} // must be in format { value, label }
+                      placeholder="Select Order By"
+                      radius="pill"
+                      // Convert between react-select and raw value
+                      value={
+                        orderByOptions.find(
+                          (opt) => opt.value === field.value?.[0]
+                        )
+                          ? [
+                              orderByOptions.find(
+                                (opt) => opt.value === field.value?.[0]
+                              )!,
+                            ]
+                          : null
+                      }
+                      onChangeSingle={(selectedOption) => {
+                        field.onChange(
+                          selectedOption ? [selectedOption.value] : []
+                        );
+                      }}
+                    />
                   )}
-                </Button>
+                />
+                {errors.orderByFields && (
+                  <p className="text-danger mt-1 fs14px">
+                    {errors.orderByFields.message}
+                  </p>
+                )}
               </div>
               <div className="col-auto">
-                <Button type="button" className="btn" onClick={handleClose}>
-                  <AiOutlineClose />
-                </Button>
+                <div className="row">
+                  <div className="col-auto text-end">
+                    <Button
+                      type="submit"
+                      className="btn bg-color-sea-blue text-white"
+                      style={{ borderRadius: "8px" }}
+                      disabled={isSubmitting}
+                    >
+                      Generate&nbsp;
+                      {isSubmitting ? (
+                        <Spinner color="text-light" />
+                      ) : (
+                        <Image
+                          src="/icons/3d-scale.svg"
+                          alt="3d-scale"
+                          width={21}
+                          height={21}
+                          style={{ width: "21px", height: "21px" }}
+                        />
+                      )}
+                    </Button>
+                  </div>
+                  <div className="col-auto">
+                    <Button type="button" className="btn" onClick={handleClose}>
+                      <AiOutlineClose />
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3 mb-3">
-            <label
-              htmlFor="reportName"
-              className="form-label fw-5 fs12px"
-              style={{ color: "#6C7278" }}
-            >
-              Report Name
-            </label>
-            <input
-              {...register("reportName")}
-              id="reportName"
-              type="text"
-              className="form-control form-control-sm color-light-dark"
-              style={{
-                border: "1px solid #EDF1F3",
-                boxShadow: "0px 3px 5px rgba(228, 229, 231, 0.24)",
-                borderRadius: "10px",
-              }}
-              placeholder="Enter Report Name"
-            />
-            {errors.reportName && (
-              <p className="text-danger mt-1 fs14px">
-                {errors.reportName.message}
-              </p>
-            )}
-          </div>
-          <div className="col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3 mb-3">
-            <label
-              htmlFor="orderBy"
-              className="form-label fw-5 fs12px"
-              style={{ color: "#6C7278" }}
-            >
-              Order By
-            </label>
-            <Controller
-              name="orderByFields"
-              control={control}
-              render={({ field }) => (
-                <CustomSelect
-                  {...field}
-                  options={orderByOptions} // must be in format { value, label }
-                  placeholder="Select"
-                  // Convert between react-select and raw value
-                  value={
-                    orderByOptions.find((opt) => opt.value === field.value?.[0])
-                      ? [
-                          orderByOptions.find(
-                            (opt) => opt.value === field.value?.[0]
-                          )!,
-                        ]
-                      : null
-                  }
-                  onChangeSingle={(selectedOption) => {
-                    field.onChange(
-                      selectedOption ? [selectedOption.value] : []
-                    );
-                  }}
-                />
-              )}
-            />
-            {errors.orderByFields && (
-              <p className="text-danger mt-1 fs14px">
-                {errors.orderByFields.message}
-              </p>
-            )}
           </div>
         </div>
         <div className="row">
@@ -395,153 +331,156 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
         </div>
         <div className="row">
           <div className="col-12 col-sm-12 col-md-7 col-lg-8">
-            <div className="table-responsive rounded-3">
-              <table
-                className="table table-bordered mb-3 rounded-3 overflow-hidden"
-                style={{ borderColor: "#F2F2F2" }}
+            <div className="table-responsive mb-2">
+              <div
+                style={{
+                  height: "calc(100vh - 345px)",
+                  overflow: "auto",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "10px",
+                }}
               >
-                <thead>
-                  <tr className={`cursor-pointer fs14px`}>
-                    <th className="bg-color-sea-blue text-white fw-bold border-0">
-                      Attributes
-                    </th>
-                    <th className="bg-color-sea-blue text-white fw-bold border-0">
-                      Function
-                    </th>
-                    <th className="bg-color-sea-blue text-white fw-bold text-center border-0">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {attributeIds?.map((id, i) => {
-                    const attribute = attributes.find(
-                      (attr) => attr.attributeId === id
-                    );
-                    if (!attribute) return null;
+                <table className="table table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <TableHeading name="Attributes" />
+                      <TableHeading name="Function" />
+                      <TableHeading name="Action" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {attributeIds?.map((id, i) => {
+                      const attribute = attributes.find(
+                        (attr) => attr.attributeId === id
+                      );
+                      if (!attribute) return null;
 
-                    return (
-                      <tr key={i} className={`fs12px`}>
-                        <td
-                          className="fw-5"
-                          style={{ color: "#404040", verticalAlign: "middle" }}
-                        >
-                          {attribute.label}
-                        </td>
-                        <td className="fw-5" style={{ color: "#404040" }}>
-                          <Select
-                            options={functionStatuses}
-                            defaultValue={functionStatuses[0]}
-                            placeholder="Select function"
-                            classNamePrefix="react-select"
-                            styles={customStyles}
-                            menuPortalTarget={document.body}
-                            onChange={(selectedOption) => {
-                              setValue(
-                                `attributeFunctions.${id}`,
-                                selectedOption?.value ?? "NONE"
-                              );
-                            }}
-                          />
-                        </td>
-                        <td
-                          className="fw-5 text-center"
-                          style={{ color: "#404040", verticalAlign: "middle" }}
-                        >
-                          <Button
-                            type="button"
-                            className="btn"
-                            onClick={() => handleDeleteAttribute(id)}
-                          >
-                            <FaRegTrashAlt
-                              style={{ color: "#E22F2F" }}
-                              size={20}
+                      return (
+                        <tr key={i}>
+                          <TableData>{attribute.label}</TableData>
+                          <TableData>
+                            <CustomSelect
+                              options={functionStatuses}
+                              defaultValue={functionStatuses[0]}
+                              placeholder="Select function"
+                              onChangeSingle={(selectedOption) => {
+                                setValue(
+                                  `attributeFunctions.${id}`,
+                                  selectedOption?.value ?? "NONE"
+                                );
+                              }}
                             />
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          </TableData>
+                          <TableData>
+                            <Button
+                              type="button"
+                              className="btn"
+                              onClick={() => handleDeleteAttribute(id)}
+                            >
+                              <PiTrashSimpleBold
+                                style={{ color: "#E22F2F" }}
+                                size={20}
+                              />
+                            </Button>
+                          </TableData>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
           <div className="col-12 col-sm-12 col-md-5 col-lg-4 ps-0">
-            <div className="table-responsive rounded-3">
-              <table
-                className="table table-bordered mb-3 rounded-3 overflow-hidden"
-                style={{ borderColor: "#F2F2F2" }}
+            <div className="table-responsive mb-2">
+              <div
+                style={{
+                  height: "calc(100vh - 345px)",
+                  overflow: "auto",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "10px",
+                }}
               >
-                <thead>
-                  <tr className={`cursor-pointer fs14px`}>
-                    <th className="bg-color-sea-blue text-white fw-bold text-center border-0">
-                      Attributes
-                    </th>
-                    <th className="bg-color-sea-blue text-white fw-bold text-center border-0">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className={`fs12px`}>
-                    <td
-                      colSpan={2}
-                      className="fw-5 text-center"
-                      style={{ color: "#404040", verticalAlign: "middle" }}
+                <table className="table table-hover mb-0">
+                  <thead>
+                    {/* First sticky header row */}
+                    <tr
+                      className="position-sticky top-0 bg-white"
+                      style={{ zIndex: 3 }}
                     >
-                      <div className="col position-relative">
-                        <input
-                          type="text"
-                          id="inputPassword6"
-                          className="form-control pe-5 "
-                          aria-describedby="passwordHelpInline"
-                          placeholder="Search"
-                          style={{
-                            border: "1px solid #EDF1F3",
-                            boxShadow: "0px 3px 5px rgba(228, 229, 231, 0.24)",
-                            borderRadius: "10px",
-                          }}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          value={searchTerm}
-                        />
-                        <div
-                          className="col position-absolute"
-                          style={{ top: 11, right: 15 }}
-                        >
-                          <FiSearch size={20} style={{ color: "#656565" }} />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {(searchTerm.trim().length > 0
-                    ? filteredAttributes
-                    : availableAttributes
-                  )?.map((attribute, i) => (
-                    <tr key={i} className={`fs12px`}>
-                      <td
-                        className="fw-5 text-center"
-                        style={{ color: "#404040", verticalAlign: "middle" }}
-                      >
-                        {attribute.label}
-                      </td>
-                      <td
-                        className="fw-5 text-center"
-                        style={{ color: "#404040" }}
-                      >
-                        <Button
-                          type="button"
-                          className="btn"
-                          onClick={() =>
-                            handleAddAttribute(attribute.attributeId)
-                          }
-                        >
-                          <FiPlus size={20} />
-                        </Button>
-                      </td>
+                      <TableHeading name="Attributes" className="text-nowrap" />
+                      <TableHeading name="Action" className="text-nowrap" />
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+
+                    {/* Second sticky row (search) */}
+                    <tr
+                      className="position-sticky bg-white"
+                      style={{
+                        top: "45px", // adjust height based on your first row
+                        zIndex: 2,
+                      }}
+                    >
+                      <th
+                        scope="col"
+                        className="fs15px"
+                        colSpan={2}
+                        style={defaultStyle}
+                      >
+                        <div className="col position-relative">
+                          <div className="input-group">
+                            <button
+                              className="btn rounded-end rounded-pill text-white shadow-none border-end-0 pe-0"
+                              type="submit"
+                              style={{
+                                border: "1.08px solid #CBD5E1",
+                                padding: "8px 0px 12px 12px",
+                                zIndex: 1,
+                              }}
+                            >
+                              <LuSearch
+                                size={17}
+                                style={{ color: "#475569" }}
+                              />
+                            </button>
+                            <CustomInput
+                              type="text"
+                              className="form-control fw-bold border-start-0 rounded-pill rounded-start shadow-none fs15px bg-transparent py-2 placeholder-bold"
+                              style={{
+                                border: "1px solid #CBD5E1",
+                              }}
+                              placeholder="Search..."
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)}
+                              id="search"
+                            />
+                          </div>
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(searchTerm.trim().length > 0
+                      ? filteredAttributes
+                      : availableAttributes
+                    )?.map((attribute, i) => (
+                      <tr key={i}>
+                        <TableData>{attribute.label}</TableData>
+                        <TableData>
+                          <Button
+                            type="button"
+                            className="btn"
+                            onClick={() =>
+                              handleAddAttribute(attribute.attributeId)
+                            }
+                          >
+                            <FiPlus size={20} />
+                          </Button>
+                        </TableData>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

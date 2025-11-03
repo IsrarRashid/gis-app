@@ -25,6 +25,7 @@ export interface TempTourPlan {
   vehicleId: number;
   driverId: number;
   districtId: number;
+  isFocalPerson: boolean;
 }
 
 interface Props {

@@ -1,6 +1,6 @@
 import { PROJECT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import CustomModal from "@/app/components/CustomModal";
+import CustomModal from "@/app/components/CustomModal/CustomModal";
 import ProgressBar from "@/app/components/ProgressBar";
 import {
   Attributes,
@@ -30,6 +30,7 @@ import MonitoringRatingIndex from "./components/MonitoringRatingIndex";
 import ObservationsAndRecommendations from "./components/ObservationsAndRecommendations";
 import ProgressAnalysis from "./components/ProgressAnalysis";
 import ProjectProfile from "./components/ProjectProfile";
+import Badge from "../ProjectsTable/components/Badge";
 
 interface Props {
   value: number;
@@ -169,10 +170,13 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
             }}
             className="col w-100 shadow-none btn p-0"
           >
-            <div className="row d-flex m-0">
+            <div className="row d-flex m-0 align-items-center">
               <ProgressBar value={Math.round(value)} />
-              <div className="col-auto p-0 color-dark-blue fw-bold fs13px">
+              {/* <div className="col-auto p-0 color-dark-blue fw-bold fs13px">
                 {Math.round(value)}%
+              </div> */}
+              <div className="col-auto p-0">
+                <Badge>{Math.round(value)}%</Badge>
               </div>
             </div>
           </Button>

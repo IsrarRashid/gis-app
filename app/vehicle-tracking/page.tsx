@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { VT_RECORDING_API } from "../APIs";
 import TimelineAuto from "./components/TimelineAuto";
-import CustomModal from "../components/CustomModal";
+import CustomModal from "../components/CustomModal/CustomModal";
 import Button from "../components/Button";
 import useVehicle from "../hooks/useVehicle";
 import Image from "next/image";

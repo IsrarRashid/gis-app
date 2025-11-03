@@ -241,11 +241,19 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                     </p>
                   )}
                 </div>
+                <div
+                  className="col-lg-12 col-md-12 col-sm-12 text-start mt-0"
+                  style={{ marginBottom: "10px" }}
+                >
+                  <CustomLabel htmlFor="description">Description</CustomLabel>
+                  <CustomTextArea
+                    id="description"
+                    {...register("description")}
+                    placeholder="Write Brief Description..."
+                  />
+                </div>
               </div>
-              <div
-                className="row g-2 g-lg-3 mt-0"
-                style={{ marginBottom: "5px" }}
-              >
+              <div className="row g-2 g-lg-3 mt-0">
                 <div
                   className="col-auto text-start mt-0"
                   style={{ marginBottom: "16px", padding: "0px 10px" }}
@@ -300,20 +308,8 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                   </div>
                 </div>
               </div>
-              <div
-                className="col-lg-12 col-md-12 col-sm-12 text-start mt-0"
-                style={{ marginBottom: "10px" }}
-              >
-                <CustomLabel htmlFor="description">Description</CustomLabel>
-                <CustomTextArea
-                  id="description"
-                  {...register("description")}
-                  placeholder="Write Brief Description..."
-                />
-              </div>
-              <div className="col-lg-4 col-md-6 col-sm-6 col-12 mx-auto">
-                <SubmitButton>Save Attribute Group</SubmitButton>
-              </div>
+
+              <SubmitButton>Save Attribute Group</SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

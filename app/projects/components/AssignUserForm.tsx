@@ -144,9 +144,7 @@ const AssignUserForm = ({ id, options }: Props) => {
                     placeholder="Choose Users..."
                   />
                 </div>
-                <div className="col-lg-5 col-md-8 col-sm-6 mx-auto">
-                  <SubmitButton>Save Users</SubmitButton>
-                </div>
+                <SubmitButton>Save Users</SubmitButton>
               </form>
             </FormWrapper>
           </Modal.Body>

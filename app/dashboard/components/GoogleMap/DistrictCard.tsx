@@ -1,6 +1,6 @@
 import approved from "@/public/icons/approved.svg";
 import dropped from "@/public/icons/dropped.svg";
-import unApproved from "@/public/icons/unApproved.svg";
+import unApproved from "@/public/icons/unapproved.svg";
 import Image from "next/image";
 import { ProgressBar } from "react-bootstrap";
 import { DistrictList } from "../Dashboard";

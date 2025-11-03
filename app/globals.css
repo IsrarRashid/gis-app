@@ -74,32 +74,32 @@ main {
 }
 
 .color-evaluation-light-blue {
-  color: #2377b6;
+  color: #2377b6 !important;
   transition: all 0.3s;
 }
 
 .bg-color-evaluation-light-blue {
-  background: #2377b6;
+  background: #2377b6 !important;
   transition: all 0.3s;
 }
 
 .color-evaluation-dark-blue {
-  color: #155e95;
+  color: #155e95 !important;
   transition: all 0.3s;
 }
 
 .bg-color-evaluation-dark-blue {
-  background: #155e95;
+  background: #155e95 !important;
   transition: all 0.3s;
 }
 
 .color-evaluation-theme-blue {
-  color: #1c6ba6;
+  color: #1c6ba6 !important;
   transition: all 0.3s;
 }
 
 .bg-color-evaluation-theme-blue {
-  background: #1c6ba6;
+  background: #1c6ba6 !important;
   transition: all 0.3s;
 }
 
@@ -258,19 +258,35 @@ select {
 }
 
 .fs10px {
-  font-size: 0.625rem;
+  font-size: 0.625rem !important;
 }
 
 .fs9px {
-  font-size: 0.563rem;
+  font-size: 0.563rem !important;
 }
 
 .fs8px {
-  font-size: 0.5rem;
+  font-size: 0.5rem !important;
 }
 
 .fs7px {
-  font-size: 0.438rem;
+  font-size: 0.438rem !important;
+}
+
+.fs6px {
+  font-size: 0.375rem !important;
+}
+
+.fs5px {
+  font-size: 0.313rem !important;
+}
+
+.fs4px {
+  font-size: 0.25rem !important;
+}
+
+.fs3px {
+  font-size: 0.188rem !important;
 }
 
 .fw-5 {
@@ -329,7 +345,7 @@ select {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 20px;
+  width: 15px;
 }
 
 /* Track */
@@ -367,16 +383,27 @@ select {
 } */
 
 #dateFilterSideNavAccordian .accordion-button {
-  background-color: rgba(180, 222, 240, 0.9) !important;
-  box-shadow: none;
-  padding: 10px;
-  font-size: 12.8px;
+  background: rgba(255, 255, 255, 0.8) !important;
+  padding: 10px 12px;
+  border-radius: 7px;
+  color: #545861;
+  font-weight: 500;
+  box-shadow: 0 0 0 1.5px #eff0f2;
+  border: 0px;
+  color: #80889e !important;
+  font-size: 0.875rem !important;
+  font-weight: 500;
+  opacity: 1; /* Ensures full visibility in Firefox */
 }
 
-#dateFilterSideNavAccordian .accordion-button:not(.collapsed) {
+#dateFilterSideNavAccordian .accordion-button:focus {
+  box-shadow: 0 0 0 1.5px #0c8ce9 !important;
+}
+
+/* #dateFilterSideNavAccordian .accordion-button:not(.collapsed) {
   background-color: red;
   box-shadow: none;
-}
+} */
 
 .custom-editor .CodeMirror,
 .CodeMirror-scroll {
@@ -408,4 +435,9 @@ select {
 .CodeMirror {
   spellcheck: true;
   -webkit-user-modify: read-write;
+}
+
+.apexcharts-series path {
+  stroke-linecap: round !important;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.3)) !important;
 }

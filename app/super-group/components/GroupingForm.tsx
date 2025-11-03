@@ -162,9 +162,7 @@ const GroupingForm = ({ id, options, dashboardType, superGroups }: Props) => {
                     placeholder="Choose Attribute Groups..."
                   />
                 </div>
-                <div className="col-lg-6 col-md-5 col-sm-6 col-8 mx-auto">
-                  <SubmitButton>Save Attribute Groups</SubmitButton>
-                </div>
+                <SubmitButton>Save Attribute Groups</SubmitButton>
               </form>
             </FormWrapper>
           </Modal.Body>

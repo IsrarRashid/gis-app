@@ -1,3 +1,5 @@
+"use client";
+
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -13,8 +15,12 @@ const useAuthorization = (requiredRight: string) => {
   };
 
   useEffect(() => {
+    // ✅ Prevent running on the server
+    if (typeof window === "undefined") return;
+
     const token = Cookies.get("token");
     handleButtonClick(requiredRight);
+
     if (!token) {
       router.push("/login");
       return;

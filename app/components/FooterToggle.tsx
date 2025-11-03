@@ -8,6 +8,7 @@ const FooterToggle = () => {
 
   if (
     currentPath !== "" &&
+    !currentPath.startsWith("/projects-live-view/project-details-dashboard") &&
     allPagesPath.some((path) => currentPath.startsWith(path))
   ) {
     return (
