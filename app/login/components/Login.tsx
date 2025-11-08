@@ -1,23 +1,21 @@
 "use client";
+import bgVideoNew from "@/public/video/bgVideoNew.mp4";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import Cookies from "js-cookie";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye } from "react-icons/fa";
 import { TbEyeClosed } from "react-icons/tb";
 import { toast } from "react-toastify";
 import { z } from "zod";
-import bgVideoNew from "@/public/video/bgVideoNew.mp4";
 import { LOGIN_API } from "../../APIs";
-import apiClient, {
-  AxiosError,
-  ErrorResponse,
-} from "../../services/api-client";
 import Button from "../../components/Button";
 import ErrorMessage from "../../components/ErrorMessage";
 import Spinner from "../../components/Spinner";
-import Link from "next/link";
+import { AxiosError, ErrorResponse } from "../../services/api-client";
 
 const schema = z.object({
   username: z.string().min(1, { message: "Please add Username!" }),
@@ -74,7 +72,7 @@ const Login = () => {
     console.log("Form Data:", formData);
     try {
       setSubmitting(true);
-      const response = await apiClient.post<Props>(LOGIN_API, formData);
+      const response = await axios.post<Props>(LOGIN_API, formData);
 
       if (response.data.responseCode === 200) {
         console.log("responseCode", response.data.responseCode);
