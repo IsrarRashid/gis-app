@@ -411,9 +411,6 @@ const VisitsPlan = ({
                                             >
                                               {projectsData && filteredKeys ? (
                                                 <ProjectsTable
-                                                  districts={districts}
-                                                  sectors={sectors}
-                                                  users={users}
                                                   role={role}
                                                   label="Being Monitored Projects"
                                                   projectsData={projectsData.filter(

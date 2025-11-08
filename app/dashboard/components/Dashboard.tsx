@@ -392,9 +392,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           setProjectsData={setProjectsData}
                           allowLink={false}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -473,9 +470,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                               projectsData={projectsData}
                               setProjectsData={setProjectsData}
                               role={""}
-                              districts={[]}
-                              sectors={[]}
-                              users={[]}
                             />
                           ) : (
                             <Loader />
@@ -541,9 +535,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                               projectsData={projectsData}
                               setProjectsData={setProjectsData}
                               role={""}
-                              districts={[]}
-                              sectors={[]}
-                              users={[]}
                             />
                           ) : (
                             <Loader />
@@ -594,9 +585,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -645,9 +633,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -694,9 +679,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -738,9 +720,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -793,9 +772,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           setProjectsData={setProjectsData}
                           allowLink={false}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -859,9 +835,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                               projectsData={projectsData}
                               setProjectsData={setProjectsData}
                               role={""}
-                              districts={[]}
-                              sectors={[]}
-                              users={[]}
                             />
                           ) : (
                             <Loader />
@@ -911,9 +884,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                               projectsData={projectsData}
                               setProjectsData={setProjectsData}
                               role={""}
-                              districts={[]}
-                              sectors={[]}
-                              users={[]}
                             />
                           ) : (
                             <Loader />
@@ -962,9 +932,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -1011,9 +978,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -1058,9 +1022,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -1101,9 +1062,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -1711,9 +1669,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                               setProjectsData={setProjectsData}
                               allowLink={false}
                               role={""}
-                              districts={[]}
-                              sectors={[]}
-                              users={[]}
                             />
                           ) : (
                             <Loader />
@@ -2105,9 +2060,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           setProjectsData={setProjectsData}
                           allowLink={false}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -2149,9 +2101,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           setProjectsData={setProjectsData}
                           allowLink={false}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -2193,9 +2142,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           setProjectsData={setProjectsData}
                           allowLink={false}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -2238,9 +2184,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                             setProjectsData={setProjectsData}
                             allowLink={false}
                             role={""}
-                            districts={[]}
-                            sectors={[]}
-                            users={[]}
                           />
                         ) : (
                           <Loader />
@@ -2282,9 +2225,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                             setProjectsData={setProjectsData}
                             allowLink={false}
                             role={""}
-                            districts={[]}
-                            sectors={[]}
-                            users={[]}
                           />
                         ) : (
                           <Loader />
@@ -2334,9 +2274,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           setProjectsData={setProjectsData}
                           allowLink={false}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -2373,9 +2310,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           setProjectsData={setProjectsData}
                           allowLink={false}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -2412,9 +2346,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           setProjectsData={setProjectsData}
                           allowLink={false}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -2451,9 +2382,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           setProjectsData={setProjectsData}
                           allowLink={false}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
@@ -2490,9 +2418,6 @@ const Dashboard = ({ dashboardType }: Props) => {
                           setProjectsData={setProjectsData}
                           allowLink={false}
                           role={""}
-                          districts={[]}
-                          sectors={[]}
-                          users={[]}
                         />
                       ) : (
                         <Loader />
