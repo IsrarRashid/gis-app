@@ -181,6 +181,8 @@ const VisitsPlan = ({
       <CustomModal
         size="xl"
         modalId="visitsPlan"
+        HeaderRightPos={10}
+        HeaderTopPos={0}
         button={
           <div
             className="text-decoration-none cursor-pointer text-dark d-flex align-items-center justify-content-center"

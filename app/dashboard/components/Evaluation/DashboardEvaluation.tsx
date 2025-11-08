@@ -7,35 +7,26 @@ import Loader from "@/app/components/Loader";
 // import Menu from "@/app/components/Menu";
 import { setContent } from "@/app/features/content/contentSlice";
 import { setTutorial } from "@/app/features/tutorial/tutorialSlice";
-import useDistrict from "@/app/hooks/useDistrict";
-import useSectors from "@/app/hooks/useSectors";
-import useUsers from "@/app/hooks/useUsers";
 import apiClient from "@/app/services/api-client";
 import { devMap } from "@/app/utils";
 import carOutline from "@/public/icons/carOutline.svg";
 import staffTracking2 from "@/public/icons/staffTracking2.svg";
 import Cookies from "js-cookie";
 import dynamic from "next/dynamic";
-import { Lexend, Montserrat } from "next/font/google";
+import { Lexend } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import styles from "../Dashboard.module.css";
 import EvaluationMap from "../GoogleMap/EvaluationMap";
 import ReportReview from "../ReportReview";
-import VisitsPlan from "./VisitsPlan";
-import styles from "../Dashboard.module.css";
 import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
+import VisitsPlan from "./VisitsPlan";
 
 const Menu = dynamic(() => import("@/app/components/Menu"), { ssr: false });
 
 const lexend = Lexend({
-  subsets: ["latin"],
-  preload: false,
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const montserrat = Montserrat({
   subsets: ["latin"],
   preload: false,
   weight: ["400", "500", "600", "700", "800"],
@@ -92,10 +83,6 @@ const DashboardEvaluation = () => {
   const [data, setData] = useState<EvaluationMainDashboard>();
   const [role, setRole] = useState<string>("");
   const [departmentId, setDepartmentId] = useState<number>();
-  const [pageLoaded, setPageLoaded] = useState<boolean>(false);
-  const { data: districts } = useDistrict();
-  const { data: sectors } = useSectors();
-  const { data: users } = useUsers();
   const dispatch = useDispatch();
   // useAuthorization("dashboard");
 
@@ -111,10 +98,6 @@ const DashboardEvaluation = () => {
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    setPageLoaded(true);
   }, []);
 
   useEffect(() => {
@@ -387,6 +370,8 @@ const DashboardEvaluation = () => {
           <div className={`row ${lexend.className} m-0`}>
             <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
               <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 modalId={"TotalProject"}
@@ -423,12 +408,9 @@ const DashboardEvaluation = () => {
                 }
                 body={
                   <>
-                    <div className="container-fluid border-0 p-1">
+                    <div className="container-fluid border-0 p-0">
                       {projectsData && filteredSubmittedPcIvKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           role={role}
                           keys={filteredSubmittedPcIvKeys}
                           label="Submitted PC(IV)s"
@@ -455,6 +437,8 @@ const DashboardEvaluation = () => {
                 <p className="mb-0 text-white fs14px">Projects Evaluated</p>
                 <div className="row m-0 d-flex flex-nowrap">
                   <CustomModal
+                    HeaderRightPos={0}
+                    HeaderTopPos={17}
                     buttonColumn="col p-0"
                     isFullscreen={true}
                     modalId={"umbrella"}
@@ -501,12 +485,9 @@ const DashboardEvaluation = () => {
                     }
                     body={
                       <>
-                        <div className="container-fluid border-0 p-1">
+                        <div className="container-fluid border-0 p-0">
                           {projectsData && filteredOtherKeys ? (
                             <ProjectsTable
-                              districts={districts}
-                              sectors={sectors}
-                              users={users}
                               role={role}
                               keys={filteredOtherKeys}
                               label="No. of Visits (Umbrella)"
@@ -521,6 +502,8 @@ const DashboardEvaluation = () => {
                     }
                   />
                   <CustomModal
+                    HeaderRightPos={0}
+                    HeaderTopPos={17}
                     buttonColumn="col p-0"
                     isFullscreen={true}
                     modalId={"single"}
@@ -571,12 +554,9 @@ const DashboardEvaluation = () => {
                     }
                     body={
                       <>
-                        <div className="container-fluid border-0 p-1">
+                        <div className="container-fluid border-0 p-0">
                           {projectsData && filteredOtherKeys ? (
                             <ProjectsTable
-                              districts={districts}
-                              sectors={sectors}
-                              users={users}
                               role={role}
                               keys={filteredOtherKeys}
                               label="No. of Visits (Single)"
@@ -595,6 +575,8 @@ const DashboardEvaluation = () => {
             </div>
             <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
               <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
@@ -623,12 +605,9 @@ const DashboardEvaluation = () => {
                 }
                 body={
                   <>
-                    <div className="container-fluid border-0 p-1">
+                    <div className="container-fluid border-0 p-0">
                       {projectsData && filteredOtherKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           role={role}
                           keys={filteredOtherKeys}
                           label="Successful Projects"
@@ -645,6 +624,8 @@ const DashboardEvaluation = () => {
             </div>
             <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
               <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
@@ -675,12 +656,9 @@ const DashboardEvaluation = () => {
                 }
                 body={
                   <>
-                    <div className="container-fluid border-0 p-1">
+                    <div className="container-fluid border-0 p-0">
                       {projectsData && filteredOtherKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           role={role}
                           keys={filteredOtherKeys}
                           label="Partial Success Projects"
@@ -697,6 +675,8 @@ const DashboardEvaluation = () => {
             </div>
             <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
               <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
@@ -725,12 +705,9 @@ const DashboardEvaluation = () => {
                 }
                 body={
                   <>
-                    <div className="container-fluid border-0 p-1">
+                    <div className="container-fluid border-0 p-0">
                       {projectsData && filteredOtherKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           role={role}
                           keys={filteredOtherKeys}
                           label="Not Successful Projects"
@@ -751,6 +728,8 @@ const DashboardEvaluation = () => {
           >
             <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
               <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
@@ -774,12 +753,9 @@ const DashboardEvaluation = () => {
                 }
                 body={
                   <>
-                    <div className="container-fluid border-0 p-1">
+                    <div className="container-fluid border-0 p-0">
                       {projectsData && filteredSubmittedPcIvKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           role={role}
                           keys={filteredSubmittedPcIvKeys}
                           label="Reports In Progress"
@@ -796,6 +772,8 @@ const DashboardEvaluation = () => {
             </div>
             <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
               <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
@@ -819,12 +797,9 @@ const DashboardEvaluation = () => {
                 }
                 body={
                   <>
-                    <div className="container-fluid border-0 p-1">
+                    <div className="container-fluid border-0 p-0">
                       {projectsData && filteredSubmittedPcIvKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           role={role}
                           keys={filteredSubmittedPcIvKeys}
                           label="PC-IV"

@@ -9,7 +9,8 @@ export interface ErrorResponse {
 }
 
 export default axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
+  withCredentials: true,
+  // baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
   headers: {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",

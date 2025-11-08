@@ -1,23 +1,29 @@
 /** @type {import('next').NextConfig} */
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API;
+
+// Parse hostname and protocol from the env
+const url = new URL(backendUrl);
 const nextConfig = {
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: "/:path*",
-  //       destination: "https://rtmes-api-dgme.punjab.gov.pk/:path*",
-  //     },
-  //   ];
-  // },
+  /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${backendUrl}/api/:path*`,
+      },
+      {
+        source: "/upload/:path*",
+        destination: `${backendUrl}/upload/:path*`,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "rtmes-api-dgme.punjab.gov.pk",
-        port: "",
-        // protocol: "http",
-        // hostname: "110.39.184.210",
-        // port: "154",
-        pathname: "/**",
+        protocol: url.protocol.replace(":", ""),
+        hostname: url.hostname,
+        port: url.port || undefined,
+        pathname: "/upload/**",
       },
     ],
   },

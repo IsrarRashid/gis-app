@@ -4,6 +4,7 @@ import Button from "@/app/components/Button";
 import CustomInput from "@/app/components/Form/CustomInput";
 import CustomLabel from "@/app/components/Form/CustomLabel";
 import CustomSelect, {
+  defaultNegativeNumberOption,
   defaultOption,
   OptionType,
 } from "@/app/components/Form/CustomSelect";
@@ -28,10 +29,9 @@ import {
 import { exportDataToExcel } from "@/app/utils/exportToExcel";
 import { format } from "date-fns";
 import { sort } from "fast-sort";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Accordion } from "react-bootstrap";
 import { DateRange, RangeKeyDict } from "react-date-range";
 import "react-date-range/dist/styles.css"; // Main style file
@@ -41,23 +41,17 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { LuSearch, LuUserRound } from "react-icons/lu";
 import { PiCircleFill } from "react-icons/pi";
 import { VscCheckAll } from "react-icons/vsc";
-import { SingleValue, StylesConfig } from "react-select";
+import { SingleValue } from "react-select";
 import { toast } from "react-toastify";
 import { ReportTypeStatusEnum } from "../../types/reportTypeStatus";
 import Badge from "./components/Badge";
 import styles from "./ProjectsTable.module.css";
-
-// Define the type of the range state
-interface RangeType {
-  startDate: Date | undefined;
-  endDate: Date | undefined;
-  key: string;
-}
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
+import {
+  FilterParams,
+  RangeType,
+  reportStatusOptions,
+} from "./ProjectsTableUtils";
+import useProjectsTableUtils from "./useProjectsTableUtils";
 
 export interface ProjectsList {
   id: number;
@@ -93,48 +87,21 @@ interface Props {
   label: string;
   keys: (keyof ProjectsList)[];
   role: string;
-  districts: District[];
-  sectors: Sector[];
-  users: User[];
   allowLink?: boolean;
 }
-
-interface Option {
-  label: string;
-  value: string;
-}
-
-interface FilterParams {
-  districtName?: string;
-  sectorName?: string;
-  userName?: string;
-  startDate?: string;
-  endDate?: string;
-  reportStatus?: number;
-}
-
-const rowCounts = [10, 20, 30, 40, 50];
 
 const ProjectsTable = ({
   projectsData,
   label,
   keys,
-  districts,
-  sectors,
-  users,
   allowLink = true,
   role = "",
 }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<OptionType[]>([]);
+  const { rowCountOptions, districtOptions, sectorOptions, userOptions } =
+    useProjectsTableUtils();
 
-  const districtOptions = districts.map((district) => {
-    return {
-      value: district.districtName,
-      label: district.districtName,
-    };
-  });
-
-  const handleDistrictChange = (selectedOption: SingleValue<Option>) => {
+  const handleDistrictChange = (selectedOption: SingleValue<OptionType>) => {
     if (selectedOption) setDistrictName(selectedOption.value);
 
     setDropdownFilterValue((prev) => {
@@ -164,14 +131,7 @@ const ProjectsTable = ({
     console.log(`Option selected:`, selectedOption);
   };
 
-  const sectorOptions = sectors.map((sector) => {
-    return {
-      value: sector.name,
-      label: sector.name,
-    };
-  });
-
-  const handleSectorChange = (selectedOption: SingleValue<Option>) => {
+  const handleSectorChange = (selectedOption: SingleValue<OptionType>) => {
     if (selectedOption) setSectorName(selectedOption.value);
 
     setDropdownFilterValue((prev) => {
@@ -199,14 +159,7 @@ const ProjectsTable = ({
     console.log(`Option selected:`, selectedOption);
   };
 
-  const userOptions = users.map((user) => {
-    return {
-      value: user.name,
-      label: user.name,
-    };
-  });
-
-  const handleUserChange = (selectedOption: SingleValue<Option>) => {
+  const handleUserChange = (selectedOption: SingleValue<OptionType>) => {
     if (selectedOption) setUserName(selectedOption.value);
 
     setDropdownFilterValue((prev) => {
@@ -234,19 +187,9 @@ const ProjectsTable = ({
     console.log(`Option selected:`, selectedOption);
   };
 
-  const defaultNumberOption = { value: "-1", label: "Select" };
-
-  const reportStatusOptions = [
-    { value: "0", label: "SCHEDULED" },
-    { value: "1", label: "COMPLETED" },
-    { value: "2", label: "CANCELLED" },
-    { value: "3", label: "SUBMITTED" },
-    { value: "4", label: "APPROVED" },
-    { value: "5", label: "REFERBACK" },
-    { value: "6", label: "ISSUED" },
-  ];
-
-  const handleReportStatusChange = (selectedOption: SingleValue<Option>) => {
+  const handleReportStatusChange = (
+    selectedOption: SingleValue<OptionType>
+  ) => {
     const value = Number(selectedOption?.value);
     setReportStatus(value);
     setDropdownFilterValue((prev) => {
@@ -843,20 +786,13 @@ const ProjectsTable = ({
     }
   };
 
-  const rowCountOptions: OptionType[] = useMemo(() => {
-    return rowCounts.map((d) => ({
-      value: d.toString(),
-      label: d.toString(),
-    }));
-  }, [rowCounts]);
-
   useEffect(() => {
     setSelectedOptions([rowCountOptions[0]]);
     handleRowsPerPage(parseInt(rowCountOptions[0].value));
   }, []);
 
   return (
-    <div className={`d-flex ${plusJakartaSans.className}`}>
+    <div className={`d-flex`}>
       <div
         className={`${styles.layout} w-100 bg-white`}
         style={{
@@ -1291,7 +1227,10 @@ const ProjectsTable = ({
                   <CustomLabel
                     inputNode={
                       <CustomSelect
-                        options={[defaultNumberOption, ...reportStatusOptions]}
+                        options={[
+                          defaultNegativeNumberOption,
+                          ...reportStatusOptions,
+                        ]}
                         closeMenuOnSelect={true}
                         id="reportStatus"
                         menuPlacement="top"
@@ -1613,30 +1552,119 @@ const ProjectsTable = ({
           >
             <table className="table table-hover mb-0">
               <thead>
-                <tr>
-                  {keys.map((k, i) => (
-                    <TableHeading
-                      className="text-nowrap"
-                      key={k + i}
-                      name={
-                        k.toLowerCase() === "id"
-                          ? "ID"
-                          : k.toLowerCase() === "gSno"
-                          ? "GS NO."
-                          : k.toLowerCase() === "visitcount"
-                          ? "no. of visits"
-                          : k.toLowerCase() === "visitstartdate"
-                          ? "Date Range"
-                          : k.toLowerCase() === "filegenrated"
-                          ? "report generated"
-                          : k.toLowerCase() === "statusDate"
-                          ? "status Date"
-                          : formatKeyName(k)
-                      }
-                      handleSort={() => handleSort(`${k}`)}
-                    />
-                  ))}
-                </tr>
+                {keys.includes("cost") ? (
+                  <>
+                    <tr
+                      className="position-sticky top-0 bg-white"
+                      style={{ zIndex: 3 }}
+                    >
+                      <TableHeading
+                        className="bg-color-sea-blue"
+                        textClassName="text-white text-nowrap"
+                        name="Grand Total Overall"
+                        colSpan={2}
+                      />
+                      <TableHeading name="" colSpan={2} />
+                      <TableHeading
+                        className="bg-color-sea-blue"
+                        textClassName="text-white"
+                        name={formatAmountWithCommas(
+                          dataToPaginate.reduce(
+                            (sum, d) => sum + (d.cost || 0),
+                            0
+                          )
+                        )}
+                      />
+                      <TableHeading
+                        className="bg-color-sea-blue"
+                        textClassName="text-white"
+                        name={formatAmountWithCommas(
+                          dataToPaginate.reduce(
+                            (sum, d) => sum + (d.revisedAllocation || 0),
+                            0
+                          )
+                        )}
+                      />
+                      <TableHeading
+                        className="bg-color-sea-blue"
+                        textClassName="text-white"
+                        name={formatAmountWithCommas(
+                          dataToPaginate.reduce(
+                            (sum, d) => sum + (d.pnDReleases || 0),
+                            0
+                          )
+                        )}
+                      />
+                      <TableHeading
+                        className="bg-color-sea-blue"
+                        textClassName="text-white"
+                        name={formatAmountWithCommas(
+                          dataToPaginate.reduce(
+                            (sum, d) => sum + (d.utilization || 0),
+                            0
+                          )
+                        )}
+                      />
+                      <TableHeading name="" />
+                      <TableHeading name="" />
+                    </tr>
+                    <tr
+                      className="position-sticky bg-white"
+                      style={{
+                        top: "52px", // adjust height based on your first row
+                        zIndex: 2,
+                      }}
+                    >
+                      {keys.map((k, i) => (
+                        <TableHeading
+                          className="text-nowrap"
+                          key={k + i}
+                          name={
+                            k.toLowerCase() === "id"
+                              ? "ID"
+                              : k.toLowerCase() === "gSno"
+                              ? "GS NO."
+                              : k.toLowerCase() === "visitcount"
+                              ? "no. of visits"
+                              : k.toLowerCase() === "visitstartdate"
+                              ? "Date Range"
+                              : k.toLowerCase() === "filegenrated"
+                              ? "report generated"
+                              : k.toLowerCase() === "statusDate"
+                              ? "status Date"
+                              : formatKeyName(k)
+                          }
+                          handleSort={() => handleSort(`${k}`)}
+                        />
+                      ))}
+                    </tr>
+                  </>
+                ) : (
+                  <tr>
+                    {keys.map((k, i) => (
+                      <TableHeading
+                        className="text-nowrap"
+                        key={k + i}
+                        name={
+                          k.toLowerCase() === "id"
+                            ? "ID"
+                            : k.toLowerCase() === "gSno"
+                            ? "GS NO."
+                            : k.toLowerCase() === "visitcount"
+                            ? "no. of visits"
+                            : k.toLowerCase() === "visitstartdate"
+                            ? "Date Range"
+                            : k.toLowerCase() === "filegenrated"
+                            ? "report generated"
+                            : k.toLowerCase() === "statusDate"
+                            ? "status Date"
+                            : formatKeyName(k)
+                        }
+                        handleSort={() => handleSort(`${k}`)}
+                      />
+                    ))}
+                  </tr>
+                )}
               </thead>
               <tbody>
                 {paginatedData?.map((d, i) => (
@@ -1837,9 +1865,11 @@ const ProjectsTable = ({
                         className="rounded-start text-light"
                         colSpan={4}
                       >
-                        Total
+                        Total ({indexOfFirstRow + 1} -{" "}
+                        {Math.min(indexOfLastRow, modifiedData.length)}) of{" "}
+                        {label}
                       </RowHeader>
-                      <TableData className="text-light">
+                      <TableData className="text-white">
                         {formatAmountWithCommas(
                           paginatedData.reduce(
                             (sum, d) => sum + (d.cost || 0),
@@ -1847,7 +1877,7 @@ const ProjectsTable = ({
                           )
                         )}
                       </TableData>
-                      <TableData className="text-light">
+                      <TableData className="text-white">
                         {formatAmountWithCommas(
                           paginatedData.reduce(
                             (sum, d) => sum + (d.revisedAllocation || 0),
@@ -1855,7 +1885,7 @@ const ProjectsTable = ({
                           )
                         )}
                       </TableData>
-                      <TableData className="text-light">
+                      <TableData className="text-white">
                         {formatAmountWithCommas(
                           paginatedData.reduce(
                             (sum, d) => sum + (d.pnDReleases || 0),
@@ -1863,7 +1893,7 @@ const ProjectsTable = ({
                           )
                         )}
                       </TableData>
-                      <TableData className="rounded-end text-light">
+                      <TableData className="text-light">
                         {formatAmountWithCommas(
                           paginatedData.reduce(
                             (sum, d) => sum + (d.utilization || 0),
@@ -1882,11 +1912,11 @@ const ProjectsTable = ({
                         className="rounded-start text-light"
                         colSpan={4}
                       >
-                        Grand Total
+                        Grand Total ({dataToPaginate.length}) of {label}
                       </RowHeader>
                       <TableData className="text-light">
                         {formatAmountWithCommas(
-                          modifiedData.reduce(
+                          dataToPaginate.reduce(
                             (sum, d) => sum + (d.cost || 0),
                             0
                           )
@@ -1894,7 +1924,7 @@ const ProjectsTable = ({
                       </TableData>
                       <TableData className="text-light">
                         {formatAmountWithCommas(
-                          modifiedData.reduce(
+                          dataToPaginate.reduce(
                             (sum, d) => sum + (d.revisedAllocation || 0),
                             0
                           )
@@ -1902,15 +1932,15 @@ const ProjectsTable = ({
                       </TableData>
                       <TableData className="text-light">
                         {formatAmountWithCommas(
-                          modifiedData.reduce(
+                          dataToPaginate.reduce(
                             (sum, d) => sum + (d.pnDReleases || 0),
                             0
                           )
                         )}
                       </TableData>
-                      <TableData className="rounded-end text-light">
+                      <TableData className="text-light">
                         {formatAmountWithCommas(
-                          modifiedData.reduce(
+                          dataToPaginate.reduce(
                             (sum, d) => sum + (d.utilization || 0),
                             0
                           )

@@ -10,6 +10,7 @@ import {
   cmInitiativeFilters,
   oldCmInitiativeFilters,
 } from "../filters";
+import { AutoTextSize } from "auto-text-size";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -97,7 +98,7 @@ const FilterButtons = ({
           ></div>
           <Button
             type="button"
-            className={`btn rounded-pill border-0 shadow-none px-4 fs14px fw-5 w-100 text-nowrap ${
+            className={`btn rounded-pill border-0 shadow-none px-4 d-flex justify-content-center fw-5 w-100 ${
               selectedButton === 1 ? "text-white" : ""
             }`}
             style={{
@@ -120,7 +121,9 @@ const FilterButtons = ({
               }
             }}
           >
-            CM Initiatives
+            <AutoTextSize mode="oneline" maxFontSizePx={14} minFontSizePx={9}>
+              CM Initiatives
+            </AutoTextSize>
           </Button>
           <Button
             type="button"

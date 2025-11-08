@@ -4,7 +4,12 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { PiCircleFill } from "react-icons/pi";
 import { GroupBase, SingleValue, StylesConfig } from "react-select";
 import Button from "../Button";
-import CustomSelect, { OptionType } from "../Form/CustomSelect";
+import { OptionType } from "../Form/CustomSelect";
+import dynamic from "next/dynamic";
+
+const CustomSelect = dynamic(() => import("../Form/CustomSelect"), {
+  ssr: false,
+});
 
 interface Props {
   searchTerm: string;

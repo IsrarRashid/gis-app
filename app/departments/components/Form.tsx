@@ -21,6 +21,7 @@ import CustomLabel from "@/app/components/Form/CustomLabel";
 import CustomInput from "@/app/components/Form/CustomInput";
 import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import SubmitButton from "@/app/components/Form/SubmitButton";
+import { FiPlus } from "react-icons/fi";
 
 const departmentSchema = z.object({
   id: z.number().optional().default(0),
@@ -430,15 +431,19 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                       <Button
                         type="button"
                         onClick={addNewRole}
-                        className="btn text-white w-100 border-0 rounded-pill fs13px"
-                        style={{
-                          backgroundImage:
-                            "linear-gradient(to right, #0C8CE9 ,#1A67A0)",
-                          paddingTop: "9px",
-                          paddingBottom: "9px",
-                        }}
+                        className="btn rounded-pill text-white fs15px fw-bold bg-color-evaluation-theme-blue"
                       >
-                        Add More +
+                        <div className="col">
+                          <div className="row align-items-center">
+                            <div
+                              className="col pe-0"
+                              style={{ paddingBottom: "2px" }}
+                            >
+                              <FiPlus size={21.6} />
+                            </div>
+                            <div className="col ps-1 text-nowrap">More</div>
+                          </div>
+                        </div>
                       </Button>
                     </div>
                     {errors.departmentRights && (

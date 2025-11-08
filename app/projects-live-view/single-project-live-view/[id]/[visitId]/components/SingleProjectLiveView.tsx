@@ -63,6 +63,9 @@ const SingleProjectLiveViewPage = ({ id, visitId }: Props) => {
   useEffect(() => {
     const handleSubmit = async (projectId: number, visitId: number) => {
       setLoading(true);
+      console.log(
+        `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`
+      );
       try {
         const response = await apiClient.get(
           `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`

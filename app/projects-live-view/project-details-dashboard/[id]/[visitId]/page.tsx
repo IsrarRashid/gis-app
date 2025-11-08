@@ -43,8 +43,8 @@ const SingleProjectDashboardPage = ({ params }: Props) => {
       }
     };
 
-    handleSubmit(parseInt(id), visitId);
-  }, [id]);
+    if (id && visitId) handleSubmit(parseInt(id), visitId);
+  }, [id, visitId]);
 
   if (isLoading) return <Loader />;
   if (data) return <ProjectDetailsDashboard data={data} />;

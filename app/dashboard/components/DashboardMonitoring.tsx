@@ -7,9 +7,6 @@ import DashboardWrapper from "@/app/components/DashboardWrapper";
 import Loader from "@/app/components/Loader";
 import { setContent } from "@/app/features/content/contentSlice";
 import { setTutorial } from "@/app/features/tutorial/tutorialSlice";
-import useDistrict from "@/app/hooks/useDistrict";
-import useSectors from "@/app/hooks/useSectors";
-import useUsers from "@/app/hooks/useUsers";
 import apiClient from "@/app/services/api-client";
 import { devMap, formatAmountWithCommas } from "@/app/utils";
 import carOutline from "@/public/icons/carOutline.svg";
@@ -119,9 +116,6 @@ const DashboardMonitoring = () => {
   const [role, setRole] = useState<string>("");
   const [departmentId, setDepartmentId] = useState<number>();
   const [pageLoaded, setPageLoaded] = useState<boolean>(false);
-  const { data: districts } = useDistrict();
-  const { data: sectors } = useSectors();
-  const { data: users } = useUsers();
   const dispatch = useDispatch();
   // useAuthorization("dashboard");
 
@@ -368,7 +362,7 @@ const DashboardMonitoring = () => {
         <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
           <CustomModal
             HeaderRightPos={0}
-            HeaderTopPos={0}
+            HeaderTopPos={17}
             buttonColumn="col p-0"
             isFullscreen={true}
             size="xl"
@@ -400,9 +394,6 @@ const DashboardMonitoring = () => {
                 <div className="container-fluid border-0 p-0">
                   {projectsData && filteredCMADPKeys ? (
                     <ProjectsTable
-                      districts={districts}
-                      sectors={sectors}
-                      users={users}
                       keys={filteredCMADPKeys}
                       label={
                         activeFilter === "cmInitiative"
@@ -435,7 +426,7 @@ const DashboardMonitoring = () => {
             <div className="row m-0 d-flex">
               <CustomModal
                 HeaderRightPos={0}
-                HeaderTopPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
@@ -474,9 +465,6 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid border-0 p-0">
                       {projectsData && filteredNoOfProjectsKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           role={role}
                           keys={filteredNoOfProjectsKeys}
                           label="Projects"
@@ -492,8 +480,8 @@ const DashboardMonitoring = () => {
               />
               <CustomModal
                 buttonColumn="col p-0"
-                HeaderRightPos={15}
-                HeaderTopPos={0}
+                HeaderRightPos={0}
+                HeaderTopPos={17}
                 isFullscreen={true}
                 size="xl"
                 modalId={"noOfVisits"}
@@ -531,9 +519,6 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid p-0">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           keys={filteredKeys}
                           label="Visits"
                           projectsData={projectsData}
@@ -553,7 +538,7 @@ const DashboardMonitoring = () => {
         <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
           <CustomModal
             HeaderRightPos={0}
-            HeaderTopPos={0}
+            HeaderTopPos={17}
             buttonColumn="col p-0"
             isFullscreen={true}
             size="xl"
@@ -584,9 +569,6 @@ const DashboardMonitoring = () => {
                 <div className="container-fluid border-0 p-0">
                   {projectsData && filteredKeys ? (
                     <ProjectsTable
-                      districts={districts}
-                      sectors={sectors}
-                      users={users}
                       keys={filteredKeys}
                       label="Good Projects"
                       projectsData={projectsData}
@@ -604,7 +586,7 @@ const DashboardMonitoring = () => {
         <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
           <CustomModal
             HeaderRightPos={0}
-            HeaderTopPos={0}
+            HeaderTopPos={17}
             buttonColumn="col p-0"
             isFullscreen={true}
             size="xl"
@@ -637,9 +619,6 @@ const DashboardMonitoring = () => {
                 <div className="container-fluid border-0 p-0">
                   {projectsData && filteredKeys ? (
                     <ProjectsTable
-                      districts={districts}
-                      sectors={sectors}
-                      users={users}
                       keys={filteredKeys}
                       label="Average Projects"
                       projectsData={projectsData}
@@ -657,7 +636,7 @@ const DashboardMonitoring = () => {
         <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
           <CustomModal
             HeaderRightPos={0}
-            HeaderTopPos={0}
+            HeaderTopPos={17}
             buttonColumn="col p-0"
             isFullscreen={true}
             size="xl"
@@ -688,9 +667,6 @@ const DashboardMonitoring = () => {
                 <div className="container-fluid border-0 p-0">
                   {projectsData && filteredKeys ? (
                     <ProjectsTable
-                      districts={districts}
-                      sectors={sectors}
-                      users={users}
                       keys={filteredKeys}
                       label="Critical Projects"
                       projectsData={projectsData}
@@ -727,7 +703,7 @@ const DashboardMonitoring = () => {
               <div className="row m-0 d-flex">
                 <CustomModal
                   HeaderRightPos={0}
-                  HeaderTopPos={0}
+                  HeaderTopPos={17}
                   buttonColumn="col p-0"
                   isFullscreen={true}
                   size="xl"
@@ -768,9 +744,6 @@ const DashboardMonitoring = () => {
                       <div className="container-fluid border-0 p-0">
                         {projectsData && filteredScheduledAndCompletedKeys ? (
                           <ProjectsTable
-                            districts={districts}
-                            sectors={sectors}
-                            users={users}
                             keys={filteredScheduledAndCompletedKeys}
                             label="Scheduled Visits"
                             projectsData={projectsData}
@@ -786,7 +759,7 @@ const DashboardMonitoring = () => {
                 />
                 <CustomModal
                   HeaderRightPos={0}
-                  HeaderTopPos={0}
+                  HeaderTopPos={17}
                   buttonColumn="col p-0"
                   isFullscreen={true}
                   size="xl"
@@ -827,9 +800,6 @@ const DashboardMonitoring = () => {
                       <div className="container-fluid border-0 p-0">
                         {projectsData && filteredScheduledAndCompletedKeys ? (
                           <ProjectsTable
-                            districts={districts}
-                            sectors={sectors}
-                            users={users}
                             keys={filteredScheduledAndCompletedKeys}
                             label="Completed Visits"
                             projectsData={projectsData}
@@ -850,7 +820,7 @@ const DashboardMonitoring = () => {
           <div className="col p-0">
             <CustomModal
               HeaderRightPos={0}
-              HeaderTopPos={0}
+              HeaderTopPos={17}
               buttonColumn="col p-0"
               isFullscreen={true}
               size="xl"
@@ -879,9 +849,6 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredKeys ? (
                       <ProjectsTable
-                        districts={districts}
-                        sectors={sectors}
-                        users={users}
                         keys={filteredKeys}
                         label="Reports In Progress"
                         projectsData={projectsData}
@@ -920,7 +887,7 @@ const DashboardMonitoring = () => {
           <div className="col p-0">
             <CustomModal
               HeaderRightPos={0}
-              HeaderTopPos={0}
+              HeaderTopPos={17}
               buttonColumn="col p-0"
               isFullscreen={true}
               size="xl"
@@ -947,9 +914,6 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredKeys ? (
                       <ProjectsTable
-                        districts={districts}
-                        sectors={sectors}
-                        users={users}
                         keys={filteredKeys}
                         label="Reports In Progress"
                         projectsData={projectsData}
@@ -968,7 +932,7 @@ const DashboardMonitoring = () => {
             <div className="col p-0">
               <CustomModal
                 HeaderRightPos={0}
-                HeaderTopPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
@@ -995,9 +959,6 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid border-0 p-0">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           keys={filteredKeys}
                           label="Reports In Progress"
                           projectsData={projectsData}
@@ -1017,7 +978,7 @@ const DashboardMonitoring = () => {
             <div className="col p-0">
               <CustomModal
                 HeaderRightPos={0}
-                HeaderTopPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
@@ -1044,9 +1005,6 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid border-0 p-0">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           keys={filteredKeys}
                           label="DGME Reports"
                           projectsData={projectsData}
@@ -1069,7 +1027,7 @@ const DashboardMonitoring = () => {
       )}
 
       <div className={`row m-0 ${lexend.className}`}>
-        <div className="p-1 col-12 col-sm-12 col-md-12 col-lg-7">
+        <div className="p-1 col-12 col-sm-12 col-md-12 col-lg-7 col-xl-8">
           {devMap && data && (
             <MyMap
               data={data}
@@ -1080,7 +1038,7 @@ const DashboardMonitoring = () => {
             />
           )}
         </div>
-        <div className="p-1 col-12 col-sm-12 col-md-12 col-lg-5">
+        <div className="p-1 col-12 col-sm-12 col-md-12 col-lg-5 col-xl-4">
           <FilterButtons
             handleSubmit={handleSubmit}
             setOtherFilters={setOtherFilters}
@@ -1556,7 +1514,7 @@ const DashboardMonitoring = () => {
                 <div className="col-7 col-sm-8 p-1">
                   <CustomModal
                     HeaderRightPos={0}
-                    HeaderTopPos={0}
+                    HeaderTopPos={17}
                     buttonColumn="col p-0"
                     isFullscreen={true}
                     modalId="utilization"
@@ -1637,9 +1595,6 @@ const DashboardMonitoring = () => {
                         <div className="container-fluid border-0 p-0">
                           {projectsData && filteredCMADPKeys ? (
                             <ProjectsTable
-                              districts={districts}
-                              sectors={sectors}
-                              users={users}
                               keys={filteredCMADPKeys}
                               label="Utilization(20% - 80%)"
                               projectsData={utilizationData}
@@ -1724,7 +1679,7 @@ const DashboardMonitoring = () => {
             >
               <CustomModal
                 HeaderRightPos={0}
-                HeaderTopPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 size="xl"
                 modalId="approvedCost"
@@ -1989,7 +1944,7 @@ const DashboardMonitoring = () => {
             </p>
             <CustomModal
               HeaderRightPos={0}
-              HeaderTopPos={0}
+              HeaderTopPos={17}
               buttonColumn="col p-0"
               isFullscreen={true}
               size="xl"
@@ -2017,9 +1972,6 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
-                        districts={districts}
-                        sectors={sectors}
-                        users={users}
                         keys={filteredCMADPKeys}
                         label="Approved Projects"
                         projectsData={projectsData}
@@ -2036,7 +1988,7 @@ const DashboardMonitoring = () => {
             />
             <CustomModal
               HeaderRightPos={0}
-              HeaderTopPos={0}
+              HeaderTopPos={17}
               buttonColumn="col p-0"
               isFullscreen={true}
               size="xl"
@@ -2064,9 +2016,6 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
-                        districts={districts}
-                        sectors={sectors}
-                        users={users}
                         keys={filteredCMADPKeys}
                         label="Unapproved Projects"
                         projectsData={projectsData}
@@ -2083,7 +2032,7 @@ const DashboardMonitoring = () => {
             />
             <CustomModal
               HeaderRightPos={0}
-              HeaderTopPos={0}
+              HeaderTopPos={17}
               buttonColumn="col p-0"
               isFullscreen={true}
               size="xl"
@@ -2111,9 +2060,6 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
-                        districts={districts}
-                        sectors={sectors}
-                        users={users}
                         keys={filteredCMADPKeys}
                         label="Dropped Projects"
                         projectsData={projectsData}
@@ -2131,7 +2077,7 @@ const DashboardMonitoring = () => {
             <div className="row m-0" style={{ gap: 10 }}>
               <CustomModal
                 HeaderRightPos={0}
-                HeaderTopPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
@@ -2159,9 +2105,6 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid border-0 p-0">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           keys={filteredCMADPKeys}
                           label="Umbrella Projects"
                           projectsData={projectsData}
@@ -2178,7 +2121,7 @@ const DashboardMonitoring = () => {
               />
               <CustomModal
                 HeaderRightPos={0}
-                HeaderTopPos={0}
+                HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
@@ -2206,9 +2149,6 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid border-0 p-0">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
-                          districts={districts}
-                          sectors={sectors}
-                          users={users}
                           keys={filteredCMADPKeys}
                           label="Single Projects"
                           projectsData={projectsData}
@@ -2238,7 +2178,7 @@ const DashboardMonitoring = () => {
             <p className="col fw-5 mb-2">Project Cost Slab</p>
             <CustomModal
               HeaderRightPos={0}
-              HeaderTopPos={0}
+              HeaderTopPos={17}
               buttonColumn="col p-0"
               isFullscreen={true}
               size="xl"
@@ -2261,9 +2201,6 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
-                        districts={districts}
-                        sectors={sectors}
-                        users={users}
                         keys={filteredCMADPKeys}
                         label="0.1M to Up to 200M DDC Projects"
                         projectsData={projectsData}
@@ -2280,7 +2217,7 @@ const DashboardMonitoring = () => {
             />
             <CustomModal
               HeaderRightPos={0}
-              HeaderTopPos={0}
+              HeaderTopPos={17}
               buttonColumn="col p-0"
               isFullscreen={true}
               size="xl"
@@ -2303,9 +2240,6 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
-                        districts={districts}
-                        sectors={sectors}
-                        users={users}
                         keys={filteredCMADPKeys}
                         label="Above 200M to Up to 400M DDWP Projects"
                         projectsData={projectsData}
@@ -2322,7 +2256,7 @@ const DashboardMonitoring = () => {
             />
             <CustomModal
               HeaderRightPos={0}
-              HeaderTopPos={0}
+              HeaderTopPos={17}
               buttonColumn="col p-0"
               isFullscreen={true}
               size="xl"
@@ -2345,9 +2279,6 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
-                        districts={districts}
-                        sectors={sectors}
-                        users={users}
                         keys={filteredCMADPKeys}
                         label="Above 400M Up to 800M DDSC Projects"
                         projectsData={projectsData}
@@ -2364,7 +2295,7 @@ const DashboardMonitoring = () => {
             />
             <CustomModal
               HeaderRightPos={0}
-              HeaderTopPos={0}
+              HeaderTopPos={17}
               buttonColumn="col p-0"
               isFullscreen={true}
               size="xl"
@@ -2387,9 +2318,6 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
-                        districts={districts}
-                        sectors={sectors}
-                        users={users}
                         keys={filteredCMADPKeys}
                         label="Above 800M to upto 10B PDWP Projects"
                         projectsData={projectsData}
@@ -2406,7 +2334,7 @@ const DashboardMonitoring = () => {
             />
             <CustomModal
               HeaderRightPos={0}
-              HeaderTopPos={0}
+              HeaderTopPos={17}
               buttonColumn="col p-0"
               isFullscreen={true}
               size="xl"
@@ -2429,9 +2357,6 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
-                        districts={districts}
-                        sectors={sectors}
-                        users={users}
                         keys={filteredCMADPKeys}
                         label="10 Billion or above CDWP Projects"
                         projectsData={projectsData}

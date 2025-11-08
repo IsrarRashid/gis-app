@@ -31,6 +31,7 @@ import ObservationsAndRecommendations from "./components/ObservationsAndRecommen
 import ProgressAnalysis from "./components/ProgressAnalysis";
 import ProjectProfile from "./components/ProjectProfile";
 import Badge from "../ProjectsTable/components/Badge";
+import Loader from "@/app/components/Loader";
 
 interface Props {
   value: number;
@@ -61,8 +62,56 @@ export interface Project {
   smdpIdentifier: string;
 }
 
+const icons = [
+  {
+    icon: mainPage,
+    label: "Main",
+  },
+  {
+    icon: book,
+    label: "Project Profile",
+  },
+  {
+    icon: dotsL,
+    label: "Design & Scope",
+  },
+  {
+    icon: drawer,
+    label: "Work BreakDown Structure",
+  },
+  {
+    icon: levelsUp,
+    label: "Progress Analysis",
+  },
+  {
+    icon: money,
+    label: "Earned Value Analysis",
+  },
+  {
+    icon: star,
+    label: "Financial Analysis",
+  },
+  {
+    icon: starBalloon,
+    label: "Observation & Recommendations",
+  },
+  {
+    icon: warningIcon2,
+    label: "Monitoring Rating Index",
+  },
+  {
+    icon: waveUp2,
+    label: "Stakeholders",
+  },
+  {
+    icon: fileAttach,
+    label: "Annexures",
+  },
+];
+
 const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
   const [projectsData, setProjectsData] = useState<Project | null>(null);
+  const [isLoading, setLoading] = useState(false);
   const [totalValue, setTotalValue] = useState<number>();
   const [gainedValue, setGainedValue] = useState<number>();
   const handleClose = () => setShow(false);
@@ -72,52 +121,19 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
   };
 
   const handleSubmit = async (id: number, visitId: number) => {
+    setLoading(true);
     try {
       const response = await apiClient.get(
         `${PROJECT_API}/${id}?visitId=${visitId}`
       );
       setProjectsData(response.data.data);
+      setLoading(false);
       console.log("reports data", response.data.data);
     } catch (err) {
       console.error("Submission error:", err);
+      setLoading(false);
     }
   };
-
-  const icons = [
-    {
-      icon: mainPage,
-    },
-    {
-      icon: book,
-    },
-    {
-      icon: dotsL,
-    },
-    {
-      icon: drawer,
-    },
-    {
-      icon: levelsUp,
-    },
-    {
-      icon: money,
-    },
-    {
-      icon: star,
-    },
-    {
-      icon: starBalloon,
-    },
-    {
-      icon: warningIcon2,
-    },
-    {
-      icon: waveUp2,
-    },
-    {
-      icon: fileAttach,
-    },
-  ];
 
   const calculatePercentage = (attributes: any, groups: any) => {
     const totalValue =
@@ -145,7 +161,6 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
           }, 0) || 0;
 
     // setGainedValue(gainedValue);
-    return gainedValue && totalValue ? (gainedValue / totalValue) * 100 : 0;
     console.log(
       "gained percentage:",
       gainedValue && totalValue ? (gainedValue / totalValue) * 100 : 0,
@@ -154,9 +169,12 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
       "totalValue:",
       totalValue
     );
+    return gainedValue && totalValue ? (gainedValue / totalValue) * 100 : 0;
   };
 
-  useEffect(() => {}, [projectsData]);
+  useEffect(() => {
+    console.log("projectsData", projectsData);
+  }, [projectsData]);
 
   return (
     <>
@@ -182,106 +200,122 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
           </Button>
         }
         body={
-          <div style={{ width: "100%", height: "627px", overflowY: "scroll" }}>
-            <Accordion>
-              {projectsData &&
-                projectsData.groups.map((group, index) => {
-                  return (
-                    <Accordion.Item
-                      key={group.id}
-                      eventKey={group.name}
-                      className="border-top-0 border-end-0 border-start-0"
-                    >
-                      <Accordion.Header>
-                        <div className="col-auto pe-1">
-                          <Image
-                            src={icons[index]?.icon}
-                            alt="mainPage"
-                            className="img-fluid"
-                            width={40}
-                            height={40}
-                          />
-                        </div>
-                        <div className="col">
-                          <div className="row d-flex flex-column m-0">
-                            <p className="m-0 fs14px ps-0 flex-wrap">
-                              {group.name}
-                            </p>
-                            <p
-                              className="m-0 fs12px ps-0 flex-wrap"
-                              style={{ color: "#83858F" }}
-                            >
-                              {group.description && group.description}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="col fw-bold fs15px pe-3">
-                          <div className="row d-flex m-0">
-                            <ProgressBar
-                              value={Math.round(
-                                calculatePercentage(
-                                  group.attributes,
-                                  group.group
-                                )
-                              )}
+          isLoading ? (
+            <Loader />
+          ) : (
+            <div style={{ width: "100%", height: "627px", overflowY: "auto" }}>
+              <Accordion>
+                {projectsData &&
+                  projectsData.groups.map((group) => {
+                    // Try to find an icon based on group.name
+                    let itemIcon = icons.find(
+                      (icon) => icon.label === group.name.trim()
+                    );
+
+                    // If not found, or if name starts with "Work BreakDown Structure", use a specific one
+                    if (group.name.startsWith("Work BreakDown Structure")) {
+                      itemIcon = icons[3]; // the desired fallback icon
+                    }
+
+                    return (
+                      <Accordion.Item
+                        key={group.id}
+                        eventKey={group.id.toString()}
+                        className="border-top-0 border-end-0 border-start-0"
+                      >
+                        <Accordion.Header>
+                          <div className="col-auto pe-1">
+                            <Image
+                              src={itemIcon?.icon}
+                              alt={itemIcon?.label || ""}
+                              className="img-fluid"
+                              width={40}
+                              height={40}
                             />
-                            <div className="col-1 p-0 pe-4 text-dark">
-                              {Math.round(
-                                calculatePercentage(
-                                  group.attributes,
-                                  group.group
-                                )
-                              )}
-                              %
+                          </div>
+                          <div className="col">
+                            <div className="row d-flex flex-column m-0">
+                              <p className="m-0 fs14px ps-0 flex-wrap">
+                                {group.name}
+                              </p>
+                              <p
+                                className="m-0 fs12px ps-0 flex-wrap"
+                                style={{ color: "#83858F" }}
+                              >
+                                {group.description && group.description}
+                              </p>
                             </div>
                           </div>
-                        </div>
-                        {/* <div className="col-lg-1 col-md-2 col-2 ps-0">
+                          <div className="col fw-bold fs15px pe-3">
+                            <div className="row d-flex m-0">
+                              <ProgressBar
+                                value={Math.round(
+                                  calculatePercentage(
+                                    group.attributes,
+                                    group.group
+                                  )
+                                )}
+                              />
+                              <div className="col-1 p-0 pe-4 text-dark">
+                                {Math.round(
+                                  calculatePercentage(
+                                    group.attributes,
+                                    group.group
+                                  )
+                                )}
+                                %
+                              </div>
+                            </div>
+                          </div>
+                          {/* <div className="col-lg-1 col-md-2 col-2 ps-0">
                       {Math.round(value)}%
                     </div> */}
-                      </Accordion.Header>
-                      <Accordion.Body>
-                        {group.name.toLowerCase().includes("main") ? (
-                          <Main group={group} />
-                        ) : group.name
-                            .toLowerCase()
-                            .includes("project profile") ? (
-                          <ProjectProfile group={group} />
-                        ) : group.name
-                            .toLowerCase()
-                            .includes("design & scope") ? (
-                          <DesignAndScope group={group} />
-                        ) : group.name
-                            .toLowerCase()
-                            .includes("major deliverable") ? (
-                          <MajorDeliverable group={group} />
-                        ) : group.name
-                            .toLowerCase()
-                            .includes("progress analysis") ? (
-                          <ProgressAnalysis group={group} />
-                        ) : group.name
-                            .toLowerCase()
-                            .includes("earned value analysis") ? (
-                          <EarnedValueAnalysis group={group} />
-                        ) : group.name
-                            .toLowerCase()
-                            .includes("financial analysis") ? (
-                          <FinancialAnalysis group={group} />
-                        ) : group.name
-                            .toLowerCase()
-                            .includes("monitoring rating index") ? (
-                          <MonitoringRatingIndex group={group} />
-                        ) : group.name.toLowerCase().includes("observation") ? (
-                          <ObservationsAndRecommendations group={group} />
-                        ) : (
-                          <div>No Data Available</div>
-                        )}
-                      </Accordion.Body>
-                    </Accordion.Item>
-                  );
-                })}
-            </Accordion>
-          </div>
+                        </Accordion.Header>
+                        <Accordion.Body>
+                          {group.name.toLowerCase().includes("main") ? (
+                            <Main group={group} />
+                          ) : group.name
+                              .toLowerCase()
+                              .includes("project profile") ? (
+                            <ProjectProfile group={group} />
+                          ) : group.name
+                              .toLowerCase()
+                              .includes("design & scope") ? (
+                            <DesignAndScope group={group} />
+                          ) : group.name
+                              .toLowerCase()
+                              .includes("major deliverable") ? (
+                            <MajorDeliverable group={group} />
+                          ) : group.name
+                              .toLowerCase()
+                              .includes("progress analysis") ? (
+                            <ProgressAnalysis group={group} />
+                          ) : group.name
+                              .toLowerCase()
+                              .includes("earned value analysis") ? (
+                            <EarnedValueAnalysis group={group} />
+                          ) : group.name
+                              .toLowerCase()
+                              .includes("financial analysis") ? (
+                            <FinancialAnalysis group={group} />
+                          ) : group.name
+                              .toLowerCase()
+                              .includes("monitoring rating index") ? (
+                            <MonitoringRatingIndex group={group} />
+                          ) : group.name
+                              .toLowerCase()
+                              .includes("observation") ? (
+                            <ObservationsAndRecommendations group={group} />
+                          ) : (
+                            <div>No Data Available</div>
+                          )}
+                        </Accordion.Body>
+                      </Accordion.Item>
+                    );
+                  })}
+              </Accordion>
+            </div>
+          )
         }
         modalId={"projectReport"}
       />

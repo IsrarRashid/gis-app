@@ -357,6 +357,7 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
                       className="form-control"
                       id="fromDate"
                       aria-describedby="emailHelp"
+                      max={new Date().toISOString().split("T")[0]}
                     />
                   </div>
                   <div className="col mb-3 p-2">
@@ -369,6 +370,7 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
                       id="toDate"
                       value={toDate}
                       onChange={(e) => setToDate(e.target.value)}
+                      max={new Date().toISOString().split("T")[0]}
                     />
                   </div>
                 </div>

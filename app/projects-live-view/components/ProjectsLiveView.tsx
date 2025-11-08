@@ -48,8 +48,16 @@ const ProjectsLiveView = () => {
                 return numA - numB;
               });
 
-            setProjectsData(sortedData ?? []);
-            console.log("sortedData data", sortedData);
+            // setProjectsData(sortedData ?? []);
+            // console.log("sortedData data", sortedData);
+
+            const specificPoject = response.data.data.find(
+              (project: ProjectsList) => Number(project.gSno) === 309
+            );
+
+            if (specificPoject) {
+              setProjectsData([specificPoject]);
+            }
           } else if (!yearFilter) {
             const response = await apiClient.post(
               `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
@@ -63,8 +71,16 @@ const ProjectsLiveView = () => {
                 return numA - numB;
               });
 
-            setProjectsData(sortedData ?? []);
-            console.log("sortedData data", sortedData);
+            // setProjectsData(sortedData ?? []);
+            // console.log("sortedData data", sortedData);
+
+            const specificPoject = response.data.data.find(
+              (project: ProjectsList) => Number(project.gSno) === 309
+            );
+
+            if (specificPoject) {
+              setProjectsData([specificPoject]);
+            }
           } else {
             const response = await apiClient.post(
               `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
@@ -78,8 +94,16 @@ const ProjectsLiveView = () => {
                 return numA - numB;
               });
 
-            setProjectsData(sortedData ?? []);
-            console.log("sortedData data", sortedData);
+            // setProjectsData(sortedData ?? []);
+            // console.log("sortedData data", sortedData);
+
+            const specificPoject = response.data.data.find(
+              (project: ProjectsList) => Number(project.gSno) === 309
+            );
+
+            if (specificPoject) {
+              setProjectsData([specificPoject]);
+            }
           }
         } else {
           const response = await apiClient.post(
@@ -94,8 +118,16 @@ const ProjectsLiveView = () => {
               return numA - numB;
             });
 
-          setProjectsData(sortedData ?? []);
-          console.log("sortedData data", sortedData);
+          // setProjectsData(sortedData ?? []);
+          // console.log("sortedData data", sortedData);
+
+          const specificPoject = response.data.data.find(
+            (project: ProjectsList) => Number(project.gSno) === 309
+          );
+
+          if (specificPoject) {
+            setProjectsData([specificPoject]);
+          }
         }
       } catch (err) {
         console.error("Submission error:", err);
@@ -143,139 +175,136 @@ const ProjectsLiveView = () => {
 
       <div className="col" style={{ padding: "10px 20px" }}>
         <div className="row">
-          {projectsData
-            ?.slice(12, 20)
-            ?.reverse()
-            .map((project, i) => (
-              <Link
-                href={`/projects-live-view/project-details-dashboard/${project.id}/${project.visitId}`}
-                target="_blank"
-                key={i}
-                className="col-3 ps-0"
-                style={{ marginBottom: "20px", paddingRight: "15.74px" }}
-              >
-                <div className="position-relative">
-                  <div className="row m-0">
-                    <div className="col p-0">
-                      <video
-                        className="w-100 h-100 overflow-hidden"
-                        style={{
-                          objectFit: "cover",
-                          borderTopLeftRadius: "10px",
-                        }}
-                        loop
-                        autoPlay
-                        muted
-                        playsInline
-                      >
-                        <source src="/video/bgVideoNew.mp4" type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                    <div className="col p-0">
-                      <video
-                        className="w-100 h-100 overflow-hidden"
-                        style={{
-                          objectFit: "cover",
-                          borderTopRightRadius: "10px",
-                        }}
-                        loop
-                        autoPlay
-                        muted
-                        playsInline
-                      >
-                        <source src="/video/bgVideoNew.mp4" type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                  </div>
-                  <div className="row m-0">
-                    <div className="col p-0">
-                      <video
-                        className="w-100 h-100 overflow-hidden"
-                        style={{
-                          objectFit: "cover",
-                          borderBottomLeftRadius: "10px",
-                        }}
-                        loop
-                        autoPlay
-                        muted
-                        playsInline
-                      >
-                        <source src="/video/bgVideoNew.mp4" type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                    <div className="col p-0 position-relative">
-                      <video
-                        className="w-100 h-100 overflow-hidden position-absolute"
-                        style={{
-                          objectFit: "cover",
-                          borderBottomRightRadius: "10px",
-                        }}
-                        loop
-                        autoPlay
-                        muted
-                        playsInline
-                      >
-                        <source src="/video/bgVideoNew.mp4" type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-                      <div
-                        className="w-100 h-100 position-absolute d-flex align-items-center justify-content-center fw-bold text-white"
-                        style={{
-                          backgroundColor: "rgba(0, 0, 0, 0.7)",
-                          borderBottomRightRadius: "10px",
-                          zIndex: 2,
-                        }}
-                      >
-                        + 2
-                      </div>
-                    </div>
-                  </div>
-
-                  <span
-                    className="badge bg-color-evaluation-theme-blue position-absolute fs11px fw-5 rounded-pill"
-                    style={{ top: "10px", right: "10px", padding: "6px 10px" }}
-                  >
-                    LIVE
-                  </span>
-                  <div
-                    className="position-absolute text-white"
-                    style={{
-                      bottom: "9px",
-                      left: "0",
-                      textShadow: "0 2px 4px rgba(0,0,0,0.6)",
-                      fontWeight: "600",
-                      zIndex: 2,
-                    }}
-                  >
-                    <p
-                      className="fw-bold fs12-5px m-0"
-                      style={{ paddingLeft: "6px" }}
+          {projectsData?.map((project, i) => (
+            <Link
+              href={`/projects-live-view/project-details-dashboard/${project.id}/${project.visitId}`}
+              target="_blank"
+              key={i}
+              className="col-3 ps-0"
+              style={{ marginBottom: "20px", paddingRight: "15.74px" }}
+            >
+              <div className="position-relative">
+                <div className="row m-0">
+                  <div className="col p-0">
+                    <video
+                      className="w-100 h-100 overflow-hidden"
+                      style={{
+                        objectFit: "cover",
+                        borderTopLeftRadius: "10px",
+                      }}
+                      loop
+                      autoPlay
+                      muted
+                      playsInline
                     >
-                      GS No. {project.gSno}
-                    </p>
-                    <p
-                      className="fw-normal fs11px m-0"
-                      style={{ paddingLeft: "6px" }}
-                    >
-                      {project.projectName}
-                    </p>
+                      <source src="/video/bgVideoNew.mp4" type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
                   </div>
-                  <div
-                    className="position-absolute w-100 bottom-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to bottom, rgba(0, 0, 0, 0) , rgba(0, 0, 0, 1))",
-                      borderBottomRightRadius: "10px",
-                      borderBottomLeftRadius: "10px",
-                      height: "30%",
-                    }}
-                  ></div>
+                  <div className="col p-0">
+                    <video
+                      className="w-100 h-100 overflow-hidden"
+                      style={{
+                        objectFit: "cover",
+                        borderTopRightRadius: "10px",
+                      }}
+                      loop
+                      autoPlay
+                      muted
+                      playsInline
+                    >
+                      <source src="/video/bgVideoNew.mp4" type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
                 </div>
-              </Link>
-            ))}
+                <div className="row m-0">
+                  <div className="col p-0">
+                    <video
+                      className="w-100 h-100 overflow-hidden"
+                      style={{
+                        objectFit: "cover",
+                        borderBottomLeftRadius: "10px",
+                      }}
+                      loop
+                      autoPlay
+                      muted
+                      playsInline
+                    >
+                      <source src="/video/bgVideoNew.mp4" type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                  <div className="col p-0 position-relative">
+                    <video
+                      className="w-100 h-100 overflow-hidden position-absolute"
+                      style={{
+                        objectFit: "cover",
+                        borderBottomRightRadius: "10px",
+                      }}
+                      loop
+                      autoPlay
+                      muted
+                      playsInline
+                    >
+                      <source src="/video/bgVideoNew.mp4" type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                    <div
+                      className="w-100 h-100 position-absolute d-flex align-items-center justify-content-center fw-bold text-white"
+                      style={{
+                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        borderBottomRightRadius: "10px",
+                        zIndex: 2,
+                      }}
+                    >
+                      + 2
+                    </div>
+                  </div>
+                </div>
+
+                <span
+                  className="badge bg-color-evaluation-theme-blue position-absolute fs11px fw-5 rounded-pill"
+                  style={{ top: "10px", right: "10px", padding: "6px 10px" }}
+                >
+                  LIVE
+                </span>
+                <div
+                  className="position-absolute text-white"
+                  style={{
+                    bottom: "9px",
+                    left: "0",
+                    textShadow: "0 2px 4px rgba(0,0,0,0.6)",
+                    fontWeight: "600",
+                    zIndex: 2,
+                  }}
+                >
+                  <p
+                    className="fw-bold fs12-5px m-0"
+                    style={{ paddingLeft: "6px" }}
+                  >
+                    GS No. {project.gSno}
+                  </p>
+                  <p
+                    className="fw-normal fs11px m-0"
+                    style={{ paddingLeft: "6px" }}
+                  >
+                    {project.projectName}
+                  </p>
+                </div>
+                <div
+                  className="position-absolute w-100 bottom-0"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(to bottom, rgba(0, 0, 0, 0) , rgba(0, 0, 0, 1))",
+                    borderBottomRightRadius: "10px",
+                    borderBottomLeftRadius: "10px",
+                    height: "30%",
+                  }}
+                ></div>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </ListWrapper>
