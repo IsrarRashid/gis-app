@@ -91,7 +91,7 @@ const ReportReview = ({
             </span>
           ) : (
             <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              {data?.filter((d) => d.submittedTo === userId).length}
+              {data?.filter((d) => d.submittedTo === userId &&  d.isFocalPerson===true).length}
             </span>
           )}
         </Link>

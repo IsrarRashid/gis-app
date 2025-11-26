@@ -611,11 +611,6 @@ export const displayStatusText = (statusId: number) => {
     : "";
 };
 
-export const isValidDate = (date: string) => {
-  const d = new Date(date);
-  return !isNaN(d.getTime());
-};
-
 export interface Option {
   label: string;
   value: string;
@@ -729,3 +724,63 @@ export const allPagesPath = [
   "/process",
   "/projects-live-view/:path*",
 ];
+
+// for new-visit-plan starts
+
+/**
+ * Converts a date to local date string (YYYY-MM-DD) without timezone offset
+ * This prevents the "day behind" issue when copying dates
+ */
+export const toLocalDateString = (date: Date | string | null): string => {
+  if (!date) return "";
+
+  const d = date instanceof Date ? date : new Date(date);
+
+  // Check if date is valid
+  if (isNaN(d.getTime())) return "";
+
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+/**
+ * Creates a Date object from YYYY-MM-DD string at local midnight
+ * Prevents timezone conversion issues
+ */
+export const fromLocalDateString = (dateString: string): Date | null => {
+  if (!dateString || !isValidDate(dateString)) return null;
+
+  const [year, month, day] = dateString.split("-").map(Number);
+
+  // Create date at local midnight (not UTC midnight)
+  return new Date(year, month - 1, day, 0, 0, 0, 0);
+};
+
+/**
+ * Converts ISO string to local date string
+ */
+export const isoToLocalDateString = (isoString: string): string => {
+  if (!isoString) return "";
+
+  const date = new Date(isoString);
+  return toLocalDateString(date);
+};
+
+/**
+ * Enhanced date validation
+ */
+export const isValidDate = (dateString: string): boolean => {
+  if (!dateString) return false;
+
+  // Check format YYYY-MM-DD
+  const regex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!regex.test(dateString)) return false;
+
+  const date = new Date(dateString);
+  return !isNaN(date.getTime());
+};
+
+// for new-visit-plan ends

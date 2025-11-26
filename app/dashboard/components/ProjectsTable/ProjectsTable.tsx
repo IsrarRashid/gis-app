@@ -14,9 +14,6 @@ import TableData from "@/app/components/Table/TableData";
 import TableHeading from "@/app/components/Table/TableHeading";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import ProjectReportOverviewModal from "@/app/dashboard/components/projectReportOverview/ProjectReportOverviewModal";
-import { District } from "@/app/hooks/useDistrict";
-import { Sector } from "@/app/hooks/useSectors";
-import { User } from "@/app/hooks/useUsers";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import {
   addDayToFormattedDate,
@@ -97,6 +94,7 @@ const ProjectsTable = ({
   allowLink = true,
   role = "",
 }: Props) => {
+  console.log("projectsData", projectsData);
   const [selectedOptions, setSelectedOptions] = useState<OptionType[]>([]);
   const { rowCountOptions, districtOptions, sectorOptions, userOptions } =
     useProjectsTableUtils();

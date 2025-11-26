@@ -162,7 +162,7 @@ const UserDropDown = () => {
             className={`fs12px ${styles.dropdownContent} ${
               show && styles.show
             }`}
-            style={{ zIndex: 3 }}
+            style={{ zIndex: 5 }}
           >
             <div className="row d-flex m-0 pt-1">
               <div className="col-lg-3 col-md-3 col-sm-12 m-auto ms-1 mt-1 mb-1 p-0">

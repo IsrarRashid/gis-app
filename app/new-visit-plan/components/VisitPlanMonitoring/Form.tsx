@@ -1,30 +1,23 @@
 import { TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import DeleteModal from "@/app/components/DeleteModal";
+import CustomCalendar from "@/app/components/Form/CustomCalender";
 import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
-import { Authentication } from "@/app/hooks/useAuthentication";
-import { District } from "@/app/hooks/useDistrict";
-import { Driver } from "@/app/hooks/useDriver";
+import TableData from "@/app/components/Table/TableData";
 import { TempTourPlan } from "@/app/hooks/useTempTourPlan";
-import { Vehicle } from "@/app/hooks/useVehicle";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import { isValidDate } from "@/app/utils";
+import {
+  isoToLocalDateString,
+  isValidDate,
+  toLocalDateString,
+} from "@/app/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DM_Sans } from "next/font/google";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FaPaste } from "react-icons/fa";
 import { MdContentCopy } from "react-icons/md";
 import { toast } from "react-toastify";
 import { z } from "zod";
-import { Calendar } from "react-date-range";
-import CustomCalendar from "@/app/components/Form/CustomCalender";
-import TableData from "@/app/components/Table/TableData";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
 
 export interface TempCopyForm {
   district_Id: number;
@@ -55,38 +48,34 @@ export type COUTempTourPlan = z.infer<typeof schema>; //create or update temp to
 interface Props {
   planData: TempTourPlan;
   index: number;
-  users: Authentication[];
-  drivers: Driver[];
-  vehicles: Vehicle[];
   formsData: COUTempTourPlan[];
   setFormsData: Dispatch<SetStateAction<COUTempTourPlan[]>>;
-  districts: District[];
   handleDelete: (id: number) => void;
   setCopiedFormData: Dispatch<SetStateAction<TempCopyForm | undefined>>;
   copiedFormData: TempCopyForm | undefined;
   setCopiedRowIndex: Dispatch<SetStateAction<number>>;
   copiedRowIndex: number;
+  userOptions: OptionType[];
+  driverOptions: OptionType[];
+  vehicleOptions: OptionType[];
+  districtOptions: OptionType[];
+  typeStatusOptions: OptionType[];
 }
-
-export const typeStatues: OptionType[] = [
-  { value: "0", label: "Monitoring" },
-  { value: "1", label: "Evaluation" },
-  { value: "2", label: "MonitoringAndCMInitiative" },
-];
 
 const Form = ({
   planData,
   index,
-  users,
-  drivers,
-  vehicles,
-  districts,
   setFormsData,
   handleDelete,
   setCopiedFormData,
   copiedFormData,
   setCopiedRowIndex,
   copiedRowIndex,
+  userOptions,
+  driverOptions,
+  vehicleOptions,
+  districtOptions,
+  typeStatusOptions,
 }: Props) => {
   const {
     register,
@@ -126,40 +115,39 @@ const Form = ({
   useEffect(() => {
     const subscription = watch((value) => {
       setFormsData((prev) => {
-        const updated = prev.filter((item) => item?.id !== value.id);
-        return [
-          ...updated,
-          {
-            ...value,
-            id: value.id !== undefined ? Number(value.id) : 0,
-            type: value.type !== undefined ? Number(value.type) : 0,
-            section: value.section !== undefined ? value.section : "",
-            dateFrom:
-              value.dateFrom && isValidDate(value.dateFrom)
-                ? new Date(value.dateFrom)?.toISOString()
-                : "",
-            dateTo:
-              value.dateTo && isValidDate(value.dateTo)
-                ? new Date(value.dateTo)?.toISOString()
-                : "",
-            driverId: value.driverId !== undefined ? value.driverId : 0,
-            vehicalId:
-              value.vehicalId !== undefined ? Number(value.vehicalId) : 0,
-            department_id:
-              value.department_id !== undefined
-                ? Number(value.department_id)
-                : 0,
-            district_Id:
-              value.district_Id !== undefined ? Number(value.district_Id) : 0,
-            projectid:
-              value.projectid !== undefined ? Number(value.projectid) : 0,
-            userId: value.userId !== undefined ? Number(value.userId) : 0,
-          },
-        ];
+        // Convert array to Map for O(1) lookups
+        const formDataMap = new Map(prev.map((item) => [item?.id, item]));
+
+        const updatedFormData: COUTempTourPlan = {
+          id: value.id !== undefined ? Number(value.id) : planData.tempId,
+          type: value.type !== undefined ? Number(value.type) : 0,
+          section: value.section !== undefined ? value.section : "",
+          dateFrom: value.dateFrom ? toLocalDateString(value.dateFrom) : "",
+          dateTo: value.dateTo ? toLocalDateString(value.dateTo) : "",
+          driverId: value.driverId !== undefined ? value.driverId : 0,
+          vehicalId:
+            value.vehicalId !== undefined ? Number(value.vehicalId) : 0,
+          department_id:
+            value.department_id !== undefined ? Number(value.department_id) : 0,
+          district_Id:
+            value.district_Id !== undefined ? Number(value.district_Id) : 0,
+          projectid:
+            value.projectid !== undefined ? Number(value.projectid) : 0,
+          userId: value.userId !== undefined ? Number(value.userId) : 0,
+        };
+
+        // Update or add the form data
+        formDataMap.set(planData.tempId, updatedFormData);
+
+        // Convert Map back to array, filtering out undefined values
+        return Array.from(formDataMap.values()).filter(
+          (item) => item !== undefined
+        );
       });
     });
-    return () => subscription.unsubscribe(); // Clean up on unmount
-  }, [watch, index, setFormsData]);
+
+    return () => subscription.unsubscribe();
+  }, [watch, planData.tempId, setFormsData]);
 
   useEffect(() => {
     if (planData) {
@@ -169,11 +157,11 @@ const Form = ({
       setValue("type", planData.type);
       setValue("userId", planData.userId);
       setValue("section", planData.section ? planData.section : "");
-      setValue(
-        "dateFrom",
-        planData.dateFrom ? planData.dateFrom.split("T")[0] : ""
-      );
-      setValue("dateTo", planData.dateTo ? planData.dateTo.split("T")[0] : "");
+
+      // ✅ FIX: Convert ISO strings to local date strings
+      setValue("dateFrom", isoToLocalDateString(planData.dateFrom));
+      setValue("dateTo", isoToLocalDateString(planData.dateTo));
+
       setValue("driverId", planData.driverId);
       setValue("vehicalId", planData.vehicleId);
       setValue("district_Id", planData.districtId);
@@ -267,34 +255,6 @@ const Form = ({
     }
   };
 
-  const districtOptions: OptionType[] = districts.map((district) => {
-    return {
-      value: district.id.toString(),
-      label: district.districtName,
-    };
-  });
-
-  const userNames: OptionType[] = users.map((user) => {
-    return {
-      value: user.id.toString(),
-      label: user.fullName,
-    };
-  });
-
-  const driverNames: OptionType[] = drivers.map((driver) => {
-    return {
-      value: driver.id.toString(),
-      label: driver.driverName,
-    };
-  });
-
-  const vehicleNumbers: OptionType[] = vehicles.map((vehicle) => {
-    return {
-      value: vehicle.id.toString(),
-      label: vehicle.vehicleNumber,
-    };
-  });
-
   // const dateFrom = watch("dateFrom");
   // const dateTo = watch("dateTo");
   // const driverId = watch("driverId");
@@ -314,13 +274,15 @@ const Form = ({
     } else {
       toast.info("Copied");
       setCopiedRowIndex(index);
-      const values = getValues(); // Get all current form values
+      const values = getValues();
+
+      // ✅ FIX: Store dates as local date strings
       setCopiedFormData({
         district_Id: values.district_Id,
         type: values.type,
         userId: values.userId,
-        dateFrom: values.dateFrom,
-        dateTo: values.dateTo,
+        dateFrom: toLocalDateString(values.dateFrom),
+        dateTo: toLocalDateString(values.dateTo),
         driverId: values.driverId,
         vehicalId: values.vehicalId,
       });
@@ -331,11 +293,16 @@ const Form = ({
     if (copiedFormData) {
       setValue("type", copiedFormData.type);
       setValue("userId", copiedFormData.userId);
-      setValue("dateFrom", `${copiedFormData.dateFrom?.split("T")[0]}`);
-      setValue("dateTo", `${copiedFormData.dateTo?.split("T")[0]}`);
+
+      // ✅ FIX: Use dates directly (already in YYYY-MM-DD format)
+      setValue("dateFrom", copiedFormData.dateFrom);
+      setValue("dateTo", copiedFormData.dateTo);
+
       setValue("driverId", copiedFormData.driverId);
       setValue("vehicalId", copiedFormData.vehicalId);
       setValue("district_Id", copiedFormData.district_Id);
+
+      toast.success("Data pasted successfully");
     }
   };
 
@@ -376,6 +343,7 @@ const Form = ({
               <CustomSelect
                 {...field}
                 options={districtOptions} // must be in format { value, label }
+                closeMenuOnSelect={true}
                 placeholder="Select"
                 // Convert between react-select and raw value
                 value={
@@ -441,18 +409,19 @@ const Form = ({
             render={({ field }) => (
               <CustomSelect
                 {...field}
-                options={typeStatues} // must be in format { value, label }
+                options={typeStatusOptions} // must be in format { value, label }
+                closeMenuOnSelect={true}
                 placeholder="Select"
                 isDisabled={true}
                 // Convert between react-select and raw value
                 value={
-                  typeStatues.find(
+                  typeStatusOptions.find(
                     (opt) =>
                       opt.value ===
                       (field.value != null ? field.value.toString() : "")
                   )
                     ? [
-                        typeStatues.find(
+                        typeStatusOptions.find(
                           (opt) =>
                             opt.value ===
                             (field.value != null ? field.value.toString() : "")
@@ -494,17 +463,18 @@ const Form = ({
             render={({ field }) => (
               <CustomSelect
                 {...field}
-                options={userNames} // must be in format { value, label }
+                options={userOptions} // must be in format { value, label }
+                closeMenuOnSelect={true}
                 placeholder="Select"
                 // Convert between react-select and raw value
                 value={
-                  userNames.find(
+                  userOptions.find(
                     (opt) =>
                       opt.value ===
                       (field.value != null ? field.value.toString() : "")
                   )
                     ? [
-                        userNames.find(
+                        userOptions.find(
                           (opt) =>
                             opt.value ===
                             (field.value != null ? field.value.toString() : "")
@@ -556,7 +526,11 @@ const Form = ({
               <CustomCalendar
                 {...field}
                 value={field.value}
-                onChange={(date) => field.onChange(date.toISOString())}
+                onChange={(date) => {
+                  // ✅ FIX: Store as local date string, not ISO
+                  const localDateString = toLocalDateString(date);
+                  field.onChange(localDateString);
+                }}
               />
             )}
           />
@@ -586,8 +560,12 @@ const Form = ({
             render={({ field }) => (
               <CustomCalendar
                 {...field}
-                value={field.value}
-                onChange={(date) => field.onChange(date.toISOString())}
+                value={field.value ?? null}
+                onChange={(date) => {
+                  // ✅ FIX: Store as local date string, not ISO
+                  const localDateString = toLocalDateString(date);
+                  field.onChange(localDateString);
+                }}
               />
             )}
           />
@@ -617,17 +595,18 @@ const Form = ({
             render={({ field }) => (
               <CustomSelect
                 {...field}
-                options={driverNames} // must be in format { value, label }
+                options={driverOptions} // must be in format { value, label }
+                closeMenuOnSelect={true}
                 placeholder="Select"
                 // Convert between react-select and raw value
                 value={
-                  driverNames.find(
+                  driverOptions.find(
                     (opt) =>
                       opt.value ===
                       (field.value != null ? field.value.toString() : "")
                   )
                     ? [
-                        driverNames.find(
+                        driverOptions.find(
                           (opt) =>
                             opt.value ===
                             (field.value != null ? field.value.toString() : "")
@@ -685,17 +664,18 @@ const Form = ({
             render={({ field }) => (
               <CustomSelect
                 {...field}
-                options={vehicleNumbers} // must be in format { value, label }
+                closeMenuOnSelect={true}
+                options={vehicleOptions} // must be in format { value, label }
                 placeholder="Select"
                 // Convert between react-select and raw value
                 value={
-                  vehicleNumbers.find(
+                  vehicleOptions.find(
                     (opt) =>
                       opt.value ===
                       (field.value != null ? field.value.toString() : "")
                   )
                     ? [
-                        vehicleNumbers.find(
+                        vehicleOptions.find(
                           (opt) =>
                             opt.value ===
                             (field.value != null ? field.value.toString() : "")

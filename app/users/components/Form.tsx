@@ -8,6 +8,7 @@ import CustomSelect, {
 } from "@/app/components/Form/CustomSelect";
 import FormWrapper from "@/app/components/Form/FormWrapper";
 import SubmitButton from "@/app/components/Form/SubmitButton";
+import Spinner from "@/app/components/Spinner";
 import ActionButton from "@/app/components/Table/ActionButton";
 import { Role } from "@/app/hooks/useRoles";
 import apiClient, {
@@ -87,6 +88,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [buttonType, setButtonType] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File>();
+  const [isSubmitting, setSubmitting] = useState<boolean>(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -127,6 +129,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
   const onSubmit = async (formData: User) => {
     console.log("Form Data:", formData);
     console.log(errors);
+    setSubmitting(true);
     try {
       const response = await apiClient({
         method: method,
@@ -136,13 +139,17 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
       console.log("Response:", response);
       setRefresh((prev) => !prev);
       toast.success(method === "POST" ? createdMessage : updatedMessage);
+      setSubmitting(false);
       handleClose();
     } catch (err) {
       console.error("Submission error:", err);
+      setSubmitting(false);
       toast.error(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
           (err as AxiosError<ErrorResponse>).message
       );
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -653,7 +660,9 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                 </div> */}
               </div>
 
-              <SubmitButton>Save User</SubmitButton>
+              <SubmitButton disabled={isSubmitting}>
+                Save User {isSubmitting && <Spinner />}
+              </SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

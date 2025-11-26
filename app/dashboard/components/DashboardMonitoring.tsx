@@ -555,7 +555,7 @@ const DashboardMonitoring = () => {
                   outline="1px solid rgba(50, 179, 52, 0.4)"
                   icon="/icons/doubleTick.svg"
                   value={data ? data.defineLimitProjects : 0}
-                  label="Good Projects"
+                  label="Good Reports"
                   showTides={true}
                   tideOneImage="/images/tideOneGreen.png"
                   tideTwoImage="/images/tideTwoGreen.png"
@@ -605,7 +605,7 @@ const DashboardMonitoring = () => {
                   outline="1px solid rgba(232, 192, 15, 0.4)"
                   icon="/icons/bulb.svg"
                   value={data ? data.needConsidrationProjects : 0}
-                  label="Average Projects"
+                  label="Average Reports"
                   showTides={true}
                   tideOneImage="/images/tideOneYellow.png"
                   tideTwoImage="/images/tideTwoYellow.png"
@@ -653,7 +653,7 @@ const DashboardMonitoring = () => {
                   outline="1px solid rgba(233, 12, 16, 0.4)"
                   icon="/icons/critical.svg"
                   value={data ? data.criticalProjects : 0}
-                  label="Critical Projects"
+                  label="Critical Reports"
                   showTides={true}
                   tideOneImage="/images/tideOneRed.png"
                   tideTwoImage="/images/tideTwoRed.png"
@@ -1511,7 +1511,11 @@ const DashboardMonitoring = () => {
           >
             {departmentId === 0 || departmentId === 1 ? (
               <div className="row d-flex m-0">
-                <div className="col-7 col-sm-8 p-1">
+                <div
+                  className={`${
+                    role === "Special Role" ? "col" : "col-7 col-sm-8"
+                  } p-1`}
+                >
                   <CustomModal
                     HeaderRightPos={0}
                     HeaderTopPos={17}

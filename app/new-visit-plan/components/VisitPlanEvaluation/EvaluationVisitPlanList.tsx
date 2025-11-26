@@ -2,17 +2,15 @@
 import { EVALUATION_TEMP_TOUR_PLAN_API, TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomLabel from "@/app/components/Form/CustomLabel";
-import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
+import CustomSelect, {
+  defaultNegativeNumberOption,
+  OptionType,
+} from "@/app/components/Form/CustomSelect";
 import Loader from "@/app/components/Loader";
 import Spinner from "@/app/components/Spinner";
 import TableHeading from "@/app/components/Table/TableHeading";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
-import useAuthentication from "@/app/hooks/useAuthentication";
-import useDistrict from "@/app/hooks/useDistrict";
-import useDriver from "@/app/hooks/useDriver";
 import useTempTourPlans, { TempTourPlan } from "@/app/hooks/useTempTourPlan";
-import useTourPlans from "@/app/hooks/useTourPlans";
-import useVehicle from "@/app/hooks/useVehicle";
 import apiClient from "@/app/services/api-client";
 import {
   addDayToFormattedDate,
@@ -21,14 +19,12 @@ import {
 } from "@/app/utils";
 import { AxiosError } from "axios";
 import { sort } from "fast-sort";
-import { Inter } from "next/font/google";
 import { useState } from "react";
 import { IoMdInformationCircle } from "react-icons/io";
 import { SingleValue } from "react-select";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
-import Form, { COUTempTourPlan, TempCopyForm, typeStatues } from "./Form";
-const inter = Inter({ subsets: ["latin"] });
+import Form, { COUTempTourPlan, TempCopyForm } from "./Form";
 
 interface CreateVisit {
   id: number;
@@ -57,19 +53,28 @@ interface CreateVisit {
   submitted_to: number | null;
 }
 
-const EvaluationVisitPlanList = ({
-  dashboardType,
-}: {
+interface Props {
+  districtOptions: OptionType[];
+  driverOptions: OptionType[];
+  tourOptions: OptionType[];
+  userOptions: OptionType[];
+  vehicleOptions: OptionType[];
   dashboardType?: string;
-}) => {
+  typeStatusOptions: OptionType[];
+}
+
+const EvaluationVisitPlanList = ({
+  districtOptions,
+  driverOptions,
+  tourOptions,
+  userOptions,
+  vehicleOptions,
+  dashboardType,
+  typeStatusOptions,
+}: Props) => {
   const [refresh, setRefresh] = useState(false);
   const [visitPlanGroup, setVisitPlanGroup] = useState<number>(-1);
   const { data, setData, isLoading } = useTempTourPlans({ refresh });
-  const { data: users } = useAuthentication();
-  const { data: drivers } = useDriver();
-  const { data: vehicles } = useVehicle();
-  const { data: districts } = useDistrict();
-  const { data: tours } = useTourPlans();
   const [copiedRowIndex, setCopiedRowIndex] = useState<number>(-1);
 
   const TEMP_TOUR_PLAN_API_ENDPOINT = dashboardType
@@ -80,8 +85,8 @@ const EvaluationVisitPlanList = ({
   // State for search input
   const [searchTerm, setSearchTerm] = useState("");
 
-  // const [tempJsonDataCreateVisit, setTempJsonDataCreateVisit] =
-  //   useState<CreateVisit[]>();
+  const [tempJsonDataCreateVisit, setTempJsonDataCreateVisit] =
+    useState<CreateVisit[]>();
   // const [tempJsonDataTourPlan, setTempJsonDataTourPlan] =
   //   useState<COUTempTourPlan[]>();
 
@@ -177,7 +182,7 @@ const EvaluationVisitPlanList = ({
       setRefresh((prev) => !prev);
     } catch (err) {
       console.log("err", err);
-      toast.error((err as AxiosError)?.response?.data as string);
+      toast.error((err as AxiosError)?.message);
     }
   };
 
@@ -186,68 +191,68 @@ const EvaluationVisitPlanList = ({
       toast.error("Please select visit plan");
       return;
     }
-    console.log("formsData", formsData);
+
     const filteredFormsData = formsData.filter((form) => form !== undefined);
-    console.log("filteredFormsData", filteredFormsData);
 
     const modifiedFormData: CreateVisit[] = filteredFormsData.map((form) => ({
       id: 0,
       projectId: form.projectid,
       department_Id: form.department_id ?? 0,
       assignedTo: form.userId,
-      status: 0, // or whatever logic you need
-      latitude: "", // default or calculate if needed
-      longitude: "", // default or calculate if needed
+      status: 0,
+      latitude: "",
+      longitude: "",
       vehicleID: form.vehicalId,
       districtID: form.district_Id,
-      eriValue: 0, // provide default or calculate
+      eriValue: 0,
       driverID: form.driverId,
-      fromDate: form.dateFrom,
-      toDate: form.dateTo,
-      createdAt: new Date().toISOString(), // or another appropriate value
-      updatedAt: new Date().toISOString(), // or another appropriate value
+
+      // ✅ FIX: Convert YYYY-MM-DD to ISO string for API
+      fromDate: form.dateFrom
+        ? new Date(form.dateFrom + "T00:00:00").toISOString()
+        : new Date().toISOString(),
+      toDate: form.dateTo
+        ? new Date(form.dateTo + "T00:00:00").toISOString()
+        : new Date().toISOString(),
+
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       complete_at: null,
       submitted_at: null,
       issued_at: null,
       tracking_status: false,
-      isFocalPerson: false,
+      is_Contractor: null,
+      is_ResidentEngineer: null,
+      is_Tpv: null,
       visitPlanGroup,
+      one_pager_status: null,
       cancel_reason: null,
+      op_submitted_at: null,
       submitted_from: null,
       submitted_to: null,
+      isFocalPerson: false,
     }));
 
-    console.log("crete-visit:", modifiedFormData);
-    // setTempJsonDataCreateVisit(modifiedFormData);
     try {
       setSubmitting(true);
-      const response = await apiClient.post(
-        `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-visit`,
-        modifiedFormData
-      );
-      console.log(response);
-      toast.success(response.data.responseMessage);
-      setFormsData([]);
-      setRefresh((prev) => !prev);
+      // const response = await apiClient.post(
+      //   `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-visit`,
+      //   modifiedFormData
+      // );
+      // setTempJsonDataCreateVisit(modifiedFormData);
+      // toast.success(response.data.responseMessage);
+      // setFormsData([]);
+      // setRefresh((prev) => !prev);
     } catch (err) {
-      setSubmitting(false);
-      console.log(err);
+      console.error(err);
       toast.error((err as AxiosError).message);
     } finally {
-      setSubmitting(false); // Always run after try/catch
+      setSubmitting(false);
     }
+
     setFormsData([]);
     setFilteredData([]);
   };
-
-  const defaultNumberOption = { value: "-1", label: "Select" };
-
-  const tourNames: OptionType[] = tours.map((tour) => {
-    return {
-      value: String(tour.id),
-      label: tour.name,
-    };
-  });
 
   const exportToExcel = (data: TempTourPlan[]) => {
     // Prepare data for export
@@ -262,7 +267,7 @@ const EvaluationVisitPlanList = ({
         District: item.district,
         Sectors: item.sectors,
         Cost: item.cost,
-        "Scheme Type": typeStatues.find(
+        "Scheme Type": typeStatusOptions.find(
           (type) => Number(type.value) === item.type
         )?.label,
         "Evaluator Name": item.meOfficerName,
@@ -289,6 +294,7 @@ const EvaluationVisitPlanList = ({
   };
 
   const handleDelete = async (tempId: number) => {
+    setSubmitting(true);
     try {
       await apiClient.delete(`${TEMP_TOUR_PLAN_API}/${tempId}`);
       // remove the deleted item from the data array
@@ -298,9 +304,11 @@ const EvaluationVisitPlanList = ({
       );
       toast.success(deleteMessage);
       console.log("item deleted successfully");
+      setSubmitting(false);
     } catch (err) {
       console.error("failed to delete item", err);
       toast.error((err as AxiosError).message);
+      setSubmitting(false);
     }
   };
 
@@ -328,13 +336,13 @@ const EvaluationVisitPlanList = ({
         <div className="col"></div>
         <div className="col">
           <h4 className="fw-bold mb-3 text-center">Evalution Visit Plan</h4>
-          {/* <p className="fw-bold">temp tour plan</p>
-          <pre>
+          {/* <p className="fw-bold">temp tour plan</p> */}
+          {/* <pre>
             {tempJsonDataTourPlan
               ? JSON.stringify(tempJsonDataTourPlan, null, 2)
               : ""}
-          </pre>
-          <p className="fw-bold">create visit plan</p>
+          </pre> */}
+          {/* <p className="fw-bold">create visit plan</p>
           <pre>
             {tempJsonDataCreateVisit
               ? JSON.stringify(tempJsonDataCreateVisit, null, 2)
@@ -357,8 +365,9 @@ const EvaluationVisitPlanList = ({
         <div className="col-12 col-sm-10 col-md-6 col-lg-8 col-xl-5 mb-3">
           <CustomLabel htmlFor="tours">Visit Plan</CustomLabel>
           <CustomSelect
-            options={[defaultNumberOption, ...tourNames]}
+            options={[defaultNegativeNumberOption, ...tourOptions]}
             id="tours"
+            closeMenuOnSelect={true}
             onChangeSingle={(
               newValue: SingleValue<{ value: string; label: string }>
             ) => {
@@ -432,10 +441,11 @@ const EvaluationVisitPlanList = ({
                   key={d.tempId}
                   planData={d}
                   index={i + 1}
-                  users={users}
-                  drivers={drivers}
-                  vehicles={vehicles}
-                  districts={districts}
+                  userOptions={userOptions}
+                  driverOptions={driverOptions}
+                  vehicleOptions={vehicleOptions}
+                  districtOptions={districtOptions}
+                  typeStatusOptions={typeStatusOptions}
                   formsData={formsData}
                   setFormsData={setFormsData}
                   handleDelete={() => handleDelete(d.tempId)}

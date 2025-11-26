@@ -15,7 +15,7 @@ import search3 from "@/public/icons/search3.svg";
 import Cookies from "js-cookie";
 import { Raleway } from "next/font/google";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsExclamationTriangleFill } from "react-icons/bs";
 import ReportNoting from "../../components/ReportNoting";
 import ViewHistoryOnly from "../../components/ViewHistoryOnly";
@@ -42,6 +42,7 @@ export interface SubmittedReport {
   intiallyUserId: number;
   intiallyUser: string;
   intiallyDesignation: string;
+  isFocalPerson: boolean;
 }
 
 interface Tab {
@@ -65,6 +66,13 @@ const List = () => {
   const [selectedTabLabel, setSelectedLabel] = useState<string>("");
   const [error, setError] = useState("");
   const [isLoading, setLoading] = useState(false);
+
+  // 👇 NEW: Track if initial modal has been opened
+  const hasOpenedInitialModal = useRef(false);
+
+  // 👇 NEW: Track current modal index and auto-open state
+  const [currentAutoOpenIndex, setCurrentAutoOpenIndex] = useState<number>(-1);
+  const [shouldAutoOpen, setShouldAutoOpen] = useState(false);
 
   useEffect(() => {
     console.log("selectedTab", selectedTab);
@@ -291,13 +299,16 @@ const List = () => {
           filteredData = data.filter(
             (d) =>
               d.status === tab.status &&
-              d.submittedFrom === tab.reportSubmittedFrom
+              d.submittedFrom === tab.reportSubmittedFrom &&
+              d.isFocalPerson === true
           );
           count = filteredData.length;
         } else if (tab.reportSubmittedTo) {
           filteredData = data.filter(
             (d) =>
-              d.status === tab.status && d.submittedTo === tab.reportSubmittedTo
+              d.status === tab.status &&
+              d.submittedTo === tab.reportSubmittedTo &&
+              d.isFocalPerson === true
           );
           count = filteredData.length;
         }
@@ -338,6 +349,76 @@ const List = () => {
   }, [tabs, role]);
 
   console.log("tabs", tabs);
+
+  // 👇 NEW: Get comment-eligible reports (where user needs to comment)
+  const getCommentEligibleReports = () => {
+    if (!filteredData || selectedTabLabel === "All") return [];
+
+    return filteredData.filter((d) => d.submittedTo === userId);
+  };
+
+  // 👇 NEW: Auto-open first modal on initial load
+  useEffect(() => {
+    if (
+      !hasOpenedInitialModal.current &&
+      filteredData &&
+      filteredData.length > 0 &&
+      selectedTabLabel !== "All" &&
+      userId
+    ) {
+      const commentEligibleReports = getCommentEligibleReports();
+
+      if (commentEligibleReports.length > 0) {
+        // Wait for DOM to be ready
+        setTimeout(() => {
+          const firstModalButton = document.querySelector(
+            `[data-bs-target="#comment${commentEligibleReports[0].id}"]`
+          ) as HTMLButtonElement;
+
+          if (firstModalButton) {
+            firstModalButton.click();
+            hasOpenedInitialModal.current = true;
+            setCurrentAutoOpenIndex(0);
+          }
+        }, 500);
+      }
+    }
+  }, [filteredData, selectedTabLabel, userId]);
+
+  // 👇 NEW: Handle auto-opening next modal after submission
+  useEffect(() => {
+    if (shouldAutoOpen && currentAutoOpenIndex >= 0) {
+      const commentEligibleReports = getCommentEligibleReports();
+
+      // Check if there's a next modal to open
+      if (currentAutoOpenIndex + 1 < commentEligibleReports.length) {
+        const nextIndex = currentAutoOpenIndex + 1;
+        const nextReport = commentEligibleReports[nextIndex];
+
+        // Wait a bit for the previous modal to close
+        setTimeout(() => {
+          const nextModalButton = document.querySelector(
+            `[data-bs-target="#comment${nextReport.id}"]`
+          ) as HTMLButtonElement;
+
+          if (nextModalButton) {
+            nextModalButton.click();
+            setCurrentAutoOpenIndex(nextIndex);
+            setShouldAutoOpen(false);
+          }
+        }, 300);
+      } else {
+        // No more modals to open
+        setShouldAutoOpen(false);
+        setCurrentAutoOpenIndex(-1);
+      }
+    }
+  }, [shouldAutoOpen, currentAutoOpenIndex, filteredData]);
+
+  // 👇 NEW: Callback function to trigger next modal
+  const handleCommentSubmitted = () => {
+    setShouldAutoOpen(true);
+  };
 
   return (
     <>
@@ -425,14 +506,17 @@ const List = () => {
                       All
                       {data?.filter(
                         (d) =>
-                          d.submittedTo === userId || d.submittedFrom === userId
+                          (d.submittedTo === userId ||
+                            d.submittedFrom === userId) &&
+                          d.isFocalPerson === true
                       ).length > 0 && (
                         <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                           {
                             data?.filter(
                               (d) =>
-                                d.submittedTo === userId ||
-                                d.submittedFrom === userId
+                                (d.submittedTo === userId ||
+                                  d.submittedFrom === userId) &&
+                                d.isFocalPerson === true
                             ).length
                           }
                         </span>
@@ -748,6 +832,9 @@ const List = () => {
                                       directors={directors}
                                       departmentHead={departmentHead}
                                       officers={officers}
+                                      onCommentSubmitted={
+                                        handleCommentSubmitted
+                                      }
                                     />
                                   )}
                               </>

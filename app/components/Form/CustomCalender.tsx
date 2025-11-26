@@ -1,11 +1,11 @@
-import { forwardRef, useState, useEffect, useRef } from "react";
+import { getFormattedDate, fromLocalDateString } from "@/app/utils";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { Calendar, CalendarProps } from "react-date-range";
 import { createPortal } from "react-dom";
+import { MdOutlineDateRange } from "react-icons/md";
+import CustomInput from "./CustomInput";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { MdOutlineDateRange } from "react-icons/md";
-import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
-import CustomInput from "./CustomInput";
 
 interface Props extends Omit<CalendarProps, "date" | "onChange"> {
   value?: string | Date | null;
@@ -18,8 +18,20 @@ const CustomCalendar = forwardRef<HTMLDivElement, Props>(
     const inputRef = useRef<HTMLInputElement | null>(null);
     const popupRef = useRef<HTMLDivElement | null>(null);
 
-    const selectedDate =
-      value instanceof Date ? value : value ? new Date(value) : null;
+    // ✅ FIX: Handle undefined in parseValue
+    const parseValue = (val: string | Date | null | undefined): Date | null => {
+      if (!val) return null; // This handles null, undefined, and empty string
+      if (val instanceof Date) return val;
+
+      // If it's a YYYY-MM-DD string, create date at local midnight
+      if (typeof val === "string") {
+        return fromLocalDateString(val);
+      }
+
+      return null;
+    };
+
+    const selectedDate = parseValue(value);
 
     // Close on outside click
     useEffect(() => {
@@ -38,7 +50,7 @@ const CustomCalendar = forwardRef<HTMLDivElement, Props>(
       };
     }, []);
 
-    // Positioning for portal popup (below input)
+    // Positioning for portal popup
     const getPopupStyle = () => {
       if (!inputRef.current) return {};
       const rect = inputRef.current.getBoundingClientRect();

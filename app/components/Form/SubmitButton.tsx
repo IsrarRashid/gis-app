@@ -12,7 +12,11 @@ const SubmitButton = ({ children, disabled }: Props) => {
       <Button
         className="btn text-white w-100 border-0 fw-bold fs14px text-nowrap"
         style={{
-          backgroundImage: "linear-gradient(to bottom, #0C8CE9 ,#074F83)",
+          background: `${
+            disabled
+              ? "linear-gradient(to bottom, #8cbbde , #6e8799)"
+              : "linear-gradient(to bottom, #0C8CE9 ,#074F83)"
+          }`,
           borderRadius: "10px",
           padding: "11px 16px",
         }}

@@ -15,7 +15,7 @@ export const defaultStyle: CSSProperties = {
   backgroundColor: "#F8FAFC",
   borderBottom: "1.08px solid #CBD5E1",
   padding: "15.17px 26px",
-  zIndex: "2",
+  zIndex: "4",
 };
 
 const TableHeading = ({

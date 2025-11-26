@@ -79,6 +79,7 @@ interface Props {
   directors: Officer[];
   departmentHead: Officer;
   officers: Officer[];
+  onCommentSubmitted?: () => void; //Add callback prop
 }
 
 export interface ReportHistory {
@@ -105,6 +106,7 @@ const ReportNoting = ({
   directors,
   departmentHead,
   officers,
+  onCommentSubmitted,
 }: Props) => {
   const {
     control,
@@ -261,6 +263,11 @@ const ReportNoting = ({
         toast.success("Report Marked Successfully");
         triggerEscapeKeyPress();
         setRefresh((prev) => !prev);
+
+        // 👇 NEW: Call the callback after successful submission
+        if (onCommentSubmitted) {
+          onCommentSubmitted();
+        }
       } catch (err) {
         setSubmitting(false);
         console.log("err", err);

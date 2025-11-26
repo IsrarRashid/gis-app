@@ -2,15 +2,17 @@
 import { EVALUATION_TEMP_TOUR_PLAN_API, TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomLabel from "@/app/components/Form/CustomLabel";
-import CustomSelect, {
-  defaultNegativeNumberOption,
-  OptionType,
-} from "@/app/components/Form/CustomSelect";
+import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import Loader from "@/app/components/Loader";
 import Spinner from "@/app/components/Spinner";
 import TableHeading from "@/app/components/Table/TableHeading";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
+import useAuthentication from "@/app/hooks/useAuthentication";
+import useDistrict from "@/app/hooks/useDistrict";
+import useDriver from "@/app/hooks/useDriver";
 import useTempTourPlans, { TempTourPlan } from "@/app/hooks/useTempTourPlan";
+import useTourPlans from "@/app/hooks/useTourPlans";
+import useVehicle from "@/app/hooks/useVehicle";
 import apiClient from "@/app/services/api-client";
 import {
   addDayToFormattedDate,
@@ -19,12 +21,14 @@ import {
 } from "@/app/utils";
 import { AxiosError } from "axios";
 import { sort } from "fast-sort";
+import { Inter } from "next/font/google";
 import { useState } from "react";
 import { IoMdInformationCircle } from "react-icons/io";
 import { SingleValue } from "react-select";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
-import Form, { COUTempTourPlan, TempCopyForm } from "./Form";
+import Form, { COUTempTourPlan, TempCopyForm, typeStatues } from "./Form";
+const inter = Inter({ subsets: ["latin"] });
 
 interface CreateVisit {
   id: number;
@@ -36,7 +40,7 @@ interface CreateVisit {
   longitude: string | null;
   vehicleID: number;
   districtID: number;
-  mriValue: number | null;
+  eriValue: number | null;
   driverID: number;
   fromDate: string;
   toDate: string;
@@ -46,39 +50,26 @@ interface CreateVisit {
   submitted_at: string | null;
   issued_at: string | null;
   tracking_status: boolean;
-  is_Contractor: number | null;
-  is_ResidentEngineer: number | null;
-  is_Tpv: number | null;
+  isFocalPerson: boolean;
   visitPlanGroup: number;
-  one_pager_status: string | null;
   cancel_reason: string | null;
-  op_submitted_at: string | null;
   submitted_from: number | null;
   submitted_to: number | null;
 }
 
-interface Props {
-  typeStatusOptions: OptionType[];
-  districtOptions: OptionType[];
-  driverOptions: OptionType[];
-  tourOptions: OptionType[];
-  userOptions: OptionType[];
-  vehicleOptions: OptionType[];
-  dashboardType?: string;
-}
-
-const MonitoringVisitPlanList = ({
-  typeStatusOptions,
-  districtOptions,
-  driverOptions,
-  tourOptions,
-  userOptions,
-  vehicleOptions,
+const EvaluationVisitPlanList = ({
   dashboardType,
-}: Props) => {
+}: {
+  dashboardType?: string;
+}) => {
   const [refresh, setRefresh] = useState(false);
   const [visitPlanGroup, setVisitPlanGroup] = useState<number>(-1);
   const { data, setData, isLoading } = useTempTourPlans({ refresh });
+  const { data: users } = useAuthentication();
+  const { data: drivers } = useDriver();
+  const { data: vehicles } = useVehicle();
+  const { data: districts } = useDistrict();
+  const { data: tours } = useTourPlans();
   const [copiedRowIndex, setCopiedRowIndex] = useState<number>(-1);
 
   const TEMP_TOUR_PLAN_API_ENDPOINT = dashboardType
@@ -166,62 +157,27 @@ const MonitoringVisitPlanList = ({
   );
 
   const saveFormsData = async (formsData: COUTempTourPlan[]) => {
-    console.log("formsData before filter:", formsData);
-
-    // ✅ Remove duplicates based on id
-    const uniqueFormsData = Array.from(
-      new Map(
-        formsData
-          .filter((form) => form !== undefined)
-          .map((form) => [form.id, form])
-      ).values()
-    );
-
-    console.log("uniqueFormsData:", uniqueFormsData);
-
-    // ✅ Validate all required fields are present
-    const validFormsData = uniqueFormsData.filter((form) => {
-      return (
-        form.projectid &&
-        form.district_Id &&
-        form.type !== undefined &&
-        form.userId &&
-        form.dateFrom &&
-        form.dateTo &&
-        form.driverId &&
-        form.vehicalId
-      );
-    });
-
-    if (validFormsData.length === 0) {
-      toast.error(
-        "No valid forms to save. Please complete all required fields."
-      );
-      return;
-    }
-
-    if (validFormsData.length < uniqueFormsData.length) {
-      toast.warning(
-        `${
-          uniqueFormsData.length - validFormsData.length
-        } form(s) skipped due to missing required fields.`
-      );
-    }
-
+    console.log("formsData", formsData);
+    const filteredFormsData = formsData.filter((form) => form !== undefined);
+    console.log("filteredFormsData", filteredFormsData);
+    // setTempJsonDataTourPlan(filteredFormsData);
     try {
       const response = await apiClient.post(
         `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-or-update`,
-        validFormsData
+        filteredFormsData
       );
-      console.log(response);
+
       toast.success(response.data.message);
 
-      // ✅ Clear formsData after successful save
-      setFormsData([]);
+      // If backend returns updated records with real IDs, replace state
+      if (response.data.data) {
+        setFormsData(response.data.data); // or reset([...response.data.data])
+      }
+
       setRefresh((prev) => !prev);
     } catch (err) {
-      console.log(err);
-      toast.error((err as AxiosError).message);
+      console.log("err", err);
+      toast.error((err as AxiosError)?.response?.data as string);
     }
   };
 
@@ -230,66 +186,68 @@ const MonitoringVisitPlanList = ({
       toast.error("Please select visit plan");
       return;
     }
-
+    console.log("formsData", formsData);
     const filteredFormsData = formsData.filter((form) => form !== undefined);
+    console.log("filteredFormsData", filteredFormsData);
 
     const modifiedFormData: CreateVisit[] = filteredFormsData.map((form) => ({
       id: 0,
       projectId: form.projectid,
       department_Id: form.department_id ?? 0,
       assignedTo: form.userId,
-      status: 0,
-      latitude: "",
-      longitude: "",
+      status: 0, // or whatever logic you need
+      latitude: "", // default or calculate if needed
+      longitude: "", // default or calculate if needed
       vehicleID: form.vehicalId,
       districtID: form.district_Id,
-      mriValue: 0,
+      eriValue: 0, // provide default or calculate
       driverID: form.driverId,
-
-      // ✅ FIX: Convert YYYY-MM-DD to ISO string for API
-      fromDate: form.dateFrom
-        ? new Date(form.dateFrom + "T00:00:00").toISOString()
-        : new Date().toISOString(),
-      toDate: form.dateTo
-        ? new Date(form.dateTo + "T00:00:00").toISOString()
-        : new Date().toISOString(),
-
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      fromDate: form.dateFrom,
+      toDate: form.dateTo,
+      createdAt: new Date().toISOString(), // or another appropriate value
+      updatedAt: new Date().toISOString(), // or another appropriate value
       complete_at: null,
       submitted_at: null,
       issued_at: null,
       tracking_status: false,
-      is_Contractor: null,
-      is_ResidentEngineer: null,
-      is_Tpv: null,
+      isFocalPerson: false,
       visitPlanGroup,
-      one_pager_status: null,
       cancel_reason: null,
-      op_submitted_at: null,
       submitted_from: null,
       submitted_to: null,
     }));
 
+    console.log("crete-visit:", modifiedFormData);
+    // setTempJsonDataCreateVisit(modifiedFormData);
     try {
       setSubmitting(true);
       const response = await apiClient.post(
         `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-visit`,
         modifiedFormData
       );
+      console.log(response);
       toast.success(response.data.responseMessage);
       setFormsData([]);
       setRefresh((prev) => !prev);
     } catch (err) {
-      console.error(err);
+      setSubmitting(false);
+      console.log(err);
       toast.error((err as AxiosError).message);
     } finally {
-      setSubmitting(false);
+      setSubmitting(false); // Always run after try/catch
     }
-
     setFormsData([]);
     setFilteredData([]);
   };
+
+  const defaultNumberOption = { value: "-1", label: "Select" };
+
+  const tourNames: OptionType[] = tours.map((tour) => {
+    return {
+      value: String(tour.id),
+      label: tour.name,
+    };
+  });
 
   const exportToExcel = (data: TempTourPlan[]) => {
     // Prepare data for export
@@ -304,7 +262,7 @@ const MonitoringVisitPlanList = ({
         District: item.district,
         Sectors: item.sectors,
         Cost: item.cost,
-        "Scheme Type": typeStatusOptions.find(
+        "Scheme Type": typeStatues.find(
           (type) => Number(type.value) === item.type
         )?.label,
         "Evaluator Name": item.meOfficerName,
@@ -369,7 +327,7 @@ const MonitoringVisitPlanList = ({
       <div className="row m-0">
         <div className="col"></div>
         <div className="col">
-          <h4 className="fw-bold mb-3 text-center">Monitoring Visit Plan</h4>
+          <h4 className="fw-bold mb-3 text-center">Evalution Visit Plan</h4>
           {/* <p className="fw-bold">temp tour plan</p>
           <pre>
             {tempJsonDataTourPlan
@@ -386,7 +344,7 @@ const MonitoringVisitPlanList = ({
         <div className="col text-end">
           {formsData.filter((form) => form !== undefined).length > 0 && (
             <Button
-              className="btn bg-color-evaluation-theme-blue rounded-pill text-white fs15px fw-bold"
+              className="btn rounded-pill bg-color-evaluation-theme-blue text-white fs15px fw-bold"
               disabled={isSubmitting}
               onClick={() => createVisit(formsData)}
             >
@@ -399,9 +357,8 @@ const MonitoringVisitPlanList = ({
         <div className="col-12 col-sm-10 col-md-6 col-lg-8 col-xl-5 mb-3">
           <CustomLabel htmlFor="tours">Visit Plan</CustomLabel>
           <CustomSelect
-            options={[defaultNegativeNumberOption, ...tourOptions]}
+            options={[defaultNumberOption, ...tourNames]}
             id="tours"
-            closeMenuOnSelect={true}
             onChangeSingle={(
               newValue: SingleValue<{ value: string; label: string }>
             ) => {
@@ -459,6 +416,7 @@ const MonitoringVisitPlanList = ({
                 <TableHeading name="Date To" className="text-nowrap" />
                 <TableHeading name="Driver Name" className="text-nowrap" />
                 <TableHeading name="Vehicle Number" className="text-nowrap" />
+                <TableHeading name="Is Focal Person" className="text-nowrap" />
                 <TableHeading
                   name="Actions"
                   colSpan={4}
@@ -466,7 +424,6 @@ const MonitoringVisitPlanList = ({
                 />
               </tr>
             </thead>
-
             <tbody>
               {data?.map((d, i) => (
                 <Form
@@ -475,11 +432,10 @@ const MonitoringVisitPlanList = ({
                   key={d.tempId}
                   planData={d}
                   index={i + 1}
-                  userOptions={userOptions}
-                  driverOptions={driverOptions}
-                  vehicleOptions={vehicleOptions}
-                  districtOptions={districtOptions}
-                  typeStatusOptions={typeStatusOptions}
+                  users={users}
+                  drivers={drivers}
+                  vehicles={vehicles}
+                  districts={districts}
                   formsData={formsData}
                   setFormsData={setFormsData}
                   handleDelete={() => handleDelete(d.tempId)}
@@ -516,4 +472,4 @@ const MonitoringVisitPlanList = ({
   );
 };
 
-export default MonitoringVisitPlanList;
+export default EvaluationVisitPlanList;
