@@ -13,7 +13,6 @@ import { Attribute } from "@/app/hooks/useAttributes";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { createdMessage } from "@/app/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -27,10 +26,6 @@ import { PiTrashSimpleBold } from "react-icons/pi";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
 type OptionType = { value: string; label: string };
 
 const schema = z.object({
@@ -193,7 +188,7 @@ const Form = ({ handleClose, attributes, show, setRefreshTabs }: Props) => {
 
   return (
     <div
-      className={`col p-3 bg-white ${plusJakartaSans.className}`}
+      className={`col p-3 bg-white`}
       style={{
         borderRadius: "15px",
         border: "1px solid #E2E4E5",

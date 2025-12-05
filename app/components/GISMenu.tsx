@@ -130,7 +130,7 @@ const GISMenu = ({
       // {
       //   name: "Summary Dashboard",
       //   nameId: "dashboard-summary",
-      //   link: "/dashboard-summary",
+      //   link: "/department-dashboard-summary",
       //   icon: dashboard,
       //   backgroundColor:
       //     "linear-gradient(to bottom right, red ,#E48E6E , yellow)",

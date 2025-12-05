@@ -11,6 +11,7 @@ import {
   oldCmInitiativeFilters,
 } from "../filters";
 import { AutoTextSize } from "auto-text-size";
+import Spinner from "@/app/components/Spinner";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -145,7 +146,7 @@ const FilterButtons = ({
           </Button>
         </div>
         <div className="p-0 col-2 text-center m-auto">
-          {userFiltersData && (
+          {userFiltersData ? (
             <FilterModal
               otherFilters={otherFilters}
               setOtherFilters={setOtherFilters}
@@ -154,6 +155,8 @@ const FilterButtons = ({
               activeFilter={activeFilter}
               userFiltersData={userFiltersData}
             />
+          ) : (
+            <Spinner />
           )}
         </div>
       </div>

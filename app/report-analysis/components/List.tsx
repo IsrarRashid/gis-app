@@ -229,19 +229,18 @@ const List = () => {
 
   return (
     <div
-      className="col px-4 py-3 bg-white"
+      className="col bg-white"
       style={{
         border: "1px solid #E2E4E5",
         borderRadius: "10px",
         height: "calc(100vh - 125px)",
         overflow: "auto",
+        padding: "15px 26px",
       }}
     >
       <div className="row justify-content-end align-items-center">
         <div className="col-auto">
-          <p className="fw-6" style={{ fontSize: "2.25rem" }}>
-            Report Analysis
-          </p>
+          <p className="fs22px fw-8">Report Analysis</p>
         </div>
 
         <div className="col text-end">
@@ -264,7 +263,7 @@ const List = () => {
                     style={{
                       border: "1px solid #CBD5E1",
                     }}
-                    placeholder="Search Reports"
+                    placeholder="Search"
                     value={searchTerm}
                     onChange={handleChange}
                     id="search"

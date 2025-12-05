@@ -1,6 +1,15 @@
-const TestPage = () => {
+import { SECTOR_API } from "../APIs";
+
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API;
+// Disable static generation
+export const dynamic = "force-dynamic";
+
+const TestPage = async () => {
+  const response = await fetch(backendUrl + SECTOR_API);
+  console.log("test server response", response);
   return (
     <>
+      <p>{response.statusText}</p>
       <div
         className="modal fade"
         id="exampleModalToggle"

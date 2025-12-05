@@ -151,6 +151,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
   }, []);
 
   const getDataAgainstFiled = async (id: number, index: number) => {
+    console.log(`${DEPARTMENT_API}/GetDataAgainstField?id=${id}`);
     try {
       const response = await apiClient.get(
         `${DEPARTMENT_API}/GetDataAgainstField?id=${id}`

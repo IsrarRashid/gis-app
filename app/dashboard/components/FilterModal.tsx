@@ -13,6 +13,12 @@ import {
   cmInitiativeFilters,
   oldCmInitiativeFilters,
 } from "../filters";
+import CustomLabel from "@/app/components/Form/CustomLabel";
+import { SingleValue } from "react-select";
+import CustomSelect, {
+  defaultOption,
+  OptionType,
+} from "@/app/components/Form/CustomSelect";
 
 interface Props {
   otherFilters: FilterData[];
@@ -48,39 +54,42 @@ const FilterModal = ({
     index: number
   ) => {
     setOtherFilters((prevFilters) => {
-      // Remove the filter if the selected value is empty
+      let updatedFilters;
+
       if (value === "") {
-        return prevFilters.filter(
+        updatedFilters = prevFilters.filter(
           (filter) => filter.filterIdentifier !== identifier
         );
-      }
-
-      // Check if the filter already exists
-      const existingFilterIndex = prevFilters.findIndex(
-        (filter) => filter.filterIdentifier === identifier
-      );
-
-      if (existingFilterIndex !== -1) {
-        // Update the existing filter
-        const updatedFilters = [...prevFilters];
-        updatedFilters[existingFilterIndex].filterValues = value;
-        return updatedFilters;
       } else {
-        // Add a new filter
-        return [
-          ...prevFilters,
-          { filterIdentifier: identifier, filterValues: value },
-        ];
+        const existingIndex = prevFilters.findIndex(
+          (filter) => filter.filterIdentifier === identifier
+        );
+
+        if (existingIndex !== -1) {
+          updatedFilters = [...prevFilters];
+          updatedFilters[existingIndex].filterValues = value;
+        } else {
+          updatedFilters = [
+            ...prevFilters,
+            { filterIdentifier: identifier, filterValues: value },
+          ];
+        }
       }
+
+      // Update count based on updated filters
+      setCount(updatedFilters.length);
+
+      return updatedFilters;
     });
-    const nonEmptySelects = selectRefs.current.filter(
-      (select) => select && select.value
-    ).length;
-    setCount(nonEmptySelects);
-    setSelectedIndices((prev) => ({
-      ...prev,
-      [index]: value !== "", // True if an option is selected, false if default
-    }));
+
+    // const nonEmptySelects = selectRefs.current.filter(
+    //   (select) => select && select.value
+    // ).length;
+    // setCount(nonEmptySelects);
+    // setSelectedIndices((prev) => ({
+    //   ...prev,
+    //   [index]: value !== "", // True if an option is selected, false if default
+    // }));
   };
 
   // Reset function to clear filters and reset selects
@@ -105,6 +114,15 @@ const FilterModal = ({
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleCustomSelectChange = (
+    identifier: string,
+    selected: SingleValue<OptionType>,
+    index: number
+  ) => {
+    const value = selected?.value || "";
+    handleSelectChange(identifier, value, index);
+  };
 
   return (
     <>
@@ -142,49 +160,76 @@ const FilterModal = ({
               >
                 <h3 className="fw-bold text-center">Filter Menu</h3>
                 <div className="row d-flex mb-3">
-                  {userFiltersData.map((d, i) => (
-                    <div
-                      key={i}
-                      className="col-lg-6 col-md-6 col-sm-12 text-start mb-3"
-                    >
-                      <label htmlFor={d.label} className="form-label">
-                        {d.label}
-                      </label>
-                      <select
-                        id={d.label}
-                        ref={(el) => {
-                          selectRefs.current[i] = el;
-                        }} // Type-safe ref assignment
-                        className="form-select form-select-sm"
-                        aria-label={d.label}
-                        name={d.label}
-                        style={{
-                          backgroundColor: selectedIndices[i]
-                            ? "yellow"
-                            : "white", // Change background color
-                        }}
-                        onChange={(e) =>
-                          handleSelectChange(
-                            d.filterIdentifier,
-                            e.target.value,
-                            i
-                          )
-                        }
-                        value={
-                          otherFilters.find(
-                            (f) => f.filterIdentifier === d.filterIdentifier
-                          )?.filterValues || ""
-                        }
+                  {userFiltersData.map((d, i) => {
+                    const options = d.filterValues.map((f: string) => ({
+                      value: f,
+                      label: f,
+                    }));
+
+                    const selectedValue =
+                      otherFilters.find(
+                        (f) => f.filterIdentifier === d.filterIdentifier
+                      )?.filterValues || "";
+
+                    return (
+                      <div
+                        key={i}
+                        className="col-lg-6 col-md-6 col-sm-12 text-start mb-3"
                       >
-                        <option value="">Select</option>
-                        {d.filterValues.map((f, j) => (
-                          <option key={j} value={f}>
-                            {f}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  ))}
+                        <CustomLabel htmlFor={d.label}>{d.label}</CustomLabel>
+                        <CustomSelect
+                          options={[defaultOption, ...options]}
+                          id={d.label}
+                          closeMenuOnSelect
+                          value={
+                            selectedValue
+                              ? { value: selectedValue, label: selectedValue }
+                              : null
+                          }
+                          onChangeSingle={(newValue) =>
+                            handleCustomSelectChange(
+                              d.filterIdentifier,
+                              newValue,
+                              i
+                            )
+                          }
+                        />
+                        {/* <select
+                          id={d.label}
+                          ref={(el) => {
+                            selectRefs.current[i] = el;
+                          }} // Type-safe ref assignment
+                          className="form-select form-select-sm"
+                          aria-label={d.label}
+                          name={d.label}
+                          style={{
+                            backgroundColor: selectedIndices[i]
+                              ? "yellow"
+                              : "white", // Change background color
+                          }}
+                          onChange={(e) =>
+                            handleSelectChange(
+                              d.filterIdentifier,
+                              e.target.value,
+                              i
+                            )
+                          }
+                          value={
+                            otherFilters.find(
+                              (f) => f.filterIdentifier === d.filterIdentifier
+                            )?.filterValues || ""
+                          }
+                        >
+                          <option value="">Select</option>
+                          {d.filterValues.map((f, j) => (
+                            <option key={j} value={f}>
+                              {f}
+                            </option>
+                          ))}
+                        </select> */}
+                      </div>
+                    );
+                  })}
                   {/* <div className="col-lg-6 col-md-6 col-sm-12 text-start mb-3">
                       <label htmlFor="sectorId" className="form-label">
                         Department

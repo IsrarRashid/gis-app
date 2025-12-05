@@ -90,7 +90,7 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/dashboard",
-    "/dashboard-summary",
+    "/department-dashboard-summary",
     "/vehicle-tracking",
     "/staff-tracking",
     "/sectors",

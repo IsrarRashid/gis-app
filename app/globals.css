@@ -201,6 +201,10 @@ select {
   border-radius: 7px !important;
 }
 
+.fs28px {
+  font-size: 1.75rem !important;
+}
+
 .fs26px {
   font-size: 1.625rem !important;
 }

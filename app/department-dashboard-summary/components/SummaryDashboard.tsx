@@ -2,20 +2,21 @@
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
 import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
+import TableHeading from "@/app/components/Table/TableHeading";
 import useDepartments from "@/app/hooks/useDepartments";
 import useUsers from "@/app/hooks/useUsers";
-import { Manrope, Plus_Jakarta_Sans } from "next/font/google";
+import { ArrowUpRight03Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Manrope } from "next/font/google";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Fragment } from "react";
+import { FaFile } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
-import { RiExpandUpDownFill } from "react-icons/ri";
-import Select, { ActionMeta, SingleValue } from "react-select";
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
+import { PiCircleFill, PiLineVerticalThin } from "react-icons/pi";
+import { ActionMeta, SingleValue } from "react-select";
+import SummaryDetail from "./SummaryDetail";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -23,8 +24,6 @@ const manrope = Manrope({
 });
 
 const SummaryDashboard = () => {
-  const router = useRouter();
-  const [selectedTab, setSelectedTab] = useState(0);
   const { data: users } = useUsers();
   const { data: departments } = useDepartments();
 
@@ -51,14 +50,14 @@ const SummaryDashboard = () => {
     //   selectOptions: [{ option: "" }],
     // },
     {
-      tabName: "Commissioner",
+      tabName: "COMMISSIONER",
       count: 1,
       icon: (
         <Image
           src="/icons/user-5.svg"
           alt="user-4"
-          width={16}
-          height={16}
+          width={30}
+          height={30}
           className="color-sea-blue"
         />
       ),
@@ -66,14 +65,14 @@ const SummaryDashboard = () => {
       selectOptions: commissionerOptions,
     },
     {
-      tabName: "Deputy Commissioner",
+      tabName: "DEPUTY COMMISSIONER",
       count: 1,
       icon: (
         <Image
           src="/icons/user-4.svg"
           alt="user-4"
-          width={16}
-          height={16}
+          width={30}
+          height={30}
           className="color-sea-blue"
         />
       ),
@@ -81,14 +80,14 @@ const SummaryDashboard = () => {
       selectOptions: commissionerOptions,
     },
     {
-      tabName: "Sponsoring Agency",
+      tabName: "SPONSORING AGENCY",
       count: 1,
       icon: (
         <Image
           src="/icons/building-1.svg"
           alt="building-1"
-          width={16}
-          height={16}
+          width={30}
+          height={30}
           className="color-sea-blue"
         />
       ),
@@ -96,14 +95,14 @@ const SummaryDashboard = () => {
       selectOptions: departmentOptions,
     },
     {
-      tabName: "Executing Agency",
+      tabName: "EXECUTING AGENCY",
       count: 1,
       icon: (
         <Image
           src="/icons/building-2.svg"
           alt="building-2"
-          width={16}
-          height={16}
+          width={30}
+          height={30}
           className="color-sea-blue"
         />
       ),
@@ -128,102 +127,107 @@ const SummaryDashboard = () => {
   };
 
   return (
-    <div className={plusJakartaSans.className}>
+    <div
+      className="m-0 bg-white"
+      style={{
+        borderRadius: "15px",
+        border: "1.08px solid #CBD5E1",
+      }}
+    >
       <div
-        style={{
-          padding: "0px 15px",
-          margin: "0px",
-        }}
+        className="row g-2 g-lg-3 mt-0 mx-0 align-items-center"
+        style={{ padding: "15px 26px" }}
       >
-        <div className="row g-2 g-lg-3 mb-3">
-          <div className="col-12 col-sm-6 col-md-6 col-lg-2 ps-0">
+        <div className="col ps-0 mt-0">
+          <div
+            className="row d-flex align-items-center bg-white m-0"
+            style={{
+              borderRadius: "20px",
+            }}
+          >
             <div
-              className="row d-flex align-items-center bg-white m-0"
+              className="col-auto rounded-circle flex items-center justify-center"
               style={{
-                padding: "20px 10px 21px 10px",
-                borderRadius: "20px",
+                background: "#F4F7FE",
+                padding: "13px",
               }}
-              onClick={() => setSelectedTab(0)}
             >
-              <div
-                className="col-auto rounded-circle flex items-center justify-center"
-                style={{
-                  background: "#F4F7FE",
-                  padding: "10px",
-                }}
+              <FaFile size={30} className="color-sea-blue" />
+            </div>
+            <div className="col pe-0" style={{ paddingLeft: "10px" }}>
+              <p
+                className="fw-bold fs12px "
+                style={{ color: "#80889E", marginBottom: "12px" }}
               >
-                <Image
-                  src="/icons/file2.svg"
-                  alt="file2"
-                  width={16}
-                  height={16}
-                  className="color-sea-blue"
-                />
-              </div>
-              <div className="col pe-0" style={{ paddingLeft: "10px" }}>
-                <p
-                  className="fw-5 fs14px"
-                  style={{ color: "#4D5878", marginBottom: "7px" }}
-                >
-                  All
-                </p>
-                <p className="fw-bold fs18px mb-0" style={{ color: "#1F3D57" }}>
-                  4&nbsp;&nbsp;
-                  <span className="fs12px fw-5" style={{ color: "#A3AED0" }}>
-                    Total Visits
-                  </span>
-                </p>
-              </div>
+                TOTAL VISITS
+              </p>
+              <p
+                className="fw-bold fs28px mb-0"
+                style={{ color: "#1F3D57", lineHeight: 1 }}
+              >
+                <span style={{ marginRight: "5px", display: "inline-block" }}>
+                  0
+                </span>
+                {/* &nbsp;&nbsp;
+                <span className="fs12px fw-5" style={{ color: "#A3AED0" }}>
+                  Total Visits
+                </span> */}
+                {/* <HugeiconsIcon icon={ArrowUpRight03Icon} /> */}
+              </p>
             </div>
           </div>
-          {tabs?.map((tab, i) => (
-            <div key={i} className="col-12 col-sm-6 col-md-6 col-lg-2 ps-0">
+        </div>
+
+        {tabs?.map((tab, i) => (
+          <Fragment key={i}>
+            <div key={i} className="col ps-0 mt-0">
               <CustomModal
                 modalId={"tab" + i}
                 showCloseButton={false}
-                buttonColumn="col p-0"
+                buttonColumn="col p-0 cursor-pointer"
                 button={
                   <div
-                    className="row d-flex align-items-center bg-white cursor-pointer m-0"
+                    className={`${manrope.className} row d-flex align-items-center bg-white cursor-pointer m-0`}
                     style={{
-                      padding: "20px 10px 21px 10px",
                       borderRadius: "20px",
-                      boxShadow:
-                        selectedTab === i
-                          ? "0px 0px 0px 2px rgba(12, 140, 233, 0.5)"
-                          : "",
-
-                      transition: "all .3s",
                     }}
-                    onClick={() => setSelectedTab(i)}
                   >
                     <div
                       className="col-auto rounded-circle flex items-center justify-center"
                       style={{
                         background: "#F4F7FE",
-                        padding: "10px",
+                        padding: "13px",
                       }}
                     >
                       {tab.icon}
                     </div>
                     <div className="col pe-0" style={{ paddingLeft: "10px" }}>
                       <p
-                        className="fw-5 fs12px "
-                        style={{ color: "#4D5878", marginBottom: "7px" }}
+                        className="fw-bold fs12px "
+                        style={{ color: "#80889E", marginBottom: "12px" }}
                       >
                         {tab.tabName}
                       </p>
                       <p
-                        className="fw-bold fs18px mb-0"
-                        style={{ color: "#1F3D57" }}
+                        className="fw-bold fs28px mb-0"
+                        style={{ color: "#1F3D57", lineHeight: 1 }}
                       >
-                        {tab.count}&nbsp;&nbsp;
+                        <span
+                          style={{
+                            marginRight: "5px",
+                            display: "inline-block",
+                          }}
+                        >
+                          {tab.count}
+                        </span>
+                        {/* &nbsp;&nbsp;
                         <span
                           className="fs12px fw-5"
                           style={{ color: "#A3AED0" }}
                         >
                           Total Visits
-                        </span>
+                        </span> */}
+                        <HugeiconsIcon icon={ArrowUpRight03Icon} size={21} />
                       </p>
                     </div>
                   </div>
@@ -259,6 +263,7 @@ const SummaryDashboard = () => {
                         {tab.selectLabel}
                       </label>
                       <CustomSelect
+                        closeMenuOnSelect
                         options={tab.selectOptions}
                         id="districtName"
                         onChangeSingle={handleSelectChange}
@@ -292,104 +297,126 @@ const SummaryDashboard = () => {
                 }
               />
             </div>
-          ))}
-          <div className="col-12 col-sm-6 col-md-6 col-lg-2 ps-0">
+
+            {/* Divider: show only if NOT last item */}
+            {/* {i !== tabs.length - 1 && ( */}
+            <div className="col-auto p-0 m-0">
+              <PiLineVerticalThin
+                size={100}
+                style={{
+                  height: "50px",
+                }}
+                color="#EFF0F2"
+              />
+            </div>
+            {/* )} */}
+          </Fragment>
+        ))}
+        <div className="col ps-0 mt-0">
+          <div
+            className="row d-flex align-items-center bg-white cursor-pointer m-0"
+            style={{
+              borderRadius: "20px",
+            }}
+          >
             <div
-              className="row d-flex align-items-center bg-white m-0"
+              className="col-auto rounded-circle flex items-center justify-center"
               style={{
-                padding: "20px 10px 21px 10px",
-                borderRadius: "20px",
+                background: "#F4F7FE",
+                padding: "13px",
               }}
             >
-              <div
-                className="col-auto rounded-circle flex items-center justify-center"
-                style={{
-                  background: "#F4F7FE",
-                  padding: "10px",
-                }}
+              <Image
+                src="/icons/building-2.svg"
+                alt="building-2"
+                width={30}
+                height={30}
+                className="color-sea-blue"
+              />
+            </div>
+            <div className="col pe-0" style={{ paddingLeft: "10px" }}>
+              <p
+                className="fw-bold fs12px "
+                style={{ color: "#80889E", marginBottom: "12px" }}
               >
-                <Image
-                  src="/icons/building-3.svg"
-                  alt="building-3"
-                  width={16}
-                  height={16}
-                  className="color-sea-blue"
-                />
-              </div>
-              <div className="col pe-0" style={{ paddingLeft: "10px" }}>
-                <p
-                  className="fw-5 fs14px"
-                  style={{ color: "#4D5878", marginBottom: "7px" }}
-                >
-                  DGME
-                </p>
-                <p className="fw-bold fs18px mb-0" style={{ color: "#1F3D57" }}>
-                  0&nbsp;&nbsp;
-                  <span className="fs12px fw-5" style={{ color: "#A3AED0" }}>
-                    Total Visits
-                  </span>
-                </p>
-              </div>
+                DGME
+              </p>
+              <p
+                className="fw-bold fs28px mb-0"
+                style={{ color: "#1F3D57", lineHeight: 1 }}
+              >
+                <span style={{ marginRight: "5px", display: "inline-block" }}>
+                  0
+                </span>
+                {/* &nbsp;&nbsp;
+                <span className="fs12px fw-5" style={{ color: "#A3AED0" }}>
+                  Total Visits
+                </span> */}
+                <HugeiconsIcon icon={ArrowUpRight03Icon} size={21} />
+              </p>
             </div>
           </div>
         </div>
+      </div>
+      <div className="col">
         <div
-          className="col bg-white fs21px"
+          className="row d-flex align-items-center m-0"
           style={{
-            border: "1px solid #E2E4E5",
-            borderRadius: "10px",
-            color: "#1E293B",
-            fontWeight: 800,
+            background: "#F8FAFC",
+            padding: "8px 26px",
           }}
         >
-          <div
-            className="row d-flex align-items-center "
-            style={{
-              padding: "17px 26px",
-            }}
-          >
-            <div className="col">
-              <div className="row d-flex align-items-center">
-                <div className="col-auto pe-0">No. of Visits</div>
-                {/* <div className="col">
-                  <span
-                    className="badge rounded-pill"
-                    style={{ border: "1px solid #1C6BA6", color: "#1C6BA6" }}
-                  >
-                    <VscCircleFilled />
-                    &nbsp;665/665 visits
-                  </span>
-                </div> */}
+          <div className="col">
+            <div className="row align-items-center gap-2">
+              <div className="col-auto mb-1 mb-lg-0 p-0">
+                <h4 className="m-0" style={{ fontWeight: 800 }}>
+                  No. of Visits
+                </h4>
+              </div>
+              <div className="col-auto mb-2 mb-lg-0 p-0">
+                <span
+                  className="badge rounded-pill fs13px fw-6"
+                  style={{ color: "#1C6BA6", border: "1.08px solid #1C6BA6" }}
+                >
+                  <div className="d-flex align-items-center gap-2">
+                    <PiCircleFill size={8} style={{ color: "#1C6BA6" }} />
+                    <span>1/1 Visits</span>
+                  </div>
+                </span>
               </div>
             </div>
-            <div className="col">
-              <div className="row gap-2 align-items-center justify-content-end">
-                <div className="col-auto p-0">
-                  <form onSubmit={(e) => e.preventDefault()}>
-                    <div className="input-group">
-                      <div
-                        className="rounded-end rounded-pill text-white shadow-none border-end-0"
-                        style={{
-                          border: "1px solid #CBD5E1",
-                          padding: "4px 0px 8px 17px",
-                        }}
-                      >
-                        <FiSearch size={21} style={{ color: "#475569" }} />
-                      </div>
-                      <input
-                        type="text"
-                        className="form-control border-start-0 rounded-pill rounded-start shadow-none fs15px fw-bold bg-transparent placeholder-bold"
-                        style={{
-                          border: "1px solid #CBD5E1",
-                          color: "#475569",
-                          padding: "10px 17px 10px 8px",
-                        }}
-                        placeholder="Search"
+          </div>
+          <div className="col">
+            <div className="row gap-2 align-items-center justify-content-end">
+              <div className="col-auto p-0">
+                <form onSubmit={(e) => e.preventDefault()}>
+                  <div className="input-group">
+                    <div
+                      className="rounded-end rounded-pill text-white shadow-none border-end-0"
+                      style={{
+                        border: "1px solid #CBD5E1",
+                        padding: "4px 0px 8px 17px",
+                      }}
+                    >
+                      <FiSearch
+                        size={21}
+                        style={{ color: "#475569", marginTop: "5px" }}
                       />
                     </div>
-                  </form>
-                </div>
-                {/* <div className="col-auto p-0">
+                    <input
+                      type="text"
+                      className="form-control border-start-0 rounded-pill rounded-start shadow-none fs15px fw-bold bg-transparent placeholder-bold"
+                      style={{
+                        border: "1px solid #CBD5E1",
+                        color: "#475569",
+                        padding: "10px 17px 10px 8px",
+                      }}
+                      placeholder="Search"
+                    />
+                  </div>
+                </form>
+              </div>
+              {/* <div className="col-auto p-0">
                   <Button
                     className="btn fw-bold bg-color-sea-blue text-white rounded-pill"
                     style={{ padding: "10px 17px" }}
@@ -398,301 +425,96 @@ const SummaryDashboard = () => {
                     District
                   </Button>
                 </div> */}
-              </div>
             </div>
           </div>
+        </div>
 
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th
-                    className="fs15px"
-                    scope="col"
-                    style={{
-                      background: "#F8FAFC",
-                      padding: "15px 26px",
-                      borderBottom: "1px solid #CBD5E1",
-                    }}
-                  >
-                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
-                      <div className="col-auto text-nowrap pe-0">GS No.</div>
-                      <div
-                        className="col"
-                        style={{ padding: "0px 0px 0px 13px" }}
-                      >
-                        <RiExpandUpDownFill size={21} />
-                      </div>
-                    </div>
-                  </th>
-                  <th
-                    className="fs15px"
-                    scope="col"
-                    style={{
-                      background: "#F8FAFC",
-                      padding: "15px 26px",
-                      borderBottom: "1px solid #CBD5E1",
-                    }}
-                  >
-                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
-                      <div className="col-auto text-nowrap pe-0">
-                        Project Name
-                      </div>
-                      <div
-                        className="col"
-                        style={{ padding: "0px 0px 0px 13px" }}
-                      >
-                        <RiExpandUpDownFill size={21} />
-                      </div>
-                    </div>
-                  </th>
-                  <th
-                    className="fs15px"
-                    scope="col"
-                    style={{
-                      background: "#F8FAFC",
-                      padding: "15px 26px",
-                      borderBottom: "1px solid #CBD5E1",
-                    }}
-                  >
-                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
-                      <div className="col-auto text-nowrap pe-0">District</div>
-                      <div
-                        className="col"
-                        style={{ padding: "0px 0px 0px 13px" }}
-                      >
-                        <RiExpandUpDownFill size={21} />
-                      </div>
-                    </div>
-                  </th>
-                  <th
-                    className="fs15px"
-                    scope="col"
-                    style={{
-                      background: "#F8FAFC",
-                      padding: "15px 26px",
-                      borderBottom: "1px solid #CBD5E1",
-                    }}
-                  >
-                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
-                      <div className="col-auto text-nowrap pe-0">
-                        Commissioner Visit
-                      </div>
-                      <div
-                        className="col"
-                        style={{ padding: "0px 0px 0px 13px" }}
-                      >
-                        <RiExpandUpDownFill size={21} />
-                      </div>
-                    </div>
-                  </th>
-                  <th
-                    className="fs15px"
-                    scope="col"
-                    style={{
-                      background: "#F8FAFC",
-                      padding: "15px 26px",
-                      borderBottom: "1px solid #CBD5E1",
-                    }}
-                  >
-                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
-                      <div className="col-auto text-nowrap pe-0">DC Visit</div>
-                      <div
-                        className="col"
-                        style={{ padding: "0px 0px 0px 13px" }}
-                      >
-                        <RiExpandUpDownFill size={21} />
-                      </div>
-                    </div>
-                  </th>
-                  <th
-                    className="fs15px"
-                    scope="col"
-                    style={{
-                      background: "#F8FAFC",
-                      padding: "15px 26px",
-                      borderBottom: "1px solid #CBD5E1",
-                    }}
-                  >
-                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
-                      <div className="col-auto text-nowrap pe-0">
-                        Sponsoring Agency Visit
-                      </div>
-                      <div
-                        className="col"
-                        style={{ padding: "0px 0px 0px 13px" }}
-                      >
-                        <RiExpandUpDownFill size={21} />
-                      </div>
-                    </div>
-                  </th>
-                  <th
-                    className="fs15px"
-                    scope="col"
-                    style={{
-                      background: "#F8FAFC",
-                      padding: "15px 26px",
-                      borderBottom: "1px solid #CBD5E1",
-                    }}
-                  >
-                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
-                      <div className="col-auto text-nowrap pe-0">
-                        Executing Agency Visit
-                      </div>
-                      <div
-                        className="col"
-                        style={{ padding: "0px 0px 0px 13px" }}
-                      >
-                        <RiExpandUpDownFill size={21} />
-                      </div>
-                    </div>
-                  </th>
-                  <th
-                    className="fs15px"
-                    scope="col"
-                    style={{
-                      background: "#F8FAFC",
-                      padding: "15px 26px",
-                      borderBottom: "1px solid #CBD5E1",
-                    }}
-                  >
-                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
-                      <div className="col-auto text-nowrap pe-0">
-                        DGM&E Visit
-                      </div>
-                      <div
-                        className="col"
-                        style={{ padding: "0px 0px 0px 13px" }}
-                      >
-                        <RiExpandUpDownFill size={21} />
-                      </div>
-                    </div>
-                  </th>
-                  <th
-                    className="fs15px"
-                    scope="col"
-                    style={{
-                      background: "#F8FAFC",
-                      padding: "15px 26px",
-                      borderBottom: "1px solid #CBD5E1",
-                    }}
-                  >
-                    <div className="row d-flex flex-nowrap justify-content-center align-items-center">
-                      <div className="col-auto text-nowrap pe-0">
-                        Total Visit
-                      </div>
-                      <div
-                        className="col"
-                        style={{ padding: "0px 0px 0px 13px" }}
-                      >
-                        <RiExpandUpDownFill size={21} />
-                      </div>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th
-                    className="fs15px bg-white"
-                    scope="row"
-                    style={{
-                      padding: "28px 26px",
-                      borderBottom: "1px solid #E2E8F0",
-                    }}
-                  >
-                    706
-                  </th>
-                  <td
-                    className="fs15px bg-white fw-5"
-                    style={{
-                      padding: "13px 26px",
-                      borderBottom: "1px solid #E2E8F0",
-                    }}
-                  >
-                    CM Himmat Card Program for Persons with Disabilities (PWDs)
-                  </td>
-                  <td
-                    className="fs15px bg-white fw-5"
-                    style={{
-                      padding: "13px 26px",
-                      borderBottom: "1px solid #E2E8F0",
-                    }}
-                  >
-                    Sialkot
-                  </td>
-                  <td
-                    className="fw-5 fs15px bg-white color-sea-blue text-decoration-underline text-center cursor-pointer"
-                    style={{
-                      padding: "13px 26px",
-                      borderBottom: "1px solid #E2E8F0",
-                    }}
-                    onClick={() =>
-                      router.push(
-                        "/department-dashboard-summary/summary-detail"
-                      )
+        <div className="table-responsive mb-2">
+          <table className="table table-hover mb-0">
+            <thead>
+              <tr>
+                {[
+                  "GS. No.",
+                  "Project Name",
+                  "District",
+                  "Commissioner Visit",
+                  "Sponsoring Agency Visit",
+                  "Executing Agency Visit",
+                  "DGM&E Visits",
+                  "Total Visit",
+                ].map((d, i) => (
+                  <TableHeading key={i} name={d} textClassName="text-nowrap" />
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <RowHeader>706</RowHeader>
+
+                <TableData>
+                  CM Himmat Card Program for Persons with Disabilities (PWDs)
+                </TableData>
+                <TableData>Sialkot</TableData>
+                <TableData className="text-center">
+                  <CustomModal
+                    modalId={"1"}
+                    size="lg"
+                    showCloseButton={false}
+                    buttonColumn="col p-0 cursor-pointer"
+                    button={
+                      <span className="color-sea-blue text-decoration-underline text-center">
+                        1
+                      </span>
                     }
-                  >
-                    1
-                  </td>
-                  <td
-                    className="fw-5 fs15px bg-white color-sea-blue text-decoration-underline text-center cursor-pointer"
-                    style={{
-                      padding: "13px 26px",
-                      borderBottom: "1px solid #E2E8F0",
-                    }}
-                    onClick={() =>
-                      router.push("/dashboard-summary/summary-detail")
+                    body={<SummaryDetail />}
+                  />
+                </TableData>
+                <TableData className="text-center">
+                  <CustomModal
+                    modalId={"1"}
+                    size="lg"
+                    showCloseButton={false}
+                    buttonColumn="col p-0 cursor-pointer"
+                    button={
+                      <span className="color-sea-blue text-decoration-underline text-center">
+                        1
+                      </span>
                     }
-                  >
-                    1
-                  </td>
-                  <td
-                    className="fw-5 fs15px bg-white color-sea-blue text-decoration-underline text-center cursor-pointer"
-                    style={{
-                      padding: "13px 26px",
-                      borderBottom: "1px solid #E2E8F0",
-                    }}
-                    onClick={() =>
-                      router.push("/dashboard-summary/summary-detail")
+                    body={<SummaryDetail />}
+                  />
+                </TableData>
+                <TableData className="text-center">
+                  <CustomModal
+                    modalId={"1"}
+                    size="lg"
+                    showCloseButton={false}
+                    buttonColumn="col p-0 cursor-pointer"
+                    button={
+                      <span className="color-sea-blue text-decoration-underline text-center">
+                        1
+                      </span>
                     }
-                  >
-                    1
-                  </td>
-                  <td
-                    className="fw-5 fs15px bg-white color-sea-blue text-decoration-underline text-center cursor-pointer"
-                    style={{
-                      padding: "13px 26px",
-                      borderBottom: "1px solid #E2E8F0",
-                    }}
-                    onClick={() =>
-                      router.push("/dashboard-summary/summary-detail")
+                    body={<SummaryDetail />}
+                  />
+                </TableData>
+                <TableData className="text-center">
+                  <CustomModal
+                    modalId={"1"}
+                    size="lg"
+                    showCloseButton={false}
+                    buttonColumn="col p-0 cursor-pointer"
+                    button={
+                      <span className="color-sea-blue text-decoration-underline text-center">
+                        1
+                      </span>
                     }
-                  >
-                    1
-                  </td>
-                  <td
-                    className="fw-5 fs15px bg-white color-sea-blue text-decoration-underline text-center cursor-pointer"
-                    style={{
-                      padding: "13px 26px",
-                      borderBottom: "1px solid #E2E8F0",
-                    }}
-                  >
-                    0
-                  </td>
-                  <td
-                    className="fw-5 fs15px bg-white color-sea-blue text-center"
-                    style={{
-                      padding: "13px 26px",
-                      borderBottom: "1px solid #E2E8F0",
-                    }}
-                  >
-                    4
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                    body={<SummaryDetail />}
+                  />
+                </TableData>
+                <TableData className="text-center">4</TableData>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -700,89 +522,3 @@ const SummaryDashboard = () => {
 };
 
 export default SummaryDashboard;
-
-{
-  /* <div
-          className="row d-flex justify-content-between align-items-center"
-          style={{ padding: "32px" }}
-        >
-          <div className="col-auto">
-            <h5
-              className="m-0"
-              style={{ fontSize: "1.875rem", fontWeight: "800" }}
-            >
-              Summary Dashboard
-            </h5>
-          </div>
-
-          <div className="col-auto my-auto">
-            <div className="row d-flex justify-content-end">
-              <div className="col">
-                <form onSubmit={(e) => e.preventDefault()}>
-                  <div className="input-group">
-                    <button
-                      className="btn rounded-end rounded-pill text-white shadow-none border-end-0 pe-0"
-                      type="submit"
-                      style={{
-                        border: "1px solid rgba(38, 50, 56,.6)",
-                      }}
-                    >
-                      <Image
-                        src={search3}
-                        alt="search3"
-                        width={18}
-                        height={18}
-                      />
-                    </button>
-                    <input
-                      type="text"
-                      className="form-control border-start-0 rounded-pill rounded-start shadow-none fs14px bg-transparent py-2"
-                      style={{
-                        border: "1px solid rgba(38, 50, 56,.6)",
-                        color: "rgba(38, 50, 56,1)",
-                      }}
-                      placeholder="Search"
-                    />
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="row d-flex mb-3">
-          <div className="col">
-            <div className="btn-group d-flex" role="group">
-              {tabs?.map((tab, i) => (
-                <div className="col-auto">
-                  <Button
-                    className={`btn shadow-none rounded-0 fw-bold position-relative border-end-0 border-start-0 ${
-                      selectedTab === i ? "text-dark" : "text-secondary"
-                    }`}
-                    style={{
-                      borderBottom:
-                        selectedTab === i
-                          ? "2px solid #0c8ce9"
-                          : "2px solid #E2E8F0",
-                      padding: "12px 16px",
-                    }}
-                    onClick={() => {
-                      setSelectedTab(i);
-                    }}
-                  >
-                    {tab.tabName} &nbsp;
-                    <span
-                      className="badge rounded-pill color-sea-blue fw-6"
-                      style={{
-                        background: "#EEF2FF",
-                        border: "1px solid #A5B4FC",
-                      }}
-                    >
-                      {tab.count}
-                    </span>
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div> */
-}

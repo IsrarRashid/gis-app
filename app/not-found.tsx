@@ -1,16 +1,10 @@
-import { Plus_Jakarta_Sans } from "next/font/google";
 import BackButton from "./not-authorized/components/BackButton";
 import HomeButton from "./not-authorized/components/HomeButton";
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
 
 const NotFoundPage = () => {
   return (
     <div
-      className={`container ${plusJakartaSans}`}
+      className={`container`}
       style={{
         position: "relative",
         zIndex: "2",

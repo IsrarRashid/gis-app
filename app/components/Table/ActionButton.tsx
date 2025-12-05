@@ -3,7 +3,7 @@ import Button from "../Button";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 
 interface Props {
-  method?: string;
+  method?: "POST" | "PUT" | "PATCH";
   onClick: () => void;
   name: string;
 }

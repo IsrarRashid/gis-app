@@ -66,15 +66,13 @@ const TableHeader = ({
                 className="badge rounded-pill fs13px fw-6"
                 style={{ color: "#1C6BA6", border: "1.08px solid #1C6BA6" }}
               >
-                <div className="row align-items-center">
-                  <div className="col-auto pe-0">
-                    <PiCircleFill size={8} style={{ color: "#1C6BA6" }} />
-                  </div>
-                  <div className="col ps-1">
+                <div className="d-flex align-items-center gap-2">
+                  <PiCircleFill size={8} style={{ color: "#1C6BA6" }} />
+                  <span>
                     {searchTerm || status ? filteredData.length : data?.length}/
                     {searchTerm || status ? filteredData.length : data?.length}{" "}
                     {status} {heading}
-                  </div>
+                  </span>
                 </div>
               </span>
             </div>

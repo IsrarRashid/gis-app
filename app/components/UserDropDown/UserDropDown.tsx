@@ -1,8 +1,9 @@
 "use client";
+import { FEEDBACK_API } from "@/app/APIs";
+import { Feedback } from "@/app/feedback/components/Feedback";
+import apiClient from "@/app/services/api-client";
 import downArrowBold from "@/public/icons/downArrowBold.svg";
-import filterBlack2 from "@/public/icons/filterBlack2.svg";
 import feedback from "@/public/icons/feedback.svg";
-import settingBlack from "@/public/icons/settingBlack.svg";
 import signOut from "@/public/icons/signOut.svg";
 import Cookies from "js-cookie";
 import Image from "next/image";
@@ -10,12 +11,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Button from "../Button";
-import styles from "./UserDropDown.module.css";
-import { useDispatch } from "react-redux";
-import apiClient from "@/app/services/api-client";
-import { FEEDBACK_API } from "@/app/APIs";
-import { Feedback } from "@/app/feedback/components/Feedback";
 import Spinner from "../Spinner";
+import ChangePasswordForm from "./ChangePasswordForm";
+import styles from "./UserDropDown.module.css";
 
 const UserDropDown = () => {
   const [show, setShow] = useState(false);
@@ -220,6 +218,10 @@ const UserDropDown = () => {
           />
           Settings
         </Link> */}
+            <div className="pt-0 pb-0 ps-3 pe-3">
+              <div className="dropdown-divider m-0"></div>
+            </div>
+            <ChangePasswordForm userName={userName} />
             <div className="pt-0 pb-0 ps-3 pe-3">
               <div className="dropdown-divider m-0"></div>
             </div>

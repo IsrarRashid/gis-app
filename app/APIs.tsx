@@ -1,3 +1,4 @@
+export const AUTH_API = `/api/Authentication`;
 export const LOGIN_API = `/api/Authentication/login`;
 export const REGISTER_USER_API = `/api/Authentication/register`;
 export const DELETE_USER_API = `/api/Authentication/DeleteUser`;

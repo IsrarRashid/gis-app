@@ -204,15 +204,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                     transition={{ duration: 0.2 }}
                   >
                     <RowHeader>{d.id}</RowHeader>
-                    <TableData>
-                      {d.id === 1
-                        ? d.name
-                        : d.id === 5
-                        ? "jkl asjdlf asdjl fkasjfdl asdklfjkasjkdf jsljdfijasjflj asldfjilas jidfjialsdfl ajs dfjlasjdlifjasj fjasldfjlasjdlfjlasjifjlasijdfjasljfljasiljflasjdlfjiasdf"
-                        : d.id === 20
-                        ? "asdf asjdlf asdjl fkasjfdl asdklfjkasjkdf jsljdfijasjflj asldfjilas jidfjialsdfl ajs dfjlasjdlifjasj fjasldfjlasjdlfjlasjifjlasijdfjasljfljasiljflasjdlfjiasdfkladjfkl asjdlf asdjl fkasjfdl asdklfjkasjkdf jsljdfijasjflj asldfjilas jidfjialsdfl ajs dfjlasjdlifjasj fjasldfjlasjdlfjlasjifjlasijdfjasljfljasiljflasjdlfjiasdfkladjfkl asjdlf asdjl fkasjfdl asdklfjkasjkdf jsljdfijasjflj asldfjilas jidfjialsdfl ajs dfjlasjdlifjasj fjasldfjlasjdlfjlasjifjlasijdfjasljfljasiljflasjdlfjiasdfkladjfkl asjdlf asdjl fkasjfdl asdklfjkasjkdf jsljdfijasjflj asldfjilas jidfjialsdfl ajs dfjlasjdlifjasj fjasldfjlasjdlfjlasjifjlasijdfjasljfljasiljflasjdlfjiasdf"
-                        : d.name}
-                    </TableData>
+                    <TableData>{d.name}</TableData>
                     <TableData>{d.description}</TableData>
                     <TableData>{getParentSector(d.parentId, data)}</TableData>
                     <TableData className="text-center">{d.sortId}</TableData>

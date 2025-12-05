@@ -70,9 +70,16 @@ const Login = () => {
 
   const onSubmit = async (formData: Login) => {
     console.log("Form Data:", formData);
+    console.log("API call", process.env.NEXT_PUBLIC_BACKEND_API + LOGIN_API);
+    console.log("API call", LOGIN_API);
+
     try {
       setSubmitting(true);
-      const response = await axios.post<Props>(LOGIN_API, formData);
+      const response = await axios.post<Props>(
+        LOGIN_API,
+        // process.env.NEXT_PUBLIC_BACKEND_API + LOGIN_API,
+        formData
+      );
 
       if (response.data.responseCode === 200) {
         console.log("responseCode", response.data.responseCode);

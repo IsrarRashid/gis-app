@@ -86,7 +86,7 @@ export function formatDateTime(dateTimeString: string, formatType: string) {
   }
 }
 
-export const devMap = true;
+export const devMap = false;
 
 // "yyyy-MM-dd" to the desired format "dd-MMM-yyyy"
 export function formatHHLStringDate(inputDate: string): string {
@@ -687,7 +687,7 @@ export function getColor(
 
 export const allPagesPath = [
   "/dashboard",
-  "/dashboard-summary",
+  "/department-dashboard-summary",
   "/vehicle-tracking",
   "/staff-tracking",
   "/sectors",
