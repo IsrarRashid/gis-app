@@ -21,14 +21,12 @@ import {
 } from "@/app/utils";
 import { AxiosError } from "axios";
 import { sort } from "fast-sort";
-import { Inter } from "next/font/google";
 import { useState } from "react";
 import { IoMdInformationCircle } from "react-icons/io";
 import { SingleValue } from "react-select";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import Form, { COUTempTourPlan, TempCopyForm, typeStatues } from "./Form";
-const inter = Inter({ subsets: ["latin"] });
 
 interface CreateVisit {
   id: number;

@@ -38,6 +38,7 @@ import useDistrict from "@/app/hooks/useDistrict";
 const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
+  preload: false,
 });
 
 const inter = Inter({ subsets: ["latin"] });

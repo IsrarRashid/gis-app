@@ -2,36 +2,24 @@
 import { GET_USER_PROJECTS_API } from "@/app/APIs";
 import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
 import Pagination from "@/app/components/Table/Pagination";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/Table/TableHeading";
+import TableWrapper from "@/app/components/Table/TableWrapper";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import { Project } from "@/app/hooks/useProjects";
 import useSectors from "@/app/hooks/useSectors";
 import useSuperGroups from "@/app/hooks/useSuperGroups";
 import AssignUserForm from "@/app/projects/components/AssignUserForm";
+import StatusBadge from "@/app/projects/components/StatusBadge";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getName } from "@/app/utils";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import calender from "../../../public/icons/calendar.svg";
-import cancel from "../../../public/icons/cancel.svg";
-import clock from "../../../public/icons/clock.svg";
-import complete from "../../../public/icons/complete.svg";
 import GroupingForm from "./GroupingForm";
-import RowHeader from "@/app/components/Table/RowHeader";
-import TableData from "@/app/components/Table/TableData";
-import StatusBadge from "@/app/projects/components/StatusBadge";
-import TableWrapper from "@/app/components/Table/TableWrapper";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const inter = Inter({ subsets: ["latin"] });
 
 interface ListProps {
   refresh: boolean;

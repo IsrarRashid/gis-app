@@ -19,7 +19,7 @@ import { ProjectsList } from "./ProjectsTable/ProjectsTable";
 import { data, tabs } from "./reportAnalysisData";
 import TimeSpentOnProjectSiteFilterMenu from "./TimeSpentOnProjectSiteFilterMenu";
 
-const dmSans = DM_Sans({ subsets: ["latin"] });
+const dmSans = DM_Sans({ subsets: ["latin"], preload: false });
 
 interface StartEndLatLng {
   visit: {

@@ -3,6 +3,7 @@ import { VISIT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
 import DeleteModal from "@/app/components/DeleteModal";
+import DisplayStatusText from "@/app/components/DisplayStatusText";
 import Loader from "@/app/components/Loader";
 import TableHeading from "@/app/components/Table/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
@@ -10,10 +11,17 @@ import useDriver from "@/app/hooks/useDriver";
 import useProjects from "@/app/hooks/useProjects";
 import useVehicle from "@/app/hooks/useVehicle";
 import useVisits, { Visit } from "@/app/hooks/useVisits";
+import {
+  APPROVED,
+  CANCELLED,
+  COMPLETED,
+  SCHEDULED,
+  SUBMITTED,
+} from "@/app/report-history/statuses";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getFormattedDate, getName } from "@/app/utils";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
@@ -23,19 +31,6 @@ import cancel from "../../../public/icons/cancel.svg";
 import clock from "../../../public/icons/clock.svg";
 import complete from "../../../public/icons/complete.svg";
 import Form from "./Form";
-import {
-  APPROVED,
-  CANCELLED,
-  COMPLETED,
-  SCHEDULED,
-  SUBMITTED,
-} from "@/app/report-history/statuses";
-import DisplayStatusText from "@/app/components/DisplayStatusText";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
 
 const inter = Inter({ subsets: ["latin"] });
 

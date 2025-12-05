@@ -1,7 +1,9 @@
 import { TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import DeleteModal from "@/app/components/DeleteModal";
+import CustomCalendar from "@/app/components/Form/CustomCalender";
 import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
+import TableData from "@/app/components/Table/TableData";
 import { Authentication } from "@/app/hooks/useAuthentication";
 import { District } from "@/app/hooks/useDistrict";
 import { Driver } from "@/app/hooks/useDriver";
@@ -10,21 +12,12 @@ import { Vehicle } from "@/app/hooks/useVehicle";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { isValidDate } from "@/app/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DM_Sans } from "next/font/google";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FaPaste } from "react-icons/fa";
 import { MdContentCopy } from "react-icons/md";
 import { toast } from "react-toastify";
 import { z } from "zod";
-import { Calendar } from "react-date-range";
-import CustomCalendar from "@/app/components/Form/CustomCalender";
-import TableData from "@/app/components/Table/TableData";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
 
 export interface TempCopyForm {
   district_Id: number;

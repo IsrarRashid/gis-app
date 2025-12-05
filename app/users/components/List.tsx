@@ -7,30 +7,21 @@ import useAuthentication, {
 } from "@/app/hooks/useAuthentication";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { sort } from "fast-sort";
-import { DM_Sans, Inter } from "next/font/google";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Form from "./Form";
 // import GroupingForm from "./GroupingForm";
+import Avatar from "@/app/components/Avatar";
 import Loader from "@/app/components/Loader";
+import Actions from "@/app/components/Table/Actions";
 import Pagination from "@/app/components/Table/Pagination";
-import TableHeader from "@/app/components/Table/TableHeader";
-import useRoles from "@/app/hooks/useRoles";
-import GroupingForm from "./GroupingForm";
-import Image from "next/image";
 import RowHeader from "@/app/components/Table/RowHeader";
 import TableData from "@/app/components/Table/TableData";
-import Link from "next/link";
-import Actions from "@/app/components/Table/Actions";
-import Avatar from "@/app/components/Avatar";
+import TableHeader from "@/app/components/Table/TableHeader";
 import TableWrapper from "@/app/components/Table/TableWrapper";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const inter = Inter({ subsets: ["latin"] });
+import useRoles from "@/app/hooks/useRoles";
+import Link from "next/link";
+import GroupingForm from "./GroupingForm";
 
 interface ListProps {
   refresh: boolean;
