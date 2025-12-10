@@ -1,11 +1,11 @@
 // app/api/sectors/route.ts
 import { NextRequest, NextResponse } from "next/server";
-// import { cookies } from "next/headers";
+import { cookies } from "next/headers";
 
 export async function GET(req: NextRequest) {
   try {
-    // const token = cookies().get("token")?.value;
-    const token = req.cookies.get("token")?.value;
+    const token = cookies().get("token")?.value;
+    // const token = req.cookies.get("token")?.value;
     console.log("token", token);
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

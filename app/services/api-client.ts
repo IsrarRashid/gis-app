@@ -9,7 +9,7 @@ export interface ErrorResponse {
 }
 
 export default axios.create({
-  withCredentials: true,
+  // withCredentials: true,
   // baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
   headers: {
     Authorization: `Bearer ${token}`,

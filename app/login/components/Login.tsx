@@ -76,8 +76,8 @@ const Login = () => {
     try {
       setSubmitting(true);
       const response = await axios.post<Props>(
-        LOGIN_API,
-        // process.env.NEXT_PUBLIC_BACKEND_API + LOGIN_API,
+        // LOGIN_API,
+        process.env.NEXT_PUBLIC_BACKEND_API + LOGIN_API,
         formData
       );
 

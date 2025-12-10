@@ -1,97 +1,10 @@
-import { SECTOR_API } from "../APIs";
-
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API;
-// Disable static generation
 export const dynamic = "force-dynamic";
 
 const TestPage = async () => {
-  const response = await fetch(backendUrl + SECTOR_API);
-  console.log("test server response", response);
-  return (
-    <>
-      <p>{response.statusText}</p>
-      <div
-        className="modal fade"
-        id="exampleModalToggle"
-        aria-hidden="true"
-        aria-labelledby="exampleModalToggleLabel"
-        tabIndex={-1}
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalToggleLabel">
-                Modal 1
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              Show a second modal and hide this one with the button below.
-            </div>
-            <div className="modal-footer">
-              <button
-                className="btn btn-primary"
-                data-bs-target="#exampleModalToggle2"
-                data-bs-toggle="modal"
-                data-bs-dismiss="modal"
-              >
-                Open second modal
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="modal fade"
-        id="exampleModalToggle2"
-        aria-hidden="true"
-        aria-labelledby="exampleModalToggleLabel2"
-        tabIndex={-1}
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalToggleLabel2">
-                Modal 2
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              Hide this modal and show the first with the button below.
-            </div>
-            <div className="modal-footer">
-              <button
-                className="btn btn-primary"
-                data-bs-target="#exampleModalToggle"
-                data-bs-toggle="modal"
-                data-bs-dismiss="modal"
-              >
-                Back to first
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <a
-        className="btn btn-primary"
-        data-bs-toggle="modal"
-        href="#exampleModalToggle"
-        role="button"
-      >
-        Open first modal
-      </a>
-    </>
-  );
+  const response = await fetch("/api/v1/sectors", { cache: "no-store" });
+
+  const text = await response.text();
+  return <p>{text}</p>;
 };
 
 export default TestPage;

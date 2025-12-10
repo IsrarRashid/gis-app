@@ -226,7 +226,7 @@ const MonitoringVisitPlanList = ({
   };
 
   const createVisit = async (formsData: COUTempTourPlan[]) => {
-    if (!visitPlanGroup || visitPlanGroup === -1) {
+    if (visitPlanGroup === -1) {
       toast.error("Please select visit plan");
       return;
     }
@@ -248,11 +248,12 @@ const MonitoringVisitPlanList = ({
 
       // ✅ FIX: Convert YYYY-MM-DD to ISO string for API
       fromDate: form.dateFrom
-        ? new Date(form.dateFrom + "T00:00:00").toISOString()
-        : new Date().toISOString(),
+        ? `${form.dateFrom}T00:00:00`
+        : new Date().toISOString().split("Z")[0], // still safe
+
       toDate: form.dateTo
-        ? new Date(form.dateTo + "T00:00:00").toISOString()
-        : new Date().toISOString(),
+        ? `${form.dateTo}T00:00:00`
+        : new Date().toISOString().split("Z")[0],
 
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -279,16 +280,15 @@ const MonitoringVisitPlanList = ({
       );
       toast.success(response.data.responseMessage);
       setFormsData([]);
+      setFilteredData([]);
       setRefresh((prev) => !prev);
+      console.log("response create visit", response);
     } catch (err) {
-      console.error(err);
+      console.error("err", err);
       toast.error((err as AxiosError).message);
     } finally {
       setSubmitting(false);
     }
-
-    setFormsData([]);
-    setFilteredData([]);
   };
 
   const exportToExcel = (data: TempTourPlan[]) => {

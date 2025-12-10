@@ -22,8 +22,12 @@ const DashboardTypeFilter = () => {
   );
 
   useEffect(() => {
-    if (dashboardType) setSelectedButton(2);
-  }, []);
+    if (!dashboardType) {
+      setSelectedButton(1);
+    } else {
+      setSelectedButton(2);
+    }
+  }, [dashboardType]);
 
   return (
     <div

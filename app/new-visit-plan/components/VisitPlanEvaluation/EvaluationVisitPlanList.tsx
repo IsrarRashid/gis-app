@@ -187,13 +187,13 @@ const EvaluationVisitPlanList = ({
   };
 
   const createVisit = async (formsData: COUTempTourPlan[]) => {
-    if (!visitPlanGroup || visitPlanGroup === -1) {
+    if (visitPlanGroup === -1) {
       toast.error("Please select visit plan");
       return;
     }
 
     const filteredFormsData = formsData.filter((form) => form !== undefined);
-
+    console.log("filteredFormsData", filteredFormsData);
     const modifiedFormData: CreateVisit[] = filteredFormsData.map((form) => ({
       id: 0,
       projectId: form.projectid,
@@ -209,11 +209,12 @@ const EvaluationVisitPlanList = ({
 
       // ✅ FIX: Convert YYYY-MM-DD to ISO string for API
       fromDate: form.dateFrom
-        ? new Date(form.dateFrom + "T00:00:00").toISOString()
-        : new Date().toISOString(),
+        ? `${form.dateFrom}T00:00:00`
+        : new Date().toISOString().split("Z")[0], // still safe
+
       toDate: form.dateTo
-        ? new Date(form.dateTo + "T00:00:00").toISOString()
-        : new Date().toISOString(),
+        ? `${form.dateTo}T00:00:00`
+        : new Date().toISOString().split("Z")[0],
 
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -233,25 +234,25 @@ const EvaluationVisitPlanList = ({
       isFocalPerson: false,
     }));
 
+    console.log("modifiedFormData", modifiedFormData);
+
     try {
       setSubmitting(true);
-      // const response = await apiClient.post(
-      //   `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-visit`,
-      //   modifiedFormData
-      // );
+      const response = await apiClient.post(
+        `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-visit`,
+        modifiedFormData
+      );
       // setTempJsonDataCreateVisit(modifiedFormData);
-      // toast.success(response.data.responseMessage);
-      // setFormsData([]);
-      // setRefresh((prev) => !prev);
+      toast.success(response.data.responseMessage);
+      setFormsData([]);
+      setFilteredData([]);
+      setRefresh((prev) => !prev);
     } catch (err) {
       console.error(err);
       toast.error((err as AxiosError).message);
     } finally {
       setSubmitting(false);
     }
-
-    setFormsData([]);
-    setFilteredData([]);
   };
 
   const exportToExcel = (data: TempTourPlan[]) => {
@@ -349,7 +350,7 @@ const EvaluationVisitPlanList = ({
               : ""}
           </pre> */}
         </div>
-        <div className="col text-end">
+        <div className="col text-end" style={{ zIndex: 10 }}>
           {formsData.filter((form) => form !== undefined).length > 0 && (
             <Button
               className="btn rounded-pill bg-color-evaluation-theme-blue text-white fs15px fw-bold"
