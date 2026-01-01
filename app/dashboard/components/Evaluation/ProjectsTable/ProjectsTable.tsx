@@ -1747,6 +1747,20 @@ const ProjectsTable = ({
                                 >
                                   {d[key]}
                                 </div>
+                              ) : label === "No. of Visits (Umbrella)" ? (
+                                <div
+                                  className="text-start color-sea-blue cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    reportPdfDownload(
+                                      d.visitId,
+                                      d.id,
+                                      ReportTypeStatusEnum.EVALUATION
+                                    );
+                                  }}
+                                >
+                                  {d[key]}
+                                </div>
                               ) : (
                                 <p className="text-start">{d[key]}</p>
                               )}

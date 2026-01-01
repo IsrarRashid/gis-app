@@ -35,7 +35,7 @@ const ReportReview = ({
         const response = await apiClient.get(
           `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`
         );
-        setData(response.data.data);
+        setData(response.data.data.reports);
       } catch (err) {
         console.error("Submission error:", err);
       }
@@ -91,7 +91,11 @@ const ReportReview = ({
             </span>
           ) : (
             <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              {data?.filter((d) => d.submittedTo === userId &&  d.isFocalPerson===true).length}
+              {
+                data?.filter(
+                  (d) => d.submittedTo === userId && d.isFocalPerson === true
+                ).length
+              }
             </span>
           )}
         </Link>

@@ -119,8 +119,6 @@ export function formatHHLStringDate(inputDate: string): string {
 
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { FaLaptopHouse } from "react-icons/fa";
-import { GroupBase, StylesConfig } from "react-select";
 
 const renameMap: Record<string, string> = {
   id: "GS No.",

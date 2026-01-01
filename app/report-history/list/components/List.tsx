@@ -45,6 +45,11 @@ export interface SubmittedReport {
   isFocalPerson: boolean;
 }
 
+export interface SubmittedReportResponse {
+  totalIssuedCount: number;
+  reports: SubmittedReport[];
+}
+
 interface Tab {
   id: number;
   label: string;
@@ -59,6 +64,7 @@ interface Tab {
 const List = () => {
   const [refresh, setRefresh] = useState(false);
   const [data, setData] = useState<SubmittedReport[]>([]);
+  const [issuedReportCount, setIssuedReportCount] = useState<number>(0);
 
   const [userId, setUserId] = useState<number>();
   const [role, setRole] = useState<string>();
@@ -102,8 +108,10 @@ const List = () => {
           `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`
         );
         if (response.data.data) {
+          setIssuedReportCount(response.data.data.totalIssuedCount);
           console.log("response.data.data", response.data.data);
-          const sortedData = response.data.data.sort(
+
+          const sortedData = response.data.data.reports.sort(
             (a: any, b: any) =>
               new Date(a.submittedDate).getTime() -
               new Date(b.submittedDate).getTime()
@@ -558,6 +566,31 @@ const List = () => {
                         </Button>
                       </div>
                     ))}
+                  <div className="col-auto">
+                    <Button
+                      className={`btn shadow-none rounded-0 fw-bold position-relative ${
+                        selectedTab === -98 ? "text-dark" : "text-secondary"
+                      }`}
+                      style={{
+                        borderBottom:
+                          selectedTab === -98 ? "3px solid #0c8ce9" : "",
+                      }}
+                      onClick={() => {
+                        setSelectedTab(-98);
+                        setSelectedLabel("Issued");
+                        setFilteredData(
+                          data?.filter((d) => d.status === ISSUED)
+                        );
+                      }}
+                    >
+                      Issued
+                      {/* {data?.filter((d) => d.status === ISSUED).length > 0 && ( */}
+                      <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {issuedReportCount}
+                      </span>
+                      {/* )} */}
+                    </Button>
+                  </div>
                   {/* <div className="col-auto">
                     <Button
                       className={`btn shadow-none rounded-0 fw-bold position-relative ${

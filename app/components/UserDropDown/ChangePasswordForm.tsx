@@ -82,7 +82,7 @@ const ChangePasswordForm = ({ userName }: { userName: string }) => {
     <>
       <Button
         onClick={handleShow}
-        className="btn text-nowrap fs12px shadow-none w-100"
+        className="btn text-nowrap fs12px shadow-none text-start w-100"
         style={{ padding: "6px 16px" }}
       >
         <MdOutlineLockReset size={20} className="me-2 mb-1" />
