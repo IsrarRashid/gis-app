@@ -721,6 +721,8 @@ export const allPagesPath = [
   "/new-visit-plan",
   "/process",
   "/projects-live-view/:path*",
+  "/charts",
+  "/pc-iv-report-history",
 ];
 
 // for new-visit-plan starts

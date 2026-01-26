@@ -1,7 +1,7 @@
 import { useSearchParams } from "next/navigation";
 import { EVALUATION_SUPER_GROUP_API, SUPER_GROUP_API } from "../APIs";
 import useData from "./useData";
-import { TypeEnum } from "../dashboard/types/types";
+import { DashboardTypeEnum } from "../dashboard/types/types";
 import { useEffect, useMemo } from "react";
 
 export interface GroupsList {
@@ -30,7 +30,7 @@ const useSuperGroups = ({ refresh = false }: Props = {}) => {
 
   // useMemo to ensure recomputation when dashboardType changes
   const endpoint = useMemo(() => {
-    return dashboardType === TypeEnum.EVALUATION
+    return dashboardType === DashboardTypeEnum.EVALUATION
       ? EVALUATION_SUPER_GROUP_API
       : SUPER_GROUP_API;
   }, [dashboardType]);

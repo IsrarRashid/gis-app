@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Button from "@/app/components/Button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { TypeEnum } from "../types/types";
+import { DashboardTypeEnum } from "../types/types";
 
 const DashboardTypeFilter = () => {
   const searchParams = useSearchParams();
@@ -86,7 +86,7 @@ const DashboardTypeFilter = () => {
           }}
           onClick={() => {
             setSelectedButton(2);
-            handleStatusChange(TypeEnum.EVALUATION);
+            handleStatusChange(DashboardTypeEnum.EVALUATION);
           }}
         >
           Evaluation

@@ -49,8 +49,8 @@ const List = ({ refresh, setRefresh }: ListProps) => {
 
   // Handle search logic
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentPage(1);
     // const lowercasedFilter = searchTerm.toLowerCase();
-
     const filtered = data.filter((item) =>
       [item.id.toString(), item.driverName, item.mobileNumber]
         .filter((field) => field) // Remove undefined fields

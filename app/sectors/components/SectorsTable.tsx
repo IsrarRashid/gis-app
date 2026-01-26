@@ -13,7 +13,7 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getFormattedDate } from "@/app/utils";
 import { sort } from "fast-sort";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import SectorForm from "./SectorForm";
 
@@ -72,7 +72,8 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   const notifyError = (msg: string) => toast.error(msg);
 
   // 🔍 Search handler
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setCurrentPage(1);
     const value = e.target.value.toLowerCase();
     const filtered = data.filter((item) =>
       [item.id, item.name, item.description, item.sortId]

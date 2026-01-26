@@ -45,6 +45,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
 
   // Handle search logic
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentPage(1);
     // const lowercasedFilter = searchTerm.toLowerCase();
 
     const filtered = [...(data || [])].reverse().filter((item) =>

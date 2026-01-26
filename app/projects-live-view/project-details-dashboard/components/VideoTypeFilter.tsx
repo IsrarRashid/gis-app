@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Button from "@/app/components/Button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { TypeEnum } from "@/app/dashboard/types/types";
+import { DashboardTypeEnum } from "@/app/dashboard/types/types";
 import { FaCircle } from "react-icons/fa";
 
 const VideoTypeFilter = () => {

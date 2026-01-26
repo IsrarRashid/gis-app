@@ -125,5 +125,6 @@ export const config = {
     "/new-visit-plan",
     "/process",
     "/projects-live-view/:path*",
+    "/pc-iv-report-history",
   ],
 };

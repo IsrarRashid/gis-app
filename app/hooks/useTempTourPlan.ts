@@ -2,7 +2,7 @@ import { useSearchParams } from "next/navigation";
 import { EVALUATION_TEMP_TOUR_PLAN_API, TEMP_TOUR_PLAN_API } from "../APIs";
 import useData from "./useData";
 import { useMemo } from "react";
-import { TypeEnum } from "../dashboard/types/types";
+import { DashboardTypeEnum } from "../dashboard/types/types";
 
 export interface TempTourPlan {
   tempId: number;
@@ -38,7 +38,7 @@ const useTempTourPlans = ({ refresh = false }: Props = {}) => {
 
   // useMemo to ensure recomputation when dashboardType changes
   const endpoint = useMemo(() => {
-    return dashboardType === TypeEnum.EVALUATION
+    return dashboardType === DashboardTypeEnum.EVALUATION
       ? EVALUATION_TEMP_TOUR_PLAN_API + "/get-tour-plan"
       : TEMP_TOUR_PLAN_API + "/get-tour-plan";
   }, [dashboardType]);

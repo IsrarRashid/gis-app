@@ -9,20 +9,16 @@ import { setContent } from "@/app/features/content/contentSlice";
 import { setTutorial } from "@/app/features/tutorial/tutorialSlice";
 import apiClient from "@/app/services/api-client";
 import { devMap } from "@/app/utils";
-import carOutline from "@/public/icons/carOutline.svg";
-import staffTracking2 from "@/public/icons/staffTracking2.svg";
 import Cookies from "js-cookie";
 import dynamic from "next/dynamic";
 import { Lexend } from "next/font/google";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import styles from "../Dashboard.module.css";
 import EvaluationMap from "../GoogleMap/EvaluationMap";
-import ReportReview from "../ReportReview";
 import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
-import VisitsPlan from "./VisitsPlan";
+import { VscPreview } from "react-icons/vsc";
+import PCIVReportReview from "./PCIVReportReview";
 
 const Menu = dynamic(() => import("@/app/components/Menu"), { ssr: false });
 
@@ -69,7 +65,7 @@ export interface EvaluationMainDashboard {
       districtName: string;
       latitude: string;
       longitude: string;
-    }
+    },
   ];
   districtList: DistrictList[];
 }
@@ -115,13 +111,13 @@ const DashboardEvaluation = () => {
   useEffect(() => {
     handleButtonClick(
       "dashboard",
-      "https://www.youtube.com/watch?v=1wgAwCufsko&ab_channel=DirectorateGeneralMonitoringandEvaluation"
+      "https://www.youtube.com/watch?v=1wgAwCufsko&ab_channel=DirectorateGeneralMonitoringandEvaluation",
     );
   }, []);
 
   const [isLoading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<"cmInitiative" | "adp">(
-    "cmInitiative"
+    "cmInitiative",
   );
 
   const [otherFilters, setOtherFilters] = useState<FilterData[]>([]);
@@ -154,7 +150,7 @@ const DashboardEvaluation = () => {
     setCombinedFilters(
       activeFilter === "cmInitiative"
         ? [...cmInitiativeFilters, ...otherFilters]
-        : [...adpFilters, ...otherFilters]
+        : [...adpFilters, ...otherFilters],
     );
   }, [activeFilter]);
 
@@ -166,7 +162,7 @@ const DashboardEvaluation = () => {
     setLoading(true);
     try {
       const response = await apiClient.post(
-        EVALUATION_MAIN_DASHBOARD_API + "/dashboard"
+        EVALUATION_MAIN_DASHBOARD_API + "/dashboard",
       );
       setData(response.data.data);
       console.log("evaluation data:", response.data.data);
@@ -190,7 +186,7 @@ const DashboardEvaluation = () => {
 
     try {
       const response = await apiClient.get(
-        `${EVALUATION_MAIN_DASHBOARD_API}/GetProjectsListByStatus?filter=${status}`
+        `${EVALUATION_MAIN_DASHBOARD_API}/GetProjectsListByStatus?filter=${status}`,
       );
       setProjectsData(response.data.data);
     } catch (err) {
@@ -215,7 +211,7 @@ const DashboardEvaluation = () => {
           "utilization",
           "utilPercent",
           role !== "Special Role" && "visitCount",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -236,7 +232,7 @@ const DashboardEvaluation = () => {
           "completedDate",
           role !== "Special Role" && "deadline",
           "fileGenrated",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -258,7 +254,7 @@ const DashboardEvaluation = () => {
           "divisionName",
           "districtName",
           "isSNE",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -280,7 +276,7 @@ const DashboardEvaluation = () => {
           "divisionName",
           "districtName",
           "isSNE",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -320,7 +316,7 @@ const DashboardEvaluation = () => {
           "maxMRIValue",
           "avgMRIValue",
           "hasVisited",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -366,9 +362,9 @@ const DashboardEvaluation = () => {
   return (
     <DashboardWrapper>
       {(departmentId === 0 || departmentId === 1) && (
-        <>
+        <div style={{ padding: "11px 5px" }}>
           <div className={`row ${lexend.className} m-0`}>
-            <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
+            <div className="col p-0">
               <CustomModal
                 HeaderRightPos={0}
                 HeaderTopPos={17}
@@ -395,7 +391,7 @@ const DashboardEvaluation = () => {
                       background="linear-gradient(to right, #155E95 , #2377B6)"
                       icon="/icons/eyeBold.svg"
                       value={data ? data.totalSubmittedPCIvs : 0}
-                      label="Submitted PC(IV)s"
+                      label="PC(IV) Submitted by Department"
                       showTides={false}
                       showArrow={true}
                       textWrap={false}
@@ -413,7 +409,7 @@ const DashboardEvaluation = () => {
                         <ProjectsTable
                           role={role}
                           keys={filteredSubmittedPcIvKeys}
-                          label="Submitted PC(IV)s"
+                          label="PC(IV) Submitted by Department"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                         />
@@ -425,6 +421,200 @@ const DashboardEvaluation = () => {
                 }
               />
             </div>
+            <div className="col p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"inprogress"}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("inprogress")}
+                  >
+                    <Menu
+                      background="rgba(12, 140, 233, 0.2)"
+                      outline="1px solid rgba(12, 140, 233, 0.4)"
+                      icon="/icons/inProcess.svg"
+                      value={data ? data.reportsInProgress : 0}
+                      label="PC(IV) In Progress"
+                      showTides={false}
+                      showArrow={true}
+                      textWrap={false}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredSubmittedPcIvKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredSubmittedPcIvKeys}
+                          label="PC(IV) In Progress"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="col p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"inprogress"}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("inprogress")}
+                  >
+                    <Menu
+                      background="rgba(12, 140, 233, 0.2)"
+                      outline="1px solid rgba(12, 140, 233, 0.4)"
+                      icon="/icons/inProcess.svg"
+                      value={data ? data.reportsInProgress : 0}
+                      label="Assigned To Evaluator"
+                      showTides={false}
+                      showArrow={true}
+                      textWrap={false}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredSubmittedPcIvKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredSubmittedPcIvKeys}
+                          label="Assigned To Evaluator"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="col p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"inprogress"}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("inprogress")}
+                  >
+                    <Menu
+                      background="rgba(12, 140, 233, 0.2)"
+                      outline="1px solid rgba(12, 140, 233, 0.4)"
+                      icon="/icons/inProcess.svg"
+                      value={data ? data.reportsInProgress : 0}
+                      label="Refer-back"
+                      showTides={false}
+                      showArrow={true}
+                      textWrap={false}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredSubmittedPcIvKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredSubmittedPcIvKeys}
+                          label="Refer-back"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="col p-0 pe-1">
+              <Link
+                href="/charts"
+                target="_blank"
+                className="shadow-none w-100 position-relative text-decoration-none"
+              >
+                <div
+                  className="text-white shadow-sm text-center fs14px fw-5"
+                  style={{
+                    background: "rgba(12, 140, 233, 0.2)",
+                    outline: "1px solid rgba(12, 140, 233, 0.4)",
+                    borderRadius: "7px",
+                    height: "90%",
+                    marginTop: "1px",
+                  }}
+                >
+                  <div className="position-relative h-100">
+                    <div style={{ position: "absolute", right: 0 }}>
+                      <img
+                        src="/icons/linkArrow.svg"
+                        className="img-fluid"
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                        }}
+                        alt="linkArrow"
+                      />
+                    </div>
+                    <span className="h-100 d-block d-flex align-items-center justify-content-center">
+                      View Charts
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+            {(role.toLowerCase().includes("director") ||
+              role.toLowerCase() === "department head") && (
+              <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
+                <PCIVReportReview />
+              </div>
+            )}
+            {/* <div className="col p-0 pe-1">
+              <Link
+                href="/pc-iv-report-history"
+                target="_blank"
+                className="shadow-none w-100 position-relative text-decoration-none"
+              >
+                <Menu
+                  background="rgba(12, 140, 233, 0.2)"
+                  outline="1px solid rgba(12, 140, 233, 0.4)"
+                  icon="/icons/reportReview.svg"
+                  value={0}
+                  label="PC-IV Review"
+                  showTides={false}
+                  showArrow={true}
+                  textWrap={false}
+                />
+              </Link>
+            </div> */}
+          </div>
+
+          <div className={`row ${lexend.className} m-0`}>
             <div className="col-12 col-sm-6 col-md-6 col-lg-4 p-0">
               <div
                 className="col px-1 py-0 me-1 text-center mb-2"
@@ -722,8 +912,394 @@ const DashboardEvaluation = () => {
                 }
               />
             </div>
+            <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"inprogress"}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("inprogress")}
+                  >
+                    <Menu
+                      background="rgba(12, 140, 233, 0.2)"
+                      outline="1px solid rgba(12, 140, 233, 0.4)"
+                      icon="/icons/inProcess.svg"
+                      value={data ? data.reportsInProgress : 0}
+                      label="Reports In Progress"
+                      showTides={false}
+                      showArrow={true}
+                      textWrap={false}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredSubmittedPcIvKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredSubmittedPcIvKeys}
+                          label="Reports In Progress"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
           </div>
-          <div
+
+          {/* <div className={`row ${lexend.className} m-0`}>
+            <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                modalId={"TotalProject"}
+                button={
+                  <Button
+                    className="position-relative btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("all")}
+                  >
+                    <div
+                      className="position-absolute"
+                      style={{
+                        // background:
+                        //   "linear-gradient( rgba(35, 119, 182, 0), rgba(35, 119, 182, 1))",
+                        padding: "1px",
+                        borderRadius: "10px",
+                        width: "98%",
+                        height: "92%",
+                      }}
+                    ></div>
+                    <Menu
+                      background="linear-gradient(to right, #155E95 , #2377B6)"
+                      icon="/icons/eyeBold.svg"
+                      value={data ? data.totalSubmittedPCIvs : 0}
+                      label="Submitted PC(IV)s"
+                      showTides={false}
+                      showArrow={true}
+                      textWrap={false}
+                      isGrouped={false}
+                      toggleLabel={true}
+                      sneCount={data ? data.snEs : 0}
+                      nonSneCount={data ? data.nonSNEs : 0}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredSubmittedPcIvKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredSubmittedPcIvKeys}
+                          label="Submitted PC(IV)s"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="col-12 col-sm-6 col-md-6 col-lg-4 p-0">
+              <div
+                className="col px-1 py-0 me-1 text-center mb-2"
+                style={{
+                  background: "rgba(12, 140, 233,.2)",
+                  borderRadius: "10px",
+                  border: "1px solid rgba(12, 140, 233,.4)",
+                }}
+              >
+                <p className="mb-0 text-white fs14px">Projects Evaluated</p>
+                <div className="row m-0 d-flex flex-nowrap">
+                  <CustomModal
+                    HeaderRightPos={0}
+                    HeaderTopPos={17}
+                    buttonColumn="col p-0"
+                    isFullscreen={true}
+                    modalId={"umbrella"}
+                    button={
+                      <Button
+                        className="position-relative btn p-0 pe-1 shadow-none w-100"
+                        onClick={() => getProjectsList("umbrella")}
+                      >
+                        <div
+                          className="position-absolute"
+                          style={{
+                            padding: "1px",
+                            borderRadius: "10px",
+                            width: "98%",
+                            height: "92%",
+                          }}
+                        ></div>
+                        <Menu
+                          background={`linear-gradient( rgba(35, 119, 182, 0), rgba(35, 119, 182, 1))`}
+                          icon="/icons/cubes.svg"
+                          value={
+                            data ? data.noOfVisitsMultipleSitesOrUmbrella : 0
+                          }
+                          label="No. of Visits (Umbrella)"
+                          showTides={false}
+                          showArrow={true}
+                          textWrap={false}
+                          isGrouped={true}
+                          toggleLabel={true}
+                          sneCount={
+                            data
+                              ? data.noOfVisitsMultipleSitesOrUmbrellaTotalSNEs
+                              : 0
+                          }
+                          nonSneCount={
+                            data
+                              ? data.noOfVisitsMultipleSitesOrUmbrellaTotalNonSNEs
+                              : 0
+                          }
+                        />
+                      </Button>
+                    }
+                    body={
+                      <>
+                        <div className="container-fluid border-0 p-0">
+                          {projectsData && filteredOtherKeys ? (
+                            <ProjectsTable
+                              role={role}
+                              keys={filteredOtherKeys}
+                              label="No. of Visits (Umbrella)"
+                              projectsData={projectsData}
+                              setProjectsData={setProjectsData}
+                            />
+                          ) : (
+                            <Loader />
+                          )}
+                        </div>
+                      </>
+                    }
+                  />
+                  <CustomModal
+                    HeaderRightPos={0}
+                    HeaderTopPos={17}
+                    buttonColumn="col p-0"
+                    isFullscreen={true}
+                    modalId={"single"}
+                    button={
+                      <Button
+                        className="position-relative btn p-0 pe-1 shadow-none w-100"
+                        onClick={() => getProjectsList("single")}
+                      >
+                        <div
+                          className="position-absolute"
+                          style={{
+                            padding: "1px",
+                            borderRadius: "10px",
+                            width: "98%",
+                            height: "92%",
+                          }}
+                        ></div>
+                        <Menu
+                          background={`linear-gradient( rgba(35, 119, 182, 0), rgba(35, 119, 182, 1))`}
+                          icon="/icons/cubes.svg"
+                          value={data ? data.noOfVisitsSingle : 0}
+                          label="No. of Visits (Single)"
+                          showTides={false}
+                          showArrow={true}
+                          textWrap={false}
+                          isGrouped={true}
+                          toggleLabel={true}
+                          sneCount={data ? data.noOfVisitsSingleTotalSNEs : 0}
+                          nonSneCount={
+                            data ? data.noOfVisitsSingleTotalNonSNEs : 0
+                          }
+                        />
+                      </Button>
+                    }
+                    body={
+                      <>
+                        <div className="container-fluid border-0 p-0">
+                          {projectsData && filteredOtherKeys ? (
+                            <ProjectsTable
+                              role={role}
+                              keys={filteredOtherKeys}
+                              label="No. of Visits (Single)"
+                              projectsData={projectsData}
+                              setProjectsData={setProjectsData}
+                            />
+                          ) : (
+                            <Loader />
+                          )}
+                        </div>
+                      </>
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"successful"}
+                allowOpen={data && data.successful === 0 ? false : true}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("successful")}
+                    disabled={data && data.successful === 0}
+                  >
+                    <Menu
+                      background="rgba(39, 192, 77, 0.35)"
+                      outline="1px solid rgba(43, 171, 45, 0.4)"
+                      icon="/icons/doubleTick.svg"
+                      value={data ? data.successful : 0}
+                      label="Successful"
+                      showTides={false}
+                      // tideOneImage="/images/tideOneGreen.png"
+                      // tideTwoImage="/images/tideTwoGreen.png"
+                      showArrow={true}
+                      textWrap={false}
+                      labelColor="#129E5C"
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredOtherKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredOtherKeys}
+                          label="Successful Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"partial"}
+                allowOpen={
+                  data && data.partiallySuccessful === 0 ? false : true
+                }
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("partial")}
+                    disabled={data && data.partiallySuccessful === 0}
+                  >
+                    <Menu
+                      background="rgba(218, 248, 21, 0.4)"
+                      outline="1px solid rgba(225, 186, 15, 0.4)"
+                      icon="/icons/bulb.svg"
+                      value={data ? data.partiallySuccessful : 0}
+                      label="Partial Success"
+                      showTides={false}
+                      // tideOneImage="/images/tideOneYellow.png"
+                      // tideTwoImage="/images/tideTwoYellow.png"
+                      showArrow={true}
+                      textWrap={false}
+                      labelColor="#AA8B2A"
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredOtherKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredOtherKeys}
+                          label="Partial Success Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"notsuccessful"}
+                allowOpen={data && data.notSuccessful === 0 ? false : true}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("notsuccessful")}
+                    disabled={data && data.notSuccessful === 0}
+                  >
+                    <Menu
+                      background="rgba(233, 12, 16, 0.26)"
+                      outline="1px solid rgba(233, 12, 16, 0.4)"
+                      icon="/icons/critical.svg"
+                      value={data ? data.notSuccessful : 0}
+                      label="Not Successful"
+                      showTides={false}
+                      // tideOneImage="/images/tideOneRed.png"
+                      // tideTwoImage="/images/tideTwoRed.png"
+                      showArrow={true}
+                      textWrap={false}
+                      labelColor="#BA2323"
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredOtherKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredOtherKeys}
+                          label="Not Successful Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+          </div> */}
+
+          {/* <div
             className={`row ${lexend.className} d-flex justify-content-center m-0`}
           >
             <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
@@ -894,7 +1470,7 @@ const DashboardEvaluation = () => {
                 </div>
               )}
             </div>
-          </div>
+          </div> */}
 
           <div className={`${lexend.className}`}>
             <div className="p-1 col">
@@ -911,7 +1487,7 @@ const DashboardEvaluation = () => {
               )}
             </div>
           </div>
-        </>
+        </div>
       )}
     </DashboardWrapper>
   );

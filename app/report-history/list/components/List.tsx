@@ -15,11 +15,12 @@ import search3 from "@/public/icons/search3.svg";
 import Cookies from "js-cookie";
 import { Raleway } from "next/font/google";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { BsExclamationTriangleFill } from "react-icons/bs";
 import ReportNoting from "../../components/ReportNoting";
 import ViewHistoryOnly from "../../components/ViewHistoryOnly";
 import { APPROVED, ISSUED, REFERBACK, SUBMITTED } from "../../statuses";
+import { DashboardTypeEnum } from "@/app/dashboard/types/types";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -61,10 +62,16 @@ interface Tab {
   filteredData: SubmittedReport[] | undefined;
 }
 
-const List = () => {
+const List = ({
+  dashbaordType,
+}: {
+  dashbaordType: DashboardTypeEnum | undefined;
+}) => {
   const [refresh, setRefresh] = useState(false);
   const [data, setData] = useState<SubmittedReport[]>([]);
   const [issuedReportCount, setIssuedReportCount] = useState<number>(0);
+  const [issuedReportsData, setIssuedReportsData] =
+    useState<SubmittedReport[]>();
 
   const [userId, setUserId] = useState<number>();
   const [role, setRole] = useState<string>();
@@ -79,6 +86,7 @@ const List = () => {
   // 👇 NEW: Track current modal index and auto-open state
   const [currentAutoOpenIndex, setCurrentAutoOpenIndex] = useState<number>(-1);
   const [shouldAutoOpen, setShouldAutoOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     console.log("selectedTab", selectedTab);
@@ -99,6 +107,8 @@ const List = () => {
   const [filteredData, setFilteredData] = useState<
     SubmittedReport[] | undefined
   >();
+  // State for filtered data
+  const [searchData, setSearchData] = useState<SubmittedReport[] | undefined>();
 
   useEffect(() => {
     const handleSubmit = async (userId: number) => {
@@ -129,6 +139,29 @@ const List = () => {
     };
     if (userId) handleSubmit(userId);
   }, [userId, refresh]);
+
+  useEffect(() => {
+    const handleSubmit = async () => {
+      setLoading(true);
+      try {
+        const response = await apiClient.get(
+          `${REPORTS_HISTORY_API}/GetIssuedReports`
+        );
+
+        if (response.data.data) {
+          setIssuedReportsData(response.data.data);
+          console.log("response.data.data", response.data.data);
+        }
+        setLoading(false);
+      } catch (err) {
+        setError((err as AxiosError).message);
+        console.error("Submission error:", err);
+        setLoading(false);
+      }
+    };
+
+    handleSubmit();
+  }, []);
 
   const { data: users } = useReportHistoryUser({ refresh });
   const { data: officers } = useOfficers({ refresh });
@@ -428,6 +461,54 @@ const List = () => {
     setShouldAutoOpen(true);
   };
 
+  useEffect(() => {
+    setSelectedTab(0);
+    setSelectedLabel("All");
+    setFilteredData(data);
+  }, [dashbaordType]);
+
+  // 🔍 Search handler
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase();
+    const filtered = filteredData?.filter((item) =>
+      [
+        item.id,
+        item.gsNo,
+        item.intiallyDesignation,
+        item.intiallyUser,
+        item.projectId,
+        item.projectName,
+        item.visitId,
+      ]
+        .filter(Boolean)
+        .map((f) => String(f).toLowerCase())
+        .some((field) => field.includes(value))
+    );
+    setSearchTerm(e.target.value);
+    setSearchData(filtered);
+  };
+
+  // 🔍 Search handler
+  const handleSearchIssuedReports = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase();
+    const filtered = issuedReportsData?.filter((item) =>
+      [
+        item.id,
+        item.gsNo,
+        item.intiallyDesignation,
+        item.intiallyUser,
+        item.projectId,
+        item.projectName,
+        item.visitId,
+      ]
+        .filter(Boolean)
+        .map((f) => String(f).toLowerCase())
+        .some((field) => field.includes(value))
+    );
+    setSearchTerm(e.target.value);
+    setSearchData(filtered);
+  };
+
   return (
     <>
       {isLoading ? (
@@ -483,8 +564,12 @@ const List = () => {
                           color: "rgba(38, 50, 56,1)",
                         }}
                         placeholder="Search"
-                        // value={searchTerm}
-                        // onChange={handleChange}
+                        value={searchTerm}
+                        onChange={
+                          selectedTabLabel === "Issued"
+                            ? handleSearchIssuedReports
+                            : handleSearch
+                        }
                       />
                     </div>
                   </form>
@@ -566,31 +651,30 @@ const List = () => {
                         </Button>
                       </div>
                     ))}
-                  <div className="col-auto">
-                    <Button
-                      className={`btn shadow-none rounded-0 fw-bold position-relative ${
-                        selectedTab === -98 ? "text-dark" : "text-secondary"
-                      }`}
-                      style={{
-                        borderBottom:
-                          selectedTab === -98 ? "3px solid #0c8ce9" : "",
-                      }}
-                      onClick={() => {
-                        setSelectedTab(-98);
-                        setSelectedLabel("Issued");
-                        setFilteredData(
-                          data?.filter((d) => d.status === ISSUED)
-                        );
-                      }}
-                    >
-                      Issued
-                      {/* {data?.filter((d) => d.status === ISSUED).length > 0 && ( */}
-                      <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        {issuedReportCount}
-                      </span>
-                      {/* )} */}
-                    </Button>
-                  </div>
+                  {dashbaordType === undefined && (
+                    <div className="col-auto">
+                      <Button
+                        className={`btn shadow-none rounded-0 fw-bold position-relative ${
+                          selectedTab === -98 ? "text-dark" : "text-secondary"
+                        }`}
+                        style={{
+                          borderBottom:
+                            selectedTab === -98 ? "3px solid #0c8ce9" : "",
+                        }}
+                        onClick={() => {
+                          setSelectedTab(-98);
+                          setSelectedLabel("Issued");
+                        }}
+                      >
+                        Issued
+                        {/* {data?.filter((d) => d.status === ISSUED).length > 0 && ( */}
+                        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                          {issuedReportCount}
+                        </span>
+                        {/* )} */}
+                      </Button>
+                    </div>
+                  )}
                   {/* <div className="col-auto">
                     <Button
                       className={`btn shadow-none rounded-0 fw-bold position-relative ${
@@ -648,120 +732,100 @@ const List = () => {
                       </div> */}
             </div>
           </div>
-          {filteredData?.map((d, i) => (
-            <div key={i} className="col mb-2 position-relative overflow-hidden">
+          {selectedTabLabel === "Issued" &&
+            dashbaordType === undefined &&
+            (searchTerm ? searchData : issuedReportsData)?.map((d, i) => (
               <div
-                className="col p-3"
-                style={{
-                  background: "#FAFAFA",
-                  borderRadius: "12px",
-                  border: "1px solid rgba(0, 0, 0,.1)",
-                }}
+                key={i}
+                className="col mb-2 position-relative overflow-hidden"
               >
-                <div className="row m-0">
-                  <div
-                    className={`col-auto rounded-3 p-3 ${
-                      d.status === ISSUED
-                        ? "bg-success text-light"
-                        : d.status === REFERBACK
-                        ? "bg-danger text-light"
-                        : d.status === SUBMITTED
-                        ? "bg-warning text-dark"
-                        : "bg-info text-dark"
-                    }`}
-                  >
-                    <p className="fw-5 mb-0">
-                      <span className="fw-bold">Sr#</span> {i + 1}
-                    </p>
-                    <p className="fw-5 mb-0">
-                      <span className="fw-bold">GS No. </span>
-                      {d.gsNo}
-                    </p>
-                  </div>
-                  <div className="col">
-                    <div className="row d-flex justify-content-between align-items-center mb-2">
-                      <div className="col">
-                        <p
-                          className="fs18px fw-bold m-0"
-                          style={{ color: "263238" }}
-                        >
-                          <span>Project: </span> {d.projectName}
-                        </p>
-                      </div>
-                      <div className="col-auto px-5">&nbsp;</div>
-                      <div
-                        className="col-auto position-absolute p-0"
-                        style={{
-                          rotate: "45deg",
-                          top: 40,
-                          right: -40,
-                        }}
-                      >
-                        {d.reportType === 1 ? (
-                          <span
-                            className="badge px-5 fw-bold py-2 fs-6"
-                            style={{ backgroundColor: "#3B7C80" }}
-                          >
-                            MONITORING
-                          </span>
-                        ) : d.reportType === 0 ? (
-                          <span className="badge bg-color-evaluation-theme-blue px-5 fw-bold py-2 fs-6">
-                            EVALUATION
-                          </span>
-                        ) : (
-                          ""
-                        )}
-                      </div>
+                <div
+                  className="col p-3"
+                  style={{
+                    background: "#FAFAFA",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(0, 0, 0,.1)",
+                  }}
+                >
+                  <div className="row m-0">
+                    <div
+                      className={`col-auto rounded-3 p-3 ${
+                        d.status === ISSUED
+                          ? "bg-success text-light"
+                          : d.status === REFERBACK
+                          ? "bg-danger text-light"
+                          : d.status === SUBMITTED
+                          ? "bg-warning text-dark"
+                          : "bg-info text-dark"
+                      }`}
+                    >
+                      <p className="fw-5 mb-0">
+                        <span className="fw-bold">Sr#</span> {i + 1}
+                      </p>
+                      <p className="fw-5 mb-0">
+                        <span className="fw-bold">GS No. </span>
+                        {d.gsNo}
+                      </p>
                     </div>
-
-                    <div className="row d-flex justify-content-between">
-                      <div className="col">
-                        <p
-                          className="mb-0 mb-2 fs18px fw-bold me-3"
-                          style={{ color: "#263238" }}
+                    <div className="col">
+                      <div className="row d-flex justify-content-between align-items-center mb-2">
+                        <div className="col">
+                          <p
+                            className="fs18px fw-bold m-0"
+                            style={{ color: "263238" }}
+                          >
+                            <span>Project: </span> {d.projectName}
+                          </p>
+                        </div>
+                        <div className="col-auto px-5">&nbsp;</div>
+                        <div
+                          className="col-auto position-absolute p-0"
+                          style={{
+                            rotate: "45deg",
+                            top: 40,
+                            right: -40,
+                          }}
                         >
-                          Officer Name
-                        </p>
-                        <p
-                          className="mb-0 fw-normal me-3"
-                          style={{ color: "#263238", fontWeight: "500" }}
-                        >
-                          {d.intiallyUser}
-                          <br />
-                          <span>({d.intiallyDesignation})</span>
-                        </p>
-                      </div>
-                      <div className="col">
-                        <p
-                          className="mb-0 mb-2 fs18px fw-bold me-3"
-                          style={{ color: "#263238", fontWeight: "500" }}
-                        >
-                          Submitted Date
-                        </p>
-                        <p
-                          className="mb-0 me-3"
-                          style={{ color: "#263238", fontWeight: "500" }}
-                        >
-                          {addDayToFormattedDate(
-                            getFormattedDate(
-                              new Date(d.submittedDate),
-                              "short"
-                            )!
+                          {d.reportType === 1 ? (
+                            <span
+                              className="badge px-5 fw-bold py-2 fs-6"
+                              style={{ backgroundColor: "#3B7C80" }}
+                            >
+                              MONITORING
+                            </span>
+                          ) : d.reportType === 0 ? (
+                            <span className="badge bg-color-evaluation-theme-blue px-5 fw-bold py-2 fs-6">
+                              EVALUATION
+                            </span>
+                          ) : (
+                            ""
                           )}
-                          <br />
-                          {convertToLocaleTimeString(
-                            new Date(d.submittedDate).toLocaleTimeString()
-                          )}
-                        </p>
+                        </div>
                       </div>
 
-                      {selectedTab === tabs?.length && (
+                      <div className="row d-flex justify-content-between">
+                        <div className="col">
+                          <p
+                            className="mb-0 mb-2 fs18px fw-bold me-3"
+                            style={{ color: "#263238" }}
+                          >
+                            Officer Name
+                          </p>
+                          <p
+                            className="mb-0 fw-normal me-3"
+                            style={{ color: "#263238", fontWeight: "500" }}
+                          >
+                            {d.intiallyUser}
+                            <br />
+                            <span>({d.intiallyDesignation})</span>
+                          </p>
+                        </div>
                         <div className="col">
                           <p
                             className="mb-0 mb-2 fs18px fw-bold me-3"
                             style={{ color: "#263238", fontWeight: "500" }}
                           >
-                            Issued Date
+                            Submitted Date
                           </p>
                           <p
                             className="mb-0 me-3"
@@ -769,15 +833,39 @@ const List = () => {
                           >
                             {addDayToFormattedDate(
                               getFormattedDate(
-                                new Date(d.issuanceDate),
+                                new Date(d.submittedDate),
                                 "short"
                               )!
                             )}
+                            <br />
+                            {convertToLocaleTimeString(
+                              new Date(d.submittedDate).toLocaleTimeString()
+                            )}
                           </p>
                         </div>
-                      )}
 
-                      {selectedTabLabel === "All" ? (
+                        {selectedTab === tabs?.length && (
+                          <div className="col">
+                            <p
+                              className="mb-0 mb-2 fs18px fw-bold me-3"
+                              style={{ color: "#263238", fontWeight: "500" }}
+                            >
+                              Issued Date
+                            </p>
+                            <p
+                              className="mb-0 me-3"
+                              style={{ color: "#263238", fontWeight: "500" }}
+                            >
+                              {addDayToFormattedDate(
+                                getFormattedDate(
+                                  new Date(d.issuanceDate),
+                                  "short"
+                                )!
+                              )}
+                            </p>
+                          </div>
+                        )}
+
                         <div className="col d-flex justify-content-end align-items-end pe-5">
                           <CustomModal
                             isFullscreen={true}
@@ -826,61 +914,250 @@ const List = () => {
                             }
                           />
                         </div>
-                      ) : (
-                        <div className="col d-flex justify-content-end align-items-end pe-5">
-                          <CustomModal
-                            isFullscreen={true}
-                            modalId={`comment${d.id}`}
-                            buttonColumn="col-auto"
-                            button={
-                              <Button
-                                className="btn shadow-sm py-2 px-3 fs20px rounded-pill fw-bold"
-                                style={{
-                                  background: "rgba(0, 57, 206,.05)",
-                                  color: "#0039CE",
-                                }}
-                              >
-                                {d.submittedTo === userId
-                                  ? "Comment"
-                                  : d.status === ISSUED
-                                  ? "Issued"
-                                  : d.status === APPROVED
-                                  ? "Approved"
-                                  : "Submitted"}
-                              </Button>
-                            }
-                            body={
-                              <>
-                                {deputyDirectors &&
-                                  directors &&
-                                  departmentHead && (
-                                    <ReportNoting
-                                      data={d}
-                                      setRefresh={setRefresh}
-                                      role={role}
-                                      userId={userId}
-                                      selectedTabLabel={selectedTabLabel}
-                                      users={users}
-                                      deputyDirectors={deputyDirectors}
-                                      directors={directors}
-                                      departmentHead={departmentHead}
-                                      officers={officers}
-                                      onCommentSubmitted={
-                                        handleCommentSubmitted
-                                      }
-                                    />
-                                  )}
-                              </>
-                            }
-                          />
-                        </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+
+          {selectedTabLabel !== "Issued" &&
+            (searchTerm ? searchData : filteredData)?.map((d, i) => (
+              <div
+                key={i}
+                className="col mb-2 position-relative overflow-hidden"
+              >
+                <div
+                  className="col p-3"
+                  style={{
+                    background: "#FAFAFA",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(0, 0, 0,.1)",
+                  }}
+                >
+                  <div className="row m-0">
+                    <div
+                      className={`col-auto rounded-3 p-3 ${
+                        d.status === ISSUED
+                          ? "bg-success text-light"
+                          : d.status === REFERBACK
+                          ? "bg-danger text-light"
+                          : d.status === SUBMITTED
+                          ? "bg-warning text-dark"
+                          : "bg-info text-dark"
+                      }`}
+                    >
+                      <p className="fw-5 mb-0">
+                        <span className="fw-bold">Sr#</span> {i + 1}
+                      </p>
+                      <p className="fw-5 mb-0">
+                        <span className="fw-bold">GS No. </span>
+                        {d.gsNo}
+                      </p>
+                    </div>
+                    <div className="col">
+                      <div className="row d-flex justify-content-between align-items-center mb-2">
+                        <div className="col">
+                          <p
+                            className="fs18px fw-bold m-0"
+                            style={{ color: "263238" }}
+                          >
+                            <span>Project: </span> {d.projectName}
+                          </p>
+                        </div>
+                        <div className="col-auto px-5">&nbsp;</div>
+                        <div
+                          className="col-auto position-absolute p-0"
+                          style={{
+                            rotate: "45deg",
+                            top: 40,
+                            right: -40,
+                          }}
+                        >
+                          {d.reportType === 1 ? (
+                            <span
+                              className="badge px-5 fw-bold py-2 fs-6"
+                              style={{ backgroundColor: "#3B7C80" }}
+                            >
+                              MONITORING
+                            </span>
+                          ) : d.reportType === 0 ? (
+                            <span className="badge bg-color-evaluation-theme-blue px-5 fw-bold py-2 fs-6">
+                              EVALUATION
+                            </span>
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="row d-flex justify-content-between">
+                        <div className="col">
+                          <p
+                            className="mb-0 mb-2 fs18px fw-bold me-3"
+                            style={{ color: "#263238" }}
+                          >
+                            Officer Name
+                          </p>
+                          <p
+                            className="mb-0 fw-normal me-3"
+                            style={{ color: "#263238", fontWeight: "500" }}
+                          >
+                            {d.intiallyUser}
+                            <br />
+                            <span>({d.intiallyDesignation})</span>
+                          </p>
+                        </div>
+                        <div className="col">
+                          <p
+                            className="mb-0 mb-2 fs18px fw-bold me-3"
+                            style={{ color: "#263238", fontWeight: "500" }}
+                          >
+                            Submitted Date
+                          </p>
+                          <p
+                            className="mb-0 me-3"
+                            style={{ color: "#263238", fontWeight: "500" }}
+                          >
+                            {addDayToFormattedDate(
+                              getFormattedDate(
+                                new Date(d.submittedDate),
+                                "short"
+                              )!
+                            )}
+                            <br />
+                            {convertToLocaleTimeString(
+                              new Date(d.submittedDate).toLocaleTimeString()
+                            )}
+                          </p>
+                        </div>
+
+                        {selectedTab === tabs?.length && (
+                          <div className="col">
+                            <p
+                              className="mb-0 mb-2 fs18px fw-bold me-3"
+                              style={{ color: "#263238", fontWeight: "500" }}
+                            >
+                              Issued Date
+                            </p>
+                            <p
+                              className="mb-0 me-3"
+                              style={{ color: "#263238", fontWeight: "500" }}
+                            >
+                              {addDayToFormattedDate(
+                                getFormattedDate(
+                                  new Date(d.issuanceDate),
+                                  "short"
+                                )!
+                              )}
+                            </p>
+                          </div>
+                        )}
+
+                        {selectedTabLabel === "All" ? (
+                          <div className="col d-flex justify-content-end align-items-end pe-5">
+                            <CustomModal
+                              isFullscreen={true}
+                              modalId={`view-history${d.id}`}
+                              buttonColumn="col-auto"
+                              button={
+                                <Button
+                                  className="btn shadow-sm py-2 px-3 fs20px rounded-pill fw-bold"
+                                  style={{
+                                    background: "rgba(0, 57, 206,.05)",
+                                    color: "#0039CE",
+                                  }}
+                                >
+                                  View History
+                                </Button>
+                              }
+                              body={
+                                <div className="container-fluid p-3">
+                                  <div
+                                    className="col"
+                                    style={{
+                                      backgroundImage: "url('/images/bg2.png')",
+                                      backgroundSize: "cover",
+                                      backgroundRepeat: "no-repeat",
+                                      border:
+                                        "1px solid rgba(255, 255, 255, 0.29)",
+                                      borderRadius: "15px",
+                                      height: "100%",
+                                    }}
+                                  >
+                                    <div
+                                      className="col"
+                                      style={{
+                                        backgroundImage:
+                                          "linear-gradient(to bottom right, rgba(239, 239, 239,.6) , rgba(255, 255, 255,.08))",
+                                        borderRadius: "15px",
+                                        padding: "34px 50px",
+                                        width: "100%",
+                                        height: "100%",
+                                      }}
+                                    >
+                                      <ViewHistoryOnly data={d} users={users} />
+                                    </div>
+                                  </div>
+                                </div>
+                              }
+                            />
+                          </div>
+                        ) : (
+                          <div className="col d-flex justify-content-end align-items-end pe-5">
+                            <CustomModal
+                              isFullscreen={true}
+                              modalId={`comment${d.id}`}
+                              buttonColumn="col-auto"
+                              button={
+                                <Button
+                                  className="btn shadow-sm py-2 px-3 fs20px rounded-pill fw-bold"
+                                  style={{
+                                    background: "rgba(0, 57, 206,.05)",
+                                    color: "#0039CE",
+                                  }}
+                                >
+                                  {d.submittedTo === userId
+                                    ? "Comment"
+                                    : d.status === ISSUED
+                                    ? "Issued"
+                                    : d.status === APPROVED
+                                    ? "Approved"
+                                    : "Submitted"}
+                                </Button>
+                              }
+                              body={
+                                <>
+                                  {deputyDirectors &&
+                                    directors &&
+                                    departmentHead && (
+                                      <ReportNoting
+                                        data={d}
+                                        setRefresh={setRefresh}
+                                        role={role}
+                                        userId={userId}
+                                        selectedTabLabel={selectedTabLabel}
+                                        users={users}
+                                        deputyDirectors={deputyDirectors}
+                                        directors={directors}
+                                        departmentHead={departmentHead}
+                                        officers={officers}
+                                        onCommentSubmitted={
+                                          handleCommentSubmitted
+                                        }
+                                      />
+                                    )}
+                                </>
+                              }
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
         </div>
       ) : (
         <div

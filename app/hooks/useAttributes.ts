@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { EVALUATION_ATTRIBUTES_API, ATTRIBUTES_API } from "../APIs";
-import { TypeEnum } from "../dashboard/types/types";
+import { DashboardTypeEnum } from "../dashboard/types/types";
 import useData from "./useData";
 import { useSearchParams } from "next/navigation";
 
@@ -64,7 +64,7 @@ const useAttributes = ({ refresh = false }: Props = {}) => {
 
   // useMemo to ensure recomputation when dashboardType changes
   const endpoint = useMemo(() => {
-    return dashboardType === TypeEnum.EVALUATION
+    return dashboardType === DashboardTypeEnum.EVALUATION
       ? EVALUATION_ATTRIBUTES_API
       : ATTRIBUTES_API;
   }, [dashboardType]);

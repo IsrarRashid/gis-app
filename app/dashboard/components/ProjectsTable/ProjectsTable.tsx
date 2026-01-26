@@ -109,7 +109,7 @@ const ProjectsTable = ({
       } else {
         // Add/Update "District Name" in the filter
         const updated = prev.filter(
-          (item) => !item.startsWith("District Name:")
+          (item) => !item.startsWith("District Name:"),
         );
         return [...updated, `District Name: ${selectedOption?.value}`];
       }
@@ -186,7 +186,7 @@ const ProjectsTable = ({
   };
 
   const handleReportStatusChange = (
-    selectedOption: SingleValue<OptionType>
+    selectedOption: SingleValue<OptionType>,
   ) => {
     const value = Number(selectedOption?.value);
     setReportStatus(value);
@@ -197,7 +197,7 @@ const ProjectsTable = ({
       } else {
         // Add/Update "Report Status" in the filter
         const updated = prev.filter(
-          (item) => !item.startsWith("Report Status:")
+          (item) => !item.startsWith("Report Status:"),
         );
         return [...updated, `Report Status: ${value}`];
       }
@@ -242,7 +242,7 @@ const ProjectsTable = ({
         ]
           .filter(Boolean)
           .map((field) => field.toLowerCase())
-          .some((field) => field.includes(searchTerm.toLowerCase()))
+          .some((field) => field.includes(searchTerm.toLowerCase())),
       );
       setFilteredData(filtered);
     } else {
@@ -322,7 +322,7 @@ const ProjectsTable = ({
           >
             <HiOutlineDotsHorizontal />
           </Button>
-        </div>
+        </div>,
       );
     }
 
@@ -344,7 +344,7 @@ const ProjectsTable = ({
           >
             {i}
           </Button>
-        </div>
+        </div>,
       );
     }
 
@@ -362,7 +362,7 @@ const ProjectsTable = ({
           >
             <HiOutlineDotsHorizontal />
           </Button>
-        </div>
+        </div>,
       );
     }
 
@@ -419,10 +419,10 @@ const ProjectsTable = ({
       submittedTime <= deadlineTime
         ? "Submitted on time"
         : diffInYears >= 1 && diffInMonths >= 12
-        ? `${diffInYears} year${diffInYears > 1 ? "s" : ""} Late Submitted`
-        : diffInMonths >= 1
-        ? `${diffInMonths} month${diffInMonths > 1 ? "s" : ""} Late Submitted`
-        : `${diffInDays} day${diffInDays > 1 ? "s" : ""} Late Submitted`;
+          ? `${diffInYears} year${diffInYears > 1 ? "s" : ""} Late Submitted`
+          : diffInMonths >= 1
+            ? `${diffInMonths} month${diffInMonths > 1 ? "s" : ""} Late Submitted`
+            : `${diffInDays} day${diffInDays > 1 ? "s" : ""} Late Submitted`;
 
     return result;
   };
@@ -465,18 +465,18 @@ const ProjectsTable = ({
           row[key] =
             data.visitStartDate &&
             `${addDayToFormattedDate(
-              getFormattedDate(new Date(data.visitStartDate), "short")!
+              getFormattedDate(new Date(data.visitStartDate), "short")!,
             )} to ${
               data.visitEndDate &&
               addDayToFormattedDate(
-                getFormattedDate(new Date(data.visitEndDate), "short")!
+                getFormattedDate(new Date(data.visitEndDate), "short")!,
               )
             }`;
           break;
         case "completedDate":
           row[key] = data.completedDate
             ? `${addDayToFormattedDate(
-                getFormattedDate(new Date(data.completedDate), "short")!
+                getFormattedDate(new Date(data.completedDate), "short")!,
               )}`
             : "NA";
           break;
@@ -502,7 +502,7 @@ const ProjectsTable = ({
         case "statusDate":
           row[key] = data.statusDate
             ? `${addDayToFormattedDate(
-                getFormattedDate(new Date(data.statusDate), "short")!
+                getFormattedDate(new Date(data.statusDate), "short")!,
               )}`
             : "NA";
           break;
@@ -526,7 +526,7 @@ const ProjectsTable = ({
       headers.forEach((header) => {
         const key =
           Object.entries(renameMap).find(
-            ([, value]) => value === header
+            ([, value]) => value === header,
           )?.[0] || header; // Find original key from renamed header
 
         switch (key) {
@@ -546,31 +546,30 @@ const ProjectsTable = ({
             row[formatKeyName(header)] = item.sectorName;
             break;
           case "userName":
-            row[
-              formatKeyName(header)
-            ] = `${item.userName} (${item.designation})`;
+            row[formatKeyName(header)] =
+              `${item.userName} (${item.designation})`;
             break;
           case "reportCompletion":
             row[formatKeyName(header)] = `${Math.round(
-              item.reportCompletion
+              item.reportCompletion,
             )}%`;
             break;
           case "visitStartDate":
             row[formatKeyName(header)] =
               item.visitStartDate &&
               `${addDayToFormattedDate(
-                getFormattedDate(new Date(item.visitStartDate), "short")!
+                getFormattedDate(new Date(item.visitStartDate), "short")!,
               )} to ${
                 item.visitEndDate &&
                 addDayToFormattedDate(
-                  getFormattedDate(new Date(item.visitEndDate), "short")!
+                  getFormattedDate(new Date(item.visitEndDate), "short")!,
                 )
               }`;
             break;
           case "completedDate":
             row[formatKeyName(header)] = item.completedDate
               ? `${addDayToFormattedDate(
-                  getFormattedDate(new Date(item.completedDate), "short")!
+                  getFormattedDate(new Date(item.completedDate), "short")!,
                 )}`
               : "NA";
             break;
@@ -578,12 +577,12 @@ const ProjectsTable = ({
             if (item.deadline && item.submittedDate) {
               row[formatKeyName(header)] = deadlineColumnValue(
                 item.submittedDate,
-                item.deadline
+                item.deadline,
               );
             } else if (item.deadline) {
               row[formatKeyName(header)] = getTimeLeft(item.deadline).replace(
                 "-",
-                ""
+                "",
               );
             } else {
               row[formatKeyName(header)] = "NA";
@@ -615,7 +614,7 @@ const ProjectsTable = ({
           case "statusDate":
             row[formatKeyName(header)] = item.statusDate
               ? `${addDayToFormattedDate(
-                  getFormattedDate(new Date(item.statusDate), "short")!
+                  getFormattedDate(new Date(item.statusDate), "short")!,
                 )}`
               : "NA";
             break;
@@ -631,7 +630,7 @@ const ProjectsTable = ({
     exportDataToExcel(
       data,
       displayHeaders,
-      `${label} ${getFormattedDate(new Date(), "short")}.xlsx`
+      `${label} ${getFormattedDate(new Date(), "short")}.xlsx`,
     );
   };
 
@@ -653,17 +652,17 @@ const ProjectsTable = ({
 
     if (districtName) {
       filtered = filtered.filter(
-        (p) => p.districtName?.toLowerCase() === districtName.toLowerCase()
+        (p) => p.districtName?.toLowerCase() === districtName.toLowerCase(),
       );
     }
     if (sectorName) {
       filtered = filtered.filter(
-        (p) => p.sectorName?.toLowerCase() === sectorName.toLowerCase()
+        (p) => p.sectorName?.toLowerCase() === sectorName.toLowerCase(),
       );
     }
     if (userName) {
       filtered = filtered.filter((p) =>
-        p.userName?.toLowerCase().includes(userName.toLowerCase())
+        p.userName?.toLowerCase().includes(userName.toLowerCase()),
       );
     }
     if (startDate && endDate) {
@@ -752,7 +751,7 @@ const ProjectsTable = ({
   const reportPdfDownload = async (
     visitId: number,
     projectId: number,
-    reportTypeRequest: number
+    reportTypeRequest: number,
   ) => {
     try {
       const response = await apiClient.post(
@@ -761,7 +760,7 @@ const ProjectsTable = ({
           visitId,
           projectId,
           reportTypeRequest,
-        }
+        },
       );
 
       console.log("response", response);
@@ -919,7 +918,7 @@ const ProjectsTable = ({
                           newValue: SingleValue<{
                             value: string;
                             label: string;
-                          }>
+                          }>,
                         ) => {
                           if (newValue) {
                             handleDistrictChange(newValue);
@@ -1012,14 +1011,14 @@ const ProjectsTable = ({
                                 {dateRangeState[0].startDate
                                   ? format(
                                       dateRangeState[0].startDate,
-                                      "dd/MM/yyyy"
+                                      "dd/MM/yyyy",
                                     )
                                   : "No start date"}{" "}
                                 to{" "}
                                 {dateRangeState[0].endDate
                                   ? format(
                                       dateRangeState[0].endDate,
-                                      "dd/MM/yyyy"
+                                      "dd/MM/yyyy",
                                     )
                                   : "No end date"}
                               </p>
@@ -1029,7 +1028,7 @@ const ProjectsTable = ({
                                     return prev.filter(
                                       (item) =>
                                         !item.startsWith("Start Date:") &&
-                                        !item.startsWith("End Date:")
+                                        !item.startsWith("End Date:"),
                                     );
                                   });
                                   setDateRangeState([
@@ -1081,7 +1080,7 @@ const ProjectsTable = ({
                           newValue: SingleValue<{
                             value: string;
                             label: string;
-                          }>
+                          }>,
                         ) => {
                           if (newValue) {
                             handleSectorChange(newValue);
@@ -1157,7 +1156,7 @@ const ProjectsTable = ({
                           newValue: SingleValue<{
                             value: string;
                             label: string;
-                          }>
+                          }>,
                         ) => {
                           if (newValue) {
                             handleUserChange(newValue);
@@ -1236,7 +1235,7 @@ const ProjectsTable = ({
                           newValue: SingleValue<{
                             value: string;
                             label: string;
-                          }>
+                          }>,
                         ) => {
                           if (newValue) {
                             handleReportStatusChange(newValue);
@@ -1569,8 +1568,8 @@ const ProjectsTable = ({
                         name={formatAmountWithCommas(
                           dataToPaginate.reduce(
                             (sum, d) => sum + (d.cost || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       />
                       <TableHeading
@@ -1579,8 +1578,8 @@ const ProjectsTable = ({
                         name={formatAmountWithCommas(
                           dataToPaginate.reduce(
                             (sum, d) => sum + (d.revisedAllocation || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       />
                       <TableHeading
@@ -1589,8 +1588,8 @@ const ProjectsTable = ({
                         name={formatAmountWithCommas(
                           dataToPaginate.reduce(
                             (sum, d) => sum + (d.pnDReleases || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       />
                       <TableHeading
@@ -1599,8 +1598,8 @@ const ProjectsTable = ({
                         name={formatAmountWithCommas(
                           dataToPaginate.reduce(
                             (sum, d) => sum + (d.utilization || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       />
                       <TableHeading name="" />
@@ -1621,16 +1620,16 @@ const ProjectsTable = ({
                             k.toLowerCase() === "id"
                               ? "ID"
                               : k.toLowerCase() === "gSno"
-                              ? "GS NO."
-                              : k.toLowerCase() === "visitcount"
-                              ? "no. of visits"
-                              : k.toLowerCase() === "visitstartdate"
-                              ? "Date Range"
-                              : k.toLowerCase() === "filegenrated"
-                              ? "report generated"
-                              : k.toLowerCase() === "statusDate"
-                              ? "status Date"
-                              : formatKeyName(k)
+                                ? "GS NO."
+                                : k.toLowerCase() === "visitcount"
+                                  ? "no. of visits"
+                                  : k.toLowerCase() === "visitstartdate"
+                                    ? "Date Range"
+                                    : k.toLowerCase() === "filegenrated"
+                                      ? "report generated"
+                                      : k.toLowerCase() === "statusDate"
+                                        ? "status Date"
+                                        : formatKeyName(k)
                           }
                           handleSort={() => handleSort(`${k}`)}
                         />
@@ -1647,16 +1646,16 @@ const ProjectsTable = ({
                           k.toLowerCase() === "id"
                             ? "ID"
                             : k.toLowerCase() === "gSno"
-                            ? "GS NO."
-                            : k.toLowerCase() === "visitcount"
-                            ? "no. of visits"
-                            : k.toLowerCase() === "visitstartdate"
-                            ? "Date Range"
-                            : k.toLowerCase() === "filegenrated"
-                            ? "report generated"
-                            : k.toLowerCase() === "statusDate"
-                            ? "status Date"
-                            : formatKeyName(k)
+                              ? "GS NO."
+                              : k.toLowerCase() === "visitcount"
+                                ? "no. of visits"
+                                : k.toLowerCase() === "visitstartdate"
+                                  ? "Date Range"
+                                  : k.toLowerCase() === "filegenrated"
+                                    ? "report generated"
+                                    : k.toLowerCase() === "statusDate"
+                                      ? "status Date"
+                                      : formatKeyName(k)
                         }
                         handleSort={() => handleSort(`${k}`)}
                       />
@@ -1682,8 +1681,8 @@ const ProjectsTable = ({
                                   {addDayToFormattedDate(
                                     getFormattedDate(
                                       new Date(d.visitStartDate),
-                                      "short"
-                                    )!
+                                      "short",
+                                    )!,
                                   )}
                                 </Badge>
                                 <span
@@ -1698,8 +1697,8 @@ const ProjectsTable = ({
                                   {addDayToFormattedDate(
                                     getFormattedDate(
                                       new Date(d.visitEndDate),
-                                      "short"
-                                    )!
+                                      "short",
+                                    )!,
                                   )}
                                 </Badge>
                               </>
@@ -1707,8 +1706,8 @@ const ProjectsTable = ({
                               addDayToFormattedDate(
                                 getFormattedDate(
                                   new Date(d.visitStartDate),
-                                  "short"
-                                )!
+                                  "short",
+                                )!,
                               )
                             ) : (
                               "NA"
@@ -1738,7 +1737,7 @@ const ProjectsTable = ({
                                 >
                                   {deadlineColumnValue(
                                     d.submittedDate,
-                                    d.deadline
+                                    d.deadline,
                                   )}
                                 </Badge>
                               </>
@@ -1785,7 +1784,7 @@ const ProjectsTable = ({
                                       reportPdfDownload(
                                         d.visitId,
                                         d.id,
-                                        ReportTypeStatusEnum.MONITORING
+                                        ReportTypeStatusEnum.MONITORING,
                                       );
                                     }}
                                   >
@@ -1826,7 +1825,7 @@ const ProjectsTable = ({
                             d[key] ? (
                               <Badge>
                                 {addDayToFormattedDate(
-                                  getFormattedDate(new Date(d[key]), "short")!
+                                  getFormattedDate(new Date(d[key]), "short")!,
                                 )}
                               </Badge>
                             ) : (
@@ -1836,7 +1835,7 @@ const ProjectsTable = ({
                             d[key] ? (
                               <Badge>
                                 {addDayToFormattedDate(
-                                  getFormattedDate(new Date(d[key]), "short")!
+                                  getFormattedDate(new Date(d[key]), "short")!,
                                 )}
                               </Badge>
                             ) : (
@@ -1871,32 +1870,32 @@ const ProjectsTable = ({
                         {formatAmountWithCommas(
                           paginatedData.reduce(
                             (sum, d) => sum + (d.cost || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       </TableData>
                       <TableData className="text-white">
                         {formatAmountWithCommas(
                           paginatedData.reduce(
                             (sum, d) => sum + (d.revisedAllocation || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       </TableData>
                       <TableData className="text-white">
                         {formatAmountWithCommas(
                           paginatedData.reduce(
                             (sum, d) => sum + (d.pnDReleases || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       </TableData>
                       <TableData className="text-light">
                         {formatAmountWithCommas(
                           paginatedData.reduce(
                             (sum, d) => sum + (d.utilization || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       </TableData>
                       <td></td>
@@ -1916,32 +1915,32 @@ const ProjectsTable = ({
                         {formatAmountWithCommas(
                           dataToPaginate.reduce(
                             (sum, d) => sum + (d.cost || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       </TableData>
                       <TableData className="text-light">
                         {formatAmountWithCommas(
                           dataToPaginate.reduce(
                             (sum, d) => sum + (d.revisedAllocation || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       </TableData>
                       <TableData className="text-light">
                         {formatAmountWithCommas(
                           dataToPaginate.reduce(
                             (sum, d) => sum + (d.pnDReleases || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       </TableData>
                       <TableData className="text-light">
                         {formatAmountWithCommas(
                           dataToPaginate.reduce(
                             (sum, d) => sum + (d.utilization || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       </TableData>
                       <td></td>
@@ -2097,7 +2096,7 @@ const ProjectsTable = ({
                 singleSelectStyles={paginationSelectStyles}
                 value={selectedOptions}
                 onChangeSingle={(
-                  newValue: SingleValue<{ value: string; label: string }>
+                  newValue: SingleValue<{ value: string; label: string }>,
                 ) => {
                   if (newValue) {
                     handleRowsPerPage(Number(newValue.value));

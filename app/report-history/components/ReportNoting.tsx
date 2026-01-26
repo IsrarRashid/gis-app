@@ -9,7 +9,7 @@ import { triggerEscapeKeyPress } from "@/app/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import "easymde/dist/easymde.min.css";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -18,7 +18,6 @@ import { APPROVED, REFERBACK, SUBMITTED } from "../statuses";
 import HistoryList from "./HistoryList";
 
 import Loader from "@/app/components/Loader";
-import { useCallback } from "react";
 import { BsExclamationTriangleFill } from "react-icons/bs";
 import PdfIframe from "./pdf/PdfIframe";
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
@@ -26,6 +25,7 @@ const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
 });
 // EasyMDE styles (required)
 import "easymde/dist/easymde.min.css";
+import type { Options as SimpleMDEOptions } from "easymde";
 
 // const RichTextEditor = dynamic(() => import("./RichTextEditor"), {
 //   ssr: false,
@@ -184,12 +184,12 @@ const ReportNoting = ({
       setValue(
         "submittedTo",
         descendingOrderReportsHistory &&
-          descendingOrderReportsHistory[0].submittedFrom
+          descendingOrderReportsHistory[0].submittedFrom,
       );
       setValue(
         "submittedTo",
         descendingOrderReportsHistory &&
-          descendingOrderReportsHistory[0].submittedFrom
+          descendingOrderReportsHistory[0].submittedFrom,
       );
       console.log("status", REFERBACK);
       setReferback(true);
@@ -212,40 +212,47 @@ const ReportNoting = ({
           !isReferback
             ? SUBMITTED
             : role === "deputy director" &&
-              data.status === SUBMITTED &&
-              isReferback
-            ? REFERBACK
-            : role === "deputy director" && data.status === APPROVED
-            ? APPROVED
-            : role === "director" && data.status === SUBMITTED && !isReferback
-            ? SUBMITTED
-            : role === "director" && data.status === SUBMITTED && isReferback
-            ? REFERBACK
-            : role === "director" && data.status === REFERBACK && isReferback
-            ? REFERBACK
-            : role === "director" && data.status === APPROVED
-            ? APPROVED
-            : role === "department head" &&
-              data.status === SUBMITTED &&
-              !isReferback
-            ? APPROVED
-            : role === "department head" &&
-              data.status === SUBMITTED &&
-              isReferback
-            ? REFERBACK
-            : role === "deputy director" && data.status === SUBMITTED
-            ? SUBMITTED
-            : role === "deputy director" &&
-              data.status === REFERBACK &&
-              isReferback
-            ? REFERBACK
-            : role === "deputy director" && isReferback
-            ? REFERBACK
-            : role === "director" && isReferback
-            ? REFERBACK
-            : -999
-            ? APPROVED
-            : REFERBACK,
+                data.status === SUBMITTED &&
+                isReferback
+              ? REFERBACK
+              : role === "deputy director" && data.status === APPROVED
+                ? APPROVED
+                : role === "director" &&
+                    data.status === SUBMITTED &&
+                    !isReferback
+                  ? SUBMITTED
+                  : role === "director" &&
+                      data.status === SUBMITTED &&
+                      isReferback
+                    ? REFERBACK
+                    : role === "director" &&
+                        data.status === REFERBACK &&
+                        isReferback
+                      ? REFERBACK
+                      : role === "director" && data.status === APPROVED
+                        ? APPROVED
+                        : role === "department head" &&
+                            data.status === SUBMITTED &&
+                            !isReferback
+                          ? APPROVED
+                          : role === "department head" &&
+                              data.status === SUBMITTED &&
+                              isReferback
+                            ? REFERBACK
+                            : role === "deputy director" &&
+                                data.status === SUBMITTED
+                              ? SUBMITTED
+                              : role === "deputy director" &&
+                                  data.status === REFERBACK &&
+                                  isReferback
+                                ? REFERBACK
+                                : role === "deputy director" && isReferback
+                                  ? REFERBACK
+                                  : role === "director" && isReferback
+                                    ? REFERBACK
+                                    : -999
+                                      ? APPROVED
+                                      : REFERBACK,
         reportType: data.reportType,
       };
       console.log("modifiedFormData", modifiedFormData);
@@ -257,7 +264,7 @@ const ReportNoting = ({
         setSubmitting(true);
         const response = await apiClient.post(
           `${REPORTS_HISTORY_API}/MarkedReport`,
-          modifiedFormData
+          modifiedFormData,
         );
         console.log("Response:", response);
         toast.success("Report Marked Successfully");
@@ -281,22 +288,22 @@ const ReportNoting = ({
     const getReportHistory = async (
       visitId: number,
       projectId: number,
-      reportType: number
+      reportType: number,
     ) => {
       setLoading(true);
       try {
         const response = await apiClient.get(
-          `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}&reportType=${reportType}`
+          `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}&reportType=${reportType}`,
         );
         const sorted = [...response.data.data].sort((a, b) =>
-          (b.sDate || "").localeCompare(a.sDate || "")
+          (b.sDate || "").localeCompare(a.sDate || ""),
         );
 
         setDescendingOrderReportsHistory(sorted);
         console.log("sorted", sorted);
 
         const sortedAsc = [...response.data.data].sort((a, b) =>
-          (a.sDate || "").localeCompare(b.sDate || "")
+          (a.sDate || "").localeCompare(b.sDate || ""),
         );
         setAscendingOrderReportsHistory(sortedAsc);
 
@@ -318,7 +325,7 @@ const ReportNoting = ({
       console.log("reportsHistory", descendingOrderReportsHistory);
       console.log(
         "test 1",
-        descendingOrderReportsHistory[0].status === SUBMITTED
+        descendingOrderReportsHistory[0].status === SUBMITTED,
       );
     }
   }, [descendingOrderReportsHistory]);
@@ -337,6 +344,23 @@ const ReportNoting = ({
   //   console.log("Sapling grammar suggestions:", data);
   //   return data;
   // }, []);
+
+  const mdeOptions = useMemo<SimpleMDEOptions>(
+    () => ({
+      toolbar: [
+        "bold",
+        "italic",
+        "heading",
+        "|",
+        "quote",
+        "unordered-list",
+        "ordered-list",
+        "|",
+        "code",
+      ],
+    }),
+    [],
+  );
 
   return (
     <div className="container-fluid p-3">
@@ -450,6 +474,7 @@ const ReportNoting = ({
                                   className="custom-editor"
                                   value={field.value}
                                   onChange={field.onChange}
+                                  options={mdeOptions}
                                 />
                               )}
                             />
@@ -485,11 +510,11 @@ const ReportNoting = ({
                                               descendingOrderReportsHistory[0]
                                                 .status === REFERBACK
                                                 ? data.intiallyUserId
-                                                : data.submittedFrom
+                                                : data.submittedFrom,
                                             )
                                           : setValue(
                                               "submittedTo",
-                                              data.submittedFrom
+                                              data.submittedFrom,
                                             );
                                       }}
                                       disabled={
@@ -509,7 +534,7 @@ const ReportNoting = ({
                                         ? data.intiallyUser
                                         : users.find(
                                             (user) =>
-                                              user.id === data.submittedFrom
+                                              user.id === data.submittedFrom,
                                           )?.fullName}
                                     </label>
                                   </div>
@@ -575,13 +600,13 @@ const ReportNoting = ({
                                         setReferback(false);
                                         console.log(
                                           "departmentHead designation: ",
-                                          departmentHead.designation
+                                          departmentHead.designation,
                                         );
 
                                         if (newValue) {
                                           setValue(
                                             "submittedTo",
-                                            departmentHead.id
+                                            departmentHead.id,
                                           ); //department head-id
                                         } else {
                                           setValue("submittedTo", undefined); //department head-id

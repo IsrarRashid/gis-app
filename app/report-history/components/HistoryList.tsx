@@ -32,11 +32,11 @@ const HistoryList = ({
               style={{ height: "500px", overflow: "scroll" }}
             >
               <div className="col mb-2 text-end">
-                <ReportHistoryDownload
+                {/* <ReportHistoryDownload
                   data={ascendingOrderData}
                   users={users}
                   submittedReport={submittedReport}
-                />
+                /> */}
               </div>
               {descendingOrderData?.map((d) => (
                 <div
@@ -76,7 +76,7 @@ const HistoryList = ({
                         <span>
                           {getFormattedDate(new Date(d.sDate), "short")} (
                           {convertToLocaleTimeString(
-                            new Date(d.sDate).toLocaleTimeString()
+                            new Date(d.sDate).toLocaleTimeString(),
                           )}
                           )
                         </span>

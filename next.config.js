@@ -5,18 +5,18 @@ const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API;
 const url = new URL(backendUrl);
 const nextConfig = {
   /* config options here */
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${backendUrl}/api/:path*`,
-      },
-      {
-        source: "/upload/:path*",
-        destination: `${backendUrl}/upload/:path*`,
-      },
-    ];
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: "/api/:path*",
+  //       destination: `${backendUrl}/api/:path*`,
+  //     },
+  //     {
+  //       source: "/upload/:path*",
+  //       destination: `${backendUrl}/upload/:path*`,
+  //     },
+  //   ];
+  // },
   images: {
     remotePatterns: [
       {

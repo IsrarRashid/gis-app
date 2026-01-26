@@ -3,6 +3,7 @@ import useData from "./useData";
 
 export interface Officer {
   id: number;
+  departmentId: number;
   userName: string;
   fullName: string;
   designation: string;

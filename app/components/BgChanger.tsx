@@ -56,9 +56,13 @@ const BgChanger = () => {
       ? "#141518"
       : !allPagesPath.some((path) => currentPath.startsWith(path))
       ? "#fff"
-      : currentType
+      : currentType && pathSegment === "charts"
+      ? "#fff"
+      : !currentType && pathSegment === "charts"
+      ? "#fff"
+      : currentType && pathSegment !== "charts"
       ? "#2377B6"
-      : !currentType
+      : !currentType && pathSegment !== "charts"
       ? "#CFE6F8"
       : "",
     isImagePath // true if it's an image, false if it's a color
@@ -68,27 +72,3 @@ const BgChanger = () => {
 };
 
 export default BgChanger;
-
-// useEffect(() => {
-//     console.log("currentPath", currentPath.split("/")[1]);
-//     const pathSegment = currentPath.split("/")[1]; // e.g., 'dashboard'
-
-//     const pagePathsForBgColor = ["vt-tracking", "dashboard"];
-//     const pagePathsForBgImage = ["xsectors", "drivers"];
-
-//     const isColorPath = pagePathsForBgColor.includes(pathSegment);
-//     const isImagePath = pagePathsForBgImage.includes(pathSegment);
-
-//     const background = isColorPath
-//       ? "#CFE6F8"
-//       : isImagePath
-//       ? "/images/bg2.png"
-//       : "";
-//     setBackground(background);
-
-//     const isImage = isImagePath;
-//     setImage(isImage);
-
-//     console.log("background", background);
-//     console.log("isImage", isImage);
-//   }, [router, currentPath]);

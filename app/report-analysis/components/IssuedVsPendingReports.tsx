@@ -110,6 +110,7 @@ const IssuedVsPendingReports = ({ isActiveTab, setActiveTab }: Props) => {
 
   // Handle search logic
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentPage(1);
     // const lowercasedFilter = searchTerm.toLowerCase();
     const filtered = data.filter((item) =>
       [

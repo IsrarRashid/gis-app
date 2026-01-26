@@ -55,3 +55,4 @@ export const TEMP_TOUR_PLAN_API = `/api/TempTourPlan`;
 export const EVALUATION_TEMP_TOUR_PLAN_API = `/api/EvaluationTempTourPlan`;
 export const REPORT_API = `/api/Reports`;
 export const DEPARTMENT_ROLES_SORTING_API = `/api/DepartmentRolesSorting`;
+export const PC_IV_WORKFLOW_API = `/api/pciv/workflow`;

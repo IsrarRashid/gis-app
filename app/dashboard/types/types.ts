@@ -1,5 +1,6 @@
-export enum TypeEnum {
+export enum DashboardTypeEnum {
   EVALUATION = "EVALUATION",
 }
 
-export type DashboardType = (typeof TypeEnum)[keyof typeof TypeEnum];
+export type DashboardType =
+  (typeof DashboardTypeEnum)[keyof typeof DashboardTypeEnum];

@@ -92,6 +92,7 @@ const PresentAttendance = () => {
 
   // Real-time search handler
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentPage(1);
     const searchValue = e.target.value.toLowerCase();
     setSearchTerm(searchValue);
 

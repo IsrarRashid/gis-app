@@ -1,6 +1,6 @@
 import DashboardEvaluation from "./components/Evaluation/DashboardEvaluation";
 import DashboardMonitoring from "./components/DashboardMonitoring";
-import { DashboardType, TypeEnum } from "./types/types";
+import { DashboardType, DashboardTypeEnum } from "./types/types";
 
 interface Props {
   searchParams: Promise<{
@@ -11,9 +11,9 @@ interface Props {
 const DashboardPage = async ({ searchParams }: Props) => {
   const { dashboardType } = await searchParams;
 
-  const types = Object.values(TypeEnum) as TypeEnum[]; // Cast to TypeEnum[]
-  const currentType = types.includes(dashboardType as TypeEnum)
-    ? (dashboardType as TypeEnum)
+  const types = Object.values(DashboardTypeEnum) as DashboardTypeEnum[]; // Cast to TypeEnum[]
+  const currentType = types.includes(dashboardType as DashboardTypeEnum)
+    ? (dashboardType as DashboardTypeEnum)
     : undefined;
 
   console.log("types array:", types);

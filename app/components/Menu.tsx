@@ -125,7 +125,7 @@ const Menu = ({
         }}
       >
         {icon && (
-          <div className="col text-lg-end text-md-center text-center pe-0">
+          <div className="col text-end pe-0">
             <img
               src={icon}
               alt={icon}
@@ -190,7 +190,7 @@ const Menu = ({
                   width: isGrouped ? "100%" : "auto",
                 }}
               >
-                <p
+                <div
                   className={`${styles.labelHoverDown} mb-0 text-nowrap fw-5`}
                   style={{
                     fontWeight: "500",
@@ -212,7 +212,7 @@ const Menu = ({
                   >
                     {label}
                   </AutoTextSize>
-                </p>
+                </div>
                 <div
                   className={`row d-flex justify-content-between m-0 ${styles.labelHoverUp} mb-2 text-nowrap fw-5`}
                   style={{
@@ -266,11 +266,11 @@ const Menu = ({
                 style={{
                   position: "relative",
                   minHeight: "28px",
-                  minWidth: isGrouped ? "130px" : "100px",
+                  minWidth: isGrouped ? "130px" : "200px",
                   maxWidth: isGrouped ? "200px" : "100%",
                 }}
               >
-                <p
+                <div
                   className={`${styles.labelHoverDown} mb-0 text-nowrap fw-5`}
                   style={{
                     fontWeight: "500",
@@ -292,7 +292,7 @@ const Menu = ({
                   >
                     {label}
                   </AutoTextSize>
-                </p>
+                </div>
                 <div
                   className={`row d-flex justify-content-between m-0 ${styles.labelHoverUp} mb-2 text-nowrap fw-5`}
                   style={{
