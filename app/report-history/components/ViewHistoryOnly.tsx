@@ -26,18 +26,18 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
     const getReportHistory = async (
       visitId: number,
       projectId: number,
-      reportType: number
+      reportType: number,
     ) => {
       setLoading(true);
       try {
         const response = await apiClient.get(
-          `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}&reportType=${reportType}`
+          `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}&reportType=${reportType}`,
         );
         setReportsHistory(
           response.data.data.sort(
             (a: ReportHistory, b: ReportHistory) =>
-              new Date(b.sDate).getTime() - new Date(a.sDate).getTime()
-          )
+              new Date(b.sDate).getTime() - new Date(a.sDate).getTime(),
+          ),
         );
         setLoading(false);
       } catch (err) {
@@ -113,7 +113,7 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
                     <span>
                       {getFormattedDate(new Date(d.sDate), "short")} (
                       {convertToLocaleTimeString(
-                        new Date(d.sDate).toLocaleTimeString()
+                        new Date(d.sDate).toLocaleTimeString(),
                       )}
                       )
                     </span>
@@ -126,7 +126,7 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
                     className="btn rounded-pill fs15px"
                     style={{ background: "#E4E4E4" }}
                   >
-                    View PDF
+                    View PDF Report
                   </Link>
                 </div>
               </div>

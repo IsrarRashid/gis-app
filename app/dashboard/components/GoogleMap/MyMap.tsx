@@ -75,7 +75,7 @@ const MyMap = ({
 
   const [selectedDistrictIndex, setSelectedDistrictIndex] = useState(0);
   const [activeDistrict, setActiveDistrict] = useState<DistrictList | null>(
-    null
+    null,
   );
   const [selectedProjectIndex, setSelectedProjectIndex] = useState(0);
   const [showButton, setShowButton] = useState(false);
@@ -104,12 +104,12 @@ const MyMap = ({
 
   const handleDistrictClick = async (
     districtId: number,
-    showProjects: boolean
+    showProjects: boolean,
   ) => {
     if (showProjects) {
       try {
         const response = await apiClient.get(
-          `${DISTRICT_API}/GetProjectByDistrict?districtId=${districtId}`
+          `${DISTRICT_API}/GetProjectByDistrict?districtId=${districtId}`,
         );
         setActiveProjects(response.data.data);
         setActiveDistrictId(districtId);
@@ -125,14 +125,14 @@ const MyMap = ({
   const handleMarkerClick = (districtId: number) => {
     const isActive = activeDistrictId === districtId;
     const districtName = districts.find(
-      (district) => district.id === districtId
+      (district) => district.id === districtId,
     )?.districtName;
 
     // Update otherFilters
     setOtherFilters((prevFilters) => {
       const updatedFilters = [...prevFilters];
       const districtFilterIndex = updatedFilters.findIndex(
-        (filter) => filter.filterIdentifier === "District"
+        (filter) => filter.filterIdentifier === "District",
       );
 
       if (districtFilterIndex !== -1) {
@@ -153,7 +153,7 @@ const MyMap = ({
       // && districts.find((district) => district.id === districtId)?.districtName
     ) {
       const yearFilter = otherFilters.find(
-        (filter) => filter.filterIdentifier === "Year"
+        (filter) => filter.filterIdentifier === "Year",
       );
       if (yearFilter && yearFilter.filterValues === "2025-2026") {
         handleSubmit([
@@ -202,7 +202,7 @@ const MyMap = ({
   const handleProjectSubmit = async (projectId: number) => {
     try {
       const response = await apiClient.get(
-        `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}`
+        `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}`,
       );
       if (response.data.data) {
         router.push(`/projectDetailsDashboard/${projectId}`);
@@ -237,7 +237,7 @@ const MyMap = ({
     setOtherFilters((prevFilters) => {
       const updatedFilters = [...prevFilters];
       const districtFilterIndex = updatedFilters.findIndex(
-        (filter) => filter.filterIdentifier === "District"
+        (filter) => filter.filterIdentifier === "District",
       );
 
       if (districtFilterIndex !== -1) {
@@ -245,7 +245,7 @@ const MyMap = ({
         return prevFilters.filter(
           (filter) =>
             filter.filterIdentifier !==
-            updatedFilters[districtFilterIndex].filterIdentifier
+            updatedFilters[districtFilterIndex].filterIdentifier,
         );
       }
       return updatedFilters; // Return updated filters
@@ -257,14 +257,14 @@ const MyMap = ({
       handleSubmit([
         ...cmInitiativeFilters,
         ...otherFilters.filter(
-          (filter) => filter.filterIdentifier !== "District"
+          (filter) => filter.filterIdentifier !== "District",
         ),
       ]);
     } else {
       handleSubmit([
         ...adpFilters,
         ...otherFilters.filter(
-          (filter) => filter.filterIdentifier !== "District"
+          (filter) => filter.filterIdentifier !== "District",
         ),
       ]);
     }
@@ -399,7 +399,7 @@ const MyMap = ({
           target="_blank"
           style={{
             zIndex: 1,
-            left: 10,
+            left: 185,
             top: 10,
             backgroundColor: "rgba(28, 28, 29, 0.86)",
             padding: "10px 12px 10px 11.5px",

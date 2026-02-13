@@ -101,3 +101,31 @@ export const exportToExcelNewOne = <T extends Record<string, any>>(
   XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
   XLSX.writeFile(workbook, `${filename}.xlsx`);
 };
+
+
+// new version for dynamic column name
+
+export interface ExcelColumn {
+  label: string;
+  value: string;
+}
+
+export const exportDataToExcelDynamicColumn = (
+  columns: ExcelColumn[],
+  rows: Record<string, any>[],
+  filename: string
+) => {
+  const worksheetData = [
+    columns.map((c) => c.label), // headers
+    ...rows.map((row) =>
+      columns.map((c) => row[c.value]) // values
+    ),
+  ];
+
+  const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+  XLSX.writeFile(workbook, filename);
+};

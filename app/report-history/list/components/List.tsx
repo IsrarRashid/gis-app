@@ -21,6 +21,7 @@ import ReportNoting from "../../components/ReportNoting";
 import ViewHistoryOnly from "../../components/ViewHistoryOnly";
 import { APPROVED, ISSUED, REFERBACK, SUBMITTED } from "../../statuses";
 import { DashboardTypeEnum } from "@/app/dashboard/types/types";
+import DownloadWrapper from "../../components/DownloadWrapper";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -115,7 +116,7 @@ const List = ({
       setLoading(true);
       try {
         const response = await apiClient.get(
-          `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`
+          `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`,
         );
         if (response.data.data) {
           setIssuedReportCount(response.data.data.totalIssuedCount);
@@ -124,7 +125,7 @@ const List = ({
           const sortedData = response.data.data.reports.sort(
             (a: any, b: any) =>
               new Date(a.submittedDate).getTime() -
-              new Date(b.submittedDate).getTime()
+              new Date(b.submittedDate).getTime(),
           );
           setData(sortedData);
           console.log("sortedData data", sortedData);
@@ -145,12 +146,16 @@ const List = ({
       setLoading(true);
       try {
         const response = await apiClient.get(
-          `${REPORTS_HISTORY_API}/GetIssuedReports`
+          `${REPORTS_HISTORY_API}/GetIssuedReports`,
         );
 
         if (response.data.data) {
-          setIssuedReportsData(response.data.data);
-          console.log("response.data.data", response.data.data);
+          const sortedData = response.data.data.sort(
+            (a: any, b: any) => b.visitId - a.visitId,
+          );
+
+          setIssuedReportsData(sortedData);
+          console.log("issued response.data.data", response.data.data);
         }
         setLoading(false);
       } catch (err) {
@@ -172,19 +177,19 @@ const List = ({
   useEffect(() => {
     if (officers) {
       const deputyDirectors = officers.filter(
-        (officer) => officer.roleName === "Deputy Director"
+        (officer) => officer.roleName === "Deputy Director",
       );
       console.log(deputyDirectors);
       if (deputyDirectors) setdeputyDirectors(deputyDirectors);
 
       const directors = officers.filter(
-        (officer) => officer.roleName === "Director"
+        (officer) => officer.roleName === "Director",
       );
       console.log(directors);
       if (directors) setDirectors(directors);
 
       const departmentHead = officers.find(
-        (officer) => officer.roleName === "Department Head"
+        (officer) => officer.roleName === "Department Head",
       );
 
       console.log(departmentHead);
@@ -341,7 +346,7 @@ const List = ({
             (d) =>
               d.status === tab.status &&
               d.submittedFrom === tab.reportSubmittedFrom &&
-              d.isFocalPerson === true
+              d.isFocalPerson === true,
           );
           count = filteredData.length;
         } else if (tab.reportSubmittedTo) {
@@ -349,7 +354,7 @@ const List = ({
             (d) =>
               d.status === tab.status &&
               d.submittedTo === tab.reportSubmittedTo &&
-              d.isFocalPerson === true
+              d.isFocalPerson === true,
           );
           count = filteredData.length;
         }
@@ -375,7 +380,7 @@ const List = ({
             tab.id === 7 ||
             tab.id === 11 ||
             // Department Head Tabs
-            tab.id === 5)
+            tab.id === 5),
       );
       if (tabWithRecord) {
         setSelectedTab(tabWithRecord.id);
@@ -413,7 +418,7 @@ const List = ({
         // Wait for DOM to be ready
         setTimeout(() => {
           const firstModalButton = document.querySelector(
-            `[data-bs-target="#comment${commentEligibleReports[0].id}"]`
+            `[data-bs-target="#comment${commentEligibleReports[0].id}"]`,
           ) as HTMLButtonElement;
 
           if (firstModalButton) {
@@ -439,7 +444,7 @@ const List = ({
         // Wait a bit for the previous modal to close
         setTimeout(() => {
           const nextModalButton = document.querySelector(
-            `[data-bs-target="#comment${nextReport.id}"]`
+            `[data-bs-target="#comment${nextReport.id}"]`,
           ) as HTMLButtonElement;
 
           if (nextModalButton) {
@@ -482,7 +487,7 @@ const List = ({
       ]
         .filter(Boolean)
         .map((f) => String(f).toLowerCase())
-        .some((field) => field.includes(value))
+        .some((field) => field.includes(value)),
     );
     setSearchTerm(e.target.value);
     setSearchData(filtered);
@@ -503,7 +508,7 @@ const List = ({
       ]
         .filter(Boolean)
         .map((f) => String(f).toLowerCase())
-        .some((field) => field.includes(value))
+        .some((field) => field.includes(value)),
     );
     setSearchTerm(e.target.value);
     setSearchData(filtered);
@@ -539,6 +544,22 @@ const List = ({
 
             <div className="col-auto">
               <div className="row d-flex justify-content-end mb-3">
+                <div className="col-auto my-auto">
+                  {selectedTabLabel === "Issued" && issuedReportsData ? (
+                    <DownloadWrapper
+                      data={issuedReportsData}
+                      fileName={selectedTabLabel}
+                    />
+                  ) : filteredData ? (
+                    <DownloadWrapper
+                      data={filteredData}
+                      fileName={selectedTabLabel}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </div>
+
                 <div className="col">
                   <form onSubmit={(e) => e.preventDefault()}>
                     <div className="input-group">
@@ -601,7 +622,7 @@ const List = ({
                         (d) =>
                           (d.submittedTo === userId ||
                             d.submittedFrom === userId) &&
-                          d.isFocalPerson === true
+                          d.isFocalPerson === true,
                       ).length > 0 && (
                         <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                           {
@@ -609,7 +630,7 @@ const List = ({
                               (d) =>
                                 (d.submittedTo === userId ||
                                   d.submittedFrom === userId) &&
-                                d.isFocalPerson === true
+                                d.isFocalPerson === true,
                             ).length
                           }
                         </span>
@@ -621,7 +642,7 @@ const List = ({
                       (tab) =>
                         tab.status === -99 ||
                         tab.status === 6 ||
-                        tab.role === role
+                        tab.role === role,
                     )
                     .map((tab) => (
                       <div key={tab.id} className="col-auto">
@@ -753,10 +774,10 @@ const List = ({
                         d.status === ISSUED
                           ? "bg-success text-light"
                           : d.status === REFERBACK
-                          ? "bg-danger text-light"
-                          : d.status === SUBMITTED
-                          ? "bg-warning text-dark"
-                          : "bg-info text-dark"
+                            ? "bg-danger text-light"
+                            : d.status === SUBMITTED
+                              ? "bg-warning text-dark"
+                              : "bg-info text-dark"
                       }`}
                     >
                       <p className="fw-5 mb-0">
@@ -834,12 +855,12 @@ const List = ({
                             {addDayToFormattedDate(
                               getFormattedDate(
                                 new Date(d.submittedDate),
-                                "short"
-                              )!
+                                "short",
+                              )!,
                             )}
                             <br />
                             {convertToLocaleTimeString(
-                              new Date(d.submittedDate).toLocaleTimeString()
+                              new Date(d.submittedDate).toLocaleTimeString(),
                             )}
                           </p>
                         </div>
@@ -859,8 +880,8 @@ const List = ({
                               {addDayToFormattedDate(
                                 getFormattedDate(
                                   new Date(d.issuanceDate),
-                                  "short"
-                                )!
+                                  "short",
+                                )!,
                               )}
                             </p>
                           </div>
@@ -941,10 +962,10 @@ const List = ({
                         d.status === ISSUED
                           ? "bg-success text-light"
                           : d.status === REFERBACK
-                          ? "bg-danger text-light"
-                          : d.status === SUBMITTED
-                          ? "bg-warning text-dark"
-                          : "bg-info text-dark"
+                            ? "bg-danger text-light"
+                            : d.status === SUBMITTED
+                              ? "bg-warning text-dark"
+                              : "bg-info text-dark"
                       }`}
                     >
                       <p className="fw-5 mb-0">
@@ -1022,12 +1043,12 @@ const List = ({
                             {addDayToFormattedDate(
                               getFormattedDate(
                                 new Date(d.submittedDate),
-                                "short"
-                              )!
+                                "short",
+                              )!,
                             )}
                             <br />
                             {convertToLocaleTimeString(
-                              new Date(d.submittedDate).toLocaleTimeString()
+                              new Date(d.submittedDate).toLocaleTimeString(),
                             )}
                           </p>
                         </div>
@@ -1047,8 +1068,8 @@ const List = ({
                               {addDayToFormattedDate(
                                 getFormattedDate(
                                   new Date(d.issuanceDate),
-                                  "short"
-                                )!
+                                  "short",
+                                )!,
                               )}
                             </p>
                           </div>
@@ -1120,10 +1141,10 @@ const List = ({
                                   {d.submittedTo === userId
                                     ? "Comment"
                                     : d.status === ISSUED
-                                    ? "Issued"
-                                    : d.status === APPROVED
-                                    ? "Approved"
-                                    : "Submitted"}
+                                      ? "Issued"
+                                      : d.status === APPROVED
+                                        ? "Approved"
+                                        : "Submitted"}
                                 </Button>
                               }
                               body={

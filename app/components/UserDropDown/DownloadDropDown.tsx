@@ -12,12 +12,14 @@ interface Props {
   onClickPdf?: () => void;
   onClickExcel?: () => void;
   styleVarient?: 1 | 2;
+  label?: string;
 }
 
 const DownloadDropDown = ({
   onClickPdf,
   onClickExcel,
   styleVarient = 1,
+  label = "Download",
 }: Props) => {
   const [show, setShow] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -68,7 +70,7 @@ const DownloadDropDown = ({
             height={22}
             style={{ width: "22px", height: "22px" }}
           />
-          Download
+          {label}
         </Button>
       ) : (
         <Button
@@ -88,7 +90,7 @@ const DownloadDropDown = ({
             height={22}
             style={{ width: "22px", height: "22px" }}
           />
-          Download
+          {label}
         </Button>
       )}
       <div

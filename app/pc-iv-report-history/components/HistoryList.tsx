@@ -76,7 +76,7 @@ const HistoryList = ({
                         <span>
                           {getFormattedDate(new Date(d.mark_date), "short")} (
                           {convertToLocaleTimeString(
-                            new Date(d.mark_date).toLocaleTimeString()
+                            new Date(d.mark_date).toLocaleTimeString(),
                           )}
                           )
                         </span>

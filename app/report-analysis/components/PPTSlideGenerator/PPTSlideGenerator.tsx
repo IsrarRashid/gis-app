@@ -20,6 +20,8 @@ import {
 import { toast } from "react-toastify";
 import DragableTable from "./DragableTable/DragableTable";
 import ToggleBetweenModals from "@/app/components/ToggleBetweenModals";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
 
 export interface SectorItem {
   id: number;
@@ -46,7 +48,7 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
     const isChecked = e.target.checked;
 
     setPriority((prev) =>
-      isChecked ? [...prev, value] : prev.filter((v) => v !== value)
+      isChecked ? [...prev, value] : prev.filter((v) => v !== value),
     );
   };
 
@@ -123,20 +125,20 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
           toDate: new Date(toDate).toISOString().split("T")[0],
           fromDate: new Date(fromDate).toISOString().split("T")[0],
           sector: sectors.map((sector) => sector.title),
-        }
+        },
       );
 
       console.log(response);
       toast.success("PPT Generated Successfully");
       setSlidePath(
-        process.env.NEXT_PUBLIC_BACKEND_API + "/" + response.data.data
+        process.env.NEXT_PUBLIC_BACKEND_API + "/" + response.data.data,
       );
     } catch (err) {
       setSubmitting(false);
       console.error("Submission error:", err);
       toast.error(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-          (err as AxiosError<ErrorResponse>).message
+          (err as AxiosError<ErrorResponse>).message,
       );
     } finally {
       setSubmitting(false); // Always run after try/catch
@@ -170,7 +172,7 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
           toDate: new Date(toDate).toISOString().split("T")[0],
           fromDate: new Date(fromDate).toISOString().split("T")[0],
           sector: [""],
-        }
+        },
       );
 
       console.log(response);
@@ -181,7 +183,7 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
       console.error("Submission error:", err);
       toast.error(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-          (err as AxiosError<ErrorResponse>).message
+          (err as AxiosError<ErrorResponse>).message,
       );
     }
   }, [priority, fromDate, toDate]);
@@ -376,7 +378,7 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
                 </div>
                 {priority.length > 0 && sectorNames.length > 0 && (
                   <div className="col">
-                    <div className="row justify-content-between m-0">
+                    <div className="row justify-content-between m-0 mb-3">
                       <div className="col-auto">
                         <h3 className="fw-bold m-0">Sectors</h3>
                       </div>
@@ -390,7 +392,7 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
                             id="select-all"
                           />
                           <label
-                            className="form-check-label"
+                            className="form-check-label text-wrap"
                             htmlFor="select-all"
                           >
                             Select All
@@ -398,9 +400,50 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
                         </div>
                       </div>
                     </div>
-                    <div className="d-flex flex-wrap m-0">
+
+                    <div
+                      className="table-responsive mb-2"
+                      style={{ margin: "0 -12px" }}
+                    >
+                      <div
+                        style={{
+                          height: "calc(100vh - 460px)",
+                          overflow: "auto",
+                        }}
+                      >
+                        <table className="table table-hover mb-0">
+                          <tbody>
+                            {sectorNames?.map((sector, index) => (
+                              <tr key={index}>
+                                <TableData>
+                                  <div className="form-check">
+                                    <input
+                                      className="form-check-input"
+                                      type="checkbox"
+                                      value={sector}
+                                      onChange={handleSectorChange}
+                                      checked={sectors.some(
+                                        (s) => s.title === sector,
+                                      )}
+                                      id={sector}
+                                    />
+                                    <label
+                                      className="form-check-label text-wrap"
+                                      htmlFor={sector}
+                                    >
+                                      {sector}
+                                    </label>
+                                  </div>
+                                </TableData>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    {/* <div className="d-flex flex-wrap m-0">
                       {sectorNames?.map((sector, i) => (
-                        <div key={i} className="col-auto p-2">
+                        <div key={i} className="col p-2">
                           <div className="form-check">
                             <input
                               className="form-check-input"
@@ -411,7 +454,7 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
                               id={sector}
                             />
                             <label
-                              className="form-check-label"
+                              className="form-check-label text-wrap"
                               htmlFor={sector}
                             >
                               {sector}
@@ -419,7 +462,7 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
                           </div>
                         </div>
                       ))}
-                    </div>
+                    </div> */}
                   </div>
                 )}
                 <div className="row m-0 justify-content-center">
@@ -447,7 +490,7 @@ const PPTSlideGenerator = ({ isActiveTab, setActiveTab }: Props) => {
             {sectors.length > 0 && (
               <div
                 className="col-lg-6 col-md-12 col-sm-12"
-                style={{ overflowY: "scroll", height: "600px" }}
+                style={{ overflowY: "auto", height: "calc(100vh - 270px)" }}
               >
                 <DragableTable sectors={sectors} setSectors={setSectors} />
               </div>

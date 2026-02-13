@@ -1,6 +1,6 @@
 export const getFormattedDate = (
   dateInput: string | Date,
-  formatType: "short" | "numeric" = "short"
+  formatType: "short" | "numeric" = "short",
 ): string => {
   let date: Date | null = null;
 
@@ -119,6 +119,7 @@ export function formatHHLStringDate(inputDate: string): string {
 
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 
 const renameMap: Record<string, string> = {
   id: "GS No.",
@@ -135,7 +136,7 @@ export const exportToPDF = (
   columns: { header: string; dataKey: string }[],
   tableRows: any[],
   selectedDate: Date,
-  label: string
+  label: string,
 ) => {
   const doc = new jsPDF("landscape");
   doc.setFont("helvetica", "bold"); // Set font to bold
@@ -234,7 +235,7 @@ export const exportToPDFNew = (
   columns: { header: string; dataKey: string }[],
   tableRows: any[],
   selectedDate: Date,
-  label: string
+  label: string,
 ) => {
   const doc = new jsPDF("landscape");
   doc.setFont("helvetica", "bold"); // Set font to bold
@@ -462,7 +463,7 @@ export const getTimeAgo = (targetDate: string) => {
  */
 export function formatAmountWithCommas(
   amount: number,
-  decimals: number = 3
+  decimals: number = 3,
 ): string {
   if (isNaN(amount) && !amount) {
     throw new Error("Invalid amount. Please provide a valid number.");
@@ -545,7 +546,7 @@ import * as XLSX from "xlsx";
 
 export const downloadReportAnalysisToExcel = (
   data: any,
-  filename: string = "Report.xlsx"
+  filename: string = "Report.xlsx",
 ) => {
   // Flatten the data into rows
   const flattenData = (items: any[], parentLabels: string[] = []) => {
@@ -595,18 +596,18 @@ export const displayStatusText = (statusId: number) => {
   return statusId === 0
     ? "SCHEDULED"
     : statusId === 1
-    ? "COMPLETED"
-    : statusId === 2
-    ? "CANCELLED"
-    : statusId === 3
-    ? "SUBMITTED"
-    : statusId === 4
-    ? "APPROVED"
-    : statusId === 5
-    ? "REFERBACK"
-    : statusId === 6
-    ? "ISSUED"
-    : "";
+      ? "COMPLETED"
+      : statusId === 2
+        ? "CANCELLED"
+        : statusId === 3
+          ? "SUBMITTED"
+          : statusId === 4
+            ? "APPROVED"
+            : statusId === 5
+              ? "REFERBACK"
+              : statusId === 6
+                ? "ISSUED"
+                : "";
 };
 
 export interface Option {
@@ -655,32 +656,32 @@ export function hexToRgba(hex: string, alpha: number = 1): string {
 
 export function getBGColor(
   status: string | null,
-  requireColorCode: boolean
+  requireColorCode: boolean,
 ): string {
   return status === "EVALUATION" && !requireColorCode
     ? "bg-color-evaluation-dark-blue"
     : status === "EVALUATION" && requireColorCode
-    ? "#2377b6"
-    : status === null && !requireColorCode
-    ? "bg-color-sea-blue"
-    : status === null && requireColorCode
-    ? "#0c8ce9"
-    : "";
+      ? "#2377b6"
+      : status === null && !requireColorCode
+        ? "bg-color-sea-blue"
+        : status === null && requireColorCode
+          ? "#0c8ce9"
+          : "";
 }
 
 export function getColor(
   status: string | null,
-  requireColorCode: boolean
+  requireColorCode: boolean,
 ): string {
   return status === "EVALUATION" && !requireColorCode
     ? "color-evaluation-dark-blue"
     : status === "EVALUATION" && requireColorCode
-    ? "#2377b6"
-    : status === null && !requireColorCode
-    ? "color-sea-blue"
-    : status === null && requireColorCode
-    ? "#0c8ce9"
-    : "";
+      ? "#2377b6"
+      : status === null && !requireColorCode
+        ? "color-sea-blue"
+        : status === null && requireColorCode
+          ? "#0c8ce9"
+          : "";
 }
 
 export const allPagesPath = [
@@ -784,3 +785,38 @@ export const isValidDate = (dateString: string): boolean => {
 };
 
 // for new-visit-plan ends
+
+export type Column<T> = {
+  label: string;
+  value?: keyof T;
+  className?: string;
+  render?: (row: T) => React.ReactNode;
+};
+
+// Generic PDF export method
+export interface PdfColumn {
+  label: string;
+  value: string;
+}
+
+export const exportDataToPDF = (
+  columns: PdfColumn[],
+  rows: any[],
+  filename: string,
+  orientation: "portrait" | "landscape" = "portrait",
+) => {
+  const doc = new jsPDF({ orientation });
+
+  doc.setFontSize(14);
+  doc.text(filename.replace(".pdf", ""), 14, 15);
+
+  autoTable(doc, {
+    startY: 25,
+    head: [columns.map((c) => c.label)],
+    body: rows.map((row) => columns.map((c) => row[c.value])),
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [19, 66, 115] },
+  });
+
+  doc.save(filename);
+};

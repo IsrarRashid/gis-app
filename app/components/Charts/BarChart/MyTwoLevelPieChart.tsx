@@ -62,7 +62,7 @@ const MyTwoLevelPieChart = ({
                   <stop offset="0%" stopColor={item.gradient.from} />
                   <stop offset="100%" stopColor={item.gradient.to} />
                 </linearGradient>
-              )
+              ),
           )}
         </defs>
 
@@ -84,7 +84,7 @@ const MyTwoLevelPieChart = ({
               fill={
                 entry.gradient
                   ? `url(#pieGradient-${entry.gradient.id})`
-                  : entry.color ?? "#8884d8"
+                  : (entry.color ?? "#8884d8")
               }
               stroke={style.stroke}
               strokeWidth={style.strokeWidth}
@@ -110,7 +110,7 @@ const MyTwoLevelPieChart = ({
               fill={
                 entry.gradient
                   ? `url(#pieGradient-${entry.gradient.id})`
-                  : entry.color ?? "#82ca9d"
+                  : (entry.color ?? "#82ca9d")
               }
               stroke={style.stroke}
               strokeWidth={style.strokeWidth}

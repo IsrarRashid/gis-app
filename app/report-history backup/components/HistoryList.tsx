@@ -59,7 +59,7 @@ const HistoryList = ({ data }: { data: ReportHistory[] }) => {
                         <span>
                           {getFormattedDate(new Date(d.sDate), "short")} (
                           {convertToLocaleTimeString(
-                            new Date(d.sDate).toLocaleTimeString()
+                            new Date(d.sDate).toLocaleTimeString(),
                           )}
                           )
                         </span>
@@ -72,7 +72,7 @@ const HistoryList = ({ data }: { data: ReportHistory[] }) => {
                         className="btn rounded-pill fs15px"
                         style={{ background: "#E4E4E4" }}
                       >
-                        View PDF
+                        View PDF Report
                       </Link>
                     </div>
                   </div>

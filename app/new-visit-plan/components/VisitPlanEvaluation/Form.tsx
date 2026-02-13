@@ -195,7 +195,7 @@ const Form = ({
   const checkDriver = async (
     driverId: number,
     dateFrom: string,
-    dateTo: string
+    dateTo: string,
   ) => {
     if (!driverId || isNaN(driverId) || driverId <= 0) {
       toast.info("Please select a valid driver");
@@ -209,7 +209,7 @@ const Form = ({
     } else {
       try {
         const response = await apiClient(
-          `${TEMP_TOUR_PLAN_API}/check-driver??driverId=${driverId}&dateFrom=${dateFrom}&dateTo=${dateTo}`
+          `${TEMP_TOUR_PLAN_API}/check-driver??driverId=${driverId}&dateFrom=${dateFrom}&dateTo=${dateTo}`,
         );
 
         if (response.data.available) {
@@ -230,7 +230,7 @@ const Form = ({
   const checkVehicle = async (
     vehicleId: number,
     dateFrom: string,
-    dateTo: string
+    dateTo: string,
   ) => {
     if (!vehicleId) {
       toast.info("Please Select Vehicle");
@@ -243,7 +243,7 @@ const Form = ({
     } else {
       try {
         const response = await apiClient(
-          `${TEMP_TOUR_PLAN_API}/check-vehical?vehicalId=${vehicleId}&dateFrom=${dateFrom}&dateTo=${dateTo}`
+          `${TEMP_TOUR_PLAN_API}/check-vehical?vehicalId=${vehicleId}&dateFrom=${dateFrom}&dateTo=${dateTo}`,
         );
 
         if (response.data.available) {
@@ -356,20 +356,20 @@ const Form = ({
                   districtOptions.find(
                     (opt) =>
                       opt.value ===
-                      (field.value != null ? field.value.toString() : "")
+                      (field.value != null ? field.value.toString() : ""),
                   )
                     ? [
                         districtOptions.find(
                           (opt) =>
                             opt.value ===
-                            (field.value != null ? field.value.toString() : "")
+                            (field.value != null ? field.value.toString() : ""),
                         )!,
                       ]
                     : null
                 }
                 onChangeSingle={(selectedOption) => {
                   field.onChange(
-                    selectedOption ? Number(selectedOption.value) : null
+                    selectedOption ? Number(selectedOption.value) : null,
                   );
                 }}
               />
@@ -424,20 +424,20 @@ const Form = ({
                   typeStatusOptions.find(
                     (opt) =>
                       opt.value ===
-                      (field.value != null ? field.value.toString() : "")
+                      (field.value != null ? field.value.toString() : ""),
                   )
                     ? [
                         typeStatusOptions.find(
                           (opt) =>
                             opt.value ===
-                            (field.value != null ? field.value.toString() : "")
+                            (field.value != null ? field.value.toString() : ""),
                         )!,
                       ]
                     : null
                 }
                 onChangeSingle={(selectedOption) => {
                   field.onChange(
-                    selectedOption ? Number(selectedOption.value) : null
+                    selectedOption ? Number(selectedOption.value) : null,
                   );
                 }}
               />
@@ -477,20 +477,20 @@ const Form = ({
                   userOptions.find(
                     (opt) =>
                       opt.value ===
-                      (field.value != null ? field.value.toString() : "")
+                      (field.value != null ? field.value.toString() : ""),
                   )
                     ? [
                         userOptions.find(
                           (opt) =>
                             opt.value ===
-                            (field.value != null ? field.value.toString() : "")
+                            (field.value != null ? field.value.toString() : ""),
                         )!,
                       ]
                     : null
                 }
                 onChangeSingle={(selectedOption) => {
                   field.onChange(
-                    selectedOption ? Number(selectedOption.value) : null
+                    selectedOption ? Number(selectedOption.value) : null,
                   );
                 }}
               />
@@ -609,20 +609,20 @@ const Form = ({
                   driverOptions.find(
                     (opt) =>
                       opt.value ===
-                      (field.value != null ? field.value.toString() : "")
+                      (field.value != null ? field.value.toString() : ""),
                   )
                     ? [
                         driverOptions.find(
                           (opt) =>
                             opt.value ===
-                            (field.value != null ? field.value.toString() : "")
+                            (field.value != null ? field.value.toString() : ""),
                         )!,
                       ]
                     : null
                 }
                 onChangeSingle={(selectedOption) => {
                   field.onChange(
-                    selectedOption ? Number(selectedOption.value) : null
+                    selectedOption ? Number(selectedOption.value) : null,
                   );
                   if (selectedOption) {
                     const driverId = Number(selectedOption.value);
@@ -678,20 +678,20 @@ const Form = ({
                   vehicleOptions.find(
                     (opt) =>
                       opt.value ===
-                      (field.value != null ? field.value.toString() : "")
+                      (field.value != null ? field.value.toString() : ""),
                   )
                     ? [
                         vehicleOptions.find(
                           (opt) =>
                             opt.value ===
-                            (field.value != null ? field.value.toString() : "")
+                            (field.value != null ? field.value.toString() : ""),
                         )!,
                       ]
                     : null
                 }
                 onChangeSingle={(selectedOption) => {
                   field.onChange(
-                    selectedOption ? Number(selectedOption.value) : null
+                    selectedOption ? Number(selectedOption.value) : null,
                   );
                   if (selectedOption) {
                     const vehicleId = Number(selectedOption.value);
@@ -741,7 +741,7 @@ const Form = ({
               value={focalPersonOptions.find(
                 (opt) =>
                   opt.value ===
-                  (field.value !== undefined ? (field.value ? "1" : "0") : "0")
+                  (field.value !== undefined ? (field.value ? "1" : "0") : "0"),
               )}
               onChangeSingle={(selectedOption) => {
                 // convert "0"/"1" to boolean

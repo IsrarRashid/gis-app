@@ -133,7 +133,7 @@
 //                       className="btn rounded-pill fs15px"
 //                       style={{ background: "#E4E4E4" }}
 //                     >
-//                       View PDF
+//                       View PDF Report
 //                     </Link>
 //                   </div>
 //                 </div>

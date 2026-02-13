@@ -26,18 +26,18 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
     const getReportHistory = async (
       visitId: number,
       projectId: number,
-      reportType: number
+      reportType: number,
     ) => {
       setLoading(true);
       try {
         const response = await apiClient.get(
-          `${PC_IV_WORKFLOW_API}/history?pcivId=${projectId}`
+          `${PC_IV_WORKFLOW_API}/history?pcivId=${projectId}`,
         );
         setReportsHistory(
           response.data.data.sort(
             (a: ReportHistory, b: ReportHistory) =>
-              new Date(b.mark_date).getTime() - new Date(a.mark_date).getTime()
-          )
+              new Date(b.mark_date).getTime() - new Date(a.mark_date).getTime(),
+          ),
         );
         setLoading(false);
       } catch (err) {
@@ -107,7 +107,7 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
                     <span>
                       {getFormattedDate(new Date(d.mark_date), "short")} (
                       {convertToLocaleTimeString(
-                        new Date(d.mark_date).toLocaleTimeString()
+                        new Date(d.mark_date).toLocaleTimeString(),
                       )}
                       )
                     </span>

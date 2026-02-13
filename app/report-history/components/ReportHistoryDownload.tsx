@@ -18,7 +18,7 @@ const ReportHistoryDownload = ({ data, users, submittedReport }: Props) => {
   // ──────────── (2) Create table rows from cards ────────────
   function cardsToTableRows(
     users: ReportHistoryUser[],
-    data: ReportHistory[]
+    data: ReportHistory[],
   ): Array<Record<string, string>> {
     return data.map((d, i) => ({
       "Sr. No.": (i + 1).toString(),
@@ -52,6 +52,7 @@ const ReportHistoryDownload = ({ data, users, submittedReport }: Props) => {
   return (
     <div>
       <DownloadDropDown
+        label="Download History"
         onClickPdf={() =>
           exportToPDFNew(
             columns,
@@ -64,7 +65,7 @@ const ReportHistoryDownload = ({ data, users, submittedReport }: Props) => {
               " - (GS. NO- " +
               submittedReport.gsNo +
               ") - " +
-              submittedReport.projectName
+              submittedReport.projectName,
           )
         }
       />

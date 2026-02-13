@@ -35,7 +35,9 @@
   height: 35px;
   text-decoration: none;
   display: block;
-  transition: transform 0.5s ease, background-color 0.5s ease;
+  transition:
+    transform 0.5s ease,
+    background-color 0.5s ease;
 }
 
 .dropdown a:hover {
@@ -49,7 +51,9 @@
   height: 35px;
   text-decoration: none;
   display: block;
-  transition: transform 0.5s ease, background-color 0.5s ease;
+  transition:
+    transform 0.5s ease,
+    background-color 0.5s ease;
 }
 
 .dropdown button:hover {
