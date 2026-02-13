@@ -8,13 +8,12 @@ import apiClient, { AxiosError } from "@/app/services/api-client";
 import { triggerEscapeKeyPress } from "@/app/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import "easymde/dist/easymde.min.css";
-import Cookies from "js-cookie";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import HistoryList from "./HistoryList";
+import { SubmittedReport } from "../list/components/List";
 import {
   APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE,
   APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE,
@@ -28,7 +27,7 @@ import {
   REVIEWED_AND_FORWARD_BY_DD_TO_D,
   SUBMITTED_BY_AD_TO_DD,
 } from "../statuses";
-import { SubmittedReport } from "../list/components/List";
+import HistoryList from "./HistoryList";
 
 import PdfIframe from "./pdf/PdfIframe";
 
@@ -243,50 +242,53 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
           !isReferback
             ? REVIEWED_AND_FORWARD_BY_DD_TO_D
             : role === "deputy director" &&
-              data.lastStatus === SUBMITTED_BY_AD_TO_DD &&
-              isReferback
-            ? DD_REFERBACK_ID
-            : role === "deputy director" &&
-              data.lastStatus ===
-                APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
-            ? APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE
-            : role === "director" &&
-              data.lastStatus === REVIEWED_AND_FORWARD_BY_DD_TO_D &&
-              !isReferback
-            ? REVIEWED_AND_FORWARD_BY_D_TO_DG
-            : role === "director" &&
-              data.lastStatus === REVIEWED_AND_FORWARD_BY_DD_TO_D &&
-              isReferback
-            ? D_REFERBACK_ID
-            : role === "director" &&
-              data.lastStatus === DG_REFERBACK_ID &&
-              isReferback
-            ? D_REFERBACK_ID
-            : role === "director" &&
-              data.lastStatus === REVIEWED_AND_APPROVED_BY_DG_TO_D
-            ? APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
-            : role === "director general" &&
-              data.lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG &&
-              !isReferback
-            ? REVIEWED_AND_APPROVED_BY_DG_TO_D
-            : role === "director general" &&
-              data.lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG &&
-              isReferback
-            ? DG_REFERBACK_ID
-            : role === "deputy director" &&
-              data.lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG
-            ? APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE
-            : role === "deputy director" &&
-              data.lastStatus === D_REFERBACK_ID &&
-              isReferback
-            ? DD_REFERBACK_ID
-            : role === "deputy director" && isReferback
-            ? data.lastStatus === DD_REFERBACK_ID
-            : role === "director" && isReferback
-            ? data.lastStatus === D_REFERBACK_ID
-            : -999
-            ? APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE
-            : DD_REFERBACK_ID,
+                data.lastStatus === SUBMITTED_BY_AD_TO_DD &&
+                isReferback
+              ? DD_REFERBACK_ID
+              : role === "deputy director" &&
+                  data.lastStatus ===
+                    APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
+                ? APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE
+                : role === "director" &&
+                    data.lastStatus === REVIEWED_AND_FORWARD_BY_DD_TO_D &&
+                    !isReferback
+                  ? REVIEWED_AND_FORWARD_BY_D_TO_DG
+                  : role === "director" &&
+                      data.lastStatus === REVIEWED_AND_FORWARD_BY_DD_TO_D &&
+                      isReferback
+                    ? D_REFERBACK_ID
+                    : role === "director" &&
+                        data.lastStatus === DG_REFERBACK_ID &&
+                        isReferback
+                      ? D_REFERBACK_ID
+                      : role === "director" &&
+                          data.lastStatus === REVIEWED_AND_APPROVED_BY_DG_TO_D
+                        ? APPROVED_BY_DG_AND_FORWARD_BY_D_TO_DD_FOR_ISSUEANCE
+                        : role === "director general" &&
+                            data.lastStatus ===
+                              REVIEWED_AND_FORWARD_BY_D_TO_DG &&
+                            !isReferback
+                          ? REVIEWED_AND_APPROVED_BY_DG_TO_D
+                          : role === "director general" &&
+                              data.lastStatus ===
+                                REVIEWED_AND_FORWARD_BY_D_TO_DG &&
+                              isReferback
+                            ? DG_REFERBACK_ID
+                            : role === "deputy director" &&
+                                data.lastStatus ===
+                                  REVIEWED_AND_FORWARD_BY_D_TO_DG
+                              ? APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE
+                              : role === "deputy director" &&
+                                  data.lastStatus === D_REFERBACK_ID &&
+                                  isReferback
+                                ? DD_REFERBACK_ID
+                                : role === "deputy director" && isReferback
+                                  ? data.lastStatus === DD_REFERBACK_ID
+                                  : role === "director" && isReferback
+                                    ? data.lastStatus === D_REFERBACK_ID
+                                    : -999
+                                      ? APPROVED_BY_DG_AND_FORWARD_BY_DD_TO_AD_FOR_ISSUEANCE
+                                      : DD_REFERBACK_ID,
         reportType: data.reportType,
       };
       console.log("modifiedFormData", modifiedFormData);
@@ -298,7 +300,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
         setSubmitting(true);
         const response = await apiClient.post(
           `${REPORTS_HISTORY_API}/MarkedReport`,
-          modifiedFormData
+          modifiedFormData,
         );
         console.log("Response:", response);
         toast.success("Report Marked Successfully");
@@ -329,7 +331,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
     const getReportHistory = async (visitId: number, projectId: number) => {
       try {
         const response = await apiClient.get(
-          `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}`
+          `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}`,
         );
         setReportsHistory(response.data.data);
       } catch (err) {
@@ -549,11 +551,11 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                                 reportsHistory?.length - 1
                                               ].status === D_REFERBACK_ID
                                                 ? data.intiallyUserId
-                                                : data.submittedFrom
+                                                : data.submittedFrom,
                                             )
                                           : setValue(
                                               "submittedTo",
-                                              data.submittedFrom
+                                              data.submittedFrom,
                                             );
                                       }}
                                     />
@@ -567,20 +569,20 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                         .status === D_REFERBACK_ID
                                         ? users.find(
                                             (user) =>
-                                              user.id === data.intiallyUserId
+                                              user.id === data.intiallyUserId,
                                           )?.fullName
                                         : role === "director" &&
-                                          reportsHistory[
-                                            reportsHistory?.length - 1
-                                          ].status === DG_REFERBACK_ID
-                                        ? officers.find(
-                                            (officer) =>
-                                              officer.id === DD_USER_ID
-                                          )?.fullName
-                                        : users.find(
-                                            (user) =>
-                                              user.id === data.submittedFrom
-                                          )?.fullName}
+                                            reportsHistory[
+                                              reportsHistory?.length - 1
+                                            ].status === DG_REFERBACK_ID
+                                          ? officers.find(
+                                              (officer) =>
+                                                officer.id === DD_USER_ID,
+                                            )?.fullName
+                                          : users.find(
+                                              (user) =>
+                                                user.id === data.submittedFrom,
+                                            )?.fullName}
                                     </label>
                                   </div>
                                 </div>
@@ -681,7 +683,7 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                                   Submitted To:{" "}
                                   {
                                     users.find(
-                                      (user) => user.id === data.intiallyUserId
+                                      (user) => user.id === data.intiallyUserId,
                                     )?.fullName
                                   }
                                 </p>
