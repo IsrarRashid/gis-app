@@ -7,7 +7,6 @@ import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { triggerEscapeKeyPress } from "@/app/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import "easymde/dist/easymde.min.css";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -424,9 +423,7 @@ const ReportNoting = ({
                 </Button>
                 <HistoryList
                   descendingOrderData={descendingOrderReportsHistory}
-                  ascendingOrderData={ascendingOrderReportsHistory}
                   users={users}
-                  submittedReport={data}
                 />
                 <div
                   className="col p-4 ms-1 mb-3"

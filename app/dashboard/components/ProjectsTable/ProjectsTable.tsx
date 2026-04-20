@@ -48,7 +48,6 @@ import {
   RangeType,
   reportStatusOptions,
 } from "./ProjectsTableUtils";
-import useProjectsTableUtils from "./useProjectsTableUtils";
 
 export interface ProjectsList {
   id: number;
@@ -70,6 +69,9 @@ export interface ProjectsList {
   revisedAllocation: number;
   pnDReleases: number;
   visitCount: number;
+  scheduleVisitCount: number;
+  completeVisitCount: number;
+  submittedVisitCount: number;
   utilization: number;
   utilPercent: number;
   expUpToJune: number;
@@ -85,6 +87,10 @@ interface Props {
   keys: (keyof ProjectsList)[];
   role: string;
   allowLink?: boolean;
+  rowCountOptions: OptionType[];
+  districtOptions: OptionType[];
+  sectorOptions: OptionType[];
+  userOptions: OptionType[];
 }
 
 const ProjectsTable = ({
@@ -93,25 +99,25 @@ const ProjectsTable = ({
   keys,
   allowLink = true,
   role = "",
+  rowCountOptions,
+  districtOptions,
+  sectorOptions,
+  userOptions,
 }: Props) => {
   console.log("projectsData", projectsData);
   const [selectedOptions, setSelectedOptions] = useState<OptionType[]>([]);
-  const { rowCountOptions, districtOptions, sectorOptions, userOptions } =
-    useProjectsTableUtils();
 
   const handleDistrictChange = (selectedOption: SingleValue<OptionType>) => {
     if (selectedOption) setDistrictName(selectedOption.value);
 
     setDropdownFilterValue((prev) => {
       if (selectedOption?.value === "") {
-        // Remove "District Name" from the filter
-        return prev.filter((item) => !item.startsWith("District Name:"));
+        // Remove "District" from the filter
+        return prev.filter((item) => !item.startsWith("District:"));
       } else {
-        // Add/Update "District Name" in the filter
-        const updated = prev.filter(
-          (item) => !item.startsWith("District Name:"),
-        );
-        return [...updated, `District Name: ${selectedOption?.value}`];
+        // Add/Update "District" in the filter
+        const updated = prev.filter((item) => !item.startsWith("District:"));
+        return [...updated, `District: ${selectedOption?.value}`];
       }
     });
     applyFilters({
@@ -134,12 +140,12 @@ const ProjectsTable = ({
 
     setDropdownFilterValue((prev) => {
       if (selectedOption?.value === "") {
-        // Remove "Sector Name" from the filter
-        return prev.filter((item) => !item.startsWith("Sector Name:"));
+        // Remove "Sector" from the filter
+        return prev.filter((item) => !item.startsWith("Sector:"));
       } else {
-        // Add/Update "Sector Name" in the filter
-        const updated = prev.filter((item) => !item.startsWith("Sector Name:"));
-        return [...updated, `Sector Name: ${selectedOption?.value}`];
+        // Add/Update "Sector" in the filter
+        const updated = prev.filter((item) => !item.startsWith("Sector:"));
+        return [...updated, `Sector: ${selectedOption?.value}`];
       }
     });
     applyFilters({
@@ -162,12 +168,12 @@ const ProjectsTable = ({
 
     setDropdownFilterValue((prev) => {
       if (selectedOption?.value === "") {
-        // Remove "User Name" from the filter
-        return prev.filter((item) => !item.startsWith("User Name:"));
+        // Remove "User" from the filter
+        return prev.filter((item) => !item.startsWith("User:"));
       } else {
-        // Add/Update "User Name" in the filter
-        const updated = prev.filter((item) => !item.startsWith("User Name:"));
-        return [...updated, `User Name: ${selectedOption?.value}`];
+        // Add/Update "User" in the filter
+        const updated = prev.filter((item) => !item.startsWith("User:"));
+        return [...updated, `User: ${selectedOption?.value}`];
       }
     });
     applyFilters({
@@ -382,16 +388,19 @@ const ProjectsTable = ({
   const renameMap: Record<string, string> = {
     srNo: "Sr No",
     gSno: "GS No.",
-    projectName: "PROJECT NAME",
-    districtName: "DISTRICT NAME",
-    sectorName: "SECTOR NAME",
-    userName: "USER NAME",
+    projectName: "PROJECT",
+    districtName: "DISTRICT",
+    sectorName: "SECTOR",
+    userName: "USER",
     reportCompletion: "REPORT COMPLETION",
     fileGenrated: "REPORT GENERATED",
     visitStartDate: "DATE RANGE",
     completedDate: "COMPLETED DATE",
     deadline: "DEADLINE",
-    visitCount: "No. OF VISITS",
+    visitCount: "Issued Report",
+    scheduleVisitCount: "Scheduled Report",
+    completeVisitCount: "Completed Report",
+    submittedVisitCount: "Submitted Report",
     cost: "COST (M)",
     revisedAllocation: "REVISED ALLOCATION (M)",
     pnDReleases: "PN D RELEASES (M)",
@@ -590,6 +599,15 @@ const ProjectsTable = ({
             break;
           case "visitCount":
             row[formatKeyName(header)] = item.visitCount;
+            break;
+          case "scheduleVisitCount":
+            row[formatKeyName(header)] = item.scheduleVisitCount;
+            break;
+          case "completeVisitCount":
+            row[formatKeyName(header)] = item.completeVisitCount;
+            break;
+          case "submittedVisitCount":
+            row[formatKeyName(header)] = item.submittedVisitCount;
             break;
           case "cost":
             row[formatKeyName(header)] = item.cost;
@@ -927,7 +945,7 @@ const ProjectsTable = ({
                       />
                     }
                   >
-                    District Name
+                    District
                   </CustomLabel>
 
                   {/* <select
@@ -937,23 +955,23 @@ const ProjectsTable = ({
                     outline: "none",
                     border: "1px solid #D0D5DD",
                   }}
-                  aria-label="District Name"
+                  aria-label="District"
                   name="districtName"
                   onChange={(e) => {
                     const value = e.target.value;
                     setDistrictName(value);
                     setDropdownFilterValue((prev) => {
                       if (value === "") {
-                        // Remove "District Name" from the filter
+                        // Remove "District" from the filter
                         return prev.filter(
-                          (item) => !item.startsWith("District Name:")
+                          (item) => !item.startsWith("District:")
                         );
                       } else {
-                        // Add/Update "District Name" in the filter
+                        // Add/Update "District" in the filter
                         const updated = prev.filter(
-                          (item) => !item.startsWith("District Name:")
+                          (item) => !item.startsWith("District:")
                         );
-                        return [...updated, `District Name: ${value}`];
+                        return [...updated, `District: ${value}`];
                       }
                     });
                     setDistrictName(e.target.value);
@@ -1089,7 +1107,7 @@ const ProjectsTable = ({
                       />
                     }
                   >
-                    Sector Name
+                    Sector
                   </CustomLabel>
 
                   {/* <select
@@ -1100,23 +1118,23 @@ const ProjectsTable = ({
                   outline: "none",
                   border: "1px solid #D0D5DD",
                 }}
-                aria-label="Sector Name"
+                aria-label="Sector"
                 name="sectorName"
                 onChange={(e) => {
                   const value = e.target.value;
                   setSectorName(value);
                   setDropdownFilterValue((prev) => {
                     if (value === "") {
-                      // Remove "Sector Name" from the filter
+                      // Remove "Sector" from the filter
                       return prev.filter(
-                        (item) => !item.startsWith("Sector Name:")
+                        (item) => !item.startsWith("Sector:")
                       );
                     } else {
-                      // Add/Update "Sector Name" in the filter
+                      // Add/Update "Sector" in the filter
                       const updated = prev.filter(
-                        (item) => !item.startsWith("Sector Name:")
+                        (item) => !item.startsWith("Sector:")
                       );
-                      return [...updated, `Sector Name: ${value}`];
+                      return [...updated, `Sector: ${value}`];
                     }
                   });
                   applyFilters({
@@ -1165,7 +1183,7 @@ const ProjectsTable = ({
                       />
                     }
                   >
-                    User Name
+                    User
                   </CustomLabel>
 
                   {/* <select
@@ -1183,16 +1201,16 @@ const ProjectsTable = ({
                   setUserName(value);
                   setDropdownFilterValue((prev) => {
                     if (value === "") {
-                      // Remove "User Name" from the filter
+                      // Remove "User" from the filter
                       return prev.filter(
-                        (item) => !item.startsWith("User Name:")
+                        (item) => !item.startsWith("User:")
                       );
                     } else {
-                      // Add/Update "User Name" in the filter
+                      // Add/Update "User" in the filter
                       const updated = prev.filter(
-                        (item) => !item.startsWith("User Name:")
+                        (item) => !item.startsWith("User:")
                       );
-                      return [...updated, `User Name: ${value}`];
+                      return [...updated, `User: ${value}`];
                     }
                   });
                   applyFilters({
@@ -1602,8 +1620,7 @@ const ProjectsTable = ({
                           ),
                         )}
                       />
-                      <TableHeading name="" />
-                      <TableHeading name="" />
+                      <TableHeading name="" colSpan={7} />
                     </tr>
                     <tr
                       className="position-sticky bg-white"
@@ -1622,14 +1639,21 @@ const ProjectsTable = ({
                               : k.toLowerCase() === "gSno"
                                 ? "GS NO."
                                 : k.toLowerCase() === "visitcount"
-                                  ? "no. of visits"
-                                  : k.toLowerCase() === "visitstartdate"
-                                    ? "Date Range"
-                                    : k.toLowerCase() === "filegenrated"
-                                      ? "report generated"
-                                      : k.toLowerCase() === "statusDate"
-                                        ? "status Date"
-                                        : formatKeyName(k)
+                                  ? "Issued Report"
+                                  : k.toLowerCase() === "schedulevisitcount"
+                                    ? "Scheduled Report"
+                                    : k.toLowerCase() === "completevisitcount"
+                                      ? "Completed Report"
+                                      : k.toLowerCase() ===
+                                          "submittedvisitcount"
+                                        ? "Submitted Report"
+                                        : k.toLowerCase() === "visitstartdate"
+                                          ? "Date Range"
+                                          : k.toLowerCase() === "filegenrated"
+                                            ? "report generated"
+                                            : k.toLowerCase() === "statusDate"
+                                              ? "status Date"
+                                              : formatKeyName(k)
                           }
                           handleSort={() => handleSort(`${k}`)}
                         />
@@ -1648,14 +1672,20 @@ const ProjectsTable = ({
                             : k.toLowerCase() === "gSno"
                               ? "GS NO."
                               : k.toLowerCase() === "visitcount"
-                                ? "no. of visits"
-                                : k.toLowerCase() === "visitstartdate"
-                                  ? "Date Range"
-                                  : k.toLowerCase() === "filegenrated"
-                                    ? "report generated"
-                                    : k.toLowerCase() === "statusDate"
-                                      ? "status Date"
-                                      : formatKeyName(k)
+                                ? "Issued Report"
+                                : k.toLowerCase() === "schedulevisitcount"
+                                  ? "Scheduled Report"
+                                  : k.toLowerCase() === "completevisitcount"
+                                    ? "Completed Report"
+                                    : k.toLowerCase() === "submittedvisitcount"
+                                      ? "Submitted Report"
+                                      : k.toLowerCase() === "visitstartdate"
+                                        ? "Date Range"
+                                        : k.toLowerCase() === "filegenrated"
+                                          ? "report generated"
+                                          : k.toLowerCase() === "statusDate"
+                                            ? "status Date"
+                                            : formatKeyName(k)
                         }
                         handleSort={() => handleSort(`${k}`)}
                       />
@@ -1819,7 +1849,10 @@ const ProjectsTable = ({
                                 {d.utilPercent}%
                               </Badge>
                             </div>
-                          ) : key === "visitCount" ? (
+                          ) : key === "visitCount" ||
+                            key === "scheduleVisitCount" ||
+                            key === "completeVisitCount" ||
+                            key === "submittedVisitCount" ? (
                             <div className="text-center">{d[key]}</div>
                           ) : key === "completedDate" ? (
                             d[key] ? (
@@ -1900,6 +1933,9 @@ const ProjectsTable = ({
                       </TableData>
                       <td></td>
                       <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
                     </tr>
                     <tr>
                       <td></td>
@@ -1943,6 +1979,9 @@ const ProjectsTable = ({
                           ),
                         )}
                       </TableData>
+                      <td></td>
+                      <td></td>
+                      <td></td>
                       <td></td>
                       <td></td>
                     </tr>

@@ -5,6 +5,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
   ResponsiveContainer,
   Tooltip,
   TooltipProps,
@@ -15,8 +16,8 @@ import {
   NameType,
   ValueType,
 } from "recharts/types/component/DefaultTooltipContent";
-import { formatAmountWithCommas } from "../../../utils";
 import { calculateLeftMargin, calculateXAxisHeight } from "../types";
+import { formatAmountWithCommas } from "@/app/utils";
 
 export interface ChartGradient {
   id: string;
@@ -28,8 +29,8 @@ export interface ChartGradient {
 export interface MyBarChartType {
   label: string;
   value: number;
-  season: string;
-  percentage: number;
+  season?: string;
+  percentage?: number;
   color?: string; // solid color
   gradient?: ChartGradient; // optional gradient
 }
@@ -40,6 +41,7 @@ interface Props {
   style?: MyBarChartStyle;
   unit?: string;
   xAxisLabelOrientation?: "horizontal" | "vertical";
+  showLabels?: boolean;
 }
 
 const MySimpleBarChart = ({
@@ -48,24 +50,30 @@ const MySimpleBarChart = ({
   style = defaultVerticalChartStyle,
   unit = "",
   xAxisLabelOrientation = "horizontal",
+  showLabels = true,
 }: Props) => {
   const fontSize = style?.axis?.fontSize ?? 12;
 
-  const leftMargin = calculateLeftMargin(data, fontSize, "%");
+  const leftMargin = calculateLeftMargin(data, fontSize, layout);
 
   const xAxisHeight =
-    calculateXAxisHeight(
-      data.map((d) => d.label),
-      fontSize - 10
-    ) +
-    (xAxisLabelOrientation === "vertical" && fontSize > 13
-      ? 130
-      : xAxisLabelOrientation === "vertical" && fontSize === 12
-      ? 80
-      : 0);
+    xAxisLabelOrientation === "vertical"
+      ? calculateXAxisHeight(
+          data.map((d) => d.label),
+          fontSize,
+          xAxisLabelOrientation,
+        )
+      : calculateXAxisHeight(
+          data.map((d) => d.label),
+          fontSize,
+        );
 
   return (
-    <ResponsiveContainer width="100%" height={style?.height ?? 300}>
+    <ResponsiveContainer
+      width="100%"
+      height={style?.height ?? 300}
+      className="!overflow-hidden"
+    >
       <BarChart
         layout={layout}
         data={data}
@@ -73,13 +81,13 @@ const MySimpleBarChart = ({
         margin={{
           top: style?.margin?.top ?? 20,
           right: style?.margin?.right ?? 20,
-          bottom: xAxisHeight,
+          bottom: style?.margin?.bottom,
           left: leftMargin,
         }}
       >
         {/* ================= SVG GRADIENTS ================= */}
         <defs>
-          {data.map((entry, index) =>
+          {data.map((entry) =>
             entry.gradient ? (
               <linearGradient
                 key={`barGradient-${entry.gradient.id}`}
@@ -92,7 +100,7 @@ const MySimpleBarChart = ({
                 <stop offset="0%" stopColor={entry.gradient.from} />
                 <stop offset="100%" stopColor={entry.gradient.to} />
               </linearGradient>
-            ) : null
+            ) : null,
           )}
         </defs>
 
@@ -103,7 +111,7 @@ const MySimpleBarChart = ({
               type="number"
               domain={[0, "dataMax + 10"]}
               tick={{
-                fill: style?.axis?.tickColor ?? "rgba(0,0,0,.7)",
+                fill: style?.axis?.tickColor ?? "#fff",
                 fontSize: style?.axis?.fontSize ?? 12,
               }}
               height={xAxisHeight} // ✅ AUTO height
@@ -114,9 +122,10 @@ const MySimpleBarChart = ({
             <YAxis
               type="category"
               dataKey="label"
-              width={70}
+              width="auto"
+              interval={0}
               tick={{
-                fill: style?.axis?.tickColor ?? "rgba(0,0,0,.7)",
+                fill: style?.axis?.tickColor ?? "#fff",
                 fontSize: style?.axis?.fontSize ?? 12,
               }}
             />
@@ -127,6 +136,7 @@ const MySimpleBarChart = ({
               dataKey="label"
               scale="point"
               interval={0}
+              height={xAxisHeight} // ✅ AUTO height
               padding={{
                 left: style?.axis?.padding?.left ?? 30,
                 right: style?.axis?.padding?.right ?? 30,
@@ -135,11 +145,11 @@ const MySimpleBarChart = ({
                 xAxisLabelOrientation === "vertical" ? (
                   <VerticalTick
                     fontSize={style?.axis?.fontSize ?? 12}
-                    fill={style?.axis?.tickColor ?? "rgba(0,0,0,.7)"}
+                    fill={style?.axis?.tickColor ?? "#fff"}
                   />
                 ) : (
                   {
-                    fill: style?.axis?.tickColor ?? "rgba(0,0,0,.7)",
+                    fill: style?.axis?.tickColor ?? "#fff",
                     fontSize: style?.axis?.fontSize ?? 12,
                   }
                 )
@@ -148,7 +158,7 @@ const MySimpleBarChart = ({
 
             <YAxis
               tick={{
-                fill: style?.axis?.tickColor ?? "rgba(0,0,0,.7)",
+                fill: style?.axis?.tickColor ?? "#fff",
                 fontSize: style?.axis?.fontSize ?? 12,
               }}
               tickFormatter={(value) =>
@@ -159,7 +169,18 @@ const MySimpleBarChart = ({
         )}
 
         {/* ================= TOOLTIP & GRID ================= */}
-        <Tooltip {...style?.tooltip} cursor={{ fill: "transparent" }} />
+        <Tooltip
+          {...style?.tooltip}
+          cursor={{ fill: "transparent" }}
+          labelFormatter={(label) => label}
+          // formatter={(value, _name, props) => {
+          formatter={(value) => {
+            return [
+              `${formatAmountWithCommas(Number(value), 0)}${unit}`,
+              // props.payload.label, // 👈 replaces "value"
+            ];
+          }}
+        />
 
         <CartesianGrid
           stroke={style?.grid?.stroke ?? "rgba(53,82,151,0.4)"}
@@ -182,10 +203,21 @@ const MySimpleBarChart = ({
               fill={
                 entry.gradient
                   ? `url(#barGradient-${entry.gradient.id})`
-                  : entry.color ?? style?.fallbackBarColor ?? "#EAA64D"
+                  : (entry.color ?? style?.fallbackBarColor ?? "#EAA64D")
               }
             />
           ))}
+          {/* Show Percentage On Top of Bar */}
+          {showLabels && (
+            <LabelList
+              dataKey="value"
+              position={layout === "vertical" ? "right" : "top"}
+              formatter={(val) => `${val} ${unit}`}
+              dx={8}
+              fontSize={style?.axis?.fontSize ?? 12}
+              fill="#fff"
+            />
+          )}
         </Bar>
       </BarChart>
     </ResponsiveContainer>
@@ -216,6 +248,8 @@ export interface MyBarChartStyle {
       left?: number;
       right?: number;
     };
+
+    marginScaleFactor?: number;
   };
 
   tooltip?: TooltipProps<ValueType, NameType>;
@@ -256,20 +290,25 @@ export const tooltipStyles = {
 };
 
 export const defaultVerticalChartStyle: MyBarChartStyle = {
-  height: 228,
-  barSize: 26.55,
+  height: 311,
+  barSize: 10,
   fallbackBarColor: "#2563EB",
-  barRadius: [20, 20, 20, 20],
+  barRadius: [0, 20, 20, 0],
   axis: {
-    tickColor: "rgba(0,0,0,.7)",
+    tickColor: "#fff",
     fontSize: 12,
+    marginScaleFactor: 0,
   },
 
+  margin: {
+    bottom: 0,
+    right: 20,
+  },
   label: {
     fontSize: 10,
-    percentageColor: "rgba(0,0,0,.7)",
-    valueColor: "rgba(0,0,0,.7)",
-    seasonColor: "#000",
+    percentageColor: "#fff",
+    valueColor: "#fff",
+    seasonColor: "#fff",
   },
 
   //   tooltip: {
@@ -282,42 +321,42 @@ export const defaultVerticalChartStyle: MyBarChartStyle = {
   //   },
 };
 
-const WrappedTick = ({
-  x,
-  y,
-  payload,
-  fontSize,
-  fill,
-  lineGap = 2,
-  offset = 20, // 👈 distance from axis line
-}: {
-  x?: number;
-  y?: number;
-  payload?: { value: string };
-  fontSize: number;
-  fill: string;
-  lineGap?: number;
-  offset?: number;
-}) => {
-  if (!payload?.value || x == null || y == null) return null;
+// const WrappedTick = ({
+//   x,
+//   y,
+//   payload,
+//   fontSize,
+//   fill,
+//   lineGap = 2,
+//   offset = 20, // 👈 distance from axis line
+// }: {
+//   x?: number;
+//   y?: number;
+//   payload?: { value: string };
+//   fontSize: number;
+//   fill: string;
+//   lineGap?: number;
+//   offset?: number;
+// }) => {
+//   if (!payload?.value || x == null || y == null) return null;
 
-  const words = payload.value.split(" ");
+//   const words = payload.value.split(" ");
 
-  return (
-    <text x={x} y={y} textAnchor="middle" fill={fill}>
-      {words.map((word, index) => (
-        <tspan
-          key={index}
-          x={x}
-          dy={index === 0 ? offset : fontSize + lineGap}
-          fontSize={fontSize}
-        >
-          {word}
-        </tspan>
-      ))}
-    </text>
-  );
-};
+//   return (
+//     <text x={x} y={y} textAnchor="middle" fill={fill}>
+//       {words.map((word, index) => (
+//         <tspan
+//           key={index}
+//           x={x}
+//           dy={index === 0 ? offset : fontSize + lineGap}
+//           fontSize={fontSize}
+//         >
+//           {word}
+//         </tspan>
+//       ))}
+//     </text>
+//   );
+// };
 
 interface VerticalTickProps {
   x?: number;
@@ -329,11 +368,11 @@ interface VerticalTickProps {
   fontSize?: number;
 }
 
-const VerticalTick = ({
+export const VerticalTick = ({
   x = 0,
   y = 0,
   payload,
-  fill = "#000",
+  fill = "#fff",
   fontSize = 12,
 }: VerticalTickProps) => {
   if (!payload) return null;

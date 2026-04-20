@@ -122,6 +122,16 @@ main {
   width: 98%;
 }
 
+.ev-charts-modal .modal-content {
+  background: rgba(255, 255, 255, 0) !important;
+  border: none;
+}
+
+.ev-charts-modal {
+  max-width: none !important;
+  width: 90%;
+}
+
 .new-custom-modal .modal-content {
   border-radius: 12px !important;
   /* background: rgba(255, 255, 255, 0) !important; */
@@ -411,9 +421,14 @@ select {
 
 .custom-editor .CodeMirror,
 .CodeMirror-scroll {
-  height: 150px !important;
-  min-height: 150px !important;
-  max-height: 150px !important;
+  height: 165px !important;
+  min-height: 165px !important;
+  max-height: 165px !important;
+  padding-bottom: 40px;
+}
+
+.custom-editor .CodeMirror-lines {
+  padding-bottom: 20px; /* extra spacing inside content */
 }
 
 /* custom toggle switch */

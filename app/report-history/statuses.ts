@@ -8,3 +8,13 @@ export const SUBMITTED = 3;
 export const APPROVED = 4;
 export const REFERBACK = 5;
 export const ISSUED = 6;
+
+export const statuses = [
+  { label: "SCHEDULED", value: SCHEDULED },
+  { label: "COMPLETED", value: COMPLETED },
+  { label: "CANCELLED", value: CANCELLED },
+  { label: "SUBMITTED", value: SUBMITTED },
+  { label: "APPROVED", value: APPROVED },
+  { label: "REFERBACK", value: REFERBACK },
+  { label: "ISSUED", value: ISSUED },
+];

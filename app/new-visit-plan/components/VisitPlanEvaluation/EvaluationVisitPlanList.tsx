@@ -85,8 +85,8 @@ const EvaluationVisitPlanList = ({
   // State for search input
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [tempJsonDataCreateVisit, setTempJsonDataCreateVisit] =
-    useState<CreateVisit[]>();
+  // const [tempJsonDataCreateVisit, setTempJsonDataCreateVisit] =
+  //   useState<CreateVisit[]>();
   // const [tempJsonDataTourPlan, setTempJsonDataTourPlan] =
   //   useState<COUTempTourPlan[]>();
 
@@ -120,7 +120,7 @@ const EvaluationVisitPlanList = ({
       ]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -159,32 +159,86 @@ const EvaluationVisitPlanList = ({
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
-
   const saveFormsData = async (formsData: COUTempTourPlan[]) => {
+    // -------------------------------------------------------------------------
+    // STEP 1: Group by projectid
+    // -------------------------------------------------------------------------
+    const grouped: Record<number, COUTempTourPlan[]> = {};
+
+    for (const item of formsData) {
+      if (!grouped[item.projectid]) {
+        grouped[item.projectid] = [];
+      }
+      grouped[item.projectid].push(item);
+    }
+
+    // -------------------------------------------------------------------------
+    // STEP 2: Validate each group
+    // -------------------------------------------------------------------------
+    for (const projectId in grouped) {
+      const group = grouped[projectId];
+
+      const focalCount = group.filter((g) => g.isFocalPerson).length;
+
+      // ✅ Case A: Only ONE row for this project
+      if (group.length === 1) {
+        if (focalCount === 0) {
+          toast.warning(
+            "Please designate a Focal Person for every project to proceed.",
+          );
+          return;
+        }
+      }
+
+      // ✅ Case B: MULTIPLE rows for same project
+      if (group.length > 1) {
+        // ❌ No focal person
+        if (focalCount === 0) {
+          toast.warning(
+            `Project ID ${projectId} has multiple entries. Please designate one Focal Person.`,
+          );
+          return;
+        }
+
+        // ❌ More than one focal person
+        if (focalCount > 1) {
+          toast.warning(
+            `Project ID ${projectId} has multiple evaluators. Please select ONLY ONE Focal Person.`,
+          );
+          return;
+        }
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // ✅ SUCCESS
+    // -------------------------------------------------------------------------
+    console.log("Valid Data:", formsData);
+
     console.log("formsData", formsData);
     const filteredFormsData = formsData.filter((form) => form !== undefined);
     console.log("filteredFormsData", filteredFormsData);
     // setTempJsonDataTourPlan(filteredFormsData);
-    try {
-      const response = await apiClient.post(
-        `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-or-update`,
-        filteredFormsData
-      );
+    // try {
+    //   const response = await apiClient.post(
+    //     `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-or-update`,
+    //     filteredFormsData,
+    //   );
 
-      toast.success(response.data.message);
+    //   toast.success(response.data.message);
 
-      // If backend returns updated records with real IDs, replace state
-      if (response.data.data) {
-        setFormsData(response.data.data); // or reset([...response.data.data])
-      }
+    //   // If backend returns updated records with real IDs, replace state
+    //   if (response.data.data) {
+    //     setFormsData(response.data.data); // or reset([...response.data.data])
+    //   }
 
-      setRefresh((prev) => !prev);
-    } catch (err) {
-      console.log("err", err);
-      toast.error((err as AxiosError)?.message);
-    }
+    //   setRefresh((prev) => !prev);
+    // } catch (err) {
+    //   console.log("err", err);
+    //   toast.error((err as AxiosError)?.message);
+    // }
   };
 
   const createVisit = async (formsData: COUTempTourPlan[]) => {
@@ -241,7 +295,7 @@ const EvaluationVisitPlanList = ({
       setSubmitting(true);
       const response = await apiClient.post(
         `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-visit`,
-        modifiedFormData
+        modifiedFormData,
       );
       // setTempJsonDataCreateVisit(modifiedFormData);
       toast.success(response.data.responseMessage);
@@ -270,7 +324,7 @@ const EvaluationVisitPlanList = ({
         Sectors: item.sectors,
         Cost: item.cost,
         "Scheme Type": typeStatusOptions.find(
-          (type) => Number(type.value) === item.type
+          (type) => Number(type.value) === item.type,
         )?.label,
         "Evaluator Name": item.meOfficerName,
         Section: item.section,
@@ -291,7 +345,7 @@ const EvaluationVisitPlanList = ({
     // Write the workbook to a file
     XLSX.writeFile(
       workbook,
-      `Generated Visit Plans ${new Date().toLocaleDateString()}.xlsx`
+      `Generated Visit Plans ${new Date().toLocaleDateString()}.xlsx`,
     ); // Changed filename
   };
 
@@ -302,7 +356,7 @@ const EvaluationVisitPlanList = ({
       // remove the deleted item from the data array
       setRefresh((prev) => !prev);
       setFormsData((prevData) =>
-        prevData.filter((item) => item !== undefined && item.id !== tempId)
+        prevData.filter((item) => item !== undefined && item.id !== tempId),
       );
       toast.success(deleteMessage);
       console.log("item deleted successfully");
@@ -371,7 +425,7 @@ const EvaluationVisitPlanList = ({
             id="tours"
             closeMenuOnSelect={true}
             onChangeSingle={(
-              newValue: SingleValue<{ value: string; label: string }>
+              newValue: SingleValue<{ value: string; label: string }>,
             ) => {
               if (newValue) {
                 setVisitPlanGroup(Number(newValue.value));

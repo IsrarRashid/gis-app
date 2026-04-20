@@ -16,6 +16,7 @@ import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Accordion } from "react-bootstrap";
 import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
+import useProjectsTableUtils from "./ProjectsTable/useProjectsTableUtils";
 
 interface VisitsPlan {
   nameOfVisit: string;
@@ -36,7 +37,7 @@ interface VisitsPlan {
       onTimeSubmitted: number;
       lateSubmitted: number;
       issuedReport: number;
-    }
+    },
   ];
 }
 
@@ -53,10 +54,9 @@ const VisitsPlan = ({
 }: Props) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<VisitsPlan[]>();
-  const { data: districts } = useDistrict();
-  const { data: sectors } = useSectors();
-  const { data: users } = useUsers();
   const [role, setRole] = useState<string>("");
+  const { rowCountOptions, districtOptions, sectorOptions, userOptions } =
+    useProjectsTableUtils();
 
   useEffect(() => {
     const userRole = Cookies.get("role");
@@ -96,14 +96,14 @@ const VisitsPlan = ({
           "completedDate",
           "deadline",
           "fileGenrated",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
   const filterProjectsData = (
     fromdate: string,
     todate: string,
-    data: ProjectsList[]
+    data: ProjectsList[],
   ) => {
     return !fromdate && !todate
       ? data // Show all data if no date is selected
@@ -172,7 +172,7 @@ const VisitsPlan = ({
     exportDataToExcel(
       data,
       headers,
-      `${plan.nameOfVisit} ${getFormattedDate(new Date(), "short")}.xlsx`
+      `${plan.nameOfVisit} ${getFormattedDate(new Date(), "short")}.xlsx`,
     );
   };
 
@@ -385,16 +385,16 @@ const VisitsPlan = ({
                                             {addDayToFormattedDate(
                                               getFormattedDate(
                                                 new Date(visit.fromDate),
-                                                "short"
-                                              )!
+                                                "short",
+                                              )!,
                                             )}
                                             <br />
                                             To:
                                             {addDayToFormattedDate(
                                               getFormattedDate(
                                                 new Date(visit.toDate),
-                                                "short"
-                                              )!
+                                                "short",
+                                              )!,
                                             )}
                                           </Button>
                                         }
@@ -411,6 +411,14 @@ const VisitsPlan = ({
                                             >
                                               {projectsData && filteredKeys ? (
                                                 <ProjectsTable
+                                                  rowCountOptions={
+                                                    rowCountOptions
+                                                  }
+                                                  districtOptions={
+                                                    districtOptions
+                                                  }
+                                                  sectorOptions={sectorOptions}
+                                                  userOptions={userOptions}
                                                   role={role}
                                                   label="Being Monitored Projects"
                                                   projectsData={projectsData.filter(
@@ -418,21 +426,21 @@ const VisitsPlan = ({
                                                       project.userName ===
                                                         visit.officerName &&
                                                       new Date(
-                                                        project.visitStartDate
+                                                        project.visitStartDate,
                                                       ) >=
                                                         new Date(
                                                           d.nameOfVisit.split(
-                                                            " "
-                                                          )[2]
+                                                            " ",
+                                                          )[2],
                                                         ) &&
                                                       new Date(
-                                                        project.visitEndDate
+                                                        project.visitEndDate,
                                                       ) <=
                                                         new Date(
                                                           d.nameOfVisit.split(
-                                                            " "
-                                                          )[4]
-                                                        )
+                                                            " ",
+                                                          )[4],
+                                                        ),
                                                   )}
                                                   setProjectsData={
                                                     setProjectsData

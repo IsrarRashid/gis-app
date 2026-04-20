@@ -4,23 +4,15 @@ import { convertToLocaleTimeString, getFormattedDate } from "@/app/utils";
 import Link from "next/link";
 import { Accordion } from "react-bootstrap";
 import ReactMarkDown from "react-markdown";
-import ReportHistoryDownload from "./ReportHistoryDownload";
-import { ReportHistory } from "./ReportNoting";
 import { SubmittedReport } from "../list/components/List";
+import { ReportHistory } from "./ReportNoting";
 
 interface Props {
   descendingOrderData: ReportHistory[];
-  ascendingOrderData: ReportHistory[];
   users: ReportHistoryUser[];
-  submittedReport: SubmittedReport;
 }
 
-const HistoryList = ({
-  descendingOrderData,
-  ascendingOrderData,
-  users,
-  submittedReport,
-}: Props) => {
+const HistoryList = ({ descendingOrderData, users }: Props) => {
   return (
     <div className="mb-2 p-2">
       <Accordion flush>

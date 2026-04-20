@@ -109,12 +109,12 @@ const MyProgressBarChart = ({
       value: d.total,
     })),
     fontSize,
-    "%"
+    layout,
   );
 
   const xAxisHeight = calculateXAxisHeight(
     data.map((d) => d.label),
-    fontSize - 10
+    fontSize - 10,
   );
 
   return (
@@ -147,7 +147,7 @@ const MyProgressBarChart = ({
                   <stop offset="0%" stopColor={v.gradient!.from} />
                   <stop offset="100%" stopColor={v.gradient!.to} />
                 </linearGradient>
-              ))
+              )),
           )}
         </defs>
 
@@ -173,7 +173,7 @@ const MyProgressBarChart = ({
               fill={
                 row.value1.gradient
                   ? `url(#barGradient-${row.value1.gradient.id})`
-                  : row.value1.color ?? "#22C55E"
+                  : (row.value1.color ?? "#22C55E")
               }
             />
           ))}

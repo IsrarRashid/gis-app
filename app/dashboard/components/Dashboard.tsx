@@ -38,6 +38,7 @@ import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
 import ReportReview from "./ReportReview";
 import SimplePieChart from "./SimplePieChart";
 import VisitsPlan from "./VisitsPlan";
+import useProjectsTableUtils from "./ProjectsTable/useProjectsTableUtils";
 
 const Menu = dynamic(() => import("@/app/components/Menu"), { ssr: false });
 
@@ -108,6 +109,8 @@ const Dashboard = ({ dashboardType }: Props) => {
   const [pageLoaded, setPageLoaded] = useState<boolean>(false);
   const dispatch = useDispatch();
   // useAuthorization("dashboard");
+  const { rowCountOptions, districtOptions, sectorOptions, userOptions } =
+    useProjectsTableUtils();
 
   const [isInRange, setIsInRange] = useState(false);
 
@@ -140,13 +143,13 @@ const Dashboard = ({ dashboardType }: Props) => {
 
     handleButtonClick(
       "dashboard",
-      "https://www.youtube.com/watch?v=1wgAwCufsko&ab_channel=DirectorateGeneralMonitoringandEvaluation"
+      "https://www.youtube.com/watch?v=1wgAwCufsko&ab_channel=DirectorateGeneralMonitoringandEvaluation",
     );
   }, []);
 
   const [isLoading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<"cmInitiative" | "adp">(
-    "cmInitiative"
+    "cmInitiative",
   );
 
   const [otherFilters, setOtherFilters] = useState<FilterData[]>([]);
@@ -179,7 +182,7 @@ const Dashboard = ({ dashboardType }: Props) => {
     setCombinedFilters(
       activeFilter === "cmInitiative"
         ? [...cmInitiativeFilters, ...otherFilters]
-        : [...adpFilters, ...otherFilters]
+        : [...adpFilters, ...otherFilters],
     );
   }, [activeFilter, adpFilters, otherFilters, cmInitiativeFilters]);
 
@@ -228,13 +231,13 @@ const Dashboard = ({ dashboardType }: Props) => {
       if (activeFilter === "cmInitiative") {
         const response = await apiClient.post(
           `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
-          [...cmInitiativeFilters, ...otherFilters]
+          [...cmInitiativeFilters, ...otherFilters],
         );
         setProjectsData(response.data.data);
       } else {
         const response = await apiClient.post(
           `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
-          [...adpFilters, ...otherFilters]
+          [...adpFilters, ...otherFilters],
         );
         setProjectsData(response.data.data);
       }
@@ -260,7 +263,7 @@ const Dashboard = ({ dashboardType }: Props) => {
           "utilization",
           "utilPercent",
           role !== "Special Role" && "visitCount",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -281,7 +284,7 @@ const Dashboard = ({ dashboardType }: Props) => {
           "completedDate",
           role !== "Special Role" && "deadline",
           "fileGenrated",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -303,7 +306,7 @@ const Dashboard = ({ dashboardType }: Props) => {
           role !== "Special Role" && "deadline",
           "reportStatus",
           "statusDate",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -331,7 +334,7 @@ const Dashboard = ({ dashboardType }: Props) => {
       const updatedProjects = projectsData.map((project) => ({
         ...project,
         utilPercent: Math.round(
-          ((project.expUpToJune + project.utilization) / project.cost) * 100
+          ((project.expUpToJune + project.utilization) / project.cost) * 100,
         ),
       }));
 
@@ -339,7 +342,7 @@ const Dashboard = ({ dashboardType }: Props) => {
 
       // Now apply the filter based on computed utilPercent
       const filteredProjects = updatedProjects.filter(
-        (project) => project.utilPercent >= 20 && project.utilPercent <= 80
+        (project) => project.utilPercent >= 20 && project.utilPercent <= 80,
       );
 
       setUtilizationData(filteredProjects); // Store filtered projects with utilPercent
@@ -382,6 +385,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label={
                             activeFilter === "cmInitiative"
@@ -465,6 +472,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                         <div className="container-fluid border-0 p-1">
                           {projectsData && filteredNoOfProjectsKeys ? (
                             <ProjectsTable
+                              rowCountOptions={rowCountOptions}
+                              districtOptions={districtOptions}
+                              sectorOptions={sectorOptions}
+                              userOptions={userOptions}
                               keys={filteredNoOfProjectsKeys}
                               label="Projects"
                               projectsData={projectsData}
@@ -530,6 +541,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                         <div className="container-fluid border-0 p-1">
                           {projectsData && filteredNoOfProjectsKeys ? (
                             <ProjectsTable
+                              rowCountOptions={rowCountOptions}
+                              districtOptions={districtOptions}
+                              sectorOptions={sectorOptions}
+                              userOptions={userOptions}
                               keys={filteredNoOfProjectsKeys}
                               label="Projects"
                               projectsData={projectsData}
@@ -580,6 +595,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="Successful Projects"
                           projectsData={projectsData}
@@ -628,6 +647,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="Partial Success Projects"
                           projectsData={projectsData}
@@ -674,6 +697,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="Not Successful Projects"
                           projectsData={projectsData}
@@ -715,6 +742,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="Reports In Progress"
                           projectsData={projectsData}
@@ -762,6 +793,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label={
                             activeFilter === "cmInitiative"
@@ -830,6 +865,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                         <div className="container-fluid border-0 p-1">
                           {projectsData && filteredNoOfProjectsKeys ? (
                             <ProjectsTable
+                              rowCountOptions={rowCountOptions}
+                              districtOptions={districtOptions}
+                              sectorOptions={sectorOptions}
+                              userOptions={userOptions}
                               keys={filteredNoOfProjectsKeys}
                               label="Projects"
                               projectsData={projectsData}
@@ -879,6 +918,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                         <div className="container-fluid border-0 p-1">
                           {projectsData && filteredKeys ? (
                             <ProjectsTable
+                              rowCountOptions={rowCountOptions}
+                              districtOptions={districtOptions}
+                              sectorOptions={sectorOptions}
+                              userOptions={userOptions}
                               keys={filteredKeys}
                               label="Visits"
                               projectsData={projectsData}
@@ -927,6 +970,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="Good Projects"
                           projectsData={projectsData}
@@ -973,6 +1020,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="Average Projects"
                           projectsData={projectsData}
@@ -1017,6 +1068,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="Critical Projects"
                           projectsData={projectsData}
@@ -1057,6 +1112,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="Reports In Progress"
                           projectsData={projectsData}
@@ -1643,7 +1702,7 @@ const Dashboard = ({ dashboardType }: Props) => {
                                       ? 0
                                       : data.utilization20t080 -
                                         utilizationData.filter(
-                                          (data) => data.visitCount > 0
+                                          (data) => data.visitCount > 0,
                                         ).length
                                   }
                                 />
@@ -1663,6 +1722,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                         <div className="container-fluid border-0 p-1">
                           {projectsData && filteredCMADPKeys ? (
                             <ProjectsTable
+                              rowCountOptions={rowCountOptions}
+                              districtOptions={districtOptions}
+                              sectorOptions={sectorOptions}
+                              userOptions={userOptions}
                               keys={filteredCMADPKeys}
                               label="Utilization(20% - 80%)"
                               projectsData={utilizationData}
@@ -2054,6 +2117,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label="Approved Projects"
                           projectsData={projectsData}
@@ -2095,6 +2162,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label="Unapproved Projects"
                           projectsData={projectsData}
@@ -2136,6 +2207,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label="Dropped Projects"
                           projectsData={projectsData}
@@ -2178,6 +2253,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                       <div className="container-fluid border-0 p-1">
                         {projectsData && filteredCMADPKeys ? (
                           <ProjectsTable
+                            rowCountOptions={rowCountOptions}
+                            districtOptions={districtOptions}
+                            sectorOptions={sectorOptions}
+                            userOptions={userOptions}
                             keys={filteredCMADPKeys}
                             label="Umbrella Projects"
                             projectsData={projectsData}
@@ -2219,6 +2298,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                       <div className="container-fluid border-0 p-1">
                         {projectsData && filteredCMADPKeys ? (
                           <ProjectsTable
+                            rowCountOptions={rowCountOptions}
+                            districtOptions={districtOptions}
+                            sectorOptions={sectorOptions}
+                            userOptions={userOptions}
                             keys={filteredCMADPKeys}
                             label="Single Projects"
                             projectsData={projectsData}
@@ -2268,6 +2351,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label="0.1M to Up to 200M DDC Projects"
                           projectsData={projectsData}
@@ -2304,6 +2391,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label="Above 200M to Up to 400M DDWP Projects"
                           projectsData={projectsData}
@@ -2340,6 +2431,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label="Above 400M Up to 800M DDSC Projects"
                           projectsData={projectsData}
@@ -2376,6 +2471,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label="Above 800M to upto 10B PDWP Projects"
                           projectsData={projectsData}
@@ -2412,6 +2511,10 @@ const Dashboard = ({ dashboardType }: Props) => {
                     <div className="container-fluid border-0 p-1">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label="10 Billion or above CDWP Projects"
                           projectsData={projectsData}

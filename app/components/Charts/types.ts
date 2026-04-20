@@ -5,24 +5,46 @@ function estimateTextWidth(text: string, fontSize: number) {
 export function calculateLeftMargin<T extends { label: string; value: number }>(
   data: T[],
   fontSize: number,
-  suffix = ""
+  layout: "horizontal" | "vertical" = "horizontal",
+  suffix = "",
+  scale = 1,
 ) {
-  const maxValue = Math.max(...data.map((d) => d.value));
-  const label = `${maxValue.toLocaleString()}${suffix}`;
+  if (layout === "vertical") {
+    // Y axis shows category labels (long text)
+    const longestLabel = data.reduce(
+      (longest, d) => (d.label?.length > longest.length ? d.label : longest),
+      "",
+    );
+    return estimateTextWidth(longestLabel, fontSize) * scale + 16;
+  }
 
-  // padding + breathing room
-  return estimateTextWidth(label, fontSize) + 16;
+  // horizontal layout — Y axis shows numeric tick values
+  const maxValue = Math.max(...data.map((d) => d.value));
+  const longestTick = `${maxValue.toLocaleString()}${suffix}`;
+
+  return estimateTextWidth(longestTick, fontSize) * scale + 16;
 }
 
 export function calculateXAxisHeight(
   labels: string[],
   fontSize: number,
+  xAxisLabelOrientation: "horizontal" | "vertical" = "horizontal",
   lineGap = 2,
-  baseOffset = 16
+  baseOffset = 16,
 ) {
-  const maxWords = Math.max(...labels.map((l) => l.split(" ").length));
+  if (xAxisLabelOrientation === "horizontal") {
+    return fontSize + baseOffset; // default recharts height is fine, no calculation needed
+  }
 
-  return maxWords * (fontSize + lineGap) + baseOffset;
+  const longestLabel = labels.reduce(
+    (longest, label) => (label?.length > longest.length ? label : longest),
+    "",
+  );
+
+  // each character is approximately 0.6x the fontSize wide
+  const estimatedTextWidth = longestLabel.length * fontSize * 0.6;
+
+  return estimatedTextWidth + baseOffset;
 }
 
 export const getGradientId = (label: string) =>

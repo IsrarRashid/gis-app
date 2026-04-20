@@ -16,9 +16,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import EvaluationMap from "../GoogleMap/EvaluationMap";
-import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
-import { VscPreview } from "react-icons/vsc";
 import PCIVReportReview from "./PCIVReportReview";
+import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
 
 const Menu = dynamic(() => import("@/app/components/Menu"), { ssr: false });
 
@@ -46,6 +45,9 @@ export interface EvaluationMainDashboard {
   totalSubmittedPCIvs: number;
   snEs: number;
   nonSNEs: number;
+  pCivInProgress: number;
+  assignedToEvaluator: number;
+  refferBackPcIV: number;
   noOfVisitsMultipleSitesOrUmbrella: number;
   noOfVisitsMultipleSitesOrUmbrellaTotalSNEs: number;
   noOfVisitsMultipleSitesOrUmbrellaTotalNonSNEs: number;
@@ -320,11 +322,6 @@ const DashboardEvaluation = () => {
       )
       .map((key) => key as keyof ProjectsList);
 
-  const [utilizationData, setUtilizationData] = useState<ProjectsList[]>([]);
-  const [openUtilizationData, setOpenUtilizationData] = useState<
-    ProjectsList[]
-  >([]);
-
   // useEffect(() => {
   //   getProjectsList("TotalProject");
   // }, []);
@@ -429,16 +426,18 @@ const DashboardEvaluation = () => {
                 isFullscreen={true}
                 size="xl"
                 modalId={"inprogress"}
+                allowOpen={false}
                 button={
                   <Button
                     className="btn p-0 pe-1 shadow-none w-100"
                     onClick={() => getProjectsList("inprogress")}
+                    disabled
                   >
                     <Menu
                       background="rgba(12, 140, 233, 0.2)"
                       outline="1px solid rgba(12, 140, 233, 0.4)"
                       icon="/icons/inProcess.svg"
-                      value={data ? data.reportsInProgress : 0}
+                      value={data ? data.pCivInProgress : 0}
                       label="PC(IV) In Progress"
                       showTides={false}
                       showArrow={true}
@@ -473,16 +472,18 @@ const DashboardEvaluation = () => {
                 isFullscreen={true}
                 size="xl"
                 modalId={"inprogress"}
+                allowOpen={false}
                 button={
                   <Button
                     className="btn p-0 pe-1 shadow-none w-100"
                     onClick={() => getProjectsList("inprogress")}
+                    disabled
                   >
                     <Menu
                       background="rgba(12, 140, 233, 0.2)"
                       outline="1px solid rgba(12, 140, 233, 0.4)"
                       icon="/icons/inProcess.svg"
-                      value={data ? data.reportsInProgress : 0}
+                      value={data ? data.assignedToEvaluator : 0}
                       label="Assigned To Evaluator"
                       showTides={false}
                       showArrow={true}
@@ -517,17 +518,19 @@ const DashboardEvaluation = () => {
                 isFullscreen={true}
                 size="xl"
                 modalId={"inprogress"}
+                allowOpen={false}
                 button={
                   <Button
                     className="btn p-0 pe-1 shadow-none w-100"
                     onClick={() => getProjectsList("inprogress")}
+                    disabled
                   >
                     <Menu
                       background="rgba(12, 140, 233, 0.2)"
                       outline="1px solid rgba(12, 140, 233, 0.4)"
                       icon="/icons/inProcess.svg"
-                      value={data ? data.reportsInProgress : 0}
-                      label="Refer-back"
+                      value={data ? data.refferBackPcIV : 0}
+                      label="Refer Back"
                       showTides={false}
                       showArrow={true}
                       textWrap={false}

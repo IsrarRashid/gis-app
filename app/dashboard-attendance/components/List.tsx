@@ -1,13 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import searchIcon from "@/public/images/attendance/searchIcon.svg";
-import exportIcon from "@/public/images/attendance/exportIcon.svg";
 // import "../Attendance.css";
 import axios from "axios";
 import Cookies from "js-cookie";
 // import { exportToPDF } from "../../utils";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { FaDownload, FaSearch } from "react-icons/fa";
 
 const PresentAttendance = () => {
@@ -56,7 +53,7 @@ const PresentAttendance = () => {
           headers: {
             Authorization: `Bearer ${token}`, // Attach token in the header for authorization
           },
-        }
+        },
       );
       setAttendanceData(response.data.attendanceList || []);
       setFilteredData(response.data.attendanceList || []);
@@ -100,7 +97,7 @@ const PresentAttendance = () => {
     const filtered =
       attendanceData &&
       attendanceData.filter((data: any) =>
-        data.employeeName.toLowerCase().includes(searchValue)
+        data.employeeName.toLowerCase().includes(searchValue),
       );
     setFilteredData(filtered);
   };
@@ -115,7 +112,7 @@ const PresentAttendance = () => {
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = filteredData.slice(
     indexOfFirstRecord,
-    indexOfLastRecord
+    indexOfLastRecord,
   );
 
   // Change page

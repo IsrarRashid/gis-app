@@ -1,26 +1,22 @@
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import more from "../../../public/icons/more.svg";
-// import { ToastContainer, toast } from "react-toastify";
-import Button from "@/app/components/Button";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-import { z } from "zod";
-import FormWrapper from "@/app/components/Form/FormWrapper";
-import CustomLabel from "@/app/components/Form/CustomLabel";
 import CustomInput from "@/app/components/Form/CustomInput";
-import CustomTextArea from "@/app/components/Form/CustomTextArea";
-import SubmitButton from "@/app/components/Form/SubmitButton";
-import CustomToggleSwitch from "@/app/components/CustomToggleSwitch";
-import { SingleValue } from "react-select";
+import CustomLabel from "@/app/components/Form/CustomLabel";
 import CustomSelect, {
   defaultNumberOption,
   OptionType,
 } from "@/app/components/Form/CustomSelect";
+import CustomTextArea from "@/app/components/Form/CustomTextArea";
+import FormWrapper from "@/app/components/Form/FormWrapper";
+import SubmitButton from "@/app/components/Form/SubmitButton";
 import ActionButton from "@/app/components/Table/ActionButton";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { SingleValue } from "react-select";
+import { z } from "zod";
+import CustomToggleSwitch from "@/app/components/CustomToggleSwitch";
 
 const schema = z.object({
   id: z.number().optional().default(0),
@@ -191,12 +187,12 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                         closeMenuOnSelect={true}
                         value={
                           parentIdOptions.find(
-                            (option) => option.value === String(field.value)
+                            (option) => option.value === String(field.value),
                           )
                             ? [
                                 parentIdOptions.find(
                                   (option) =>
-                                    option.value === String(field.value)
+                                    option.value === String(field.value),
                                 )!,
                               ]
                             : null
@@ -205,7 +201,7 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                           const singleOption =
                             selectedOption as SingleValue<OptionType>;
                           field.onChange(
-                            singleOption ? Number(singleOption.value) : 0
+                            singleOption ? Number(singleOption.value) : 0,
                           );
                         }}
                       />
@@ -262,7 +258,7 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                     <CustomToggleSwitch
                       id="group_type"
                       checked={isGroupType}
-                      onChange={() => setGroupType(!isGroupType)}
+                      onChange={setGroupType}
                     />
                     <label
                       className="form-label form-label-color-black fs14px ms-2 mb-0"
@@ -289,7 +285,7 @@ const Form = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                     <CustomToggleSwitch
                       id="group_nature"
                       checked={isGroupNature}
-                      onChange={() => setGroupNature(!isGroupNature)}
+                      onChange={setGroupNature}
                     />
                     <label
                       className="form-label form-label-color-black fs14px ms-2 mb-0"

@@ -1,8 +1,6 @@
 import ListWrapper from "../components/ListWrapper";
 import { DashboardType, DashboardTypeEnum } from "../dashboard/types/types";
 import NewVisitPlan from "./components/NewVisitPlan";
-import EvaluationVisitPlanList from "./components/VisitPlanEvaluation/EvaluationVisitPlanList";
-import MonitoringVisitPlanList from "./components/VisitPlanMonitoring/MonitoringVisitPlanList";
 
 interface Props {
   searchParams: Promise<{

@@ -5,77 +5,131 @@ import Card from "./Card";
 import TileLabel from "./TileLabel";
 import { HiChartBar } from "react-icons/hi";
 import MySimpleBarChart, {
+  ChartGradient,
   MyBarChartStyle,
   MyBarChartType,
 } from "@/app/components/Charts/BarChart/MySimpleBarChart";
+import { EvaluationTotalProject } from "../page";
 
-const BarChartTileTotalProjects = ({
-  chartSize = "small",
-}: {
+interface Props {
+  data: EvaluationTotalProject[];
   chartSize?: "small" | "large";
-}) => {
-  const data: MyBarChartType[] = [
-    {
-      label: "Total Projects",
-      value: 50,
-      season: "Nov-Jun",
-      percentage: 98.94,
-      gradient: {
-        id: "1",
-        from: "#036CCF",
-        to: "#013769",
-        direction: "vertical", // optional
-      },
-    },
-    {
-      label: "UnAssigned Projects",
-      value: 25,
-      season: "Dec-Jan",
-      percentage: 0.05,
-      gradient: {
-        id: "2",
-        from: "#00E331",
-        to: "#00911F",
-        direction: "vertical", // optional
-      },
-    },
-    {
-      label: "In Progress Projects",
-      value: 60,
-      season: "Aug-Oct",
-      percentage: 0.17,
-      gradient: {
-        id: "3",
-        from: "#E27D02",
-        to: "#BB6802",
-        direction: "vertical", // optional
-      },
-    },
-    {
-      label: "Completed Projects",
-      value: 40,
-      season: "Jun-Nov",
-      percentage: 0.83,
-      gradient: {
-        id: "4",
-        from: "#CFB303",
-        to: "#A38D00",
-        direction: "vertical", // optional
-      },
-    },
-    {
-      label: "Stopped Projects",
-      value: 55,
-      season: "Jun-Nov",
-      percentage: 0.83,
-      gradient: {
-        id: "5",
-        from: "#A4A4A4",
-        to: "#4A4A4A",
-        direction: "vertical", // optional
-      },
-    },
-  ];
+}
+
+const colors: ChartGradient[] = [
+  {
+    id: "ETP1",
+    from: "#036CCF",
+    to: "#013769",
+    direction: "vertical", // optional
+  },
+  {
+    id: "ETP2",
+    from: "#00E331",
+    to: "#00911F",
+    direction: "vertical", // optional
+  },
+  {
+    id: "ETP3",
+    from: "#E27D02",
+    to: "#BB6802",
+    direction: "vertical", // optional
+  },
+  {
+    id: "ETP4",
+    from: "#CFB303",
+    to: "#A38D00",
+    direction: "vertical", // optional
+  },
+  {
+    id: "ETP5",
+    from: "#A4A4A4",
+    to: "#4A4A4A",
+    direction: "vertical", // optional
+  },
+  {
+    id: "ETP6",
+    from: "#8E2DE2", // purple
+    to: "#4A00E0",
+    direction: "vertical",
+  },
+  {
+    id: "ETP7",
+    from: "#FF4E50", // red
+    to: "#B31217",
+    direction: "vertical",
+  },
+];
+
+const BarChartTileTotalProjects = ({ chartSize = "small", data }: Props) => {
+  const myChartData: MyBarChartType[] = data.map((item, i) => ({
+    label: item.userName,
+    value: item.totalAssignedProjects, // 🔥 dynamic field access
+    gradient: colors[i],
+  }));
+
+  // const data: MyBarChartType[] = [
+  //   {
+  //     label: "Total Projects",
+  //     value: 50,
+  //     season: "Nov-Jun",
+  //     percentage: 98.94,
+  //     gradient: {
+  //       id: "1",
+  //       from: "#036CCF",
+  //       to: "#013769",
+  //       direction: "vertical", // optional
+  //     },
+  //   },
+  //   {
+  //     label: "UnAssigned Projects",
+  //     value: 25,
+  //     season: "Dec-Jan",
+  //     percentage: 0.05,
+  //     gradient: {
+  //       id: "2",
+  //       from: "#00E331",
+  //       to: "#00911F",
+  //       direction: "vertical", // optional
+  //     },
+  //   },
+  //   {
+  //     label: "In Progress Projects",
+  //     value: 60,
+  //     season: "Aug-Oct",
+  //     percentage: 0.17,
+  //     gradient: {
+  //       id: "3",
+  //       from: "#E27D02",
+  //       to: "#BB6802",
+  //       direction: "vertical", // optional
+  //     },
+  //   },
+  //   {
+  //     label: "Completed Projects",
+  //     value: 40,
+  //     season: "Jun-Nov",
+  //     percentage: 0.83,
+  //     gradient: {
+  //       id: "4",
+  //       from: "#CFB303",
+  //       to: "#A38D00",
+  //       direction: "vertical", // optional
+  //     },
+  //   },
+  //   {
+  //     label: "Stopped Projects",
+  //     value: 55,
+  //     season: "Jun-Nov",
+  //     percentage: 0.83,
+  //     gradient: {
+  //       id: "5",
+  //       from: "#A4A4A4",
+  //       to: "#4A4A4A",
+  //       direction: "vertical", // optional
+  //     },
+  //   },
+  // ];
 
   const smallChartStyle: MyBarChartStyle = {
     height: 292,
@@ -142,7 +196,7 @@ const BarChartTileTotalProjects = ({
                 size={30 * (chartSize === "small" ? 1 : 1.5)}
               />
             }
-            label="Evaluation Total Projects"
+            label="Status-wise Projects"
             description="Projects Details"
             chartSize={chartSize}
           />
@@ -168,34 +222,37 @@ const BarChartTileTotalProjects = ({
       }
     >
       <MySimpleBarChart
-        data={data}
+        data={myChartData}
         style={chartSize === "small" ? smallChartStyle : largeChartStyle}
+        xAxisLabelOrientation="vertical"
       />
 
       <div className="d-flex flex-wrap justify-content-center align-items-center gap-2">
-        <span
-          className="d-flex align-items-center gap-2"
-          style={{ padding: "4.5px 4px" }}
-        >
-          <span className="p-1">
-            <div
-              style={{
-                width: 8 * (chartSize === "small" ? 1 : 2) + "px",
-                height: 8 * (chartSize === "small" ? 1 : 2) + "px",
-                backgroundImage:
-                  "linear-gradient(to bottom, #036CCF , #013769)",
-              }}
-            />
-          </span>
+        {myChartData.map((d, i) => (
           <span
-            style={{
-              fontSize: 12 * (chartSize === "small" ? 1 : 2) + "px",
-            }}
+            key={i}
+            className="d-flex align-items-center gap-2"
+            style={{ padding: "4.5px 4px" }}
           >
-            1032 Total Projects - 1032
+            <span className="p-1">
+              <div
+                style={{
+                  width: 8 * (chartSize === "small" ? 1 : 2) + "px",
+                  height: 8 * (chartSize === "small" ? 1 : 2) + "px",
+                  backgroundImage: `linear-gradient(to bottom, ${colors[i]?.from || "#2563EB"} , ${colors[i]?.to || "#013769"})`,
+                }}
+              />
+            </span>
+            <span
+              style={{
+                fontSize: 12 * (chartSize === "small" ? 1 : 2) + "px",
+              }}
+            >
+              {d.label}
+            </span>
           </span>
-        </span>
-        <span
+        ))}
+        {/* <span
           className="d-flex align-items-center gap-2"
           style={{ padding: "4.5px 4px" }}
         >
@@ -280,7 +337,7 @@ const BarChartTileTotalProjects = ({
           >
             Stopped Projects - 174
           </span>
-        </span>
+        </span> */}
       </div>
     </Card>
   );

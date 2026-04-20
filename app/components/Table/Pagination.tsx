@@ -50,7 +50,7 @@ const Pagination = ({
 
   // for pagination buttons
   const totalPages = Math.ceil(
-    (searchTerm || status ? filteredData : data).length / rows
+    (searchTerm || status ? filteredData : data).length / rows,
   );
   // Handle previous page
   const handlePreviousPage = () => {
@@ -94,7 +94,7 @@ const Pagination = ({
           >
             <HiOutlineDotsHorizontal />
           </Button>
-        </div>
+        </div>,
       );
     }
 
@@ -116,7 +116,7 @@ const Pagination = ({
           >
             {i}
           </Button>
-        </div>
+        </div>,
       );
     }
 
@@ -134,7 +134,7 @@ const Pagination = ({
           >
             <HiOutlineDotsHorizontal />
           </Button>
-        </div>
+        </div>,
       );
     }
 
@@ -302,7 +302,7 @@ const Pagination = ({
               singleSelectStyles={paginationSelectStyles}
               value={selectedOptions}
               onChangeSingle={(
-                newValue: SingleValue<{ value: string; label: string }>
+                newValue: SingleValue<{ value: string; label: string }>,
               ) => {
                 if (newValue) {
                   if (Number(newValue.value) === 0) {
@@ -436,8 +436,8 @@ export const paginationSelectStyles: StylesConfig<
     backgroundColor: state.isSelected
       ? "#C2E7E4" // selected background color
       : state.isFocused
-      ? "#E4EDEC" // hover background color
-      : "white",
+        ? "#E4EDEC" // hover background color
+        : "white",
     color: "#333",
     fontSize: "14px",
     padding: "10px",

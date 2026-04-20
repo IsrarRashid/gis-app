@@ -8,12 +8,11 @@ import CustomSelect, {
   OptionType,
 } from "@/app/components/Form/CustomSelect";
 import { paginationSelectStyles } from "@/app/components/Table/Pagination";
+import RowHeader from "@/app/components/Table/RowHeader";
+import TableData from "@/app/components/Table/TableData";
 import TableHeading from "@/app/components/Table/TableHeading";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import { ReportTypeStatusEnum } from "@/app/dashboard/types/reportTypeStatus";
-import { District } from "@/app/hooks/useDistrict";
-import { Sector } from "@/app/hooks/useSectors";
-import { User } from "@/app/hooks/useUsers";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import {
   addDayToFormattedDate,
@@ -38,15 +37,13 @@ import { LuSearch, LuUserRound } from "react-icons/lu";
 import { PiCircleFill } from "react-icons/pi";
 import { SingleValue } from "react-select";
 import { toast } from "react-toastify";
+import Badge from "../../ProjectsTable/components/Badge";
 import styles from "../../ProjectsTable/ProjectsTable.module.css";
 import {
   FilterParams,
   RangeType,
 } from "../../ProjectsTable/ProjectsTableUtils";
 import useProjectsTableUtils from "../../ProjectsTable/useProjectsTableUtils";
-import RowHeader from "@/app/components/Table/RowHeader";
-import TableData from "@/app/components/Table/TableData";
-import Badge from "../../ProjectsTable/components/Badge";
 
 export interface ProjectsList {
   id: number;
@@ -112,7 +109,7 @@ const ProjectsTable = ({
       } else {
         // Add/Update "District Name" in the filter
         const updated = prev.filter(
-          (item) => !item.startsWith("District Name:")
+          (item) => !item.startsWith("District Name:"),
         );
         return [...updated, `District Name: ${selectedOption?.value}`];
       }
@@ -189,7 +186,7 @@ const ProjectsTable = ({
   };
 
   const handleReportStatusChange = (
-    selectedOption: SingleValue<OptionType>
+    selectedOption: SingleValue<OptionType>,
   ) => {
     const value = Number(selectedOption?.value);
     setReportStatus(value);
@@ -200,7 +197,7 @@ const ProjectsTable = ({
       } else {
         // Add/Update "Report Status" in the filter
         const updated = prev.filter(
-          (item) => !item.startsWith("Report Status:")
+          (item) => !item.startsWith("Report Status:"),
         );
         return [...updated, `Report Status: ${value}`];
       }
@@ -245,7 +242,7 @@ const ProjectsTable = ({
         ]
           .filter(Boolean)
           .map((field) => field.toLowerCase())
-          .some((field) => field.includes(searchTerm.toLowerCase()))
+          .some((field) => field.includes(searchTerm.toLowerCase())),
       );
       setFilteredData(filtered);
     } else {
@@ -325,7 +322,7 @@ const ProjectsTable = ({
           >
             <HiOutlineDotsHorizontal />
           </Button>
-        </div>
+        </div>,
       );
     }
 
@@ -347,7 +344,7 @@ const ProjectsTable = ({
           >
             {i}
           </Button>
-        </div>
+        </div>,
       );
     }
 
@@ -365,7 +362,7 @@ const ProjectsTable = ({
           >
             <HiOutlineDotsHorizontal />
           </Button>
-        </div>
+        </div>,
       );
     }
 
@@ -423,10 +420,10 @@ const ProjectsTable = ({
       submittedTime <= deadlineTime
         ? "Submitted on time"
         : diffInYears >= 1 && diffInMonths >= 12
-        ? `${diffInYears} year${diffInYears > 1 ? "s" : ""} Late Submitted`
-        : diffInMonths >= 1
-        ? `${diffInMonths} month${diffInMonths > 1 ? "s" : ""} Late Submitted`
-        : `${diffInDays} day${diffInDays > 1 ? "s" : ""} Late Submitted`;
+          ? `${diffInYears} year${diffInYears > 1 ? "s" : ""} Late Submitted`
+          : diffInMonths >= 1
+            ? `${diffInMonths} month${diffInMonths > 1 ? "s" : ""} Late Submitted`
+            : `${diffInDays} day${diffInDays > 1 ? "s" : ""} Late Submitted`;
 
     return result;
   };
@@ -457,18 +454,18 @@ const ProjectsTable = ({
           row[key] =
             data.visitStartDate &&
             `${addDayToFormattedDate(
-              getFormattedDate(new Date(data.visitStartDate), "short")!
+              getFormattedDate(new Date(data.visitStartDate), "short")!,
             )} to ${
               data.visitEndDate &&
               addDayToFormattedDate(
-                getFormattedDate(new Date(data.visitEndDate), "short")!
+                getFormattedDate(new Date(data.visitEndDate), "short")!,
               )
             }`;
           break;
         case "completedDate":
           row[key] = data.completedDate
             ? `${addDayToFormattedDate(
-                getFormattedDate(new Date(data.completedDate), "short")!
+                getFormattedDate(new Date(data.completedDate), "short")!,
               )}`
             : "NA";
           break;
@@ -494,7 +491,7 @@ const ProjectsTable = ({
         case "statusDate":
           row[key] = data.statusDate
             ? `${addDayToFormattedDate(
-                getFormattedDate(new Date(data.statusDate), "short")!
+                getFormattedDate(new Date(data.statusDate), "short")!,
               )}`
             : "NA";
           break;
@@ -518,7 +515,7 @@ const ProjectsTable = ({
       headers.forEach((header) => {
         const key =
           Object.entries(renameMap).find(
-            ([, value]) => value === header
+            ([, value]) => value === header,
           )?.[0] || header; // Find original key from renamed header
 
         switch (key) {
@@ -547,11 +544,11 @@ const ProjectsTable = ({
             row[formatKeyName(header)] =
               item.visitStartDate &&
               `${addDayToFormattedDate(
-                getFormattedDate(new Date(item.visitStartDate), "short")!
+                getFormattedDate(new Date(item.visitStartDate), "short")!,
               )} to ${
                 item.visitEndDate &&
                 addDayToFormattedDate(
-                  getFormattedDate(new Date(item.visitEndDate), "short")!
+                  getFormattedDate(new Date(item.visitEndDate), "short")!,
                 )
               }`;
             break;
@@ -559,9 +556,8 @@ const ProjectsTable = ({
             row[formatKeyName(header)] = item.cost;
             break;
           case "userName":
-            row[
-              formatKeyName(header)
-            ] = `${item.userName} (${item.designation})`;
+            row[formatKeyName(header)] =
+              `${item.userName} (${item.designation})`;
             break;
           case "visitId":
             row[formatKeyName(header)] = item.visitId;
@@ -604,7 +600,7 @@ const ProjectsTable = ({
             break;
           case "pcivSubmittedDate":
             row[formatKeyName(header)] = addDayToFormattedDate(
-              getFormattedDate(new Date(item.pcivSubmittedDate), "short")!
+              getFormattedDate(new Date(item.pcivSubmittedDate), "short")!,
             );
             break;
           case "status":
@@ -635,7 +631,7 @@ const ProjectsTable = ({
     exportDataToExcel(
       data,
       displayHeaders,
-      `${label} ${getFormattedDate(new Date(), "short")}.xlsx`
+      `${label} ${getFormattedDate(new Date(), "short")}.xlsx`,
     );
   };
 
@@ -657,17 +653,17 @@ const ProjectsTable = ({
 
     if (districtName) {
       filtered = filtered.filter(
-        (p) => p.districtName?.toLowerCase() === districtName.toLowerCase()
+        (p) => p.districtName?.toLowerCase() === districtName.toLowerCase(),
       );
     }
     if (sectorName) {
       filtered = filtered.filter(
-        (p) => p.sectorName?.toLowerCase() === sectorName.toLowerCase()
+        (p) => p.sectorName?.toLowerCase() === sectorName.toLowerCase(),
       );
     }
     if (userName) {
       filtered = filtered.filter((p) =>
-        p.userName?.toLowerCase().includes(userName.toLowerCase())
+        p.userName?.toLowerCase().includes(userName.toLowerCase()),
       );
     }
     if (startDate && endDate) {
@@ -687,7 +683,7 @@ const ProjectsTable = ({
       reportStatus !== -1
     ) {
       filtered = filtered.filter(
-        (project) => parseInt(project.status) === reportStatus
+        (project) => parseInt(project.status) === reportStatus,
       );
     }
 
@@ -764,7 +760,7 @@ const ProjectsTable = ({
   const reportPdfDownload = async (
     visitId: number,
     projectId: number,
-    reportTypeRequest: number
+    reportTypeRequest: number,
   ) => {
     console.log(visitId, projectId, reportTypeRequest);
     try {
@@ -774,7 +770,7 @@ const ProjectsTable = ({
           visitId,
           projectId,
           reportTypeRequest,
-        }
+        },
       );
 
       console.log("response", response);
@@ -800,7 +796,7 @@ const ProjectsTable = ({
   const pcIVReportPdfDownload = async (pcIvId: number) => {
     try {
       const response = await apiClient.post(
-        `${GENERATE_REPORT_API}/GenerateReportPCIV?pcIVid=${pcIvId}`
+        `${GENERATE_REPORT_API}/GenerateReportPCIV?pcIVid=${pcIvId}`,
       );
 
       console.log("response", response);
@@ -958,7 +954,7 @@ const ProjectsTable = ({
                           newValue: SingleValue<{
                             value: string;
                             label: string;
-                          }>
+                          }>,
                         ) => {
                           if (newValue) {
                             handleDistrictChange(newValue);
@@ -1051,14 +1047,14 @@ const ProjectsTable = ({
                                 {dateRangeState[0].startDate
                                   ? format(
                                       dateRangeState[0].startDate,
-                                      "dd/MM/yyyy"
+                                      "dd/MM/yyyy",
                                     )
                                   : "No start date"}{" "}
                                 to{" "}
                                 {dateRangeState[0].endDate
                                   ? format(
                                       dateRangeState[0].endDate,
-                                      "dd/MM/yyyy"
+                                      "dd/MM/yyyy",
                                     )
                                   : "No end date"}
                               </p>
@@ -1068,7 +1064,7 @@ const ProjectsTable = ({
                                     return prev.filter(
                                       (item) =>
                                         !item.startsWith("Start Date:") &&
-                                        !item.startsWith("End Date:")
+                                        !item.startsWith("End Date:"),
                                     );
                                   });
                                   setDateRangeState([
@@ -1120,7 +1116,7 @@ const ProjectsTable = ({
                           newValue: SingleValue<{
                             value: string;
                             label: string;
-                          }>
+                          }>,
                         ) => {
                           if (newValue) {
                             handleSectorChange(newValue);
@@ -1196,7 +1192,7 @@ const ProjectsTable = ({
                           newValue: SingleValue<{
                             value: string;
                             label: string;
-                          }>
+                          }>,
                         ) => {
                           if (newValue) {
                             handleUserChange(newValue);
@@ -1532,8 +1528,8 @@ const ProjectsTable = ({
                         name={formatAmountWithCommas(
                           dataToPaginate.reduce(
                             (sum, d) => sum + (d.cost || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       />
                       <TableHeading colSpan={7} name="" />
@@ -1553,18 +1549,18 @@ const ProjectsTable = ({
                             k.toLowerCase() === "id"
                               ? "ID"
                               : k.toLowerCase() === "gsno"
-                              ? "GS NO."
-                              : k.toLowerCase() === "username"
-                              ? "USERNAME"
-                              : k.toLowerCase() === "visitcount"
-                              ? "no. of visits"
-                              : k.toLowerCase() === "visitstartdate"
-                              ? "Date Range"
-                              : k.toLowerCase() === "filegenrated"
-                              ? "report generated"
-                              : k.toLowerCase() === "statusDate"
-                              ? "status Date"
-                              : formatKeyName(k)
+                                ? "GS NO."
+                                : k.toLowerCase() === "username"
+                                  ? "USERNAME"
+                                  : k.toLowerCase() === "visitcount"
+                                    ? "no. of visits"
+                                    : k.toLowerCase() === "visitstartdate"
+                                      ? "Date Range"
+                                      : k.toLowerCase() === "filegenrated"
+                                        ? "report generated"
+                                        : k.toLowerCase() === "statusDate"
+                                          ? "status Date"
+                                          : formatKeyName(k)
                           }
                           handleSort={() => handleSort(`${k}`)}
                         />
@@ -1581,18 +1577,18 @@ const ProjectsTable = ({
                           k.toLowerCase() === "id"
                             ? "ID"
                             : k.toLowerCase() === "gsno"
-                            ? "GS NO."
-                            : k.toLowerCase() === "username"
-                            ? "USERNAME"
-                            : k.toLowerCase() === "visitcount"
-                            ? "no. of visits"
-                            : k.toLowerCase() === "visitstartdate"
-                            ? "Date Range"
-                            : k.toLowerCase() === "filegenrated"
-                            ? "report generated"
-                            : k.toLowerCase() === "statusDate"
-                            ? "status Date"
-                            : formatKeyName(k)
+                              ? "GS NO."
+                              : k.toLowerCase() === "username"
+                                ? "USERNAME"
+                                : k.toLowerCase() === "visitcount"
+                                  ? "no. of visits"
+                                  : k.toLowerCase() === "visitstartdate"
+                                    ? "Date Range"
+                                    : k.toLowerCase() === "filegenrated"
+                                      ? "report generated"
+                                      : k.toLowerCase() === "statusDate"
+                                        ? "status Date"
+                                        : formatKeyName(k)
                         }
                         handleSort={() => handleSort(`${k}`)}
                       />
@@ -1657,23 +1653,23 @@ const ProjectsTable = ({
                                 {addDayToFormattedDate(
                                   getFormattedDate(
                                     new Date(d.visitStartDate),
-                                    "short"
-                                  )!
+                                    "short",
+                                  )!,
                                 )}
                                 <div className="text-center">to</div>
                                 {addDayToFormattedDate(
                                   getFormattedDate(
                                     new Date(d.visitEndDate),
-                                    "short"
-                                  )!
+                                    "short",
+                                  )!,
                                 )}
                               </>
                             ) : d.visitStartDate ? (
                               addDayToFormattedDate(
                                 getFormattedDate(
                                   new Date(d.visitStartDate),
-                                  "short"
-                                )!
+                                  "short",
+                                )!,
                               )
                             ) : (
                               "NA"
@@ -1723,7 +1719,7 @@ const ProjectsTable = ({
                         <TableData key={key}>
                           {key === "name" ? (
                             <>
-                              {label === "Submitted PC(IV)s" ? (
+                              {label === "PC(IV) Submitted by Department" ? (
                                 <div
                                   className="text-start color-sea-blue cursor-pointer"
                                   onClick={(e) => {
@@ -1741,13 +1737,27 @@ const ProjectsTable = ({
                                     reportPdfDownload(
                                       d.visitId,
                                       d.id,
-                                      ReportTypeStatusEnum.EVALUATION
+                                      ReportTypeStatusEnum.EVALUATION,
                                     );
                                   }}
                                 >
                                   {d[key]}
                                 </div>
-                              ) : label === "No. of Visits (Umbrella)" ? (
+                              ) : // ) : label === "PC(IV) Submitted by Department" ? (
+                              //   <div
+                              //     className="text-start color-sea-blue cursor-pointer"
+                              //     onClick={(e) => {
+                              //       e.preventDefault();
+                              //       reportPdfDownload(
+                              //         d.visitId,
+                              //         d.id,
+                              //         ReportTypeStatusEnum.EVALUATION,
+                              //       );
+                              //     }}
+                              //   >
+                              //     {d[key]}
+                              //   </div>
+                              label === "No. of Visits (Umbrella)" ? (
                                 <div
                                   className="text-start color-sea-blue cursor-pointer"
                                   onClick={(e) => {
@@ -1755,7 +1765,7 @@ const ProjectsTable = ({
                                     reportPdfDownload(
                                       d.visitId,
                                       d.id,
-                                      ReportTypeStatusEnum.EVALUATION
+                                      ReportTypeStatusEnum.EVALUATION,
                                     );
                                   }}
                                 >
@@ -1790,8 +1800,8 @@ const ProjectsTable = ({
                         {formatAmountWithCommas(
                           paginatedData.reduce(
                             (sum, d) => sum + (d.cost || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       </TableData>
                       {/* <td className="text-nowrap">
@@ -1831,8 +1841,8 @@ const ProjectsTable = ({
                         {formatAmountWithCommas(
                           dataToPaginate.reduce(
                             (sum, d) => sum + (d.cost || 0),
-                            0
-                          )
+                            0,
+                          ),
                         )}
                       </TableData>
                       {/* <td className="text-nowrap">
@@ -2010,7 +2020,7 @@ const ProjectsTable = ({
                 singleSelectStyles={paginationSelectStyles}
                 value={selectedOptions}
                 onChangeSingle={(
-                  newValue: SingleValue<{ value: string; label: string }>
+                  newValue: SingleValue<{ value: string; label: string }>,
                 ) => {
                   if (newValue) {
                     handleRowsPerPage(Number(newValue.value));

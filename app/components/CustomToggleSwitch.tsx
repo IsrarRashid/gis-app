@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from "react";
+import { useMemo } from "react";
 
 interface Props {
   checked: boolean;
-  onChange: () => void;
+  onChange: (checked: boolean) => void;
+  // onChange: () => void;
   onColor?: string; // background color
   offColor?: string; // background color
   onHandleColor?: string; //thumb color
@@ -158,7 +159,7 @@ const CustomToggleSwitch = ({
       onHandleColor,
       disabled,
       uniqueId,
-    ]
+    ],
   );
 
   return (
@@ -171,7 +172,10 @@ const CustomToggleSwitch = ({
           id={id}
           name={id}
           checked={checked}
-          onChange={disabled ? undefined : onChange}
+          onChange={(e) => {
+            if (disabled) return;
+            onChange(e.target.checked);
+          }}
           disabled={disabled}
         />
         <span

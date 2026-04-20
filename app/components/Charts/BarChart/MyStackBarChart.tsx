@@ -17,6 +17,7 @@ import {
   NameType,
   ValueType,
 } from "recharts/types/component/DefaultTooltipContent";
+import { VerticalTick } from "./MySimpleBarChart";
 
 export interface StackValue {
   value: number;
@@ -37,6 +38,7 @@ interface Props {
   data: MyStackBarChartType[];
   layout?: "vertical" | "horizontal";
   style?: MyStackBarChartStyle;
+  xAxisLabelOrientation?: "horizontal" | "vertical";
 }
 
 export interface StackBarGradient {
@@ -49,7 +51,7 @@ export interface StackBarGradient {
 export interface StackBarSegmentStyle {
   /** Must match dataKey in Bar */
   key: string;
-
+  name?: string;
   color?: string;
   gradient?: StackBarGradient;
 
@@ -94,6 +96,7 @@ const MyStackBarChart = ({
   data,
   layout = "horizontal",
   style = defaultStackBarChartStyle,
+  xAxisLabelOrientation = "horizontal",
 }: Props) => {
   const fontSize = style?.axis?.fontSize ?? 12;
 
@@ -107,16 +110,23 @@ const MyStackBarChart = ({
   const leftMargin = calculateLeftMargin(
     normalizedData.map((d) => ({
       label: d.label,
-      value: d.value1 + d.value2!,
+      value: d.value1 + d.value2,
     })),
     fontSize,
-    "%"
+    layout,
   );
 
-  const xAxisHeight = calculateXAxisHeight(
-    data.map((d) => d.label),
-    fontSize - 10
-  );
+  const xAxisHeight =
+    xAxisLabelOrientation === "vertical"
+      ? calculateXAxisHeight(
+          data.map((d) => d.label),
+          fontSize,
+          xAxisLabelOrientation,
+        )
+      : calculateXAxisHeight(
+          data.map((d) => d.label),
+          fontSize,
+        );
 
   return (
     <ResponsiveContainer width="100%" height={style?.height ?? 300}>
@@ -148,7 +158,7 @@ const MyStackBarChart = ({
                   <stop offset="0%" stopColor={v.gradient!.from} />
                   <stop offset="100%" stopColor={v.gradient!.to} />
                 </linearGradient>
-              ))
+              )),
           )}
         </defs>
 
@@ -156,7 +166,20 @@ const MyStackBarChart = ({
         <XAxis
           dataKey="label"
           scale="point"
-          tick
+          interval={0}
+          tick={
+            xAxisLabelOrientation === "vertical" ? (
+              <VerticalTick
+                fontSize={style?.axis?.fontSize ?? 12}
+                fill={style?.axis?.tickColor ?? "#fff"}
+              />
+            ) : (
+              {
+                fill: style?.axis?.tickColor ?? "#fff",
+                fontSize: style?.axis?.fontSize ?? 12,
+              }
+            )
+          }
           padding={{
             left: style?.axis?.padding?.left ?? 30,
             right: style?.axis?.padding?.right ?? 30,
@@ -170,7 +193,7 @@ const MyStackBarChart = ({
 
         {/* GRID + TOOLTIP */}
         <CartesianGrid strokeDasharray="5 3" />
-        <Tooltip />
+        <Tooltip {...(style?.tooltip ?? {})} />
 
         {/* STACKED BARS */}
         {style.stacks.map((stack) => (
@@ -178,6 +201,7 @@ const MyStackBarChart = ({
             key={stack.key}
             dataKey={stack.key}
             stackId="a"
+            name={stack.name ?? stack.key}
             radius={stack.radius}
           >
             {data.map((row, index) => {
@@ -189,7 +213,7 @@ const MyStackBarChart = ({
                   fill={
                     seg.gradient
                       ? `url(#barGradient-${seg.gradient.id})`
-                      : seg.color ?? stack.color
+                      : (seg.color ?? stack.color)
                   }
                 />
               );

@@ -42,6 +42,7 @@ import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
 import ReportReview from "./ReportReview";
 import SimplePieChart from "./SimplePieChart";
 import VisitsPlan from "./VisitsPlan";
+import useProjectsTableUtils from "./ProjectsTable/useProjectsTableUtils";
 
 const Menu = dynamic(() => import("@/app/components/Menu"), { ssr: false });
 
@@ -138,13 +139,13 @@ const DashboardMonitoring = () => {
   useEffect(() => {
     handleButtonClick(
       "dashboard",
-      "https://www.youtube.com/watch?v=1wgAwCufsko&ab_channel=DirectorateGeneralMonitoringandEvaluation"
+      "https://www.youtube.com/watch?v=1wgAwCufsko&ab_channel=DirectorateGeneralMonitoringandEvaluation",
     );
   }, []);
 
   const [isLoading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<"cmInitiative" | "adp">(
-    "cmInitiative"
+    "cmInitiative",
   );
 
   const [otherFilters, setOtherFilters] = useState<FilterData[]>([]);
@@ -155,7 +156,7 @@ const DashboardMonitoring = () => {
     setCombinedFilters(
       activeFilter === "cmInitiative"
         ? [...cmInitiativeFilters, ...otherFilters]
-        : [...adpFilters, ...otherFilters]
+        : [...adpFilters, ...otherFilters],
     );
   }, [activeFilter]);
 
@@ -193,6 +194,8 @@ const DashboardMonitoring = () => {
   }, [data]);
 
   const [projectsData, setProjectsData] = useState<ProjectsList[]>();
+  const { rowCountOptions, districtOptions, sectorOptions, userOptions } =
+    useProjectsTableUtils();
 
   const getProjectsList = async (status: string) => {
     setProjectsData([]);
@@ -201,31 +204,31 @@ const DashboardMonitoring = () => {
     try {
       if (activeFilter === "cmInitiative") {
         const yearFilter = otherFilters.find(
-          (filter) => filter.filterIdentifier === "Year"
+          (filter) => filter.filterIdentifier === "Year",
         );
         if (yearFilter && yearFilter.filterValues === "2025-2026") {
           const response = await apiClient.post(
             `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
-            [...cmInitiativeFilters, ...otherFilters]
+            [...cmInitiativeFilters, ...otherFilters],
           );
           setProjectsData(response.data.data);
         } else if (!yearFilter) {
           const response = await apiClient.post(
             `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
-            [...cmInitiativeFilters, ...otherFilters]
+            [...cmInitiativeFilters, ...otherFilters],
           );
           setProjectsData(response.data.data);
         } else {
           const response = await apiClient.post(
             `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
-            [...oldCmInitiativeFilters, ...otherFilters]
+            [...oldCmInitiativeFilters, ...otherFilters],
           );
           setProjectsData(response.data.data);
         }
       } else {
         const response = await apiClient.post(
           `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
-          [...adpFilters, ...otherFilters]
+          [...adpFilters, ...otherFilters],
         );
         setProjectsData(response.data.data);
       }
@@ -251,8 +254,40 @@ const DashboardMonitoring = () => {
           "utilization",
           "utilPercent",
           role !== "Special Role" && "visitCount",
-        ].includes(key)
+        ].includes(key),
       )
+      .map((key) => key as keyof ProjectsList);
+
+  // Filter and map keys
+  const baseKeys = [
+    "gSno",
+    "projectName",
+    "sectorName",
+    "districtName",
+    "cost",
+    "revisedAllocation",
+    "pnDReleases",
+    "utilization",
+    "utilPercent",
+  ];
+
+  const visitKeys =
+    role !== "Special Role"
+      ? [
+          "scheduleVisitCount",
+          "completeVisitCount",
+          "submittedVisitCount",
+          "visitCount",
+        ]
+      : [];
+
+  const allowedKeys = [...baseKeys, ...visitKeys];
+
+  const filteredCMADPUtilizationKeys =
+    projectsData &&
+    projectsData.length > 0 &&
+    allowedKeys
+      .filter((key) => key in projectsData[0])
       .map((key) => key as keyof ProjectsList);
 
   const filteredNoOfProjectsKeys =
@@ -272,7 +307,7 @@ const DashboardMonitoring = () => {
           "completedDate",
           role !== "Special Role" && "deadline",
           "fileGenrated",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -294,7 +329,7 @@ const DashboardMonitoring = () => {
           role !== "Special Role" && "deadline",
           "reportStatus",
           "statusDate",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -313,7 +348,7 @@ const DashboardMonitoring = () => {
           "visitStartDate",
           "completedDate",
           "reportStatus",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
@@ -341,7 +376,7 @@ const DashboardMonitoring = () => {
       const updatedProjects = projectsData.map((project) => ({
         ...project,
         utilPercent: Math.round(
-          ((project.expUpToJune + project.utilization) / project.cost) * 100
+          ((project.expUpToJune + project.utilization) / project.cost) * 100,
         ),
       }));
 
@@ -349,7 +384,7 @@ const DashboardMonitoring = () => {
 
       // Now apply the filter based on computed utilPercent
       const filteredProjects = updatedProjects.filter(
-        (project) => project.utilPercent >= 20 && project.utilPercent <= 80
+        (project) => project.utilPercent >= 20 && project.utilPercent <= 80,
       );
 
       setUtilizationData(filteredProjects); // Store filtered projects with utilPercent
@@ -394,6 +429,10 @@ const DashboardMonitoring = () => {
                 <div className="container-fluid border-0 p-0">
                   {projectsData && filteredCMADPKeys ? (
                     <ProjectsTable
+                      rowCountOptions={rowCountOptions}
+                      districtOptions={districtOptions}
+                      sectorOptions={sectorOptions}
+                      userOptions={userOptions}
                       keys={filteredCMADPKeys}
                       label={
                         activeFilter === "cmInitiative"
@@ -465,6 +504,10 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid border-0 p-0">
                       {projectsData && filteredNoOfProjectsKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           role={role}
                           keys={filteredNoOfProjectsKeys}
                           label="Projects"
@@ -519,6 +562,10 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid p-0">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="Visits"
                           projectsData={projectsData}
@@ -569,6 +616,10 @@ const DashboardMonitoring = () => {
                 <div className="container-fluid border-0 p-0">
                   {projectsData && filteredKeys ? (
                     <ProjectsTable
+                      rowCountOptions={rowCountOptions}
+                      districtOptions={districtOptions}
+                      sectorOptions={sectorOptions}
+                      userOptions={userOptions}
                       keys={filteredKeys}
                       label="Good Projects"
                       projectsData={projectsData}
@@ -619,6 +670,10 @@ const DashboardMonitoring = () => {
                 <div className="container-fluid border-0 p-0">
                   {projectsData && filteredKeys ? (
                     <ProjectsTable
+                      rowCountOptions={rowCountOptions}
+                      districtOptions={districtOptions}
+                      sectorOptions={sectorOptions}
+                      userOptions={userOptions}
                       keys={filteredKeys}
                       label="Average Projects"
                       projectsData={projectsData}
@@ -667,6 +722,10 @@ const DashboardMonitoring = () => {
                 <div className="container-fluid border-0 p-0">
                   {projectsData && filteredKeys ? (
                     <ProjectsTable
+                      rowCountOptions={rowCountOptions}
+                      districtOptions={districtOptions}
+                      sectorOptions={sectorOptions}
+                      userOptions={userOptions}
                       keys={filteredKeys}
                       label="Critical Projects"
                       projectsData={projectsData}
@@ -744,6 +803,10 @@ const DashboardMonitoring = () => {
                       <div className="container-fluid border-0 p-0">
                         {projectsData && filteredScheduledAndCompletedKeys ? (
                           <ProjectsTable
+                            rowCountOptions={rowCountOptions}
+                            districtOptions={districtOptions}
+                            sectorOptions={sectorOptions}
+                            userOptions={userOptions}
                             keys={filteredScheduledAndCompletedKeys}
                             label="Scheduled Visits"
                             projectsData={projectsData}
@@ -800,6 +863,10 @@ const DashboardMonitoring = () => {
                       <div className="container-fluid border-0 p-0">
                         {projectsData && filteredScheduledAndCompletedKeys ? (
                           <ProjectsTable
+                            rowCountOptions={rowCountOptions}
+                            districtOptions={districtOptions}
+                            sectorOptions={sectorOptions}
+                            userOptions={userOptions}
                             keys={filteredScheduledAndCompletedKeys}
                             label="Completed Visits"
                             projectsData={projectsData}
@@ -849,6 +916,10 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredKeys ? (
                       <ProjectsTable
+                        rowCountOptions={rowCountOptions}
+                        districtOptions={districtOptions}
+                        sectorOptions={sectorOptions}
+                        userOptions={userOptions}
                         keys={filteredKeys}
                         label="Reports In Progress"
                         projectsData={projectsData}
@@ -914,6 +985,10 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredKeys ? (
                       <ProjectsTable
+                        rowCountOptions={rowCountOptions}
+                        districtOptions={districtOptions}
+                        sectorOptions={sectorOptions}
+                        userOptions={userOptions}
                         keys={filteredKeys}
                         label="Reports In Progress"
                         projectsData={projectsData}
@@ -959,6 +1034,10 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid border-0 p-0">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="Reports In Progress"
                           projectsData={projectsData}
@@ -1005,6 +1084,10 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid border-0 p-0">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredKeys}
                           label="DGME Reports"
                           projectsData={projectsData}
@@ -1579,7 +1662,7 @@ const DashboardMonitoring = () => {
                                   to={
                                     data.utilization20t080 -
                                     utilizationData.filter(
-                                      (data) => data.visitCount > 0
+                                      (data) => data.visitCount > 0,
                                     ).length
                                   }
                                 />
@@ -1597,9 +1680,13 @@ const DashboardMonitoring = () => {
                     body={
                       <>
                         <div className="container-fluid border-0 p-0">
-                          {projectsData && filteredCMADPKeys ? (
+                          {projectsData && filteredCMADPUtilizationKeys ? (
                             <ProjectsTable
-                              keys={filteredCMADPKeys}
+                              rowCountOptions={rowCountOptions}
+                              districtOptions={districtOptions}
+                              sectorOptions={sectorOptions}
+                              userOptions={userOptions}
+                              keys={filteredCMADPUtilizationKeys}
                               label="Utilization(20% - 80%)"
                               projectsData={utilizationData}
                               setProjectsData={setProjectsData}
@@ -1976,6 +2063,10 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
+                        rowCountOptions={rowCountOptions}
+                        districtOptions={districtOptions}
+                        sectorOptions={sectorOptions}
+                        userOptions={userOptions}
                         keys={filteredCMADPKeys}
                         label="Approved Projects"
                         projectsData={projectsData}
@@ -2020,6 +2111,10 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
+                        rowCountOptions={rowCountOptions}
+                        districtOptions={districtOptions}
+                        sectorOptions={sectorOptions}
+                        userOptions={userOptions}
                         keys={filteredCMADPKeys}
                         label="Unapproved Projects"
                         projectsData={projectsData}
@@ -2064,6 +2159,10 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
+                        rowCountOptions={rowCountOptions}
+                        districtOptions={districtOptions}
+                        sectorOptions={sectorOptions}
+                        userOptions={userOptions}
                         keys={filteredCMADPKeys}
                         label="Dropped Projects"
                         projectsData={projectsData}
@@ -2109,6 +2208,10 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid border-0 p-0">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label="Umbrella Projects"
                           projectsData={projectsData}
@@ -2153,6 +2256,10 @@ const DashboardMonitoring = () => {
                     <div className="container-fluid border-0 p-0">
                       {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
                           keys={filteredCMADPKeys}
                           label="Single Projects"
                           projectsData={projectsData}
@@ -2205,6 +2312,10 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
+                        rowCountOptions={rowCountOptions}
+                        districtOptions={districtOptions}
+                        sectorOptions={sectorOptions}
+                        userOptions={userOptions}
                         keys={filteredCMADPKeys}
                         label="0.1M to Up to 200M DDC Projects"
                         projectsData={projectsData}
@@ -2244,6 +2355,10 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
+                        rowCountOptions={rowCountOptions}
+                        districtOptions={districtOptions}
+                        sectorOptions={sectorOptions}
+                        userOptions={userOptions}
                         keys={filteredCMADPKeys}
                         label="Above 200M to Up to 400M DDWP Projects"
                         projectsData={projectsData}
@@ -2283,6 +2398,10 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
+                        rowCountOptions={rowCountOptions}
+                        districtOptions={districtOptions}
+                        sectorOptions={sectorOptions}
+                        userOptions={userOptions}
                         keys={filteredCMADPKeys}
                         label="Above 400M Up to 800M DDSC Projects"
                         projectsData={projectsData}
@@ -2322,6 +2441,10 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
+                        rowCountOptions={rowCountOptions}
+                        districtOptions={districtOptions}
+                        sectorOptions={sectorOptions}
+                        userOptions={userOptions}
                         keys={filteredCMADPKeys}
                         label="Above 800M to upto 10B PDWP Projects"
                         projectsData={projectsData}
@@ -2361,6 +2484,10 @@ const DashboardMonitoring = () => {
                   <div className="container-fluid border-0 p-0">
                     {projectsData && filteredCMADPKeys ? (
                       <ProjectsTable
+                        rowCountOptions={rowCountOptions}
+                        districtOptions={districtOptions}
+                        sectorOptions={sectorOptions}
+                        userOptions={userOptions}
                         keys={filteredCMADPKeys}
                         label="10 Billion or above CDWP Projects"
                         projectsData={projectsData}

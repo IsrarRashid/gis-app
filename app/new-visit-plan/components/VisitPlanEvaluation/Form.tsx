@@ -1,5 +1,6 @@
 import { TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
+import CustomToggleSwitch from "@/app/components/CustomToggleSwitch";
 import DeleteModal from "@/app/components/DeleteModal";
 import CustomCalendar from "@/app/components/Form/CustomCalender";
 import CustomSelect, { OptionType } from "@/app/components/Form/CustomSelect";
@@ -753,6 +754,18 @@ const Form = ({
             />
           )}
         />
+
+        {/* <Controller
+          name="isFocalPerson"
+          control={control}
+          render={({ field }) => (
+            <CustomToggleSwitch
+              id="isFocalPerson"
+              checked={!!field.value}
+              onChange={field.onChange}
+            />
+          )}
+        /> */}
       </TableData>
 
       <TableData>

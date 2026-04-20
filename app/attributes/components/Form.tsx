@@ -93,14 +93,14 @@ const Form = ({
   const [isRemoveable, setRemoveable] = useState(false);
   const [isMaster, setMaster] = useState(false);
   const [activeStates, setActiveStates] = useState<{ [key: number]: boolean }>(
-    {}
+    {},
   );
 
   const modalId = `formModal-${id}`;
-  const handleCheckboxChange = (index: number) => {
+  const handleCheckboxChange = (index: number, checked: boolean) => {
     setActiveStates((prevStates) => ({
       ...prevStates,
-      [index]: !prevStates[index],
+      [index]: checked,
     }));
   };
 
@@ -219,14 +219,14 @@ const Form = ({
               condition: "",
               remarks: "",
             },
-          ]
+          ],
         );
         setActiveStates(
           itemData.options
             ? itemData.options.map((option: Option) =>
-                option.isActive ? true : false
+                option.isActive ? true : false,
               )
-            : {}
+            : {},
         );
         setRequired(itemData.required === 1 ? true : false);
         setMultiSelect(itemData.multiselect === 1 ? true : false);
@@ -244,7 +244,7 @@ const Form = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
 
@@ -279,13 +279,13 @@ const Form = ({
 
   const handleOptionChange = (
     index: number,
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
     setOptionsData((prevOptions) =>
       prevOptions.map((option, i) =>
-        i === index ? { ...option, [name]: value } : option
-      )
+        i === index ? { ...option, [name]: value } : option,
+      ),
     );
   };
 
@@ -293,7 +293,7 @@ const Form = ({
     name: Key,
     newValue: SingleValue<OptionType>,
     actionMeta: ActionMeta<OptionType>,
-    setFormData: Dispatch<SetStateAction<Attribute>>
+    setFormData: Dispatch<SetStateAction<Attribute>>,
   ) {
     setFormData((prev) => ({
       ...prev,
@@ -350,7 +350,7 @@ const Form = ({
       prevOptions.map((option, i) => ({
         ...option,
         isActive: activeStates[i] === true ? 1 : 0,
-      }))
+      })),
     );
   }, [activeStates]);
 
@@ -627,11 +627,11 @@ const Form = ({
                     closeMenuOnSelect={true}
                     value={
                       attributeDataTypeOptions.find(
-                        (opt) => opt.value === formData.attributeDataType
+                        (opt) => opt.value === formData.attributeDataType,
                       )
                         ? [
                             attributeDataTypeOptions.find(
-                              (opt) => opt.value === formData.attributeDataType
+                              (opt) => opt.value === formData.attributeDataType,
                             )!,
                           ]
                         : null
@@ -641,7 +641,7 @@ const Form = ({
                         "attributeDataType",
                         nv,
                         meta,
-                        setFormData
+                        setFormData,
                       )
                     }
                   />
@@ -672,11 +672,11 @@ const Form = ({
                     closeMenuOnSelect={true}
                     value={
                       attributeTypeOptions.find(
-                        (opt) => opt.value === formData.attributeType
+                        (opt) => opt.value === formData.attributeType,
                       )
                         ? [
                             attributeTypeOptions.find(
-                              (opt) => opt.value === formData.attributeType
+                              (opt) => opt.value === formData.attributeType,
                             )!,
                           ]
                         : null
@@ -764,11 +764,11 @@ const Form = ({
                     closeMenuOnSelect={true}
                     value={
                       verificationTypeOptions.find(
-                        (opt) => opt.value === formData.verificationType
+                        (opt) => opt.value === formData.verificationType,
                       )
                         ? [
                             verificationTypeOptions.find(
-                              (opt) => opt.value === formData.verificationType
+                              (opt) => opt.value === formData.verificationType,
                             )!,
                           ]
                         : null
@@ -778,7 +778,7 @@ const Form = ({
                         "verificationType",
                         nv,
                         meta,
-                        setFormData
+                        setFormData,
                       )
                     }
                   />
@@ -809,11 +809,11 @@ const Form = ({
                     closeMenuOnSelect={true}
                     value={
                       smdpIdentifierOptions.find(
-                        (opt) => opt.value === formData.smdpIdentifier
+                        (opt) => opt.value === formData.smdpIdentifier,
                       )
                         ? [
                             smdpIdentifierOptions.find(
-                              (opt) => opt.value === formData.smdpIdentifier
+                              (opt) => opt.value === formData.smdpIdentifier,
                             )!,
                           ]
                         : null
@@ -823,7 +823,7 @@ const Form = ({
                         "smdpIdentifier",
                         nv,
                         meta,
-                        setFormData
+                        setFormData,
                       )
                     }
                   />
@@ -1030,7 +1030,7 @@ const Form = ({
                   <div className="d-flex align-items-center">
                     <CustomToggleSwitch
                       checked={isMultiSelect}
-                      onChange={() => setMultiSelect(!isMultiSelect)}
+                      onChange={setMultiSelect}
                       id="multiselect"
                     />
                     <label
@@ -1056,7 +1056,7 @@ const Form = ({
                   <div className="d-flex align-items-center">
                     <CustomToggleSwitch
                       checked={isRequired}
-                      onChange={() => setRequired(!isRequired)}
+                      onChange={setRequired}
                       id="required"
                     />
                     <label
@@ -1083,7 +1083,7 @@ const Form = ({
                     <CustomToggleSwitch
                       id="status"
                       checked={isStatus}
-                      onChange={() => setStatus(!isStatus)}
+                      onChange={setStatus}
                     />
                     <label
                       className="form-label form-label-color-black fs14px ms-2 mb-0"
@@ -1109,7 +1109,7 @@ const Form = ({
                     <CustomToggleSwitch
                       id="hidden"
                       checked={isHidden}
-                      onChange={() => setHidden(!isHidden)}
+                      onChange={setHidden}
                     />
                     <label
                       className="form-label form-label-color-black fs14px ms-2 mb-0"
@@ -1135,7 +1135,7 @@ const Form = ({
                     <CustomToggleSwitch
                       id="readoOnly"
                       checked={isReadOnly}
-                      onChange={() => setReadOnly(!isReadOnly)}
+                      onChange={setReadOnly}
                     />
                     <label
                       className="form-label form-label-color-black fs14px ms-2 mb-0"
@@ -1161,7 +1161,7 @@ const Form = ({
                     <CustomToggleSwitch
                       id="removeable"
                       checked={isRemoveable}
-                      onChange={() => setRemoveable(!isRemoveable)}
+                      onChange={setRemoveable}
                     />
                     <label
                       className="form-label form-label-color-black fs14px ms-2 mb-0"
@@ -1187,7 +1187,7 @@ const Form = ({
                     <CustomToggleSwitch
                       id="master"
                       checked={isMaster}
-                      onChange={() => setMaster(!isMaster)}
+                      onChange={setMaster}
                     />
                     <label
                       className="form-label form-label-color-black fs14px ms-2 mb-0"
@@ -1414,7 +1414,9 @@ const Form = ({
                             <CustomToggleSwitch
                               id={`isActive${index}`}
                               checked={activeStates[index] || false}
-                              onChange={() => handleCheckboxChange(index)}
+                              onChange={(checked) =>
+                                handleCheckboxChange(index, checked)
+                              }
                             />
                             {/* <input
                             className="form-check-input"
@@ -1422,7 +1424,7 @@ const Form = ({
                             name="isActive"
                             id={`isActive${index}`}
                             checked={activeStates[index] || false}
-                            onChange={() => handleCheckboxChange(index)}
+                            onChange={(checked) => handleCheckboxChange(index, checked)}
                           /> */}
                           </div>
                         </div>

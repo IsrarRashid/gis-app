@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { Lexend } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { FaPlay, FaYoutube } from "react-icons/fa";
 import { useSelector } from "react-redux";
@@ -25,6 +25,7 @@ const Navbar = () => {
   const [currentType, setCurrentType] = useState<string | null>();
   const searchParams = useSearchParams();
   const currentParams = searchParams.toString();
+  const currentPath = usePathname();
 
   useEffect(() => {
     const type = searchParams.get("dashboardType");
@@ -36,7 +37,7 @@ const Navbar = () => {
   const [departmentId, setDepartmentId] = useState<number>();
 
   const currentTutorial = useSelector(
-    (state: RootState) => state.tutorial.currentTutorial
+    (state: RootState) => state.tutorial.currentTutorial,
   );
 
   useEffect(() => {
@@ -47,6 +48,8 @@ const Navbar = () => {
   }, []);
 
   const [isEnter, setEnter] = useState(false);
+
+  console.log("backendURL: ", process.env.NEXT_PUBLIC_BACKEND_API);
 
   return (
     <nav
@@ -152,34 +155,39 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
-            {(departmentId === 0 || departmentId === 1) &&
-            role !== "Special Role" ? (
-              <li className="nav-item p-1 me-3 m-auto">
-                <Suspense
-                  fallback={
-                    <div className="d-flex align-items-center justify-content-center h-100">
-                      <Spinner color="text-light" />
-                    </div>
-                  }
-                >
-                  <DashboardTypeFilter />
-                </Suspense>
-              </li>
-            ) : role === "Special Role" || !role || !departmentId ? (
-              ""
-            ) : (
-              <li className="nav-item p-1 me-3 m-auto">
-                <Suspense
-                  fallback={
-                    <div className="d-flex align-items-center justify-content-center h-100">
-                      <Spinner color="text-light" />
-                    </div>
-                  }
-                >
-                  <DepartmentCategoryFilter />
-                </Suspense>
-              </li>
+            {currentPath !== "/charts" && (
+              <>
+                {(departmentId === 0 || departmentId === 1) &&
+                role !== "Special Role" ? (
+                  <li className="nav-item p-1 me-3 m-auto">
+                    <Suspense
+                      fallback={
+                        <div className="d-flex align-items-center justify-content-center h-100">
+                          <Spinner color="text-light" />
+                        </div>
+                      }
+                    >
+                      <DashboardTypeFilter />
+                    </Suspense>
+                  </li>
+                ) : role === "Special Role" || !role || !departmentId ? (
+                  ""
+                ) : (
+                  <li className="nav-item p-1 me-3 m-auto">
+                    <Suspense
+                      fallback={
+                        <div className="d-flex align-items-center justify-content-center h-100">
+                          <Spinner color="text-light" />
+                        </div>
+                      }
+                    >
+                      <DepartmentCategoryFilter />
+                    </Suspense>
+                  </li>
+                )}
+              </>
             )}
+
             <li className="nav-item p-1 me-2">
               <Link href="https://smdp.punjab.gov.pk/" target="_blank">
                 <Button
