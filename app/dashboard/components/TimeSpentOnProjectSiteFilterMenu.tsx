@@ -44,8 +44,8 @@ const TimeSpentOnProjectSiteFilterMenu = ({
   };
 
   useEffect(() => {
-    console.log("fromDate", new Date(fromDate).toLocaleDateString("en-US"));
-    console.log("toDate", new Date(toDate).toLocaleDateString("en-US"));
+    console.log("fromDate", new Date(fromDate).toLocaleDateString("en-GB"));
+    console.log("toDate", new Date(toDate).toLocaleDateString("en-GB"));
 
     const dateFilteredData =
       projectsData &&

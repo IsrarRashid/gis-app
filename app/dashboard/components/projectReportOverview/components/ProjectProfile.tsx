@@ -13,7 +13,7 @@ const ProjectProfile = ({ group }: Props) => {
           .filter(
             (attribute) =>
               attribute.label.toLowerCase() !== "goal objectives" &&
-              attribute.label.toLowerCase() !== "objectives"
+              attribute.label.toLowerCase() !== "objectives",
           )
           .map((attribute) => (
             <div
@@ -27,17 +27,20 @@ const ProjectProfile = ({ group }: Props) => {
                 {attribute.label.toLowerCase().includes("date") ||
                 (attribute.label.toLowerCase() === "administrative approval" &&
                   attribute?.values[0]?.value)
-                  ? addDayToFormattedDate(
-                      getFormattedDate(
-                        new Date(attribute?.values[0]?.value),
-                        "short"
-                      )!
+                  ? new Date(attribute?.values[0]?.value).toLocaleDateString(
+                      "en-GB",
+                      {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      },
                     )
                   : attribute.label.toLowerCase() === "pc-i cost"
-                  ? `${Math.round(parseFloat(attribute?.values[0]?.value))} M`
-                  : attribute.label.toLowerCase() === "Gestation Period"
-                  ? `${attribute?.values[0]?.value} Months`
-                  : attribute?.values[0]?.value}
+                    ? `${Math.round(parseFloat(attribute?.values[0]?.value))} M`
+                    : attribute.label.toLowerCase() === "Gestation Period"
+                      ? `${attribute?.values[0]?.value} Months`
+                      : attribute?.values[0]?.value}
               </p>
             </div>
           ))}

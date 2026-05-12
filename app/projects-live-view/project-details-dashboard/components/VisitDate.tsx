@@ -74,7 +74,12 @@ const VisitDate = ({ data }: Props) => {
                 <div className="col-lg-9 col-md-9 col ps-0">
                   <p className="m-0 mt-1 fs14px">Lahore Ring Road</p>
                   <p className="m-0 fw-bold fs-5">
-                    {getFormattedDate(new Date(d.planStartDate), "short")}
+                    {new Date(d.planStartDate).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </p>
                   <p className="m-0 fs12px" style={{ color: "#B1B1B1" }}>
                     2 days ago

@@ -45,7 +45,7 @@ const Header = ({ data }: Props) => {
                     attribute.label
                       .toLowerCase()
                       .includes("planned start date") ||
-                    attribute.label.toLowerCase().includes("planned end date")
+                    attribute.label.toLowerCase().includes("planned end date"),
                 )
                 .map((attribute) => (
                   <div key={attribute.attributeId} className="col-auto">
@@ -57,13 +57,20 @@ const Header = ({ data }: Props) => {
                         ? `${
                             attribute.values[0]?.value &&
                             formatAmountWithCommas(
-                              parseFloat(attribute.values[0]?.value)
+                              parseFloat(attribute.values[0]?.value),
                             )
                           }M`
                         : attribute.label.toLowerCase().includes("date") &&
-                          attribute?.values[0]?.value
-                        ? getFormattedDate(attribute?.values[0]?.value, "short")
-                        : attribute.values[0]?.value}
+                            attribute?.values[0]?.value
+                          ? new Date(
+                              attribute?.values[0]?.value,
+                            ).toLocaleDateString("en-GB", {
+                              weekday: "short",
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })
+                          : attribute.values[0]?.value}
                     </p>
                   </div>
                 ))}
@@ -86,7 +93,7 @@ const Header = ({ data }: Props) => {
                     <p className="m-0 fw-normal fs9px text-nowrap text-white">
                       {
                         data.staffTrackings?.filter(
-                          (tracking) => tracking.userName
+                          (tracking) => tracking.userName,
                         )[0]?.userName
                       }
                     </p>
@@ -100,10 +107,10 @@ const Header = ({ data }: Props) => {
                       {data.reportsCount === 1
                         ? "st"
                         : data.reportsCount === 2
-                        ? "nd"
-                        : data.reportsCount === 3
-                        ? "rd"
-                        : "th"}{" "}
+                          ? "nd"
+                          : data.reportsCount === 3
+                            ? "rd"
+                            : "th"}{" "}
                       Monitoring Report
                     </p>
                   </div>
@@ -117,7 +124,7 @@ const Header = ({ data }: Props) => {
                   .attributes.filter(
                     (attribute) =>
                       attribute.label.toLowerCase().includes("report date") ||
-                      attribute.label.toLowerCase().includes("visit date")
+                      attribute.label.toLowerCase().includes("visit date"),
                   )
                   .map((attribute) => (
                     <div key={attribute.attributeId} className="col-auto">
@@ -126,12 +133,14 @@ const Header = ({ data }: Props) => {
                       </p>
                       <p className="m-0 fw-normal fs9px text-nowrap text-white">
                         {attribute.values[0]?.value &&
-                          addDayToFormattedDate(
-                            getFormattedDate(
-                              attribute.values[0]?.value,
-                              "short"
-                            )!
-                          )}
+                          new Date(
+                            attribute.values[0]?.value,
+                          ).toLocaleDateString("en-GB", {
+                            weekday: "short",
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
                       </p>
                     </div>
                   ))}
@@ -144,7 +153,7 @@ const Header = ({ data }: Props) => {
                     data.groups
                       .find((d) => d.name === "Project Profile")
                       ?.attributes.filter((attribute) =>
-                        attribute.label.toLowerCase().includes("location")
+                        attribute.label.toLowerCase().includes("location"),
                       )[0]?.values[0]?.value}
                 </p>
               </div>

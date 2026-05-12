@@ -49,7 +49,7 @@ const DepartmentsPage = async () => {
   console.log("Cookie Store:", cookieData); // Log the entire cookie store
 
   const accessToken = cookieData.find(
-    (cookie) => cookie.name === "token"
+    (cookie) => cookie.name === "token",
   )?.value; // Assuming your cookie is named 'accessToken'
 
   if (!accessToken) {
@@ -70,7 +70,7 @@ const DepartmentsPage = async () => {
           Authorization: `Bearer ${accessToken}`,
         },
         credentials: "include",
-      }
+      },
     );
     // console.log(
     //   "Headers after api call:",
@@ -116,9 +116,12 @@ const DepartmentsPage = async () => {
                 </div>
                 <div className="col text-end mt-1">
                   <span className="fw-bold">
-                    {addDayToFormattedDate(
-                      getFormattedDate(new Date(), "short")!
-                    )}
+                    {new Date().toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </span>
                   &nbsp;Today
                 </div>

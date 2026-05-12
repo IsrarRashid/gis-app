@@ -429,9 +429,12 @@ const ReportNoting = ({ data, setRefresh, refresh, role, userId }: Props) => {
                       style={{ color: "#1E1E1E", opacity: 0.6 }}
                     >
                       Last modification:&nbsp;
-                      {addDayToFormattedDate(
-                        getFormattedDate(new Date(data.sDate), "short")!
-                      )}
+                      {new Date(data.sDate).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                     </p>
                   </div>
                 </div>

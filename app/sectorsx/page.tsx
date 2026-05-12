@@ -7,14 +7,14 @@ async function getCookieData() {
   return new Promise<typeof cookieData>((resolve) =>
     setTimeout(() => {
       resolve(cookieData);
-    }, 1000)
+    }, 1000),
   );
 }
 const SectorsPage = async () => {
   const cookieData = await getCookieData();
 
   const accessToken = cookieData.find(
-    (cookie) => cookie.name === "token"
+    (cookie) => cookie.name === "token",
   )?.value; // Assuming your cookie is named 'accessToken'
 
   if (!accessToken) {
@@ -73,9 +73,12 @@ const SectorsPage = async () => {
                 </div>
                 <div className="col text-end mt-1">
                   <span className="fw-bold">
-                    {addDayToFormattedDate(
-                      getFormattedDate(new Date(), "short")!
-                    )}
+                    {new Date().toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </span>
                   &nbsp;Today
                 </div>

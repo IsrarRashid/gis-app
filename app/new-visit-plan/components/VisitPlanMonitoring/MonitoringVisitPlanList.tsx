@@ -124,7 +124,7 @@ const MonitoringVisitPlanList = ({
       ]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -163,7 +163,7 @@ const MonitoringVisitPlanList = ({
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const saveFormsData = async (formsData: COUTempTourPlan[]) => {
@@ -174,8 +174,8 @@ const MonitoringVisitPlanList = ({
       new Map(
         formsData
           .filter((form) => form !== undefined)
-          .map((form) => [form.id, form])
-      ).values()
+          .map((form) => [form.id, form]),
+      ).values(),
     );
 
     console.log("uniqueFormsData:", uniqueFormsData);
@@ -196,7 +196,7 @@ const MonitoringVisitPlanList = ({
 
     if (validFormsData.length === 0) {
       toast.error(
-        "No valid forms to save. Please complete all required fields."
+        "No valid forms to save. Please complete all required fields.",
       );
       return;
     }
@@ -205,14 +205,14 @@ const MonitoringVisitPlanList = ({
       toast.warning(
         `${
           uniqueFormsData.length - validFormsData.length
-        } form(s) skipped due to missing required fields.`
+        } form(s) skipped due to missing required fields.`,
       );
     }
 
     try {
       const response = await apiClient.post(
         `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-or-update`,
-        validFormsData
+        validFormsData,
       );
       console.log(response);
       toast.success(response.data.message);
@@ -277,7 +277,7 @@ const MonitoringVisitPlanList = ({
       setSubmitting(true);
       const response = await apiClient.post(
         `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-visit`,
-        modifiedFormData
+        modifiedFormData,
       );
       toast.success(response.data.responseMessage);
       setFormsData([]);
@@ -306,12 +306,22 @@ const MonitoringVisitPlanList = ({
         Sectors: item.sectors,
         Cost: item.cost,
         "Scheme Type": typeStatusOptions.find(
-          (type) => Number(type.value) === item.type
+          (type) => Number(type.value) === item.type,
         )?.label,
         "Evaluator Name": item.meOfficerName,
         Section: item.section,
-        "Date From": addDayToFormattedDate(getFormattedDate(item.dateFrom)),
-        "Date To": addDayToFormattedDate(getFormattedDate(item.dateTo)),
+        "Date From": new Date(item.dateFrom).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
+        "Date To": new Date(item.dateTo).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
         "Driver Name": item.driverName,
         "Vehicle Number": item.vehicleNumber,
       };
@@ -327,7 +337,7 @@ const MonitoringVisitPlanList = ({
     // Write the workbook to a file
     XLSX.writeFile(
       workbook,
-      `Generated Visit Plans ${new Date().toLocaleDateString()}.xlsx`
+      `Generated Visit Plans ${new Date().toLocaleDateString()}.xlsx`,
     ); // Changed filename
   };
 
@@ -337,7 +347,7 @@ const MonitoringVisitPlanList = ({
       // remove the deleted item from the data array
       setRefresh((prev) => !prev);
       setFormsData((prevData) =>
-        prevData.filter((item) => item !== undefined && item.id !== tempId)
+        prevData.filter((item) => item !== undefined && item.id !== tempId),
       );
       toast.success(deleteMessage);
       console.log("item deleted successfully");
@@ -404,7 +414,7 @@ const MonitoringVisitPlanList = ({
             id="tours"
             closeMenuOnSelect={true}
             onChangeSingle={(
-              newValue: SingleValue<{ value: string; label: string }>
+              newValue: SingleValue<{ value: string; label: string }>,
             ) => {
               if (newValue) {
                 setVisitPlanGroup(Number(newValue.value));

@@ -55,7 +55,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
       [item.id.toString(), item.driverName, item.mobileNumber]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -141,7 +141,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const handleFirstPage = () => {
@@ -167,7 +167,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           style={{ border: "1px solid #445E84" }}
         >
           ...
-        </Button>
+        </Button>,
       );
     }
 
@@ -186,7 +186,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           }}
         >
           {i}
-        </Button>
+        </Button>,
       );
     }
 
@@ -199,7 +199,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           style={{ border: "1px solid #445E84" }}
         >
           ...
-        </Button>
+        </Button>,
       );
     }
 
@@ -299,11 +299,21 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   <TableData>{d.mobileNumber}</TableData>
                   <TableData>
                     {d.createdAt &&
-                      getFormattedDate(new Date(d.createdAt), "short")}
+                      new Date(d.createdAt).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                   </TableData>
                   <TableData>
                     {d.updatedAt &&
-                      getFormattedDate(new Date(d.updatedAt), "short")}
+                      new Date(d.updatedAt).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                   </TableData>
                   <TableData>
                     <Actions

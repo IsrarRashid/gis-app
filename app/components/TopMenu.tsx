@@ -54,7 +54,15 @@
 //           <div className="row d-flex ">
 //             <div className="col d-none d-lg-block"></div>
 //             <div className="col text-end">
-//               <span className="fw-bold">{getFormattedDate()}</span> Today
+//               <span className="fw-bold">{new Date().toLocaleDateString(
+//     "en-GB",
+//     {
+//       weekday: "short",
+//       day: "2-digit",
+//       month: "short",
+//       year: "numeric",
+//     },
+//   )}</span> Today
 //             </div>
 //             <div className="col text-end">
 //               <SectorForm api={PROJECT_API} method="POST" />

@@ -79,7 +79,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
       ]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -165,7 +165,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   // Paginate data to display only the current page's rows
   const paginatedData = data.slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const handleFirstPage = () => {
@@ -191,7 +191,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           style={{ border: "1px solid #445E84" }}
         >
           ...
-        </Button>
+        </Button>,
       );
     }
 
@@ -210,7 +210,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           }}
         >
           {i}
-        </Button>
+        </Button>,
       );
     }
 
@@ -223,7 +223,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
           style={{ border: "1px solid #445E84" }}
         >
           ...
-        </Button>
+        </Button>,
       );
     }
 
@@ -281,7 +281,12 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                         <div className="col d-none d-lg-block"></div>
                         <div className="col text-end">
                           <span className="fw-bold">
-                            {getFormattedDate(new Date(), "short")}
+                            {new Date().toLocaleDateString("en-GB", {
+                              weekday: "short",
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })}
                           </span>{" "}
                           Today
                         </div>
@@ -515,44 +520,82 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                               {d.driverID ? getName(d.driverID, drivers) : ""}
                             </td>
                             <td>
-                              {getFormattedDate(new Date(d.fromDate), "short")}
+                              {new Date(d.fromDate).toLocaleDateString(
+                                "en-GB",
+                                {
+                                  weekday: "short",
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )}
                             </td>
                             <td>
-                              {getFormattedDate(new Date(d.toDate), "short")}
+                              {new Date(d.toDate).toLocaleDateString("en-GB", {
+                                weekday: "short",
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              })}
                             </td>
                             <td>
                               {d.createdAt &&
-                                getFormattedDate(
-                                  new Date(d.createdAt),
-                                  "short"
+                                new Date(d.createdAt).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )}
                             </td>
                             <td>
                               {d.updatedAt &&
-                                getFormattedDate(
-                                  new Date(d.updatedAt),
-                                  "short"
+                                new Date(d.updatedAt).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )}
                             </td>
                             <td>
                               {d.complete_at &&
-                                getFormattedDate(
-                                  new Date(d.complete_at),
-                                  "short"
+                                new Date(d.complete_at).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )}
                             </td>
                             <td>
                               {d.submitted_at &&
-                                getFormattedDate(
-                                  new Date(d.submitted_at),
-                                  "short"
+                                new Date(d.submitted_at).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )}
                             </td>
                             <td>
                               {d.issued_at &&
-                                getFormattedDate(
-                                  new Date(d.issued_at),
-                                  "short"
+                                new Date(d.issued_at).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )}
                             </td>
                             <td>
@@ -702,7 +745,12 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                         <div className="col d-none d-lg-block"></div>
                         <div className="col text-end">
                           <span className="fw-bold">
-                            {getFormattedDate(new Date(), "short")}
+                            {new Date().toLocaleDateString("en-GB", {
+                              weekday: "short",
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })}
                           </span>{" "}
                           Today
                         </div>
@@ -937,44 +985,82 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                               {d.driverID ? getName(d.driverID, drivers) : ""}
                             </td>
                             <td>
-                              {getFormattedDate(new Date(d.fromDate), "short")}
+                              {new Date(d.fromDate).toLocaleDateString(
+                                "en-GB",
+                                {
+                                  weekday: "short",
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )}
                             </td>
                             <td>
-                              {getFormattedDate(new Date(d.toDate), "short")}
+                              {new Date(d.toDate).toLocaleDateString("en-GB", {
+                                weekday: "short",
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              })}
                             </td>
                             <td>
                               {d.createdAt &&
-                                getFormattedDate(
-                                  new Date(d.createdAt),
-                                  "short"
+                                new Date(d.createdAt).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )}
                             </td>
                             <td>
                               {d.updatedAt &&
-                                getFormattedDate(
-                                  new Date(d.updatedAt),
-                                  "short"
+                                new Date(d.updatedAt).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )}
                             </td>
                             <td>
                               {d.complete_at &&
-                                getFormattedDate(
-                                  new Date(d.complete_at),
-                                  "short"
+                                new Date(d.complete_at).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )}
                             </td>
                             <td>
                               {d.submitted_at &&
-                                getFormattedDate(
-                                  new Date(d.submitted_at),
-                                  "short"
+                                new Date(d.submitted_at).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )}
                             </td>
                             <td>
                               {d.issued_at &&
-                                getFormattedDate(
-                                  new Date(d.issued_at),
-                                  "short"
+                                new Date(d.issued_at).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )}
                             </td>
                             <td>

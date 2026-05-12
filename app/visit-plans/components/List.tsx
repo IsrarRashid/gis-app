@@ -47,7 +47,7 @@ const List = ({ refresh, setRefresh }: Props) => {
       [item.id.toString(), item.name]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -86,7 +86,7 @@ const List = ({ refresh, setRefresh }: Props) => {
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const handleDelete = async (id: number) => {
@@ -185,23 +185,48 @@ const List = ({ refresh, setRefresh }: Props) => {
                   <TableData>{d.name}</TableData>
                   <TableData>
                     {d.tourStartDate &&
-                      getFormattedDate(new Date(d.tourStartDate), "short")}
+                      new Date(d.tourStartDate).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                   </TableData>
                   <TableData>
                     {d.tourEndDate &&
-                      getFormattedDate(new Date(d.tourEndDate), "short")}
+                      new Date(d.tourEndDate).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                   </TableData>
                   <TableData>
                     {d.approvalDate &&
-                      getFormattedDate(new Date(d.approvalDate), "short")}
+                      new Date(d.approvalDate).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                   </TableData>
                   <TableData>
                     {d.createdDate &&
-                      getFormattedDate(new Date(d.createdDate), "short")}
+                      new Date(d.createdDate).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                   </TableData>
                   <TableData>
                     {d.updatedDate &&
-                      getFormattedDate(new Date(d.updatedDate), "short")}
+                      new Date(d.updatedDate).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                   </TableData>
                   <TableData>
                     {users.find((user) => user.id === d.createdBy)?.fullName}

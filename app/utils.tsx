@@ -40,20 +40,8 @@ export const getFormattedDate = (
 };
 
 // Usage examples
-const shortDate = getFormattedDate(new Date(), "short"); // Outputs: "Sep 10, 2024"
-const numericDate = getFormattedDate(new Date(), "numeric"); // Outputs: "10.9.2024"
-
-export const convertToLocaleTimeString = (time: string) => {
-  const [hours, minutes] = time.split(":");
-  const date = new Date();
-  date.setHours(parseInt(hours), parseInt(minutes));
-
-  return date.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-};
+// const shortDate = getFormattedDate(new Date(), "short"); // Outputs: "Sep 10, 2024"
+// const numericDate = getFormattedDate(new Date(), "numeric"); // Outputs: "10.9.2024"
 
 export const getName = (id: number, data: any) => {
   const record = data.find((item: any) => item.id === id);
@@ -142,7 +130,15 @@ export const exportToPDF = (
   doc.setFont("helvetica", "bold"); // Set font to bold
   doc.setFontSize(16); // Set font size for the heading
   // const titleText = `${label} ${
-  //   getFormattedDate(selectedDate, "short") || "today"
+  // new Date(selectedDate).toLocaleDateString(
+  //                           "en-GB",
+  //                           {
+  //                             weekday: "short",
+  //                             day: "2-digit",
+  //                             month: "short",
+  //                             year: "numeric",
+  //                           },
+  //                         )
   // }`;
   const titleText = label;
   const pageWidth = doc.internal.pageSize.width;
@@ -241,7 +237,15 @@ export const exportToPDFNew = (
   doc.setFont("helvetica", "bold"); // Set font to bold
   doc.setFontSize(16); // Set font size for the heading
   // const titleText = `${label} ${
-  //   getFormattedDate(selectedDate, "short") || "today"
+  // new Date(selectedDate).toLocaleDateString(
+  //                             "en-GB",
+  //                             {
+  //                               weekday: "short",
+  //                               day: "2-digit",
+  //                               month: "short",
+  //                               year: "numeric",
+  //                             },
+  //                           )
   // }`;
   const titleText = `${label}`;
   const pageWidth = doc.internal.pageSize.width;
@@ -363,10 +367,10 @@ export const addDayToFormattedDate = (formattedDate: string): string => {
   const date = new Date(dateString);
 
   // Get the weekday name
-  const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+  const weekday = date.toLocaleDateString("en-GB", { weekday: "short" });
 
   // Get the month name
-  const monthName = date.toLocaleDateString("en-US", { month: "short" });
+  const monthName = date.toLocaleDateString("en-GB", { month: "short" });
 
   // Construct and return the final string
   return `${weekday}-${day}-${monthName}-${year}`;

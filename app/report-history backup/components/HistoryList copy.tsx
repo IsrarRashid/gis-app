@@ -74,7 +74,12 @@
 //                         className="fw-normal p-3 px-1 m-0 "
 //                         style={{ opacity: 0.7 }}
 //                       >
-//                         {getFormattedDate(new Date(d.sDate), "short")}
+//                         {new Date(d.sDate).toLocaleDateString("en-GB", {
+//     weekday: "short",
+//     day: "2-digit",
+//     month: "short",
+//     year: "numeric",
+//   })}
 //                       </p>
 //                     </div>
 //                     <div className="col-auto m-auto">
@@ -122,7 +127,12 @@
 //                     <p className="fw-normal m-0">
 //                       Date:{" "}
 //                       <span>
-//                         {getFormattedDate(new Date(d.sDate), "short")}
+//                         {new Date(d.sDate).toLocaleDateString("en-GB", {
+//     weekday: "short",
+//     day: "2-digit",
+//     month: "short",
+//     year: "numeric",
+//   })}
 //                       </span>
 //                     </p>
 //                   </div>

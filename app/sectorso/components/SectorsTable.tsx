@@ -47,7 +47,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
       [item.id.toString(), item.name, item.description, item.sortId.toString()]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -86,7 +86,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const getParentSector = (parsentSectorId: number, data: Sector[]) => {
@@ -184,11 +184,21 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                 <td>{d.sortId}</td>
                 <td>
                   {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "short")}
+                    new Date(d.createdAt).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                 </td>
                 <td>
                   {d.updateAt &&
-                    getFormattedDate(new Date(d.updateAt), "short")}
+                    new Date(d.updateAt).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                 </td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />

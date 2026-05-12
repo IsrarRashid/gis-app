@@ -1,16 +1,12 @@
 "use client";
-import { PC_IV_WORKFLOW_API, REPORTS_HISTORY_API } from "@/app/APIs";
+import { PC_IV_WORKFLOW_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
 import Loader from "@/app/components/Loader";
 import useOfficers, { Officer } from "@/app/hooks/useOfficers";
 import useReportHistoryUser from "@/app/hooks/useReportHistoryUsers";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import {
-  addDayToFormattedDate,
-  convertToLocaleTimeString,
-  getFormattedDate,
-} from "@/app/utils";
+import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
 import search3 from "@/public/icons/search3.svg";
 import Cookies from "js-cookie";
 import { Raleway } from "next/font/google";
@@ -21,7 +17,6 @@ import ReportNoting from "../../components/ReportNoting";
 import ViewHistoryOnly from "../../components/ViewHistoryOnly";
 import {
   APPROVED,
-  COMPLETED,
   ISSUED,
   REFERBACK,
   SCHEDULED,
@@ -112,7 +107,7 @@ const List = () => {
       setLoading(true);
       try {
         const response = await apiClient.get(
-          `${PC_IV_WORKFLOW_API}/submitted-reports?userId=${userId}`
+          `${PC_IV_WORKFLOW_API}/submitted-reports?userId=${userId}`,
         );
         if (response.data.data) {
           setIssuedReportCount(response.data.data.totalIssuedCount);
@@ -121,7 +116,7 @@ const List = () => {
           const sortedData = response.data.data.reports.sort(
             (a: any, b: any) =>
               new Date(a.submittedDate).getTime() -
-              new Date(b.submittedDate).getTime()
+              new Date(b.submittedDate).getTime(),
           );
           setData(sortedData);
           console.log("sortedData data", sortedData);
@@ -146,19 +141,19 @@ const List = () => {
   useEffect(() => {
     if (officers) {
       const deputyDirectors = officers.filter(
-        (officer) => officer.roleName === "Deputy Director"
+        (officer) => officer.roleName === "Deputy Director",
       );
       console.log(deputyDirectors);
       if (deputyDirectors) setdeputyDirectors(deputyDirectors);
 
       const directors = officers.filter(
-        (officer) => officer.roleName === "Director"
+        (officer) => officer.roleName === "Director",
       );
       console.log(directors);
       if (directors) setDirectors(directors);
 
       const departmentHead = officers.find(
-        (officer) => officer.roleName === "Department Head"
+        (officer) => officer.roleName === "Department Head",
       );
 
       console.log(departmentHead);
@@ -397,7 +392,7 @@ const List = () => {
             (d) =>
               d.status === tab.status &&
               d.submittedFrom === tab.reportSubmittedFrom &&
-              d.isFocalPerson === true
+              d.isFocalPerson === true,
           );
           count = filteredData.length;
         } else if (tab.reportSubmittedTo) {
@@ -405,7 +400,7 @@ const List = () => {
             (d) =>
               d.status === tab.status &&
               d.submittedTo === tab.reportSubmittedTo &&
-              d.isFocalPerson === true
+              d.isFocalPerson === true,
           );
           count = filteredData.length;
         }
@@ -431,7 +426,7 @@ const List = () => {
             tab.id === 7 ||
             tab.id === 11 ||
             // Department Head Tabs
-            tab.id === 5)
+            tab.id === 5),
       );
       if (tabWithRecord) {
         setSelectedTab(tabWithRecord.id);
@@ -469,7 +464,7 @@ const List = () => {
         // Wait for DOM to be ready
         setTimeout(() => {
           const firstModalButton = document.querySelector(
-            `[data-bs-target="#comment${commentEligibleReports[0].id}"]`
+            `[data-bs-target="#comment${commentEligibleReports[0].id}"]`,
           ) as HTMLButtonElement;
 
           if (firstModalButton) {
@@ -495,7 +490,7 @@ const List = () => {
         // Wait a bit for the previous modal to close
         setTimeout(() => {
           const nextModalButton = document.querySelector(
-            `[data-bs-target="#comment${nextReport.id}"]`
+            `[data-bs-target="#comment${nextReport.id}"]`,
           ) as HTMLButtonElement;
 
           if (nextModalButton) {
@@ -605,7 +600,7 @@ const List = () => {
                         (d) =>
                           (d.submittedTo === userId ||
                             d.submittedFrom === userId) &&
-                          d.isFocalPerson === true
+                          d.isFocalPerson === true,
                       ).length > 0 && (
                         <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                           {
@@ -613,7 +608,7 @@ const List = () => {
                               (d) =>
                                 (d.submittedTo === userId ||
                                   d.submittedFrom === userId) &&
-                                d.isFocalPerson === true
+                                d.isFocalPerson === true,
                             ).length
                           }
                         </span>
@@ -625,7 +620,7 @@ const List = () => {
                       (tab) =>
                         tab.status === -99 ||
                         tab.status === 6 ||
-                        tab.role === role
+                        tab.role === role,
                     )
                     .map((tab) => (
                       <div key={tab.id} className="col-auto">
@@ -751,10 +746,10 @@ const List = () => {
                       d.status === ISSUED
                         ? "bg-success text-light"
                         : d.status === REFERBACK
-                        ? "bg-danger text-light"
-                        : d.status === SUBMITTED
-                        ? "bg-warning text-dark"
-                        : "bg-info text-dark"
+                          ? "bg-danger text-light"
+                          : d.status === SUBMITTED
+                            ? "bg-warning text-dark"
+                            : "bg-info text-dark"
                     }`}
                   >
                     <p className="fw-5 mb-0">
@@ -832,16 +827,21 @@ const List = () => {
                           className="mb-0 me-3"
                           style={{ color: "#263238", fontWeight: "500" }}
                         >
-                          {addDayToFormattedDate(
-                            getFormattedDate(
-                              new Date(d.submittedDate),
-                              "short"
-                            )!
+                          {new Date(d.submittedDate).toLocaleDateString(
+                            "en-GB",
+                            {
+                              weekday: "short",
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            },
                           )}
                           <br />
-                          {convertToLocaleTimeString(
-                            new Date(d.submittedDate).toLocaleTimeString()
-                          )}
+                          {new Date(d.submittedDate).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
                         </p>
                       </div>
 
@@ -857,11 +857,14 @@ const List = () => {
                             className="mb-0 me-3"
                             style={{ color: "#263238", fontWeight: "500" }}
                           >
-                            {addDayToFormattedDate(
-                              getFormattedDate(
-                                new Date(d.issuanceDate),
-                                "short"
-                              )!
+                            {new Date(d.issuanceDate).toLocaleDateString(
+                              "en-GB",
+                              {
+                                weekday: "short",
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              },
                             )}
                           </p>
                         </div>
@@ -933,10 +936,10 @@ const List = () => {
                                 {d.submittedTo === userId
                                   ? "Comment"
                                   : d.status === ISSUED
-                                  ? "Issued"
-                                  : d.status === APPROVED
-                                  ? "Approved"
-                                  : "Submitted"}
+                                    ? "Issued"
+                                    : d.status === APPROVED
+                                      ? "Approved"
+                                      : "Submitted"}
                               </Button>
                             }
                             body={

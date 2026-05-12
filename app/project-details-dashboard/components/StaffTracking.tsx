@@ -160,9 +160,12 @@ const StaffTracking = ({ data }: Props) => {
                 <div className="col">
                   <p className="fs14px m-0 fw-normal">
                     <span className="fw-bold">From:</span>{" "}
-                    {addDayToFormattedDate(
-                      getFormattedDate(new Date(d.planStartDate), "short")!
-                    )}
+                    {new Date(d.planStartDate).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </p>
                 </div>
                 <div className="col p-0">
@@ -176,9 +179,12 @@ const StaffTracking = ({ data }: Props) => {
                 <div className="col">
                   <p className="fs14px m-0 fw-normal">
                     <span className="fw-bold">To:</span>{" "}
-                    {addDayToFormattedDate(
-                      getFormattedDate(new Date(d.planEndDate), "short")!
-                    )}
+                    {new Date(d.planEndDate).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </p>
                 </div>
               </div>

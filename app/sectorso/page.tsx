@@ -35,7 +35,7 @@ const SectorsPage = async () => {
       {
         cache: "no-store",
         headers: myHeaders,
-      }
+      },
     );
     // const errorText = await res.text();
     // console.error("Error Body:", errorText);
@@ -77,9 +77,12 @@ const SectorsPage = async () => {
                 </div>
                 <div className="col text-end mt-1">
                   <span className="fw-bold">
-                    {addDayToFormattedDate(
-                      getFormattedDate(new Date(), "short")!
-                    )}
+                    {new Date().toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </span>
                   &nbsp;Today
                 </div>

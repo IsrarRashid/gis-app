@@ -1,12 +1,8 @@
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
-import {
-  convertToLocaleTimeString,
-  exportToPDFNew,
-  getFormattedDate,
-} from "@/app/utils";
-import { ReportHistory } from "./ReportNoting";
+import { exportToPDFNew, getFormattedDate } from "@/app/utils";
 import { SubmittedReport } from "../list/components/List";
+import { ReportHistory } from "./ReportNoting";
 
 interface Props {
   data: ReportHistory[];
@@ -30,9 +26,18 @@ const ReportHistoryDownload = ({ data, users, submittedReport }: Props) => {
         }` || "NA",
       To: users.find((u) => u.id === d.submittedTo)?.fullName || "NA",
       Date:
-        `${getFormattedDate(new Date(d.sDate), "short")} ` +
+        `${new Date(d.sDate).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })} ` +
         "(" +
-        `${convertToLocaleTimeString(new Date(d.sDate).toLocaleTimeString())}` +
+        `${new Date(d.sDate).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        })}` +
         ")",
       //   "Report Link": d.reportPath,
       Comments: d.remarks.replace(/\r\n?/g, "\n").substring(0, 200), // limit length if needed

@@ -36,7 +36,7 @@ interface VisitsPlan {
       onTimeSubmitted: number;
       lateSubmitted: number;
       issuedReport: number;
-    }
+    },
   ];
 }
 
@@ -96,14 +96,14 @@ const VisitsPlan = ({
           "completedDate",
           "deadline",
           "fileGenrated",
-        ].includes(key)
+        ].includes(key),
       )
       .map((key) => key as keyof ProjectsList);
 
   const filterProjectsData = (
     fromdate: string,
     todate: string,
-    data: ProjectsList[]
+    data: ProjectsList[],
   ) => {
     return !fromdate && !todate
       ? data // Show all data if no date is selected
@@ -172,7 +172,12 @@ const VisitsPlan = ({
     exportDataToExcel(
       data,
       headers,
-      `${plan.nameOfVisit} ${getFormattedDate(new Date(), "short")}.xlsx`
+      `${plan.nameOfVisit} ${new Date().toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })}.xlsx`,
     );
   };
 
@@ -381,20 +386,24 @@ const VisitsPlan = ({
                                             {visit.designation}
                                             <br />
                                             From:{" "}
-                                            {addDayToFormattedDate(
-                                              getFormattedDate(
-                                                new Date(visit.fromDate),
-                                                "short"
-                                              )!
-                                            )}
+                                            {new Date(
+                                              visit.fromDate,
+                                            ).toLocaleDateString("en-GB", {
+                                              weekday: "short",
+                                              day: "2-digit",
+                                              month: "short",
+                                              year: "numeric",
+                                            })}
                                             <br />
                                             To:
-                                            {addDayToFormattedDate(
-                                              getFormattedDate(
-                                                new Date(visit.toDate),
-                                                "short"
-                                              )!
-                                            )}
+                                            {new Date(
+                                              visit.toDate,
+                                            ).toLocaleDateString("en-GB", {
+                                              weekday: "short",
+                                              day: "2-digit",
+                                              month: "short",
+                                              year: "numeric",
+                                            })}
                                           </Button>
                                         }
                                         body={
@@ -417,21 +426,21 @@ const VisitsPlan = ({
                                                       project.userName ===
                                                         visit.officerName &&
                                                       new Date(
-                                                        project.visitStartDate
+                                                        project.visitStartDate,
                                                       ) >=
                                                         new Date(
                                                           d.nameOfVisit.split(
-                                                            " "
-                                                          )[2]
+                                                            " ",
+                                                          )[2],
                                                         ) &&
                                                       new Date(
-                                                        project.visitEndDate
+                                                        project.visitEndDate,
                                                       ) <=
                                                         new Date(
                                                           d.nameOfVisit.split(
-                                                            " "
-                                                          )[4]
-                                                        )
+                                                            " ",
+                                                          )[4],
+                                                        ),
                                                   )}
                                                   setProjectsData={
                                                     setProjectsData

@@ -51,7 +51,7 @@ const EmployeeProfilePage = ({ params }: Props) => {
   const handleSubmit = async (
     userId: number,
     fromDate: string | null,
-    toDate: string | null
+    toDate: string | null,
   ) => {
     try {
       const response = await apiClient.post(
@@ -60,7 +60,7 @@ const EmployeeProfilePage = ({ params }: Props) => {
           userId,
           fromDate,
           toDate,
-        }
+        },
       );
       setData(response.data.data);
       console.log("staff record ", response);
@@ -76,7 +76,7 @@ const EmployeeProfilePage = ({ params }: Props) => {
     handleSubmit(parseInt(employeeId), null, null);
     console.log(
       "date from:",
-      new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+      new Date(now.getFullYear(), now.getMonth(), 1).toISOString(),
     );
   }, []);
 
@@ -100,7 +100,7 @@ const EmployeeProfilePage = ({ params }: Props) => {
       ]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     if (filtered) setFilteredData(filtered);
   };
@@ -150,10 +150,10 @@ const EmployeeProfilePage = ({ params }: Props) => {
 
   // download with pdf or excel
   const keys = Object.keys(
-    data && data?.dailyAttandance.length > 0 ? data.dailyAttandance[0] : ""
+    data && data?.dailyAttandance.length > 0 ? data.dailyAttandance[0] : "",
   );
   const keysForPDF = keys.filter(
-    (key) => key !== "employeePicture" && key !== "employeeDesignation"
+    (key) => key !== "employeePicture" && key !== "employeeDesignation",
   );
   const columns = keysForPDF.map((key) => ({
     header: formatKeyName(key), // Format key for header
@@ -186,7 +186,14 @@ const EmployeeProfilePage = ({ params }: Props) => {
             break;
           case "date":
             row[key] = `${
-              data.date ? getFormattedDate(new Date(data.date), "short") : ""
+              data.date
+                ? new Date(data.date).toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
+                : ""
             }`;
             break;
           case "reportCompletion":
@@ -198,36 +205,42 @@ const EmployeeProfilePage = ({ params }: Props) => {
       });
 
       return row;
-    }
+    },
   );
 
   const heading = addSpaceToCamelCase(employeeId).includes("Present")
     ? addSpaceToCamelCase(employeeId).split(" ")[1]
     : addSpaceToCamelCase(employeeId).includes("Daily Late Comer")
-    ? "Late Arrival"
-    : addSpaceToCamelCase(employeeId).includes("Daily Early Time")
-    ? "Left Early"
-    : addSpaceToCamelCase(employeeId).includes("Daily Leave")
-    ? addSpaceToCamelCase(employeeId).split(" ")[1]
-    : addSpaceToCamelCase(employeeId).includes("Daily Visit")
-    ? addSpaceToCamelCase(employeeId).split(" ")[1]
-    : addSpaceToCamelCase(employeeId).includes("Daily Absent")
-    ? addSpaceToCamelCase(employeeId).split(" ")[1]
-    : addSpaceToCamelCase(employeeId).includes("Daily Others")
-    ? addSpaceToCamelCase(employeeId).split(" ")[1]
-    : addSpaceToCamelCase(employeeId);
+      ? "Late Arrival"
+      : addSpaceToCamelCase(employeeId).includes("Daily Early Time")
+        ? "Left Early"
+        : addSpaceToCamelCase(employeeId).includes("Daily Leave")
+          ? addSpaceToCamelCase(employeeId).split(" ")[1]
+          : addSpaceToCamelCase(employeeId).includes("Daily Visit")
+            ? addSpaceToCamelCase(employeeId).split(" ")[1]
+            : addSpaceToCamelCase(employeeId).includes("Daily Absent")
+              ? addSpaceToCamelCase(employeeId).split(" ")[1]
+              : addSpaceToCamelCase(employeeId).includes("Daily Others")
+                ? addSpaceToCamelCase(employeeId).split(" ")[1]
+                : addSpaceToCamelCase(employeeId);
 
   const label = `${data?.userName} Attendance List ${
     selectedFromDate
-      ? `From ${addDayToFormattedDate(
-          getFormattedDate(new Date(selectedFromDate), "short")!
-        )}`
+      ? `From ${new Date(selectedFromDate).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })}`
       : ""
   } ${
     selectedToDate
-      ? `To ${addDayToFormattedDate(
-          getFormattedDate(new Date(selectedToDate), "short")!
-        )}`
+      ? `To ${new Date(selectedToDate).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })}`
       : ""
   }, Today`;
 
@@ -278,21 +291,30 @@ const EmployeeProfilePage = ({ params }: Props) => {
             case "visitStartDate":
               row[header] =
                 item.visitStartDate &&
-                `${addDayToFormattedDate(
-                  getFormattedDate(new Date(item.visitStartDate), "short")!
-                )} To ${
+                `${new Date(item.visitStartDate).toLocaleDateString("en-GB", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })} To ${
                   item.visitEndDate &&
-                  addDayToFormattedDate(
-                    getFormattedDate(new Date(item.visitEndDate), "short")!
-                  )
+                  new Date(item.visitEndDate).toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
                 }`;
               break;
             case formatKeyName("completedDate"):
               row[header] =
                 item.completedDate &&
-                `${addDayToFormattedDate(
-                  getFormattedDate(new Date(item.completedDate), "short")!
-                )}`;
+                `${new Date(item.completedDate).toLocaleDateString("en-GB", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}`;
               break;
             case formatKeyName("deadline"):
               row[header] =
@@ -325,13 +347,18 @@ const EmployeeProfilePage = ({ params }: Props) => {
         });
 
         return row;
-      }
+      },
     );
 
     exportDataToExcel(
       excelData!,
       headers,
-      `${label} ${getFormattedDate(new Date(), "short")}.xlsx`
+      `${label} ${new Date().toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })}.xlsx`,
     );
   };
 
@@ -541,7 +568,7 @@ const EmployeeProfilePage = ({ params }: Props) => {
                           new Date(e.target.value).toISOString(),
                           selectedToDate
                             ? selectedToDate.toISOString()
-                            : new Date().toISOString()
+                            : new Date().toISOString(),
                         );
                       }}
                     />
@@ -565,7 +592,7 @@ const EmployeeProfilePage = ({ params }: Props) => {
                           selectedFromDate
                             ? selectedFromDate.toISOString()
                             : new Date().toISOString(),
-                          new Date(e.target.value).toISOString()
+                          new Date(e.target.value).toISOString(),
                         );
                       }}
                       placeholder="Select To Date"
@@ -628,9 +655,12 @@ const EmployeeProfilePage = ({ params }: Props) => {
                         <p className="p-0 m-0">{d.employeeDesignation}</p>
                       </td>
                       <td>
-                        {addDayToFormattedDate(
-                          getFormattedDate(new Date(d.date), "short")!
-                        )}
+                        {new Date(d.date).toLocaleDateString("en-GB", {
+                          weekday: "short",
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
                       </td>
                       <td>{d.punchInTime}</td>
                       <td>{d.punchInStatus}</td>

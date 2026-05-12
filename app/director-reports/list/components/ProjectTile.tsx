@@ -1,16 +1,12 @@
-import {
-  addDayToFormattedDate,
-  convertToLocaleTimeString,
-  getFormattedDate,
-} from "@/app/utils";
+import { REPORTS_HISTORY_API } from "@/app/APIs";
+import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
+import apiClient, { AxiosError } from "@/app/services/api-client";
+import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
+import { useEffect, useState } from "react";
+import HistoryList from "../../components/HistoryList";
+import { ReportHistory } from "../../components/ReportNoting";
 import { ISSUED, REFERBACK, SUBMITTED } from "../../statuses";
 import { SubmittedReport } from "./List";
-import { useEffect, useState } from "react";
-import { ReportHistory } from "../../components/ReportNoting";
-import apiClient, { AxiosError } from "@/app/services/api-client";
-import { REPORTS_HISTORY_API } from "@/app/APIs";
-import HistoryList from "../../components/HistoryList";
-import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
 
 interface Props {
   data: SubmittedReport;
@@ -133,13 +129,18 @@ const ProjectTile = ({ data, index, users }: Props) => {
               <div className="col">
                 <p className="mb-2 fs18px fw-bold">Submitted Date</p>
                 <p className="mb-0">
-                  {addDayToFormattedDate(
-                    getFormattedDate(new Date(data.submittedDate), "short")!,
-                  )}
+                  {new Date(data.submittedDate).toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
                   <br />
-                  {convertToLocaleTimeString(
-                    new Date(data.submittedDate).toLocaleTimeString(),
-                  )}
+                  {new Date(data.submittedDate).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
                 </p>
               </div>
 

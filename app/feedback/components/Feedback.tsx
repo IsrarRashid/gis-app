@@ -54,7 +54,7 @@ const Feedback = () => {
     const handleSubmit = async (userId: number) => {
       try {
         const response = await apiClient.get(
-          `${FEEDBACK_API}/GetFeedBackByReportingTo?reportingTo=${userId}`
+          `${FEEDBACK_API}/GetFeedBackByReportingTo?reportingTo=${userId}`,
         );
         setData(response.data.data);
         {
@@ -64,8 +64,8 @@ const Feedback = () => {
         }
         dispatch(
           setFeedbackCount(
-            response.data.data.filter((d: any) => d.status === 0).length
-          )
+            response.data.data.filter((d: any) => d.status === 0).length,
+          ),
         );
       } catch (err) {
         console.error("Submission error:", err);
@@ -126,7 +126,7 @@ const Feedback = () => {
         ]
           .filter((field) => field) // Remove undefined fields
           .map((field) => field.toLowerCase())
-          .some((field) => field.includes(e.target.value.toLowerCase()))
+          .some((field) => field.includes(e.target.value.toLowerCase())),
       );
 
     if (filtered) setFilteredData(filtered);
@@ -144,8 +144,8 @@ const Feedback = () => {
         data
           ?.filter((d: any) => d) // Apply any additional filters if needed
           .sort((a: any, b: any) =>
-            a.status === 0 ? -1 : b.status === 0 ? 1 : 0
-          )
+            a.status === 0 ? -1 : b.status === 0 ? 1 : 0,
+          ),
       );
     } else {
       setStatus(status);
@@ -318,7 +318,7 @@ const Feedback = () => {
                           <p className="m-0 fs13px fw-bold">
                             {
                               projects.find(
-                                (project) => project.id === d.projectId
+                                (project) => project.id === d.projectId,
                               )?.name
                             }
                           </p>
@@ -341,7 +341,7 @@ const Feedback = () => {
                           >
                             {
                               projects.find(
-                                (project) => project.id === d.projectId
+                                (project) => project.id === d.projectId,
                               )?.gsNo
                             }
                           </span>
@@ -388,8 +388,14 @@ const Feedback = () => {
                             className="fw-normal"
                             style={{ color: "#888888" }}
                           >
-                            {addDayToFormattedDate(
-                              getFormattedDate(new Date(d.reportDate), "short")!
+                            {new Date(d.reportDate).toLocaleDateString(
+                              "en-GB",
+                              {
+                                weekday: "short",
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              },
                             )}
                           </span>
                         </span>

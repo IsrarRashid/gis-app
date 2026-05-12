@@ -88,7 +88,7 @@ const AttendanceDetailsPage = ({ params }: Props) => {
         ]
           .filter((field) => field) // Remove undefined fields
           .map((field) => field.toLowerCase())
-          .some((field) => field.includes(e.target.value.toLowerCase()))
+          .some((field) => field.includes(e.target.value.toLowerCase())),
       );
     if (filtered) setFilteredData(filtered);
   };
@@ -145,12 +145,12 @@ const AttendanceDetailsPage = ({ params }: Props) => {
     data &&
     (searchTerm ? filteredData : data).slice(
       (currentPage - 1) * rows,
-      currentPage * rows
+      currentPage * rows,
     );
 
   const keys = Object.keys(data && data?.length > 0 ? data[0] : "");
   const keysForPDF = keys.filter(
-    (key) => key !== "employeePicture" && key !== "employeeDesignation"
+    (key) => key !== "employeePicture" && key !== "employeeDesignation",
   );
   const columns = keysForPDF.map((key) => ({
     header: formatKeyName(key), // Format key for header
@@ -183,7 +183,14 @@ const AttendanceDetailsPage = ({ params }: Props) => {
             break;
           case "date":
             row[key] = `${
-              data.date ? getFormattedDate(new Date(data.date), "short") : ""
+              data.date
+                ? new Date(data.date).toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
+                : ""
             }`;
             break;
           case "reportCompletion":
@@ -195,24 +202,24 @@ const AttendanceDetailsPage = ({ params }: Props) => {
       });
 
       return row;
-    }
+    },
   );
 
   const heading = addSpaceToCamelCase(attendanceFeature).includes("Present")
     ? addSpaceToCamelCase(attendanceFeature).split(" ")[1]
     : addSpaceToCamelCase(attendanceFeature).includes("Daily Late Comer")
-    ? "Late Arrival"
-    : addSpaceToCamelCase(attendanceFeature).includes("Daily Early Time")
-    ? "Left Early"
-    : addSpaceToCamelCase(attendanceFeature).includes("Daily Leave")
-    ? addSpaceToCamelCase(attendanceFeature).split(" ")[1]
-    : addSpaceToCamelCase(attendanceFeature).includes("Daily Visit")
-    ? addSpaceToCamelCase(attendanceFeature).split(" ")[1]
-    : addSpaceToCamelCase(attendanceFeature).includes("Daily Absent")
-    ? addSpaceToCamelCase(attendanceFeature).split(" ")[1]
-    : addSpaceToCamelCase(attendanceFeature).includes("Daily Others")
-    ? addSpaceToCamelCase(attendanceFeature).split(" ")[1]
-    : addSpaceToCamelCase(attendanceFeature);
+      ? "Late Arrival"
+      : addSpaceToCamelCase(attendanceFeature).includes("Daily Early Time")
+        ? "Left Early"
+        : addSpaceToCamelCase(attendanceFeature).includes("Daily Leave")
+          ? addSpaceToCamelCase(attendanceFeature).split(" ")[1]
+          : addSpaceToCamelCase(attendanceFeature).includes("Daily Visit")
+            ? addSpaceToCamelCase(attendanceFeature).split(" ")[1]
+            : addSpaceToCamelCase(attendanceFeature).includes("Daily Absent")
+              ? addSpaceToCamelCase(attendanceFeature).split(" ")[1]
+              : addSpaceToCamelCase(attendanceFeature).includes("Daily Others")
+                ? addSpaceToCamelCase(attendanceFeature).split(" ")[1]
+                : addSpaceToCamelCase(attendanceFeature);
 
   const label = `${heading} Attendance List`;
 
@@ -263,21 +270,30 @@ const AttendanceDetailsPage = ({ params }: Props) => {
             case "visitStartDate":
               row[header] =
                 item.visitStartDate &&
-                `${addDayToFormattedDate(
-                  getFormattedDate(new Date(item.visitStartDate), "short")!
-                )} To ${
+                `${new Date(item.visitStartDate).toLocaleDateString("en-GB", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })} To ${
                   item.visitEndDate &&
-                  addDayToFormattedDate(
-                    getFormattedDate(new Date(item.visitEndDate), "short")!
-                  )
+                  new Date(item.visitEndDate).toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
                 }`;
               break;
             case formatKeyName("completedDate"):
               row[header] =
                 item.completedDate &&
-                `${addDayToFormattedDate(
-                  getFormattedDate(new Date(item.completedDate), "short")!
-                )}`;
+                `${new Date(item.completedDate).toLocaleDateString("en-GB", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}`;
               break;
             case formatKeyName("deadline"):
               row[header] =
@@ -310,13 +326,18 @@ const AttendanceDetailsPage = ({ params }: Props) => {
         });
 
         return row;
-      }
+      },
     );
 
     exportDataToExcel(
       excelData!,
       headers,
-      `${label} ${getFormattedDate(new Date(), "short")}.xlsx`
+      `${label} ${new Date().toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })}.xlsx`,
     );
   };
 

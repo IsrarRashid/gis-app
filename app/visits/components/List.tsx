@@ -79,7 +79,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
       ]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -132,7 +132,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm || status ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const handleFilterData = (data: Visit[], status: string) => {
@@ -327,27 +327,66 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                 <td>{d.longitude}</td>
                 <td>{d.vehicleID ? getName(d.vehicleID, vehicles) : ""}</td>
                 <td>{d.driverID ? getName(d.driverID, drivers) : ""}</td>
-                <td>{getFormattedDate(new Date(d.fromDate), "short")}</td>
-                <td>{getFormattedDate(new Date(d.toDate), "short")}</td>
+                <td>
+                  {new Date(d.fromDate).toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </td>
+                <td>
+                  {new Date(d.toDate).toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </td>
                 <td>
                   {d.createdAt &&
-                    getFormattedDate(new Date(d.createdAt), "short")}
+                    new Date(d.createdAt).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                 </td>
                 <td>
                   {d.updatedAt &&
-                    getFormattedDate(new Date(d.updatedAt), "short")}
+                    new Date(d.updatedAt).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                 </td>
                 <td>
                   {d.complete_at &&
-                    getFormattedDate(new Date(d.complete_at), "short")}
+                    new Date(d.complete_at).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                 </td>
                 <td>
                   {d.submitted_at &&
-                    getFormattedDate(new Date(d.submitted_at), "short")}
+                    new Date(d.submitted_at).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                 </td>
                 <td>
                   {d.issued_at &&
-                    getFormattedDate(new Date(d.issued_at), "short")}
+                    new Date(d.issued_at).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                 </td>
                 <td>
                   <DeleteModal handleDelete={handleDelete} id={d.id} />

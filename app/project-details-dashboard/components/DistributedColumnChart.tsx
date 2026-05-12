@@ -24,20 +24,20 @@ const DistributedColumnChart = ({ data, spi, cpi, projectRating }: Props) => {
 
   useEffect(() => {
     const financialAnalysis = data.groups.find((group) =>
-      group.name.startsWith("Financial Analysis")
+      group.name.startsWith("Financial Analysis"),
     );
 
     if (financialAnalysis) {
       const allocation = financialAnalysis.attributes.find(
-        (attribute) => attribute.label.toLowerCase() === "allocation"
+        (attribute) => attribute.label.toLowerCase() === "allocation",
       )?.values[0]?.value;
 
       const releases = financialAnalysis.attributes.find(
-        (attribute) => attribute.label.toLowerCase() === "releases"
+        (attribute) => attribute.label.toLowerCase() === "releases",
       )?.values[0]?.value;
 
       const utilization = financialAnalysis.attributes.find(
-        (attribute) => attribute.label.toLowerCase() === "utilization"
+        (attribute) => attribute.label.toLowerCase() === "utilization",
       )?.values[0]?.value;
 
       setAllocation(allocation);
@@ -47,7 +47,7 @@ const DistributedColumnChart = ({ data, spi, cpi, projectRating }: Props) => {
       const accumulativePC1Cost = data.groups
         .find((group) => group.name.toLowerCase() === "project profile")
         ?.attributes.find(
-          (attribute) => attribute.label.toLowerCase() === "pc-i cost"
+          (attribute) => attribute.label.toLowerCase() === "pc-i cost",
         )?.values[0]?.value;
 
       // Convert values to numbers
@@ -63,7 +63,7 @@ const DistributedColumnChart = ({ data, spi, cpi, projectRating }: Props) => {
         "releasesValue:",
         releasesValue,
         "utilizationValue:",
-        utilizationValue
+        utilizationValue,
       );
 
       // Calculate percentages
@@ -88,7 +88,7 @@ const DistributedColumnChart = ({ data, spi, cpi, projectRating }: Props) => {
       console.log(
         allocationPercentage,
         releasesPercentage,
-        utilizationPercentage
+        utilizationPercentage,
       );
       // Set the percentages in state
       setCalculatedData(percentages);
@@ -99,29 +99,29 @@ const DistributedColumnChart = ({ data, spi, cpi, projectRating }: Props) => {
         data.groups
           .find((group) => group.name.toLowerCase() === "project profile")
           ?.attributes.find(
-            (attribute) => attribute.label.toLowerCase() === "pc-i cost"
-          )?.values[0]?.value || 0
+            (attribute) => attribute.label.toLowerCase() === "pc-i cost",
+          )?.values[0]?.value || 0,
       ),
       Math.round(
         Number(
           financialAnalysis?.attributes.find(
-            (attribute) => attribute.label.toLowerCase() === "allocation"
-          )?.values[0]?.value || 0
-        )
+            (attribute) => attribute.label.toLowerCase() === "allocation",
+          )?.values[0]?.value || 0,
+        ),
       ),
       Math.round(
         Number(
           financialAnalysis?.attributes.find(
-            (attribute) => attribute.label.toLowerCase() === "releases"
-          )?.values[0]?.value || 0
-        )
+            (attribute) => attribute.label.toLowerCase() === "releases",
+          )?.values[0]?.value || 0,
+        ),
       ),
       Math.round(
         Number(
           financialAnalysis?.attributes.find(
-            (attribute) => attribute.label.toLowerCase() === "utilization"
-          )?.values[0]?.value || 0
-        )
+            (attribute) => attribute.label.toLowerCase() === "utilization",
+          )?.values[0]?.value || 0,
+        ),
       ),
     ];
 
@@ -352,13 +352,15 @@ const DistributedColumnChart = ({ data, spi, cpi, projectRating }: Props) => {
                                   .toLowerCase()
                                   .includes("visit date") &&
                                 attribute?.values[0]?.value
-                                  ? addDayToFormattedDate(
-                                      getFormattedDate(
-                                        new Date(attribute?.values[0]?.value),
-                                        "short"
-                                      )!
-                                    )
-                                  : ""}
+                                  ? new Date(attribute?.values[0]?.value).toLocaleDateString(
+                            "en-GB",
+                            {
+                              weekday: "short",
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          ): ""}
                               </td>
                               <td
                                 style={{

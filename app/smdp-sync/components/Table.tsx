@@ -133,13 +133,13 @@ const ProjectsList = ({
   // Paginate data to display only the current page's rows
   const paginatedData = data.slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
   const hideCompleted = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       // Filter the data to hide completed items
       setData((prevData) =>
-        prevData.filter((item) => item.status !== "Complete")
+        prevData.filter((item) => item.status !== "Complete"),
       );
     } else {
       // Reset to the original data
@@ -151,7 +151,7 @@ const ProjectsList = ({
     if (e.target.checked) {
       // Filter the data to show only canceled items
       setData((prevData) =>
-        prevData.filter((item) => item.status === "Cancel")
+        prevData.filter((item) => item.status === "Cancel"),
       );
     } else {
       // Reset to the original data
@@ -210,7 +210,12 @@ const ProjectsList = ({
               <div className="col d-none d-lg-block"></div>
               <div className="col text-end">
                 <span className="fw-bold">
-                  {getFormattedDate(new Date(), "short")}
+                  {new Date().toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </span>{" "}
                 Today
               </div>

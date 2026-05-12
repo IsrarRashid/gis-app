@@ -64,16 +64,16 @@ const SingleProjectLiveViewPage = ({ id, visitId }: Props) => {
     const handleSubmit = async (projectId: number, visitId: number) => {
       setLoading(true);
       console.log(
-        `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`
+        `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`,
       );
       try {
         const response = await apiClient.get(
-          `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`
+          `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`,
         );
         setData(response.data.data);
         console.log(
           `check now: projectid=${projectId}&visit=${visitId}`,
-          response
+          response,
         );
         setLoading(false);
       } catch (err) {
@@ -88,7 +88,7 @@ const SingleProjectLiveViewPage = ({ id, visitId }: Props) => {
   //   const previewDate = (requriedDate: string) => {
   //     if (requriedDate.length > 0) {
   //       console.log("requriedDate", requriedDate);
-  //       return new Date(requriedDate).toLocaleDateString("en-US", {
+  //       return new Date(requriedDate).toLocaleDateString("en-GB", {
   //         weekday: "short",
   //         year: "numeric",
   //         month: "short",
@@ -102,7 +102,12 @@ const SingleProjectLiveViewPage = ({ id, visitId }: Props) => {
     if (!requriedDate) return "";
 
     console.log("requriedDate", requriedDate);
-    return addDayToFormattedDate(getFormattedDate(requriedDate));
+    return new Date(requriedDate).toLocaleDateString("en-GB", {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   return (
@@ -185,7 +190,7 @@ const SingleProjectLiveViewPage = ({ id, visitId }: Props) => {
                       className="fw-normal m-0"
                       style={{ paddingLeft: "6px", fontSize: "1.875rem" }}
                     >
-                      {new Date().toLocaleDateString("en-US", {
+                      {new Date().toLocaleDateString("en-GB", {
                         weekday: "short",
                         year: "numeric",
                         month: "short",
@@ -315,7 +320,7 @@ const SingleProjectLiveViewPage = ({ id, visitId }: Props) => {
                     className="fw-normal fs11px m-0"
                     style={{ paddingLeft: "6px" }}
                   >
-                    {new Date().toLocaleDateString("en-US", {
+                    {new Date().toLocaleDateString("en-GB", {
                       weekday: "short",
                       year: "numeric",
                       month: "short",
@@ -391,8 +396,8 @@ const SingleProjectLiveViewPage = ({ id, visitId }: Props) => {
                     data?.groups
                       .find((group) => group.name === "Project Profile")
                       ?.attributes.find(
-                        (attr) => attr.label === "Planned Start Date"
-                      )?.values[0].value || ""
+                        (attr) => attr.label === "Planned Start Date",
+                      )?.values[0].value || "",
                   )}
                 </p>
               </div>
@@ -419,8 +424,8 @@ const SingleProjectLiveViewPage = ({ id, visitId }: Props) => {
                     data?.groups
                       .find((group) => group.name === "Project Profile")
                       ?.attributes.find(
-                        (attr) => attr.label === "Planned End Date"
-                      )?.values[0].value || ""
+                        (attr) => attr.label === "Planned End Date",
+                      )?.values[0].value || "",
                   )}
                 </p>
               </div>
@@ -503,7 +508,7 @@ const SingleProjectLiveViewPage = ({ id, visitId }: Props) => {
                     data?.groups
                       .find((group) => group.name === "Project Profile")
                       ?.attributes.find(
-                        (attr) => attr.label === "Gestation Period"
+                        (attr) => attr.label === "Gestation Period",
                       )?.values[0].value
                   }{" "}
                   Months
@@ -517,7 +522,7 @@ const SingleProjectLiveViewPage = ({ id, visitId }: Props) => {
                 reports={data.reports}
                 observations={
                   data.groups.find(
-                    (group) => group.name === "Observation & Recommendations"
+                    (group) => group.name === "Observation & Recommendations",
                   )!
                 }
               />

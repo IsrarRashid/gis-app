@@ -473,20 +473,29 @@ const ProjectsTable = ({
         case "visitStartDate":
           row[key] =
             data.visitStartDate &&
-            `${addDayToFormattedDate(
-              getFormattedDate(new Date(data.visitStartDate), "short")!,
-            )} to ${
+            `${new Date(data.visitStartDate).toLocaleDateString("en-GB", {
+              weekday: "short",
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })} to ${
               data.visitEndDate &&
-              addDayToFormattedDate(
-                getFormattedDate(new Date(data.visitEndDate), "short")!,
-              )
+              new Date(data.visitEndDate).toLocaleDateString("en-GB", {
+                weekday: "short",
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
             }`;
           break;
         case "completedDate":
           row[key] = data.completedDate
-            ? `${addDayToFormattedDate(
-                getFormattedDate(new Date(data.completedDate), "short")!,
-              )}`
+            ? `${new Date(data.completedDate).toLocaleDateString("en-GB", {
+                weekday: "short",
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}`
             : "NA";
           break;
         case "utilization":
@@ -510,9 +519,12 @@ const ProjectsTable = ({
           break;
         case "statusDate":
           row[key] = data.statusDate
-            ? `${addDayToFormattedDate(
-                getFormattedDate(new Date(data.statusDate), "short")!,
-              )}`
+            ? `${new Date(data.statusDate).toLocaleDateString("en-GB", {
+                weekday: "short",
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}`
             : "NA";
           break;
         default:
@@ -566,20 +578,29 @@ const ProjectsTable = ({
           case "visitStartDate":
             row[formatKeyName(header)] =
               item.visitStartDate &&
-              `${addDayToFormattedDate(
-                getFormattedDate(new Date(item.visitStartDate), "short")!,
-              )} to ${
+              `${new Date(item.visitStartDate).toLocaleDateString("en-GB", {
+                weekday: "short",
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })} to ${
                 item.visitEndDate &&
-                addDayToFormattedDate(
-                  getFormattedDate(new Date(item.visitEndDate), "short")!,
-                )
+                new Date(item.visitEndDate).toLocaleDateString("en-GB", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })
               }`;
             break;
           case "completedDate":
             row[formatKeyName(header)] = item.completedDate
-              ? `${addDayToFormattedDate(
-                  getFormattedDate(new Date(item.completedDate), "short")!,
-                )}`
+              ? `${new Date(item.completedDate).toLocaleDateString("en-GB", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}`
               : "NA";
             break;
           case "deadline":
@@ -631,9 +652,12 @@ const ProjectsTable = ({
             break;
           case "statusDate":
             row[formatKeyName(header)] = item.statusDate
-              ? `${addDayToFormattedDate(
-                  getFormattedDate(new Date(item.statusDate), "short")!,
-                )}`
+              ? `${new Date(item.statusDate).toLocaleDateString("en-GB", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}`
               : "NA";
             break;
 
@@ -648,7 +672,12 @@ const ProjectsTable = ({
     exportDataToExcel(
       data,
       displayHeaders,
-      `${label} ${getFormattedDate(new Date(), "short")}.xlsx`,
+      `${label} ${new Date().toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })}.xlsx`,
     );
   };
 
@@ -1708,12 +1737,14 @@ const ProjectsTable = ({
                             {d.visitStartDate && d.visitEndDate ? (
                               <>
                                 <Badge>
-                                  {addDayToFormattedDate(
-                                    getFormattedDate(
-                                      new Date(d.visitStartDate),
-                                      "short",
-                                    )!,
-                                  )}
+                                  {new Date(
+                                    d.visitStartDate,
+                                  ).toLocaleDateString("en-GB", {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  })}
                                 </Badge>
                                 <span
                                   style={{
@@ -1724,20 +1755,26 @@ const ProjectsTable = ({
                                   &nbsp;
                                 </span>
                                 <Badge>
-                                  {addDayToFormattedDate(
-                                    getFormattedDate(
-                                      new Date(d.visitEndDate),
-                                      "short",
-                                    )!,
+                                  {new Date(d.visitEndDate).toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                      weekday: "short",
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    },
                                   )}
                                 </Badge>
                               </>
                             ) : d.visitStartDate ? (
-                              addDayToFormattedDate(
-                                getFormattedDate(
-                                  new Date(d.visitStartDate),
-                                  "short",
-                                )!,
+                              new Date(d.visitStartDate).toLocaleDateString(
+                                "en-GB",
+                                {
+                                  weekday: "short",
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                },
                               )
                             ) : (
                               "NA"
@@ -1857,9 +1894,12 @@ const ProjectsTable = ({
                           ) : key === "completedDate" ? (
                             d[key] ? (
                               <Badge>
-                                {addDayToFormattedDate(
-                                  getFormattedDate(new Date(d[key]), "short")!,
-                                )}
+                                {new Date(d[key]).toLocaleDateString("en-GB", {
+                                  weekday: "short",
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                })}
                               </Badge>
                             ) : (
                               "NA"
@@ -1867,9 +1907,12 @@ const ProjectsTable = ({
                           ) : key === "statusDate" ? (
                             d[key] ? (
                               <Badge>
-                                {addDayToFormattedDate(
-                                  getFormattedDate(new Date(d[key]), "short")!,
-                                )}
+                                {new Date(d[key]).toLocaleDateString("en-GB", {
+                                  weekday: "short",
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                })}
                               </Badge>
                             ) : (
                               "NA"

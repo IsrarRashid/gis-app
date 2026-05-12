@@ -172,7 +172,12 @@ const VisitsPlan = ({
     exportDataToExcel(
       data,
       headers,
-      `${plan.nameOfVisit} ${getFormattedDate(new Date(), "short")}.xlsx`,
+      `${plan.nameOfVisit} ${new Date().toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })}}.xlsx`,
     );
   };
 
@@ -382,20 +387,24 @@ const VisitsPlan = ({
                                             {visit.designation}
                                             <br />
                                             From:{" "}
-                                            {addDayToFormattedDate(
-                                              getFormattedDate(
-                                                new Date(visit.fromDate),
-                                                "short",
-                                              )!,
-                                            )}
+                                            {new Date(
+                                              visit.fromDate,
+                                            ).toLocaleDateString("en-GB", {
+                                              weekday: "short",
+                                              day: "2-digit",
+                                              month: "short",
+                                              year: "numeric",
+                                            })}
                                             <br />
                                             To:
-                                            {addDayToFormattedDate(
-                                              getFormattedDate(
-                                                new Date(visit.toDate),
-                                                "short",
-                                              )!,
-                                            )}
+                                            {new Date(
+                                              visit.toDate,
+                                            ).toLocaleDateString("en-GB", {
+                                              weekday: "short",
+                                              day: "2-digit",
+                                              month: "short",
+                                              year: "numeric",
+                                            })}
                                           </Button>
                                         }
                                         body={

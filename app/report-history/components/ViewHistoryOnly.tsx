@@ -2,7 +2,7 @@ import { REPORTS_HISTORY_API } from "@/app/APIs";
 import Loader from "@/app/components/Loader";
 import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
 import apiClient, { AxiosError } from "@/app/services/api-client";
-import { convertToLocaleTimeString, getFormattedDate } from "@/app/utils";
+import { getFormattedDate } from "@/app/utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BsExclamationTriangleFill } from "react-icons/bs";
@@ -111,10 +111,18 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
                   <p className="fw-normal m-0">
                     Date:{" "}
                     <span>
-                      {getFormattedDate(new Date(d.sDate), "short")} (
-                      {convertToLocaleTimeString(
-                        new Date(d.sDate).toLocaleTimeString(),
-                      )}
+                      {new Date(d.sDate).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}{" "}
+                      (
+                      {new Date(d.sDate).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
                       )
                     </span>
                   </p>

@@ -54,7 +54,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
     // Compute average row height
     const totalHeight = Array.from(allRows).reduce(
       (sum, row) => sum + row.getBoundingClientRect().height,
-      0
+      0,
     );
     const avgHeight = totalHeight / allRows.length;
 
@@ -79,7 +79,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
       [item.id, item.name, item.description, item.sortId]
         .filter(Boolean)
         .map((f) => String(f).toLowerCase())
-        .some((field) => field.includes(value))
+        .some((field) => field.includes(value)),
     );
     setSearchTerm(e.target.value);
     setFilteredData(filtered);
@@ -110,7 +110,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
   const effectiveData = searchTerm ? filteredData : data;
   const paginatedData = effectiveData.slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const getParentSector = (parentId: number, data: Sector[]) =>
@@ -211,11 +211,21 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                     <TableData className="text-center">{d.sortId}</TableData>
                     <TableData>
                       {d.createdAt &&
-                        getFormattedDate(new Date(d.createdAt), "short")}
+                        new Date(d.createdAt).toLocaleDateString("en-GB", {
+                          weekday: "short",
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
                     </TableData>
                     <TableData>
                       {d.updateAt &&
-                        getFormattedDate(new Date(d.updateAt), "short")}
+                        new Date(d.updateAt).toLocaleDateString("en-GB", {
+                          weekday: "short",
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
                     </TableData>
                     <TableData>
                       <Actions

@@ -15,7 +15,7 @@ const Main = ({ group }: Props) => {
         <p className="m-0 pe-0 fw-bold">
           {
             group?.attributes.find(
-              (attribute) => attribute.label.toLowerCase() === "report name"
+              (attribute) => attribute.label.toLowerCase() === "report name",
             )?.values[0]?.value
           }
         </p>
@@ -25,7 +25,7 @@ const Main = ({ group }: Props) => {
           .filter(
             (attribute) =>
               attribute.label.toLowerCase() !== "report picture" &&
-              attribute.label.toLowerCase() !== "report name"
+              attribute.label.toLowerCase() !== "report name",
           )
           .map((attribute) => (
             <div className="col" key={attribute.attributeId}>
@@ -34,9 +34,14 @@ const Main = ({ group }: Props) => {
               </p>
               <p className="m-0 pe-0 fw-bold">
                 {attribute?.values[0]?.value &&
-                  getFormattedDate(
-                    new Date(attribute.values[0].value),
-                    "short"
+                  new Date(attribute.values[0].value).toLocaleDateString(
+                    "en-GB",
+                    {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    },
                   )}
               </p>
             </div>
@@ -65,13 +70,13 @@ const Main = ({ group }: Props) => {
           }}
         >
           {group?.attributes.find(
-            (attribute) => attribute.label.toLowerCase() === "report picture"
+            (attribute) => attribute.label.toLowerCase() === "report picture",
           )?.values[0]?.verificatioContentPath && (
             <img
               src={`${process.env.NEXT_PUBLIC_BACKEND_API}${
                 group?.attributes.find(
                   (attribute) =>
-                    attribute.label.toLowerCase() === "report picture"
+                    attribute.label.toLowerCase() === "report picture",
                 )?.values[0]?.verificatioContentPath
               }`}
               className="img-fluid rounded-3 me-2"

@@ -31,7 +31,15 @@ const ProjectCard = ({ data }: Props) => {
             alt="tickStar"
           />{" "}
           {data.sectorId && data.sectorId}
-          {/* {getFormattedDate(new Date(data.approvalDate), "short")} */}
+          {/* {new Date(data.approvalDate).toLocaleDateString(
+                            "en-GB",
+                            {
+                              weekday: "short",
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )} */}
         </span>
         <span
           className="col p-1 rounded text-white"

@@ -3,11 +3,7 @@ import { REPORTS_HISTORY_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
 import apiClient from "@/app/services/api-client";
-import {
-  addDayToFormattedDate,
-  convertToLocaleTimeString,
-  getFormattedDate,
-} from "@/app/utils";
+import { addDayToFormattedDate, getFormattedDate } from "@/app/utils";
 import search3 from "@/public/icons/search3.svg";
 import Cookies from "js-cookie";
 import { Raleway } from "next/font/google";
@@ -28,7 +24,6 @@ import {
   REVIEWED_AND_FORWARD_BY_DD_TO_D,
   SUBMITTED_BY_AD_TO_DD,
 } from "../../statuses";
-import useBackground from "@/app/hooks/useBackground";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -131,7 +126,7 @@ const List = () => {
     const handleSubmit = async (userId: number) => {
       try {
         const response = await apiClient.get(
-          `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`
+          `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`,
         );
         setData(response.data.data);
         calculateTabCounts(response.data.data);
@@ -153,7 +148,7 @@ const List = () => {
 
       if (status === SUBMITTED_BY_AD_TO_DD && role === "deputy director") {
         const filtered = data.filter(
-          (d) => d.submittedTo === DD_USER_ID && d.lastStatus === status
+          (d) => d.submittedTo === DD_USER_ID && d.lastStatus === status,
         );
 
         const latestByProjectId = new Map();
@@ -175,7 +170,7 @@ const List = () => {
         const filtered = data.filter(
           (d) =>
             d.submittedFrom === reportSubmittedFrom &&
-            d.submittedTo === reportSubmittedTo
+            d.submittedTo === reportSubmittedTo,
         );
 
         const latestByProjectId = new Map();
@@ -190,7 +185,7 @@ const List = () => {
       } else if (status === DD_REFERBACK_ID) {
         const filtered = data.filter(
           (d) =>
-            d.submittedFrom === reportSubmittedFrom && d.lastStatus === status
+            d.submittedFrom === reportSubmittedFrom && d.lastStatus === status,
         );
 
         const latestByProjectId = new Map();
@@ -205,7 +200,8 @@ const List = () => {
         const filtered = data
           .filter(
             (d) =>
-              d.lastStatus === status && d.submittedFrom === reportSubmittedFrom
+              d.lastStatus === status &&
+              d.submittedFrom === reportSubmittedFrom,
           )
           .filter((d) => d.submittedTo !== reportSubmittedTo);
 
@@ -245,7 +241,7 @@ const List = () => {
           (d) =>
             d.lastStatus === status &&
             d.submittedFrom === reportSubmittedFrom &&
-            d.submittedTo === reportSubmittedTo
+            d.submittedTo === reportSubmittedTo,
         );
 
         const latestByProjectId = new Map();
@@ -268,7 +264,7 @@ const List = () => {
 
   const getLatestUniqueProjects = (
     data: SubmittedReport[] | undefined,
-    filterFn: (project: SubmittedReport) => boolean
+    filterFn: (project: SubmittedReport) => boolean,
   ): SubmittedReport[] => {
     if (!data) return [];
 
@@ -294,20 +290,20 @@ const List = () => {
     data: SubmittedReport[],
     status: number,
     submittedFrom: number,
-    submittedTo: number
+    submittedTo: number,
   ) => {
     console.log(
       "Data inside filterDataFn",
       status,
       submittedFrom,
       submittedTo,
-      data
+      data,
     );
     if (role === "deputy director" && status === SUBMITTED_BY_AD_TO_DD) {
       setStatus(status);
       const uniqueLatestProjects = getLatestUniqueProjects(
         data,
-        (d) => d.submittedTo === DD_USER_ID && d.lastStatus === status
+        (d) => d.submittedTo === DD_USER_ID && d.lastStatus === status,
       );
 
       setFilteredData(uniqueLatestProjects);
@@ -334,7 +330,7 @@ const List = () => {
       setStatus(status);
       const filteredProjects = data?.filter(
         (d) =>
-          d.submittedFrom === submittedFrom && d.submittedTo === submittedTo
+          d.submittedFrom === submittedFrom && d.submittedTo === submittedTo,
       );
 
       // Create a Map to store only the latest record for each projectId
@@ -352,7 +348,7 @@ const List = () => {
     } else if (status === DD_REFERBACK_ID) {
       setStatus(status);
       const filteredProjects = data?.filter(
-        (d) => d.submittedFrom === submittedFrom && d.lastStatus === status
+        (d) => d.submittedFrom === submittedFrom && d.lastStatus === status,
       );
 
       // Create a Map to store only the latest record for each projectId
@@ -372,7 +368,7 @@ const List = () => {
 
       const filteredProjects = data
         ?.filter(
-          (d) => d.lastStatus === status && d.submittedFrom === submittedFrom
+          (d) => d.lastStatus === status && d.submittedFrom === submittedFrom,
         )
         .filter((d) => d.submittedTo !== submittedTo);
 
@@ -427,7 +423,7 @@ const List = () => {
         (d) =>
           d.lastStatus === status &&
           d.submittedFrom === submittedFrom &&
-          d.submittedTo === submittedTo
+          d.submittedTo === submittedTo,
       );
 
       // Create a Map to store only the latest record for each projectId
@@ -467,26 +463,26 @@ const List = () => {
         role === "deputy director"
           ? -99
           : role === "director"
-          ? DD_USER_ID
-          : role === "director general"
-          ? D_USER_ID
-          : -99,
+            ? DD_USER_ID
+            : role === "director general"
+              ? D_USER_ID
+              : -99,
       reportSubmittedTo:
         role === "deputy director"
           ? DD_USER_ID
           : role === "director"
-          ? D_USER_ID
-          : role === "director general"
-          ? DG_USER_ID
-          : -99,
+            ? D_USER_ID
+            : role === "director general"
+              ? DG_USER_ID
+              : -99,
       nextSubmittedTo:
         role === "deputy director"
           ? D_USER_ID
           : role === "director"
-          ? DG_USER_ID
-          : role === "director general"
-          ? D_USER_ID
-          : -99,
+            ? DG_USER_ID
+            : role === "director general"
+              ? D_USER_ID
+              : -99,
     },
     {
       label: "SUBMITTED BY (AD)",
@@ -592,18 +588,18 @@ const List = () => {
         role === "deputy director"
           ? DD_USER_ID
           : role === "director"
-          ? D_USER_ID
-          : role === "director general"
-          ? DG_USER_ID
-          : -99,
+            ? D_USER_ID
+            : role === "director general"
+              ? DG_USER_ID
+              : -99,
       reportSubmittedTo:
         role === "deputy director"
           ? D_USER_ID
           : role === "director"
-          ? DG_USER_ID
-          : role === "director general"
-          ? -99
-          : -99,
+            ? DG_USER_ID
+            : role === "director general"
+              ? -99
+              : -99,
     }, // FOR ALL
   ];
 
@@ -613,19 +609,19 @@ const List = () => {
         role === "deputy director"
           ? 0
           : role === "director"
-          ? 1
-          : role === "director general"
-          ? 2
-          : -99;
+            ? 1
+            : role === "director general"
+              ? 2
+              : -99;
 
       const currentSubmittedFrom =
         role === "deputy director"
           ? D_USER_ID
           : role === "director"
-          ? DD_USER_ID
-          : role === "director general"
-          ? D_USER_ID
-          : -99;
+            ? DD_USER_ID
+            : role === "director general"
+              ? D_USER_ID
+              : -99;
 
       setSelectedButton(currentStatus);
       handleFilterData(data, currentStatus, currentSubmittedFrom, userId);
@@ -709,7 +705,7 @@ const List = () => {
                       (tab) =>
                         tab.status === -99 ||
                         tab.status === 6 ||
-                        tab.role === role
+                        tab.role === role,
                     )
                     .map((tab) => (
                       <div key={tab.status} className="col-auto">
@@ -732,7 +728,7 @@ const List = () => {
                               data,
                               tab.status,
                               tab.reportSubmittedFrom,
-                              tab.reportSubmittedTo
+                              tab.reportSubmittedTo,
                             );
                             console.log("tab click data", data);
                           }}
@@ -790,14 +786,15 @@ const List = () => {
                       d.lastStatus === ISSUED_By_AD
                         ? "bg-success text-light"
                         : d.lastStatus === DD_REFERBACK_ID ||
-                          d.lastStatus === D_REFERBACK_ID ||
-                          d.lastStatus === DG_REFERBACK_ID
-                        ? "bg-danger text-light"
-                        : d.lastStatus === SUBMITTED_BY_AD_TO_DD ||
-                          d.lastStatus === REVIEWED_AND_FORWARD_BY_DD_TO_D ||
-                          d.lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG
-                        ? "bg-warning text-dark"
-                        : "bg-info text-dark"
+                            d.lastStatus === D_REFERBACK_ID ||
+                            d.lastStatus === DG_REFERBACK_ID
+                          ? "bg-danger text-light"
+                          : d.lastStatus === SUBMITTED_BY_AD_TO_DD ||
+                              d.lastStatus ===
+                                REVIEWED_AND_FORWARD_BY_DD_TO_D ||
+                              d.lastStatus === REVIEWED_AND_FORWARD_BY_D_TO_DG
+                            ? "bg-warning text-dark"
+                            : "bg-info text-dark"
                     }`}
                   >
                     <p className="fw-5 mb-0">
@@ -843,13 +840,18 @@ const List = () => {
                           className="mb-0 me-3"
                           style={{ color: "#263238", fontWeight: "500" }}
                         >
-                          {addDayToFormattedDate(
-                            getFormattedDate(new Date(d.sDate), "short")!
-                          )}
+                          {new Date(d.sDate).toLocaleDateString("en-GB", {
+                            weekday: "short",
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
                           <br />
-                          {convertToLocaleTimeString(
-                            new Date(d.sDate).toLocaleTimeString()
-                          )}
+                          {new Date(d.sDate).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
                         </p>
                       </div>
 
@@ -865,11 +867,14 @@ const List = () => {
                             className="mb-0 me-3"
                             style={{ color: "#263238", fontWeight: "500" }}
                           >
-                            {addDayToFormattedDate(
-                              getFormattedDate(
-                                new Date(d.issuanceDate),
-                                "short"
-                              )!
+                            {new Date(d.issuanceDate).toLocaleDateString(
+                              "en-GB",
+                              {
+                                weekday: "short",
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              },
                             )}
                           </p>
                         </div>
@@ -922,8 +927,8 @@ const List = () => {
                                   REVIEWED_AND_FORWARD_BY_D_TO_DG)
                                 ? "Comment"
                                 : d.lastStatus === ISSUED_By_AD
-                                ? "Issued"
-                                : "Submitted"}
+                                  ? "Issued"
+                                  : "Submitted"}
                             </Button>
                           }
                           body={

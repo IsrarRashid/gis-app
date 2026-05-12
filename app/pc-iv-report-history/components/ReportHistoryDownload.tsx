@@ -1,12 +1,8 @@
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
-import {
-  convertToLocaleTimeString,
-  exportToPDFNew,
-  getFormattedDate,
-} from "@/app/utils";
-import { ReportHistory } from "./ReportNoting";
+import { exportToPDFNew, getFormattedDate } from "@/app/utils";
 import { SubmittedReport } from "../list/components/List";
+import { ReportHistory } from "./ReportNoting";
 
 interface Props {
   data: ReportHistory[];
@@ -18,7 +14,7 @@ const ReportHistoryDownload = ({ data, users, submittedReport }: Props) => {
   // ──────────── (2) Create table rows from cards ────────────
   function cardsToTableRows(
     users: ReportHistoryUser[],
-    data: ReportHistory[]
+    data: ReportHistory[],
   ): Array<Record<string, string>> {
     return data.map((d, i) => ({
       "Sr. No.": (i + 1).toString(),
@@ -30,11 +26,19 @@ const ReportHistoryDownload = ({ data, users, submittedReport }: Props) => {
         }` || "NA",
       To: users.find((u) => u.id === d.mark_to)?.fullName || "NA",
       Date:
-        `${getFormattedDate(new Date(d.mark_date), "short")} ` +
+        `${new Date(d.mark_date).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })} ` +
         "(" +
-        `${convertToLocaleTimeString(
-          new Date(d.mark_date).toLocaleTimeString()
-        )}` +
+        `${new Date(d.mark_date).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        })}
+        ` +
         ")",
       //   "Report Link": d.reportPath,
       Comments: d.remarks.replace(/\r\n?/g, "\n").substring(0, 200), // limit length if needed
@@ -66,7 +70,7 @@ const ReportHistoryDownload = ({ data, users, submittedReport }: Props) => {
               " - (GS. NO- " +
               submittedReport.gsNo +
               ") - " +
-              submittedReport.projectName
+              submittedReport.projectName,
           )
         }
       />

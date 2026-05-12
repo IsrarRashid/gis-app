@@ -118,7 +118,7 @@ const List = () => {
       [item.reportName]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredTabs(filtered);
   };
@@ -153,7 +153,15 @@ const List = () => {
   //   exportDataToExcel(
   //     data,
   //     headers,
-  //     `${plan.nameOfVisit} ${getFormattedDate(new Date(), "short")}.xlsx`
+  //     `${plan.nameOfVisit} ${new Date().toLocaleDateString(
+  //   "en-GB",
+  //   {
+  //     weekday: "short",
+  //     day: "2-digit",
+  //     month: "short",
+  //     year: "numeric",
+  //   },
+  // )}.xlsx`
   //   );
   // };
 
@@ -279,7 +287,7 @@ const List = () => {
                     exportToExcel(
                       data,
                       tabs.find((tab) => tab.reportId === isActiveTab)
-                        ?.reportName
+                        ?.reportName,
                     )
                   }
                 />

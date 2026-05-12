@@ -96,9 +96,12 @@ const DetailAnalysis = ({ data }: { data: DetailedAnalysis[] }) => {
                           borderBottom: "1px solid rgba(159, 159, 159, 0.75)",
                         }}
                       >
-                        {addDayToFormattedDate(
-                          getFormattedDate(new Date(d.visitDate))
-                        )}
+                        {new Date(d.visitDate).toLocaleDateString("en-GB", {
+                          weekday: "short",
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
                       </td>
                       <td
                         className="text-center"

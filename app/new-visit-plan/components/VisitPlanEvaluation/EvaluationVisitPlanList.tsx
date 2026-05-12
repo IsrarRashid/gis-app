@@ -328,8 +328,18 @@ const EvaluationVisitPlanList = ({
         )?.label,
         "Evaluator Name": item.meOfficerName,
         Section: item.section,
-        "Date From": addDayToFormattedDate(getFormattedDate(item.dateFrom)),
-        "Date To": addDayToFormattedDate(getFormattedDate(item.dateTo)),
+        "Date From": new Date(item.dateFrom).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
+        "Date To": new Date(item.dateTo).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
         "Driver Name": item.driverName,
         "Vehicle Number": item.vehicleNumber,
       };

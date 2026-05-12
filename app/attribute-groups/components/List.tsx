@@ -61,7 +61,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
       [item.id.toString(), item.name, item.parentName]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -190,11 +190,21 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
                   <TableData className="text-center">{d.sortId}</TableData>
                   <TableData>
                     {d.createdAt &&
-                      getFormattedDate(new Date(d.createdAt), "short")}
+                      new Date(d.createdAt).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                   </TableData>
                   <TableData>
                     {d.updatedAt &&
-                      getFormattedDate(new Date(d.updatedAt), "short")}
+                      new Date(d.updatedAt).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                   </TableData>
                   <TableData className="text-center">
                     <GroupingForm

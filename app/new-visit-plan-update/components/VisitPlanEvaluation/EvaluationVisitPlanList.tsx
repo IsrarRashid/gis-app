@@ -113,7 +113,7 @@ const EvaluationVisitPlanList = ({
       ]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -152,7 +152,7 @@ const EvaluationVisitPlanList = ({
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const saveFormsData = async (formsData: COUTempTourPlan[]) => {
@@ -163,7 +163,7 @@ const EvaluationVisitPlanList = ({
     try {
       const response = await apiClient.post(
         `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-or-update`,
-        filteredFormsData
+        filteredFormsData,
       );
 
       toast.success(response.data.message);
@@ -222,7 +222,7 @@ const EvaluationVisitPlanList = ({
       setSubmitting(true);
       const response = await apiClient.post(
         `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-visit`,
-        modifiedFormData
+        modifiedFormData,
       );
       console.log(response);
       toast.success(response.data.responseMessage);
@@ -262,12 +262,22 @@ const EvaluationVisitPlanList = ({
         Sectors: item.sectors,
         Cost: item.cost,
         "Scheme Type": typeStatues.find(
-          (type) => Number(type.value) === item.type
+          (type) => Number(type.value) === item.type,
         )?.label,
         "Evaluator Name": item.meOfficerName,
         Section: item.section,
-        "Date From": addDayToFormattedDate(getFormattedDate(item.dateFrom)),
-        "Date To": addDayToFormattedDate(getFormattedDate(item.dateTo)),
+        "Date From": new Date(item.dateFrom).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
+        "Date To": new Date(item.dateTo).toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
         "Driver Name": item.driverName,
         "Vehicle Number": item.vehicleNumber,
       };
@@ -283,7 +293,7 @@ const EvaluationVisitPlanList = ({
     // Write the workbook to a file
     XLSX.writeFile(
       workbook,
-      `Generated Visit Plans ${new Date().toLocaleDateString()}.xlsx`
+      `Generated Visit Plans ${new Date().toLocaleDateString()}.xlsx`,
     ); // Changed filename
   };
 
@@ -293,7 +303,7 @@ const EvaluationVisitPlanList = ({
       // remove the deleted item from the data array
       setRefresh((prev) => !prev);
       setFormsData((prevData) =>
-        prevData.filter((item) => item !== undefined && item.id !== tempId)
+        prevData.filter((item) => item !== undefined && item.id !== tempId),
       );
       toast.success(deleteMessage);
       console.log("item deleted successfully");
@@ -359,7 +369,7 @@ const EvaluationVisitPlanList = ({
             options={[defaultNumberOption, ...tourNames]}
             id="tours"
             onChangeSingle={(
-              newValue: SingleValue<{ value: string; label: string }>
+              newValue: SingleValue<{ value: string; label: string }>,
             ) => {
               if (newValue) {
                 setVisitPlanGroup(Number(newValue.value));
