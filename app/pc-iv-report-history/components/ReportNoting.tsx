@@ -368,7 +368,7 @@ const ReportNoting = ({
                 className={`${
                   viewPdf ? "col-lg-6" : "col-lg-12"
                 } col-md-12 col-sm-12`}
-                style={{ height: "85%", overflowY: "scroll" }}
+                style={{ height: "85%", overflowY: "auto" }}
               >
                 <Button
                   className="btn btn-primary"

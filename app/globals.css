@@ -444,6 +444,18 @@ select {
   font-size: 15px; /* or whatever size */
 }
 
+.placeholder-scaled::placeholder {
+  color: #62748e; /* placeholder color */
+  font-weight: 400; /* make it bold */
+  font-size: 183.74px; /* or whatever size */
+}
+
+.placeholder-scaled-down::placeholder {
+  color: #62748e; /* placeholder color */
+  font-weight: 400; /* make it bold */
+  font-size: 9.57px; /* or whatever size */
+}
+
 .dynamic-font {
   font-size: clamp(12px, 2vw, 18px);
   white-space: nowrap;

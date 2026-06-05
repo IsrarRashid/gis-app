@@ -30,7 +30,7 @@ import WorkInProgress from "./WorkInProgress";
 
 const DistributedColumnChart = dynamic(
   () => import("./DistributedColumnChart"),
-  { ssr: false }
+  { ssr: false },
 );
 
 const SimplePieChart = dynamic(() => import("./SimplePieChart"), {
@@ -92,7 +92,7 @@ export interface StaffTrackings {
       longitude: string;
       visit_status: string;
       createdAt: string;
-    }
+    },
   ];
 }
 
@@ -131,7 +131,7 @@ export interface Attributes {
       createdAt: string;
       updatedAt: string;
       label: string;
-    }
+    },
   ];
   value: string;
   values: [
@@ -149,7 +149,7 @@ export interface Attributes {
       remarks: string;
       latitude: string;
       longitude: string;
-    }
+    },
   ];
   evaluationFormula: string;
   evaluationFormulaWeightage: number;
@@ -226,13 +226,13 @@ const ProjectDetailsDashboard = ({ data }: Props) => {
       const spi: string | undefined = data?.groups
         .find((group) => group.name === "Earned Value Analysis")
         ?.attributes.find((attribute) =>
-          attribute.label.toLowerCase().includes("spi")
+          attribute.label.toLowerCase().includes("spi"),
         )?.values[0]?.value;
 
       const cpi: string | undefined = data?.groups
         .find((group) => group.name === "Earned Value Analysis")
         ?.attributes.find((attribute) =>
-          attribute.label.toLowerCase().includes("cpi")
+          attribute.label.toLowerCase().includes("cpi"),
         )?.values[0]?.value;
 
       if (cpi) {
@@ -247,14 +247,14 @@ const ProjectDetailsDashboard = ({ data }: Props) => {
   const searchMonitoringRatingIndex = (
     parentGroupName: string,
     groupName: string,
-    attributeName: string
+    attributeName: string,
   ) => {
     if (data) {
       const value = data.groups
         .find((group) => group.name.toLowerCase().includes(parentGroupName))
         ?.group.find((group) => group.name.toLowerCase().includes(groupName))
         ?.attributes.find((attribute) =>
-          attribute.label.toLowerCase().includes(attributeName)
+          attribute.label.toLowerCase().includes(attributeName),
         )?.values[0]?.value;
       if (value) {
         return parseInt(value);
@@ -268,8 +268,8 @@ const ProjectDetailsDashboard = ({ data }: Props) => {
         searchMonitoringRatingIndex(
           "rating index",
           "performance",
-          "project rating"
-        )!
+          "project rating",
+        )!,
       );
       getCPIAndSPI();
     }
@@ -294,21 +294,21 @@ const ProjectDetailsDashboard = ({ data }: Props) => {
   useEffect(() => {
     if (data) {
       const filteredAttributes = data.groups.find((group) =>
-        group.name?.toLowerCase().includes("progress analysis")
+        group.name?.toLowerCase().includes("progress analysis"),
       )?.attributes[5];
 
       console.log("Filtered attributes: ", filteredAttributes);
       console.log(
         "lowercase attributes:",
-        filteredAttributes?.label.toLowerCase()
+        filteredAttributes?.label.toLowerCase(),
       );
       console.log(
         "lowercase attributes trim:",
-        filteredAttributes?.label.trim().toLowerCase()
+        filteredAttributes?.label.trim().toLowerCase(),
       );
       console.log(
         "decimal value",
-        parseFloat(filteredAttributes?.values[0]?.value!)
+        parseFloat(filteredAttributes?.values[0]?.value!),
       );
     }
   }, [data]);
@@ -326,7 +326,16 @@ const ProjectDetailsDashboard = ({ data }: Props) => {
   // }, [data]);
 
   return (
-    <div className="row m-0">
+    <div
+      className="row m-0"
+      style={
+        {
+          // transform: "scale(19.2)",
+          // transformOrigin: "top left",
+          // overflow: "visible",
+        }
+      }
+    >
       <div
         className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3"
         style={{ padding: "9px 3.5px" }}
@@ -703,7 +712,7 @@ const ProjectDetailsDashboard = ({ data }: Props) => {
                   reports={data.reports}
                   observations={
                     data.groups.find(
-                      (group) => group.name === "Observation & Recommendations"
+                      (group) => group.name === "Observation & Recommendations",
                     )!
                   }
                 />
@@ -715,7 +724,7 @@ const ProjectDetailsDashboard = ({ data }: Props) => {
                   reports={data.reports}
                   observations={
                     data.groups.find(
-                      (group) => group.name === "Observation & Recommendations"
+                      (group) => group.name === "Observation & Recommendations",
                     )!
                   }
                 />
@@ -794,12 +803,12 @@ const ProjectDetailsDashboard = ({ data }: Props) => {
                 data={data}
                 financialAnalysis={
                   data.groups.find((group) =>
-                    group.name.toLowerCase().includes("financial analysis")
+                    group.name.toLowerCase().includes("financial analysis"),
                   )!
                 }
                 projectProfile={
                   data.groups.find((group) =>
-                    group.name.toLowerCase().includes("project profile")
+                    group.name.toLowerCase().includes("project profile"),
                   )!
                 }
               />
@@ -810,12 +819,12 @@ const ProjectDetailsDashboard = ({ data }: Props) => {
                   data={data}
                   financialAnalysis={
                     data.groups.find((group) =>
-                      group.name.toLowerCase().includes("financial analysis")
+                      group.name.toLowerCase().includes("financial analysis"),
                     )!
                   }
                   projectProfile={
                     data.groups.find((group) =>
-                      group.name.toLowerCase().includes("project profile")
+                      group.name.toLowerCase().includes("project profile"),
                     )!
                   }
                 />

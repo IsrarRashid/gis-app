@@ -523,6 +523,10 @@ const List = ({
     setSearchData(filtered);
   };
 
+  useEffect(() => {
+    console.log("searchData", searchData);
+  }, [searchData]);
+
   // 🔍 Search handler
   const handleSearchIssuedReports = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
@@ -912,21 +916,30 @@ const List = ({
                         <div className="col">
                           <p className="mb-2 fs18px fw-bold">Submitted Date</p>
                           <p className="mb-0">
-                            {new Date(d.submittedDate).toLocaleDateString(
-                              "en-GB",
-                              {
-                                weekday: "short",
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                              },
+                            {d.submittedDate ? (
+                              <>
+                                {new Date(d.submittedDate).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    weekday: "short",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
+                                )}
+                                <br />
+                                {new Date(d.submittedDate).toLocaleTimeString(
+                                  [],
+                                  {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                  },
+                                )}
+                              </>
+                            ) : (
+                              "N/A"
                             )}
-                            <br />
-                            {new Date(d.submittedDate).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: true,
-                            })}
                           </p>
                         </div>
 
@@ -935,15 +948,17 @@ const List = ({
                           <div className="col">
                             <p className="mb-2 fs18px fw-bold">Issued Date</p>
                             <p className="mb-0">
-                              {new Date(d.issuanceDate).toLocaleDateString(
-                                "en-GB",
-                                {
-                                  weekday: "short",
-                                  day: "2-digit",
-                                  month: "short",
-                                  year: "numeric",
-                                },
-                              )}
+                              {d.issuanceDate
+                                ? new Date(d.issuanceDate).toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                      weekday: "short",
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    },
+                                  )
+                                : "N/A"}
                             </p>
                           </div>
                         )}

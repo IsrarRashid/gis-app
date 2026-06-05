@@ -825,3 +825,12 @@ export const exportDataToPDF = (
 
   doc.save(filename);
 };
+
+export function getInitials(name: string): string {
+  return name
+    .trim()
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word[0].toUpperCase())
+    .join("");
+}

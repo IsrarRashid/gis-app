@@ -294,17 +294,20 @@ const ReportNoting = ({
         const response = await apiClient.get(
           `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}&reportType=${reportType}`,
         );
-        const sorted = [...response.data.data].sort((a, b) =>
-          (b.sDate || "").localeCompare(a.sDate || ""),
-        );
+        console.log("response", response);
+        if (response.data !== null) {
+          const sorted = [...response.data.data].sort((a, b) =>
+            (b.sDate || "").localeCompare(a.sDate || ""),
+          );
 
-        setDescendingOrderReportsHistory(sorted);
-        console.log("sorted", sorted);
+          setDescendingOrderReportsHistory(sorted);
+          console.log("sorted", sorted);
 
-        const sortedAsc = [...response.data.data].sort((a, b) =>
-          (a.sDate || "").localeCompare(b.sDate || ""),
-        );
-        setAscendingOrderReportsHistory(sortedAsc);
+          const sortedAsc = [...response.data.data].sort((a, b) =>
+            (a.sDate || "").localeCompare(b.sDate || ""),
+          );
+          setAscendingOrderReportsHistory(sortedAsc);
+        }
 
         setLoading(false);
       } catch (err) {
@@ -413,7 +416,7 @@ const ReportNoting = ({
                 className={`${
                   viewPdf ? "col-lg-6" : "col-lg-12"
                 } col-md-12 col-sm-12`}
-                style={{ height: "85%", overflowY: "scroll" }}
+                style={{ height: "85%", overflowY: "auto" }}
               >
                 <Button
                   className="btn btn-primary"

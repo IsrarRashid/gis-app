@@ -51,21 +51,21 @@ const BgChanger = () => {
     isImagePath
       ? "/images/bg2.png"
       : pathSegment === "dashboard-to" || pathSegment === "vehicle-tracking"
-      ? "#7ABEF0"
-      : currentPath.startsWith("/projects-live-view/project-details-dashboard")
-      ? "#141518"
-      : !allPagesPath.some((path) => currentPath.startsWith(path))
-      ? "#fff"
-      : currentType && pathSegment === "charts"
-      ? "#fff"
-      : !currentType && pathSegment === "charts"
-      ? "#fff"
-      : currentType && pathSegment !== "charts"
-      ? "#2377B6"
-      : !currentType && pathSegment !== "charts"
-      ? "#CFE6F8"
-      : "",
-    isImagePath // true if it's an image, false if it's a color
+        ? "#7ABEF0"
+        : currentPath.startsWith("/projects-live-view")
+          ? "#141518"
+          : !allPagesPath.some((path) => currentPath.startsWith(path))
+            ? "#fff"
+            : currentType && pathSegment === "charts"
+              ? "#fff"
+              : !currentType && pathSegment === "charts"
+                ? "#fff"
+                : currentType && pathSegment !== "charts"
+                  ? "#2377B6"
+                  : !currentType && pathSegment !== "charts"
+                    ? "#CFE6F8"
+                    : "",
+    isImagePath, // true if it's an image, false if it's a color
   );
 
   return <></>; // empty component just to trigger hook

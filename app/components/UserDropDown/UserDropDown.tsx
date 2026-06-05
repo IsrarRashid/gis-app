@@ -53,6 +53,7 @@ const UserDropDown = () => {
     Cookies.remove("deptUserFirstName");
     Cookies.remove("deptUserLastName");
     setShow(false);
+    window.location.href = "/login";
   };
 
   useEffect(() => {
@@ -99,7 +100,7 @@ const UserDropDown = () => {
     const handleSubmit = async (userId: number) => {
       try {
         const response = await apiClient.get(
-          `${FEEDBACK_API}/GetFeedBackByReportingTo?reportingTo=${userId}`
+          `${FEEDBACK_API}/GetFeedBackByReportingTo?reportingTo=${userId}`,
         );
         setData(response.data.data);
       } catch (err) {
@@ -225,7 +226,11 @@ const UserDropDown = () => {
             <div className="pt-0 pb-0 ps-3 pe-3">
               <div className="dropdown-divider m-0"></div>
             </div>
-            <Link href="/login" className="fw-normal" onClick={handleLogout}>
+            <Button
+              onClick={handleLogout}
+              className="btn text-nowrap fs12px fw-normal shadow-none text-start w-100"
+              style={{ padding: "6px 16px" }}
+            >
               <Image
                 src={signOut}
                 alt="signOut"
@@ -234,7 +239,7 @@ const UserDropDown = () => {
                 className="me-2 mb-1"
               />
               Sign out
-            </Link>
+            </Button>
           </div>
         </div>
       ) : !userName ? (
