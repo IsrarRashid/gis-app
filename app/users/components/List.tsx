@@ -22,6 +22,7 @@ import TableWrapper from "@/app/components/Table/TableWrapper";
 import useRoles from "@/app/hooks/useRoles";
 import Link from "next/link";
 import GroupingForm from "./GroupingForm";
+import Image from "next/image";
 
 interface ListProps {
   refresh: boolean;
@@ -37,6 +38,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   const { data, setData, setError, isLoading } = useAuthentication({
     refresh,
   });
+  console.log("data", data);
   const [isPageLimit, setPageLimit] = useState(false);
   const { data: roles } = useRoles({ refresh });
   const deleteMessage = "Deleted Successfully!";
@@ -58,7 +60,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
       [item.userName, item.fullName, item.designation, item.email]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -81,7 +83,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
       await apiClient.delete(`${DELETE_USER_API}?UserName=${userName}`);
       // remove the deleted item from the data array
       setData((prevData) =>
-        prevData.filter((item) => item.userName !== userName)
+        prevData.filter((item) => item.userName !== userName),
       );
       notifyCreate(deleteMessage);
       console.log("item deleted successfully");
@@ -120,7 +122,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   return (
@@ -210,24 +212,24 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                         src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
                         alt="picture"
                       /> */}
-                        {/* <Image
-                        className="rounded-circle shadow-sm"
-                        style={{
-                          objectFit: "cover",
-                          objectPosition: "center top",
-                          width: "70px",
-                          height: "70px",
-                        }}
-                        width={70}
-                        height={70}
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
-                        alt="picture"
-                      /> */}
-                        <Avatar
+                        <Image
+                          className="rounded-circle shadow-sm"
+                          style={{
+                            objectFit: "cover",
+                            objectPosition: "center top",
+                            width: "70px",
+                            height: "70px",
+                          }}
+                          width={70}
+                          height={70}
+                          src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
+                          alt="picture"
+                        />
+                        {/* <Avatar
                           src={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.picture}`}
                           width={70}
                           height={70}
-                        />
+                        /> */}
                       </Link>
                     )}
                   </TableData>
