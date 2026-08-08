@@ -282,14 +282,21 @@ const GISMenu = ({
       //   icon: visitSchedule,
       //   backgroundColor: "linear-gradient(to bottom right, #28A897 , violet)",
       // },
+      {
+        name: "Project Document Names",
+        nameId: "project-document-names",
+        link: "/project-document-names",
+        icon: process,
+        backgroundColor: "linear-gradient(to bottom right, #a8118f , #11a89b)",
+      },
     ];
 
     if (rights) {
       // Filter data based on rights
       const filteredData = data.filter((item) =>
         rights.some(
-          (right: string) => right.toLowerCase() === item.nameId.toLowerCase()
-        )
+          (right: string) => right.toLowerCase() === item.nameId.toLowerCase(),
+        ),
       );
       console.log("rights filtered", filteredData);
       setFilteredMenu(filteredData);
@@ -358,7 +365,7 @@ const GISMenu = ({
                     // style={{ borderRadius: "10px" }}
                     whileTap={{ scale: 0.9 }}
                     whileHover={{
-                      scale: 1.1,
+                      scale: 1.05,
                       transition: { duration: 0.2 },
                       // boxShadow: "0px 2.5px 3px .5px rgba(0, 0, 0, 0.6)",
                     }}

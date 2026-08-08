@@ -547,6 +547,7 @@ export function addSpaceToCamelCase(text: string) {
 }
 
 import * as XLSX from "xlsx";
+import { OptionType } from "./components/Form/CustomSelect";
 
 export const downloadReportAnalysisToExcel = (
   data: any,
@@ -729,6 +730,7 @@ export const allPagesPath = [
   "/charts",
   "/pc-iv-report-history",
   "/director-reports",
+  "/document-names",
 ];
 
 // for new-visit-plan starts
@@ -834,3 +836,8 @@ export function getInitials(name: string): string {
     .map((word) => word[0].toUpperCase())
     .join("");
 }
+
+export const booleanOptions: OptionType[] = [
+  { label: "True", value: "true" },
+  { label: "False", value: "false" },
+];
