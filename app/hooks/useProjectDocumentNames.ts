@@ -1,5 +1,5 @@
 import { PROJECT_DOCUMENT_NAMES_API } from "../APIs";
-import { ProjectDocumentName } from "../document-names/components/Form";
+import { ProjectDocumentName } from "../project-document-names/components/Form";
 import useData from "./useData";
 
 interface Props {

@@ -3,7 +3,7 @@ import ListWrapper from "@/app/components/ListWrapper";
 import { useState } from "react";
 import List from "./List";
 
-const DocumentNames = () => {
+const ProjectDocumentNames = () => {
   const [refresh, setRefresh] = useState(false);
 
   return (
@@ -13,4 +13,4 @@ const DocumentNames = () => {
   );
 };
 
-export default DocumentNames;
+export default ProjectDocumentNames;
