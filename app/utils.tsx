@@ -730,7 +730,7 @@ export const allPagesPath = [
   "/charts",
   "/pc-iv-report-history",
   "/director-reports",
-  "/document-names",
+  "/project-document-names",
 ];
 
 // for new-visit-plan starts

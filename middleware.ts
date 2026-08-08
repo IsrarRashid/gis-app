@@ -65,7 +65,7 @@ export function middleware(request: NextRequest) {
   console.log("Current pathname:", pathname);
 
   const hasRequiredRight = rights.some((right) =>
-    requiredRight.startsWith(right)
+    requiredRight.startsWith(right),
   );
 
   if (!hasRequiredRight) {
@@ -126,5 +126,6 @@ export const config = {
     "/process",
     "/projects-live-view/:path*",
     "/pc-iv-report-history",
+    "/project-document-names/:path*",
   ],
 };
