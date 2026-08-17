@@ -11,3 +11,4 @@ export const ISSUED = 6;
 
 export const DE_USER_ID = 27;
 export const DDE_USER_ID = 29;
+export const DDE2_USER_ID = 85;

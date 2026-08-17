@@ -68,7 +68,7 @@ const List = () => {
   const [data, setData] = useState<SubmittedReport[]>([]);
   const [issuedReportCount, setIssuedReportCount] = useState<number>(0);
 
-  const [userId, setUserId] = useState<number>();
+  const [userId, setUserId] = useState<number | null>(null);
   const [role, setRole] = useState<string>();
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [selectedTabLabel, setSelectedLabel] = useState<string>("");
@@ -91,10 +91,12 @@ const List = () => {
     const role = Cookies.get("role");
 
     if (id) {
-      const convertedId = parseInt(id);
-      setUserId(convertedId);
+      setUserId(Number(id));
     }
-    if (role) setRole(role.toLowerCase());
+
+    if (role) {
+      setRole(role.toLowerCase());
+    }
   }, []);
 
   // State for filtered data
@@ -143,7 +145,7 @@ const List = () => {
       const deputyDirectors = officers.filter(
         (officer) => officer.roleName === "Deputy Director",
       );
-      console.log(deputyDirectors);
+      console.log("deputyDirectors", deputyDirectors);
       if (deputyDirectors) setdeputyDirectors(deputyDirectors);
 
       const directors = officers.filter(
@@ -164,6 +166,8 @@ const List = () => {
   const [tabs, setTabs] = useState<Tab[]>();
 
   useEffect(() => {
+    if (!data || userId === null) return;
+
     const tabs = [
       // {
       // id: 0,
@@ -387,7 +391,7 @@ const List = () => {
         let count = 0;
         let filteredData: SubmittedReport[] = [];
 
-        if (tab.reportSubmittedFrom) {
+        if (tab.reportSubmittedFrom !== undefined) {
           filteredData = data.filter(
             (d) =>
               d.status === tab.status &&
@@ -395,7 +399,7 @@ const List = () => {
               d.isFocalPerson === true,
           );
           count = filteredData.length;
-        } else if (tab.reportSubmittedTo) {
+        } else if (tab.reportSubmittedTo !== undefined) {
           filteredData = data.filter(
             (d) =>
               d.status === tab.status &&
@@ -409,7 +413,7 @@ const List = () => {
       });
       if (updatedTabs) setTabs(updatedTabs);
     }
-  }, [data]);
+  }, [data, userId]);
 
   useEffect(() => {
     if (tabs) {

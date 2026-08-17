@@ -16,6 +16,7 @@ import { z } from "zod";
 import { SubmittedReport } from "../list/components/List";
 import {
   APPROVED,
+  DDE2_USER_ID,
   DDE_USER_ID,
   DE_USER_ID,
   REFERBACK,
@@ -760,21 +761,18 @@ const ReportNoting = ({
                                               {officer.designation}
                                             </option>
                                           ))} */}
-                                          <option
-                                            value={
-                                              deputyDirectors?.find(
-                                                (dDirector) =>
-                                                  dDirector.id === DDE_USER_ID,
-                                              )?.id
-                                            }
-                                          >
-                                            {
-                                              deputyDirectors?.find(
-                                                (dDirector) =>
-                                                  dDirector.id === DDE_USER_ID,
-                                              )?.designation
-                                            }
-                                          </option>
+
+                                          {deputyDirectors
+                                            ?.filter(
+                                              (dd) =>
+                                                dd.id === DDE_USER_ID ||
+                                                dd.id === DDE2_USER_ID,
+                                            )
+                                            ?.map((op) => (
+                                              <option value={op?.id}>
+                                                {op?.designation}
+                                              </option>
+                                            ))}
                                         </>
                                       ) : (
                                         <>
