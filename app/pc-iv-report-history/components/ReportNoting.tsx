@@ -769,7 +769,10 @@ const ReportNoting = ({
                                                 dd.id === DDE2_USER_ID,
                                             )
                                             ?.map((op) => (
-                                              <option value={op?.id}>
+                                              <option
+                                                key={op?.id}
+                                                value={op?.id}
+                                              >
                                                 {op?.designation}
                                               </option>
                                             ))}
