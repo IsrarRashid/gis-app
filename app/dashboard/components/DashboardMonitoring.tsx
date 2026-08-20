@@ -39,10 +39,10 @@ import FilterButtons from "./FilterButtons";
 import FinancialSlab from "./FinancialSlab";
 import MyMap from "./GoogleMap/MyMap";
 import ProjectsTable, { ProjectsList } from "./ProjectsTable/ProjectsTable";
+import useProjectsTableUtils from "./ProjectsTable/useProjectsTableUtils";
 import ReportReview from "./ReportReview";
 import SimplePieChart from "./SimplePieChart";
 import VisitsPlan from "./VisitsPlan";
-import useProjectsTableUtils from "./ProjectsTable/useProjectsTableUtils";
 
 const Menu = dynamic(() => import("@/app/components/Menu"), { ssr: false });
 
@@ -127,6 +127,7 @@ const DashboardMonitoring = () => {
   useEffect(() => {
     const userRole = Cookies.get("role");
     const departmentId = Cookies.get("departmentId");
+    const userId = Cookies.get("userId");
     if (userRole) setRole(userRole);
     if (departmentId) setDepartmentId(parseInt(departmentId));
   }, []);
@@ -393,126 +394,62 @@ const DashboardMonitoring = () => {
 
   return (
     <DashboardWrapper>
-      <div className={`row ${lexend.className} m-0`}>
-        <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
-          <CustomModal
-            HeaderRightPos={0}
-            HeaderTopPos={17}
-            buttonColumn="col p-0"
-            isFullscreen={true}
-            size="xl"
-            modalId={"TotalProjects"}
-            allowOpen={data?.totalProjects === 0 ? false : true}
-            button={
-              <Button
-                className="btn p-0 pe-1 shadow-none w-100"
-                onClick={() => getProjectsList("TotalProject")}
-                disabled={data?.totalProjects === 0}
-              >
-                <Menu
-                  background="linear-gradient(to bottom right, #40DDFF , #14BAE3, #13B1E6,#11AADF,#0B98C5)"
-                  icon="/icons/eyeBold.svg"
-                  value={data ? data.totalProjects : 0}
-                  label={
-                    activeFilter === "cmInitiative"
-                      ? "CM Initiatives"
-                      : "ADP Projects"
-                  }
-                  showTides={false}
-                  showArrow={true}
-                  textWrap={false}
-                />
-              </Button>
-            }
-            body={
-              <>
-                <div className="container-fluid border-0 p-0">
-                  {projectsData && filteredCMADPKeys ? (
-                    <ProjectsTable
-                      rowCountOptions={rowCountOptions}
-                      districtOptions={districtOptions}
-                      sectorOptions={sectorOptions}
-                      userOptions={userOptions}
-                      keys={filteredCMADPKeys}
+      {role.toLowerCase() === "dgme reports" ? (
+        <div className="col p-0">
+          <ReportReview />
+        </div>
+      ) : (
+        <>
+          <div className={`row ${lexend.className} m-0`}>
+            <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"TotalProjects"}
+                allowOpen={data?.totalProjects === 0 ? false : true}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("TotalProject")}
+                    disabled={data?.totalProjects === 0}
+                  >
+                    <Menu
+                      background="linear-gradient(to bottom right, #40DDFF , #14BAE3, #13B1E6,#11AADF,#0B98C5)"
+                      icon="/icons/eyeBold.svg"
+                      value={data ? data.totalProjects : 0}
                       label={
                         activeFilter === "cmInitiative"
                           ? "CM Initiatives"
                           : "ADP Projects"
                       }
-                      projectsData={openUtilizationData}
-                      setProjectsData={setProjectsData}
-                      allowLink={false}
-                      role={role}
-                    />
-                  ) : (
-                    <Loader />
-                  )}
-                </div>
-              </>
-            }
-          />
-        </div>
-        <div className="col-12 col-sm-6 col-md-6 col-lg-4 p-0">
-          <div
-            className="col px-1 py-0 me-1 text-center mb-2"
-            style={{
-              background: "rgba(12, 140, 233,.2)",
-              borderRadius: "10px",
-              border: "1px solid rgba(12, 140, 233,.4)",
-            }}
-          >
-            <p className="mb-0 text-white fs14px">Projects Being Monitored</p>
-            <div className="row m-0 d-flex">
-              <CustomModal
-                HeaderRightPos={0}
-                HeaderTopPos={17}
-                buttonColumn="col p-0"
-                isFullscreen={true}
-                size="xl"
-                modalId={"noOfProjects"}
-                allowOpen={data?.noofProject === 0 ? false : true}
-                button={
-                  <Button
-                    className="position-relative btn p-0 pe-1 shadow-none w-100"
-                    onClick={() => getProjectsList("NoOfProject")}
-                    disabled={data?.noofProject === 0}
-                  >
-                    <div
-                      className={`position-absolute ${styles.menuDiv}`}
-                      style={{
-                        background:
-                          "linear-gradient( rgba(163, 12, 233, 0), rgba(163, 12, 233, 0.2),rgba(163, 12, 233, 0.2))",
-                        borderRadius: "10px",
-                        width: "98%",
-                        height: "92%",
-                      }}
-                    ></div>
-                    <Menu
-                      classNames={styles.noOfProjectMenu}
-                      icon="/icons/cubes.svg"
-                      value={data ? data.noofProject : 0}
-                      label="No. of Projects"
-                      showTides={true}
+                      showTides={false}
                       showArrow={true}
                       textWrap={false}
-                      isGrouped={true}
                     />
                   </Button>
                 }
                 body={
                   <>
                     <div className="container-fluid border-0 p-0">
-                      {projectsData && filteredNoOfProjectsKeys ? (
+                      {projectsData && filteredCMADPKeys ? (
                         <ProjectsTable
                           rowCountOptions={rowCountOptions}
                           districtOptions={districtOptions}
                           sectorOptions={sectorOptions}
                           userOptions={userOptions}
-                          role={role}
-                          keys={filteredNoOfProjectsKeys}
-                          label="Projects"
-                          projectsData={projectsData}
+                          keys={filteredCMADPKeys}
+                          label={
+                            activeFilter === "cmInitiative"
+                              ? "CM Initiatives"
+                              : "ADP Projects"
+                          }
+                          projectsData={openUtilizationData}
                           setProjectsData={setProjectsData}
+                          allowLink={false}
+                          role={role}
                         />
                       ) : (
                         <Loader />
@@ -521,45 +458,173 @@ const DashboardMonitoring = () => {
                   </>
                 }
               />
+            </div>
+            <div className="col-12 col-sm-6 col-md-6 col-lg-4 p-0">
+              <div
+                className="col px-1 py-0 me-1 text-center mb-2"
+                style={{
+                  background: "rgba(12, 140, 233,.2)",
+                  borderRadius: "10px",
+                  border: "1px solid rgba(12, 140, 233,.4)",
+                }}
+              >
+                <p className="mb-0 text-white fs14px">
+                  Projects Being Monitored
+                </p>
+                <div className="row m-0 d-flex">
+                  <CustomModal
+                    HeaderRightPos={0}
+                    HeaderTopPos={17}
+                    buttonColumn="col p-0"
+                    isFullscreen={true}
+                    size="xl"
+                    modalId={"noOfProjects"}
+                    allowOpen={data?.noofProject === 0 ? false : true}
+                    button={
+                      <Button
+                        className="position-relative btn p-0 pe-1 shadow-none w-100"
+                        onClick={() => getProjectsList("NoOfProject")}
+                        disabled={data?.noofProject === 0}
+                      >
+                        <div
+                          className={`position-absolute ${styles.menuDiv}`}
+                          style={{
+                            background:
+                              "linear-gradient( rgba(163, 12, 233, 0), rgba(163, 12, 233, 0.2),rgba(163, 12, 233, 0.2))",
+                            borderRadius: "10px",
+                            width: "98%",
+                            height: "92%",
+                          }}
+                        ></div>
+                        <Menu
+                          classNames={styles.noOfProjectMenu}
+                          icon="/icons/cubes.svg"
+                          value={data ? data.noofProject : 0}
+                          label="No. of Projects"
+                          showTides={true}
+                          showArrow={true}
+                          textWrap={false}
+                          isGrouped={true}
+                        />
+                      </Button>
+                    }
+                    body={
+                      <>
+                        <div className="container-fluid border-0 p-0">
+                          {projectsData && filteredNoOfProjectsKeys ? (
+                            <ProjectsTable
+                              rowCountOptions={rowCountOptions}
+                              districtOptions={districtOptions}
+                              sectorOptions={sectorOptions}
+                              userOptions={userOptions}
+                              role={role}
+                              keys={filteredNoOfProjectsKeys}
+                              label="Projects"
+                              projectsData={projectsData}
+                              setProjectsData={setProjectsData}
+                            />
+                          ) : (
+                            <Loader />
+                          )}
+                        </div>
+                      </>
+                    }
+                  />
+                  <CustomModal
+                    buttonColumn="col p-0"
+                    HeaderRightPos={0}
+                    HeaderTopPos={17}
+                    isFullscreen={true}
+                    size="xl"
+                    modalId={"noOfVisits"}
+                    allowOpen={data?.monitoredProjects === 0 ? false : true}
+                    button={
+                      <Button
+                        className="position-relative btn p-0 shadow-none w-100"
+                        onClick={() => getProjectsList("BeingMonitored")}
+                        disabled={data?.monitoredProjects === 0}
+                      >
+                        <div
+                          className={`position-absolute ${styles.menuDiv}`}
+                          style={{
+                            background:
+                              "linear-gradient( rgba(12, 140, 233, 0), rgba(12, 140, 233, 0.2),rgba(12, 140, 233, 0.2))",
+                            borderRadius: "10px",
+                            width: "100%",
+                            height: "92%",
+                          }}
+                        ></div>
+                        <Menu
+                          classNames={styles.noOfVisitsMenu}
+                          icon="/icons/archery.svg"
+                          value={data ? data.monitoredProjects : 0}
+                          label="No. of Visits"
+                          showTides={true}
+                          showArrow={true}
+                          textWrap={false}
+                          isGrouped={true}
+                        />
+                      </Button>
+                    }
+                    body={
+                      <>
+                        <div className="container-fluid p-0">
+                          {projectsData && filteredKeys ? (
+                            <ProjectsTable
+                              rowCountOptions={rowCountOptions}
+                              districtOptions={districtOptions}
+                              sectorOptions={sectorOptions}
+                              userOptions={userOptions}
+                              keys={filteredKeys}
+                              label="Visits"
+                              projectsData={projectsData}
+                              setProjectsData={setProjectsData}
+                              role={role}
+                            />
+                          ) : (
+                            <Loader />
+                          )}
+                        </div>
+                      </>
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
               <CustomModal
-                buttonColumn="col p-0"
                 HeaderRightPos={0}
                 HeaderTopPos={17}
+                buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
-                modalId={"noOfVisits"}
-                allowOpen={data?.monitoredProjects === 0 ? false : true}
+                modalId={"Good"}
+                allowOpen={
+                  data && data.defineLimitProjects === 0 ? false : true
+                }
                 button={
                   <Button
-                    className="position-relative btn p-0 shadow-none w-100"
-                    onClick={() => getProjectsList("BeingMonitored")}
-                    disabled={data?.monitoredProjects === 0}
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("OnTrack")}
+                    disabled={data && data.defineLimitProjects === 0}
                   >
-                    <div
-                      className={`position-absolute ${styles.menuDiv}`}
-                      style={{
-                        background:
-                          "linear-gradient( rgba(12, 140, 233, 0), rgba(12, 140, 233, 0.2),rgba(12, 140, 233, 0.2))",
-                        borderRadius: "10px",
-                        width: "100%",
-                        height: "92%",
-                      }}
-                    ></div>
                     <Menu
-                      classNames={styles.noOfVisitsMenu}
-                      icon="/icons/archery.svg"
-                      value={data ? data.monitoredProjects : 0}
-                      label="No. of Visits"
+                      background="rgba(45, 199, 84, 0.35)"
+                      outline="1px solid rgba(50, 179, 52, 0.4)"
+                      icon="/icons/doubleTick.svg"
+                      value={data ? data.defineLimitProjects : 0}
+                      label="Good Reports"
                       showTides={true}
+                      tideOneImage="/images/tideOneGreen.png"
+                      tideTwoImage="/images/tideTwoGreen.png"
                       showArrow={true}
                       textWrap={false}
-                      isGrouped={true}
                     />
                   </Button>
                 }
                 body={
                   <>
-                    <div className="container-fluid p-0">
+                    <div className="container-fluid border-0 p-0">
                       {projectsData && filteredKeys ? (
                         <ProjectsTable
                           rowCountOptions={rowCountOptions}
@@ -567,7 +632,7 @@ const DashboardMonitoring = () => {
                           sectorOptions={sectorOptions}
                           userOptions={userOptions}
                           keys={filteredKeys}
-                          label="Visits"
+                          label="Good Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           role={role}
@@ -580,537 +645,495 @@ const DashboardMonitoring = () => {
                 }
               />
             </div>
-          </div>
-        </div>
-        <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
-          <CustomModal
-            HeaderRightPos={0}
-            HeaderTopPos={17}
-            buttonColumn="col p-0"
-            isFullscreen={true}
-            size="xl"
-            modalId={"Good"}
-            allowOpen={data && data.defineLimitProjects === 0 ? false : true}
-            button={
-              <Button
-                className="btn p-0 pe-1 shadow-none w-100"
-                onClick={() => getProjectsList("OnTrack")}
-                disabled={data && data.defineLimitProjects === 0}
-              >
-                <Menu
-                  background="rgba(45, 199, 84, 0.35)"
-                  outline="1px solid rgba(50, 179, 52, 0.4)"
-                  icon="/icons/doubleTick.svg"
-                  value={data ? data.defineLimitProjects : 0}
-                  label="Good Reports"
-                  showTides={true}
-                  tideOneImage="/images/tideOneGreen.png"
-                  tideTwoImage="/images/tideTwoGreen.png"
-                  showArrow={true}
-                  textWrap={false}
-                />
-              </Button>
-            }
-            body={
-              <>
-                <div className="container-fluid border-0 p-0">
-                  {projectsData && filteredKeys ? (
-                    <ProjectsTable
-                      rowCountOptions={rowCountOptions}
-                      districtOptions={districtOptions}
-                      sectorOptions={sectorOptions}
-                      userOptions={userOptions}
-                      keys={filteredKeys}
-                      label="Good Projects"
-                      projectsData={projectsData}
-                      setProjectsData={setProjectsData}
-                      role={role}
+            <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"Average"}
+                allowOpen={
+                  data && data.needConsidrationProjects === 0 ? false : true
+                }
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("OffTrack")}
+                    disabled={data && data.needConsidrationProjects === 0}
+                  >
+                    <Menu
+                      background="rgba(224, 255, 22, 0.4)"
+                      outline="1px solid rgba(232, 192, 15, 0.4)"
+                      icon="/icons/bulb.svg"
+                      value={data ? data.needConsidrationProjects : 0}
+                      label="Average Reports"
+                      showTides={true}
+                      tideOneImage="/images/tideOneYellow.png"
+                      tideTwoImage="/images/tideTwoYellow.png"
+                      showArrow={true}
+                      textWrap={false}
                     />
-                  ) : (
-                    <Loader />
-                  )}
-                </div>
-              </>
-            }
-          />
-        </div>
-        <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
-          <CustomModal
-            HeaderRightPos={0}
-            HeaderTopPos={17}
-            buttonColumn="col p-0"
-            isFullscreen={true}
-            size="xl"
-            modalId={"Average"}
-            allowOpen={
-              data && data.needConsidrationProjects === 0 ? false : true
-            }
-            button={
-              <Button
-                className="btn p-0 pe-1 shadow-none w-100"
-                onClick={() => getProjectsList("OffTrack")}
-                disabled={data && data.needConsidrationProjects === 0}
-              >
-                <Menu
-                  background="rgba(224, 255, 22, 0.4)"
-                  outline="1px solid rgba(232, 192, 15, 0.4)"
-                  icon="/icons/bulb.svg"
-                  value={data ? data.needConsidrationProjects : 0}
-                  label="Average Reports"
-                  showTides={true}
-                  tideOneImage="/images/tideOneYellow.png"
-                  tideTwoImage="/images/tideTwoYellow.png"
-                  showArrow={true}
-                  textWrap={false}
-                />
-              </Button>
-            }
-            body={
-              <>
-                <div className="container-fluid border-0 p-0">
-                  {projectsData && filteredKeys ? (
-                    <ProjectsTable
-                      rowCountOptions={rowCountOptions}
-                      districtOptions={districtOptions}
-                      sectorOptions={sectorOptions}
-                      userOptions={userOptions}
-                      keys={filteredKeys}
-                      label="Average Projects"
-                      projectsData={projectsData}
-                      setProjectsData={setProjectsData}
-                      role={role}
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredKeys ? (
+                        <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
+                          keys={filteredKeys}
+                          label="Average Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                          role={role}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"Critical"}
+                allowOpen={data && data.criticalProjects === 0 ? false : true}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("Critical")}
+                    disabled={data && data.criticalProjects === 0}
+                  >
+                    <Menu
+                      background="rgba(233, 12, 16, 0.26)"
+                      outline="1px solid rgba(233, 12, 16, 0.4)"
+                      icon="/icons/critical.svg"
+                      value={data ? data.criticalProjects : 0}
+                      label="Critical Reports"
+                      showTides={true}
+                      tideOneImage="/images/tideOneRed.png"
+                      tideTwoImage="/images/tideTwoRed.png"
+                      showArrow={true}
+                      textWrap={false}
                     />
-                  ) : (
-                    <Loader />
-                  )}
-                </div>
-              </>
-            }
-          />
-        </div>
-        <div className="col-12 col-sm-6 col-md-6 col-lg-2 p-0">
-          <CustomModal
-            HeaderRightPos={0}
-            HeaderTopPos={17}
-            buttonColumn="col p-0"
-            isFullscreen={true}
-            size="xl"
-            modalId={"Critical"}
-            allowOpen={data && data.criticalProjects === 0 ? false : true}
-            button={
-              <Button
-                className="btn p-0 pe-1 shadow-none w-100"
-                onClick={() => getProjectsList("Critical")}
-                disabled={data && data.criticalProjects === 0}
-              >
-                <Menu
-                  background="rgba(233, 12, 16, 0.26)"
-                  outline="1px solid rgba(233, 12, 16, 0.4)"
-                  icon="/icons/critical.svg"
-                  value={data ? data.criticalProjects : 0}
-                  label="Critical Reports"
-                  showTides={true}
-                  tideOneImage="/images/tideOneRed.png"
-                  tideTwoImage="/images/tideTwoRed.png"
-                  showArrow={true}
-                  textWrap={false}
-                />
-              </Button>
-            }
-            body={
-              <>
-                <div className="container-fluid border-0 p-0">
-                  {projectsData && filteredKeys ? (
-                    <ProjectsTable
-                      rowCountOptions={rowCountOptions}
-                      districtOptions={districtOptions}
-                      sectorOptions={sectorOptions}
-                      userOptions={userOptions}
-                      keys={filteredKeys}
-                      label="Critical Projects"
-                      projectsData={projectsData}
-                      setProjectsData={setProjectsData}
-                      role={role}
-                    />
-                  ) : (
-                    <Loader />
-                  )}
-                </div>
-              </>
-            }
-          />
-        </div>
-      </div>
-      {role !== "Special Role" && (
-        <div
-          className={`row ${lexend.className} m-0 d-flex justify-content-center`}
-        >
-          <div className="col-12 col-sm-6 col-md-6 col-lg-4 p-0">
-            <div
-              className="col px-1 py-0 me-1 text-center mb-2"
-              style={{
-                background: "rgba(12, 140, 233,.2)",
-                borderRadius: "10px",
-                border: "1px solid rgba(12, 140, 233,.4)",
-              }}
-            >
-              <p className="mb-0 text-white fs14px">
-                Total Visits:&nbsp;
-                {data &&
-                  data.officerReports.scheduled + data.officerReports.completed}
-              </p>
-              <div className="row m-0 d-flex">
-                <CustomModal
-                  HeaderRightPos={0}
-                  HeaderTopPos={17}
-                  buttonColumn="col p-0"
-                  isFullscreen={true}
-                  size="xl"
-                  modalId={"scheduledVisits"}
-                  allowOpen={
-                    data?.officerReports.scheduled === 0 ? false : true
-                  }
-                  button={
-                    <Button
-                      className="position-relative btn p-0 pe-1 shadow-none w-100"
-                      onClick={() => getProjectsList("Scheduled")}
-                      disabled={data && data.officerReports.scheduled === 0}
-                    >
-                      <div
-                        className={`position-absolute ${styles.menuDiv}`}
-                        style={{
-                          background:
-                            "linear-gradient( rgba(163, 12, 233, 0), rgba(163, 12, 233, 0.2),rgba(163, 12, 233, 0.2))",
-                          borderRadius: "10px",
-                          width: "98%",
-                          height: "92%",
-                        }}
-                      ></div>
-                      <Menu
-                        classNames={styles.noOfProjectMenu}
-                        icon="/icons/material-symbols_schedule.svg"
-                        value={data ? data.officerReports.scheduled : 0}
-                        label="Scheduled visits"
-                        showTides={false}
-                        showArrow={true}
-                        textWrap={false}
-                        isGrouped={true}
-                      />
-                    </Button>
-                  }
-                  body={
-                    <>
-                      <div className="container-fluid border-0 p-0">
-                        {projectsData && filteredScheduledAndCompletedKeys ? (
-                          <ProjectsTable
-                            rowCountOptions={rowCountOptions}
-                            districtOptions={districtOptions}
-                            sectorOptions={sectorOptions}
-                            userOptions={userOptions}
-                            keys={filteredScheduledAndCompletedKeys}
-                            label="Scheduled Visits"
-                            projectsData={projectsData}
-                            setProjectsData={setProjectsData}
-                            role={role}
-                          />
-                        ) : (
-                          <Loader />
-                        )}
-                      </div>
-                    </>
-                  }
-                />
-                <CustomModal
-                  HeaderRightPos={0}
-                  HeaderTopPos={17}
-                  buttonColumn="col p-0"
-                  isFullscreen={true}
-                  size="xl"
-                  modalId={"completedVisits"}
-                  allowOpen={
-                    data?.officerReports.completed === 0 ? false : true
-                  }
-                  button={
-                    <Button
-                      className="position-relative btn p-0 shadow-none w-100"
-                      onClick={() => getProjectsList("Completed")}
-                      disabled={data?.officerReports.completed === 0}
-                    >
-                      <div
-                        className={`position-absolute ${styles.menuDiv}`}
-                        style={{
-                          background:
-                            "linear-gradient( rgba(12, 140, 233, 0), rgba(12, 140, 233, 0.2),rgba(12, 140, 233, 0.2))",
-                          borderRadius: "10px",
-                          width: "100%",
-                          height: "92%",
-                        }}
-                      ></div>
-                      <Menu
-                        classNames={styles.noOfVisitsMenu}
-                        icon="/icons/streamline-plump.svg"
-                        value={data ? data.officerReports.completed : 0}
-                        label="Completed Visits"
-                        showTides={false}
-                        showArrow={true}
-                        textWrap={false}
-                        isGrouped={true}
-                      />
-                    </Button>
-                  }
-                  body={
-                    <>
-                      <div className="container-fluid border-0 p-0">
-                        {projectsData && filteredScheduledAndCompletedKeys ? (
-                          <ProjectsTable
-                            rowCountOptions={rowCountOptions}
-                            districtOptions={districtOptions}
-                            sectorOptions={sectorOptions}
-                            userOptions={userOptions}
-                            keys={filteredScheduledAndCompletedKeys}
-                            label="Completed Visits"
-                            projectsData={projectsData}
-                            setProjectsData={setProjectsData}
-                            role={role}
-                          />
-                        ) : (
-                          <Loader />
-                        )}
-                      </div>
-                    </>
-                  }
-                />
-              </div>
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredKeys ? (
+                        <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
+                          keys={filteredKeys}
+                          label="Critical Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                          role={role}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
             </div>
           </div>
 
-          <div className="col p-0">
-            <CustomModal
-              HeaderRightPos={0}
-              HeaderTopPos={17}
-              buttonColumn="col p-0"
-              isFullscreen={true}
-              size="xl"
-              modalId={"reportsInProgress"}
-              allowOpen={data?.inProcessProjects === 0 ? false : true}
-              button={
-                <Button
-                  className="btn p-0 pe-1 shadow-none w-100"
-                  onClick={() => getProjectsList("InProcess")}
-                  disabled={data?.inProcessProjects === 0}
-                >
-                  <Menu
-                    background="rgba(12, 140, 233, 0.2)"
-                    outline="1px solid rgba(12, 140, 233, 0.4)"
-                    icon="/icons/inProcess.svg"
-                    value={data ? data.inProcessProjects : 0}
-                    label="Reports In Progress"
-                    showTides={false}
-                    showArrow={true}
-                    textWrap={false}
-                  />
-                </Button>
-              }
-              body={
-                <>
-                  <div className="container-fluid border-0 p-0">
-                    {projectsData && filteredKeys ? (
-                      <ProjectsTable
-                        rowCountOptions={rowCountOptions}
-                        districtOptions={districtOptions}
-                        sectorOptions={sectorOptions}
-                        userOptions={userOptions}
-                        keys={filteredKeys}
-                        label="Reports In Progress"
-                        projectsData={projectsData}
-                        setProjectsData={setProjectsData}
-                        role={role}
-                      />
-                    ) : (
-                      <Loader />
-                    )}
-                  </div>
-                </>
-              }
-            />
-          </div>
-          {(departmentId === 0 || departmentId === 1) && (
-            <div className="col p-0">
-              <Link
-                href="/department-dashboard-summary"
-                target="_blank"
-                className="col btn p-0 pe-1 shadow-none w-100 position-relative"
+          <>
+            {role !== "Special Role" && (
+              <div
+                className={`row ${lexend.className} m-0 d-flex justify-content-center`}
               >
-                <Menu
-                  background="rgba(12, 140, 233, 0.2)"
-                  outline="1px solid rgba(12, 140, 233, 0.4)"
-                  icon="/icons/fluent-list-detail-filled.svg"
-                  // value={data ? data.inProcessProjects : 0}
-                  value={0}
-                  label="Department Summary"
-                  showTides={false}
-                  showArrow={true}
-                  textWrap={false}
-                />
-              </Link>
-            </div>
-          )}
-          <div className="col p-0">
-            <CustomModal
-              HeaderRightPos={0}
-              HeaderTopPos={17}
-              buttonColumn="col p-0"
-              isFullscreen={true}
-              size="xl"
-              modalId={"pc-iii"}
-              button={
-                <Button
-                  className="btn p-0 pe-1 shadow-none w-100"
-                  onClick={() => getProjectsList("InProcess")}
-                >
-                  <Menu
-                    background="rgba(12, 140, 233, 0.2)"
-                    outline="1px solid rgba(12, 140, 233, 0.4)"
-                    icon="/icons/file.svg"
-                    value={0}
-                    label="PC-III"
-                    showTides={false}
-                    showArrow={true}
-                    textWrap={false}
-                  />
-                </Button>
-              }
-              body={
-                <>
-                  <div className="container-fluid border-0 p-0">
-                    {projectsData && filteredKeys ? (
-                      <ProjectsTable
-                        rowCountOptions={rowCountOptions}
-                        districtOptions={districtOptions}
-                        sectorOptions={sectorOptions}
-                        userOptions={userOptions}
-                        keys={filteredKeys}
-                        label="Reports In Progress"
-                        projectsData={projectsData}
-                        setProjectsData={setProjectsData}
-                        role={role}
+                <div className="col-12 col-sm-6 col-md-6 col-lg-4 p-0">
+                  <div
+                    className="col px-1 py-0 me-1 text-center mb-2"
+                    style={{
+                      background: "rgba(12, 140, 233,.2)",
+                      borderRadius: "10px",
+                      border: "1px solid rgba(12, 140, 233,.4)",
+                    }}
+                  >
+                    <p className="mb-0 text-white fs14px">
+                      Total Visits:&nbsp;
+                      {data &&
+                        data.officerReports.scheduled +
+                          data.officerReports.completed}
+                    </p>
+                    <div className="row m-0 d-flex">
+                      <CustomModal
+                        HeaderRightPos={0}
+                        HeaderTopPos={17}
+                        buttonColumn="col p-0"
+                        isFullscreen={true}
+                        size="xl"
+                        modalId={"scheduledVisits"}
+                        allowOpen={
+                          data?.officerReports.scheduled === 0 ? false : true
+                        }
+                        button={
+                          <Button
+                            className="position-relative btn p-0 pe-1 shadow-none w-100"
+                            onClick={() => getProjectsList("Scheduled")}
+                            disabled={
+                              data && data.officerReports.scheduled === 0
+                            }
+                          >
+                            <div
+                              className={`position-absolute ${styles.menuDiv}`}
+                              style={{
+                                background:
+                                  "linear-gradient( rgba(163, 12, 233, 0), rgba(163, 12, 233, 0.2),rgba(163, 12, 233, 0.2))",
+                                borderRadius: "10px",
+                                width: "98%",
+                                height: "92%",
+                              }}
+                            ></div>
+                            <Menu
+                              classNames={styles.noOfProjectMenu}
+                              icon="/icons/material-symbols_schedule.svg"
+                              value={data ? data.officerReports.scheduled : 0}
+                              label="Scheduled visits"
+                              showTides={false}
+                              showArrow={true}
+                              textWrap={false}
+                              isGrouped={true}
+                            />
+                          </Button>
+                        }
+                        body={
+                          <>
+                            <div className="container-fluid border-0 p-0">
+                              {projectsData &&
+                              filteredScheduledAndCompletedKeys ? (
+                                <ProjectsTable
+                                  rowCountOptions={rowCountOptions}
+                                  districtOptions={districtOptions}
+                                  sectorOptions={sectorOptions}
+                                  userOptions={userOptions}
+                                  keys={filteredScheduledAndCompletedKeys}
+                                  label="Scheduled Visits"
+                                  projectsData={projectsData}
+                                  setProjectsData={setProjectsData}
+                                  role={role}
+                                />
+                              ) : (
+                                <Loader />
+                              )}
+                            </div>
+                          </>
+                        }
                       />
-                    ) : (
-                      <Loader />
-                    )}
+                      <CustomModal
+                        HeaderRightPos={0}
+                        HeaderTopPos={17}
+                        buttonColumn="col p-0"
+                        isFullscreen={true}
+                        size="xl"
+                        modalId={"completedVisits"}
+                        allowOpen={
+                          data?.officerReports.completed === 0 ? false : true
+                        }
+                        button={
+                          <Button
+                            className="position-relative btn p-0 shadow-none w-100"
+                            onClick={() => getProjectsList("Completed")}
+                            disabled={data?.officerReports.completed === 0}
+                          >
+                            <div
+                              className={`position-absolute ${styles.menuDiv}`}
+                              style={{
+                                background:
+                                  "linear-gradient( rgba(12, 140, 233, 0), rgba(12, 140, 233, 0.2),rgba(12, 140, 233, 0.2))",
+                                borderRadius: "10px",
+                                width: "100%",
+                                height: "92%",
+                              }}
+                            ></div>
+                            <Menu
+                              classNames={styles.noOfVisitsMenu}
+                              icon="/icons/streamline-plump.svg"
+                              value={data ? data.officerReports.completed : 0}
+                              label="Completed Visits"
+                              showTides={false}
+                              showArrow={true}
+                              textWrap={false}
+                              isGrouped={true}
+                            />
+                          </Button>
+                        }
+                        body={
+                          <>
+                            <div className="container-fluid border-0 p-0">
+                              {projectsData &&
+                              filteredScheduledAndCompletedKeys ? (
+                                <ProjectsTable
+                                  rowCountOptions={rowCountOptions}
+                                  districtOptions={districtOptions}
+                                  sectorOptions={sectorOptions}
+                                  userOptions={userOptions}
+                                  keys={filteredScheduledAndCompletedKeys}
+                                  label="Completed Visits"
+                                  projectsData={projectsData}
+                                  setProjectsData={setProjectsData}
+                                  role={role}
+                                />
+                              ) : (
+                                <Loader />
+                              )}
+                            </div>
+                          </>
+                        }
+                      />
+                    </div>
                   </div>
-                </>
-              }
-            />
-          </div>
-          {departmentId !== 1 && departmentId !== 0 && (
-            <div className="col p-0">
-              <CustomModal
-                HeaderRightPos={0}
-                HeaderTopPos={17}
-                buttonColumn="col p-0"
-                isFullscreen={true}
-                size="xl"
-                modalId={"pc-iv"}
-                button={
-                  <Button
-                    className="btn p-0 pe-1 shadow-none w-100"
-                    onClick={() => getProjectsList("InProcess")}
-                  >
-                    <Menu
-                      background="rgba(12, 140, 233, 0.2)"
-                      outline="1px solid rgba(12, 140, 233, 0.4)"
-                      icon="/icons/file.svg"
-                      value={0}
-                      label="PC-IV"
-                      showTides={false}
-                      showArrow={true}
-                      textWrap={false}
-                    />
-                  </Button>
-                }
-                body={
-                  <>
-                    <div className="container-fluid border-0 p-0">
-                      {projectsData && filteredKeys ? (
-                        <ProjectsTable
-                          rowCountOptions={rowCountOptions}
-                          districtOptions={districtOptions}
-                          sectorOptions={sectorOptions}
-                          userOptions={userOptions}
-                          keys={filteredKeys}
+                </div>
+
+                <div className="col p-0">
+                  <CustomModal
+                    HeaderRightPos={0}
+                    HeaderTopPos={17}
+                    buttonColumn="col p-0"
+                    isFullscreen={true}
+                    size="xl"
+                    modalId={"reportsInProgress"}
+                    allowOpen={data?.inProcessProjects === 0 ? false : true}
+                    button={
+                      <Button
+                        className="btn p-0 pe-1 shadow-none w-100"
+                        onClick={() => getProjectsList("InProcess")}
+                        disabled={data?.inProcessProjects === 0}
+                      >
+                        <Menu
+                          background="rgba(12, 140, 233, 0.2)"
+                          outline="1px solid rgba(12, 140, 233, 0.4)"
+                          icon="/icons/inProcess.svg"
+                          value={data ? data.inProcessProjects : 0}
                           label="Reports In Progress"
-                          projectsData={projectsData}
-                          setProjectsData={setProjectsData}
-                          role={role}
+                          showTides={false}
+                          showArrow={true}
+                          textWrap={false}
                         />
-                      ) : (
-                        <Loader />
-                      )}
-                    </div>
-                  </>
-                }
-              />
-            </div>
-          )}
-          {departmentId !== 1 && departmentId !== 0 && (
-            <div className="col p-0">
-              <CustomModal
-                HeaderRightPos={0}
-                HeaderTopPos={17}
-                buttonColumn="col p-0"
-                isFullscreen={true}
-                size="xl"
-                modalId={"dgme-reports"}
-                button={
-                  <Button
-                    className="btn p-0 pe-1 shadow-none w-100"
-                    onClick={() => getProjectsList("InProcess")}
-                  >
-                    <Menu
-                      background="rgba(12, 140, 233, 0.2)"
-                      outline="1px solid rgba(12, 140, 233, 0.4)"
-                      icon="/icons/dgme-logo-white.svg"
-                      value={0}
-                      label="DGME Reports"
-                      showTides={false}
-                      showArrow={true}
-                      textWrap={false}
+                      </Button>
+                    }
+                    body={
+                      <>
+                        <div className="container-fluid border-0 p-0">
+                          {projectsData && filteredKeys ? (
+                            <ProjectsTable
+                              rowCountOptions={rowCountOptions}
+                              districtOptions={districtOptions}
+                              sectorOptions={sectorOptions}
+                              userOptions={userOptions}
+                              keys={filteredKeys}
+                              label="Reports In Progress"
+                              projectsData={projectsData}
+                              setProjectsData={setProjectsData}
+                              role={role}
+                            />
+                          ) : (
+                            <Loader />
+                          )}
+                        </div>
+                      </>
+                    }
+                  />
+                </div>
+                {(departmentId === 0 || departmentId === 1) && (
+                  <div className="col p-0">
+                    <Link
+                      href="/department-dashboard-summary"
+                      target="_blank"
+                      className="col btn p-0 pe-1 shadow-none w-100 position-relative"
+                    >
+                      <Menu
+                        background="rgba(12, 140, 233, 0.2)"
+                        outline="1px solid rgba(12, 140, 233, 0.4)"
+                        icon="/icons/fluent-list-detail-filled.svg"
+                        // value={data ? data.inProcessProjects : 0}
+                        value={0}
+                        label="Department Summary"
+                        showTides={false}
+                        showArrow={true}
+                        textWrap={false}
+                      />
+                    </Link>
+                  </div>
+                )}
+                <div className="col p-0">
+                  <CustomModal
+                    HeaderRightPos={0}
+                    HeaderTopPos={17}
+                    buttonColumn="col p-0"
+                    isFullscreen={true}
+                    size="xl"
+                    modalId={"pc-iii"}
+                    button={
+                      <Button
+                        className="btn p-0 pe-1 shadow-none w-100"
+                        onClick={() => getProjectsList("InProcess")}
+                      >
+                        <Menu
+                          background="rgba(12, 140, 233, 0.2)"
+                          outline="1px solid rgba(12, 140, 233, 0.4)"
+                          icon="/icons/file.svg"
+                          value={0}
+                          label="PC-III"
+                          showTides={false}
+                          showArrow={true}
+                          textWrap={false}
+                        />
+                      </Button>
+                    }
+                    body={
+                      <>
+                        <div className="container-fluid border-0 p-0">
+                          {projectsData && filteredKeys ? (
+                            <ProjectsTable
+                              rowCountOptions={rowCountOptions}
+                              districtOptions={districtOptions}
+                              sectorOptions={sectorOptions}
+                              userOptions={userOptions}
+                              keys={filteredKeys}
+                              label="Reports In Progress"
+                              projectsData={projectsData}
+                              setProjectsData={setProjectsData}
+                              role={role}
+                            />
+                          ) : (
+                            <Loader />
+                          )}
+                        </div>
+                      </>
+                    }
+                  />
+                </div>
+                {departmentId !== 1 && departmentId !== 0 && (
+                  <div className="col p-0">
+                    <CustomModal
+                      HeaderRightPos={0}
+                      HeaderTopPos={17}
+                      buttonColumn="col p-0"
+                      isFullscreen={true}
+                      size="xl"
+                      modalId={"pc-iv"}
+                      button={
+                        <Button
+                          className="btn p-0 pe-1 shadow-none w-100"
+                          onClick={() => getProjectsList("InProcess")}
+                        >
+                          <Menu
+                            background="rgba(12, 140, 233, 0.2)"
+                            outline="1px solid rgba(12, 140, 233, 0.4)"
+                            icon="/icons/file.svg"
+                            value={0}
+                            label="PC-IV"
+                            showTides={false}
+                            showArrow={true}
+                            textWrap={false}
+                          />
+                        </Button>
+                      }
+                      body={
+                        <>
+                          <div className="container-fluid border-0 p-0">
+                            {projectsData && filteredKeys ? (
+                              <ProjectsTable
+                                rowCountOptions={rowCountOptions}
+                                districtOptions={districtOptions}
+                                sectorOptions={sectorOptions}
+                                userOptions={userOptions}
+                                keys={filteredKeys}
+                                label="Reports In Progress"
+                                projectsData={projectsData}
+                                setProjectsData={setProjectsData}
+                                role={role}
+                              />
+                            ) : (
+                              <Loader />
+                            )}
+                          </div>
+                        </>
+                      }
                     />
-                  </Button>
-                }
-                body={
-                  <>
-                    <div className="container-fluid border-0 p-0">
-                      {projectsData && filteredKeys ? (
-                        <ProjectsTable
-                          rowCountOptions={rowCountOptions}
-                          districtOptions={districtOptions}
-                          sectorOptions={sectorOptions}
-                          userOptions={userOptions}
-                          keys={filteredKeys}
-                          label="DGME Reports"
-                          projectsData={projectsData}
-                          setProjectsData={setProjectsData}
-                          role={role}
-                        />
-                      ) : (
-                        <Loader />
-                      )}
-                    </div>
-                  </>
-                }
-              />
-            </div>
-          )}
-          <div className="col p-0">
-            <ReportReview />
-          </div>
-        </div>
+                  </div>
+                )}
+                {departmentId !== 1 && departmentId !== 0 && (
+                  <div className="col p-0">
+                    <CustomModal
+                      HeaderRightPos={0}
+                      HeaderTopPos={17}
+                      buttonColumn="col p-0"
+                      isFullscreen={true}
+                      size="xl"
+                      modalId={"dgme-reports"}
+                      button={
+                        <Button
+                          className="btn p-0 pe-1 shadow-none w-100"
+                          onClick={() => getProjectsList("InProcess")}
+                        >
+                          <Menu
+                            background="rgba(12, 140, 233, 0.2)"
+                            outline="1px solid rgba(12, 140, 233, 0.4)"
+                            icon="/icons/dgme-logo-white.svg"
+                            value={0}
+                            label="DGME Reports"
+                            showTides={false}
+                            showArrow={true}
+                            textWrap={false}
+                          />
+                        </Button>
+                      }
+                      body={
+                        <>
+                          <div className="container-fluid border-0 p-0">
+                            {projectsData && filteredKeys ? (
+                              <ProjectsTable
+                                rowCountOptions={rowCountOptions}
+                                districtOptions={districtOptions}
+                                sectorOptions={sectorOptions}
+                                userOptions={userOptions}
+                                keys={filteredKeys}
+                                label="DGME Reports"
+                                projectsData={projectsData}
+                                setProjectsData={setProjectsData}
+                                role={role}
+                              />
+                            ) : (
+                              <Loader />
+                            )}
+                          </div>
+                        </>
+                      }
+                    />
+                  </div>
+                )}
+                <div className="col p-0">
+                  <ReportReview />
+                </div>
+              </div>
+            )}
+          </>
+        </>
       )}
 
       <div className={`row m-0 ${lexend.className}`}>
-        <div className="p-1 col-12 col-sm-12 col-md-12 col-lg-7 col-xl-8">
+        <div
+          className={`p-1 col-12 col-sm-12 col-md-12 ${role.toLowerCase() === "dgme reports" ? "col-lg-12" : "col-lg-7 col-xl-8"}`}
+        >
           {devMap && data && (
             <MyMap
               data={data}
@@ -1121,87 +1144,91 @@ const DashboardMonitoring = () => {
             />
           )}
         </div>
-        <div className="p-1 col-12 col-sm-12 col-md-12 col-lg-5 col-xl-4">
-          <FilterButtons
-            handleSubmit={handleSubmit}
-            setOtherFilters={setOtherFilters}
-            otherFilters={otherFilters}
-            handleFilterChange={handleFilterChange}
-            combinedFilters={combinedFilters}
-            activeFilter={activeFilter}
-          />
-          {role !== "Special Role" && (
-            <div
-              className={`col gap-2 mb-2 shadow-sm fs14px ${lexend.className}`}
-              style={{
-                background: "#C6D9F1",
-                borderRadius: "10px",
-                padding: "10px",
-              }}
-            >
-              <CustomModal
-                buttonColumn="col p-0"
-                size="xl"
-                modalId="pieBarChart"
-                HeaderRightPos={20}
-                HeaderTopPos={5}
-                button={
-                  <Button
-                    className="btn fs18px fw-normal text-white w-100"
-                    style={{
-                      background: "rgba(12, 140, 233, 0.2)",
-                      borderRadius: "10px",
-                      border: "1px solid rgba(12, 140, 233, 0.4)",
-                    }}
-                    onClick={() => getProjectsList("BarPie")}
-                  >
-                    <Image
-                      src="/icons/barPie.svg"
-                      alt="barPie"
-                      width={30}
-                      height={30}
-                    />{" "}
-                    Financial Analysis
-                  </Button>
-                }
-                body={
-                  <div className="row d-flex m-0">
-                    {projectsData && projectsData.length > 0 && pageLoaded && (
-                      <>
-                        <div className="col mb-4">
-                          <DistributedColumnChart
-                            data={projectsData[0]}
-                            activeFilter={activeFilter}
-                          />
-                        </div>
-                        <div className="col mb-4">
-                          <SimplePieChart
-                            data={{
-                              totalRevenueCost:
-                                projectsData[0].totalRevenueCost,
-                              totalCapitalCost:
-                                projectsData[0].totalCapitalCost,
-                            }}
-                            activeFilter={activeFilter}
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                }
-              />
-            </div>
-          )}
-          {role !== "Special Role" && (
-            <div
-              className={`col mb-2 shadow-sm fs14px p-0 ${lexend.className}`}
-              style={{
-                background:
-                  "linear-gradient(to right, #C6D9F1,#C6D9F1 , #E3F1C6,#E3F1C6)",
-                borderRadius: "10px",
-              }}
-            >
-              {/* <div className="row d-flex m-0">
+
+        {role.toLowerCase() !== "dgme reports" && (
+          <div className="p-1 col-12 col-sm-12 col-md-12 col-lg-5 col-xl-4">
+            <FilterButtons
+              handleSubmit={handleSubmit}
+              setOtherFilters={setOtherFilters}
+              otherFilters={otherFilters}
+              handleFilterChange={handleFilterChange}
+              combinedFilters={combinedFilters}
+              activeFilter={activeFilter}
+            />
+            {role !== "Special Role" && (
+              <div
+                className={`col gap-2 mb-2 shadow-sm fs14px ${lexend.className}`}
+                style={{
+                  background: "#C6D9F1",
+                  borderRadius: "10px",
+                  padding: "10px",
+                }}
+              >
+                <CustomModal
+                  buttonColumn="col p-0"
+                  size="xl"
+                  modalId="pieBarChart"
+                  HeaderRightPos={20}
+                  HeaderTopPos={5}
+                  button={
+                    <Button
+                      className="btn fs18px fw-normal text-white w-100"
+                      style={{
+                        background: "rgba(12, 140, 233, 0.2)",
+                        borderRadius: "10px",
+                        border: "1px solid rgba(12, 140, 233, 0.4)",
+                      }}
+                      onClick={() => getProjectsList("BarPie")}
+                    >
+                      <Image
+                        src="/icons/barPie.svg"
+                        alt="barPie"
+                        width={30}
+                        height={30}
+                      />{" "}
+                      Financial Analysis
+                    </Button>
+                  }
+                  body={
+                    <div className="row d-flex m-0">
+                      {projectsData &&
+                        projectsData.length > 0 &&
+                        pageLoaded && (
+                          <>
+                            <div className="col mb-4">
+                              <DistributedColumnChart
+                                data={projectsData[0]}
+                                activeFilter={activeFilter}
+                              />
+                            </div>
+                            <div className="col mb-4">
+                              <SimplePieChart
+                                data={{
+                                  totalRevenueCost:
+                                    projectsData[0].totalRevenueCost,
+                                  totalCapitalCost:
+                                    projectsData[0].totalCapitalCost,
+                                }}
+                                activeFilter={activeFilter}
+                              />
+                            </div>
+                          </>
+                        )}
+                    </div>
+                  }
+                />
+              </div>
+            )}
+            {role !== "Special Role" && (
+              <div
+                className={`col mb-2 shadow-sm fs14px p-0 ${lexend.className}`}
+                style={{
+                  background:
+                    "linear-gradient(to right, #C6D9F1,#C6D9F1 , #E3F1C6,#E3F1C6)",
+                  borderRadius: "10px",
+                }}
+              >
+                {/* <div className="row d-flex m-0">
                 {hoveredButton === -1 || hoveredButton === 0 ? (
                   <div
                     className="col p-0"
@@ -1294,63 +1321,65 @@ const DashboardMonitoring = () => {
                 )}
               </div> */}
 
-              <div className={`row d-flex m-0 ${styles.hoverWrapper}`}>
-                <div className={`p-0 ${styles.hoverWrapper}`}>
-                  <div className={styles.hoverItem}>
-                    <Link
-                      href="/vehicle-tracking"
-                      target="_blank"
-                      className="text-decoration-none text-dark h-100 d-flex align-items-center justify-content-center"
-                      style={{
-                        borderRadius: "8px",
-                        background: "#C6D9F1",
-                      }}
-                    >
-                      <div className="d-flex align-items-center justify-content-center">
-                        <div className="me-2 ps-2">
-                          <Image
-                            src={carOutline}
-                            alt="Vehicle Icon"
-                            width={24}
-                            height={24}
-                          />
+                <div className={`row d-flex m-0 ${styles.hoverWrapper}`}>
+                  <div className={`p-0 ${styles.hoverWrapper}`}>
+                    <div className={styles.hoverItem}>
+                      <Link
+                        href="/vehicle-tracking"
+                        target="_blank"
+                        className="text-decoration-none text-dark h-100 d-flex align-items-center justify-content-center"
+                        style={{
+                          borderRadius: "8px",
+                          background: "#C6D9F1",
+                        }}
+                      >
+                        <div className="d-flex align-items-center justify-content-center">
+                          <div className="me-2 ps-2">
+                            <Image
+                              src={carOutline}
+                              alt="Vehicle Icon"
+                              width={24}
+                              height={24}
+                            />
+                          </div>
+                          <div className="text-start fw-5">
+                            Vehicle Tracking
+                          </div>
                         </div>
-                        <div className="text-start fw-5">Vehicle Tracking</div>
-                      </div>
-                    </Link>
-                  </div>
-                  <div className={`${styles.hoverItem}`}>
-                    <Link
-                      href="/staff-tracking"
-                      target="_blank"
-                      className="text-decoration-none text-dark h-100 d-flex align-items-center justify-content-center"
-                      style={{
-                        borderRadius: "8px",
-                        background: "#E3F1C6",
-                      }}
-                    >
-                      <div className="d-flex align-items-center justify-content-center">
-                        <div className="me-2 ps-2">
-                          <Image
-                            src={staffTracking2}
-                            alt="staffTracking2"
-                            width={24}
-                            height={24}
-                          />
+                      </Link>
+                    </div>
+                    <div className={`${styles.hoverItem}`}>
+                      <Link
+                        href="/staff-tracking"
+                        target="_blank"
+                        className="text-decoration-none text-dark h-100 d-flex align-items-center justify-content-center"
+                        style={{
+                          borderRadius: "8px",
+                          background: "#E3F1C6",
+                        }}
+                      >
+                        <div className="d-flex align-items-center justify-content-center">
+                          <div className="me-2 ps-2">
+                            <Image
+                              src={staffTracking2}
+                              alt="staffTracking2"
+                              width={24}
+                              height={24}
+                            />
+                          </div>
+                          <div className="text-start">Staff Tracking</div>
                         </div>
-                        <div className="text-start">Staff Tracking</div>
-                      </div>
-                    </Link>
+                      </Link>
+                    </div>
+                    <div className={`${styles.hoverItem}`}>
+                      <VisitsPlan
+                        getProjectsList={getProjectsList}
+                        projectsData={projectsData ? projectsData : []}
+                        setProjectsData={setProjectsData}
+                      />
+                    </div>
                   </div>
-                  <div className={`${styles.hoverItem}`}>
-                    <VisitsPlan
-                      getProjectsList={getProjectsList}
-                      projectsData={projectsData ? projectsData : []}
-                      setProjectsData={setProjectsData}
-                    />
-                  </div>
-                </div>
-                {/* <AnimatePresence>
+                  {/* <AnimatePresence>
                     {(hoveredButton === -1 || hoveredButton === 0) && (
                       <motion.div
                         className="p-0"
@@ -1464,9 +1493,9 @@ const DashboardMonitoring = () => {
                       </motion.div>
                     )}
                   </AnimatePresence> */}
-              </div>
+                </div>
 
-              {/* <div className="row d-flex m-0">
+                {/* <div className="row d-flex m-0">
                   <AnimatePresence>
                     {(hoveredButton === -1 || hoveredButton === 0) && (
                       <motion.div
@@ -1582,33 +1611,132 @@ const DashboardMonitoring = () => {
                     )}
                   </AnimatePresence>
                 </div> */}
-            </div>
-          )}
-          <div
-            className={`col mb-2 shadow-sm fs14px ${lexend.className}`}
-            style={{
-              background: "#C6D9F1",
-              borderRadius: "10px",
-              padding: "10px",
-            }}
-          >
-            {departmentId === 0 || departmentId === 1 ? (
-              <div className="row d-flex m-0">
-                <div
-                  className={`${
-                    role === "Special Role" ? "col" : "col-7 col-sm-8"
-                  } p-1`}
-                >
-                  <CustomModal
-                    HeaderRightPos={0}
-                    HeaderTopPos={17}
-                    buttonColumn="col p-0"
-                    isFullscreen={true}
-                    modalId="utilization"
-                    button={
-                      <Button
-                        onClick={() => getProjectsList("TotalProject")}
-                        className="row d-flex m-0 justify-content-center align-items-center btn w-100 text-white text-nowrap fw-normal fs12px py-3 px-0 position-relative"
+              </div>
+            )}
+            <div
+              className={`col mb-2 shadow-sm fs14px ${lexend.className}`}
+              style={{
+                background: "#C6D9F1",
+                borderRadius: "10px",
+                padding: "10px",
+              }}
+            >
+              {departmentId === 0 || departmentId === 1 ? (
+                <div className="row d-flex m-0">
+                  <div
+                    className={`${
+                      role === "Special Role" ? "col" : "col-7 col-sm-8"
+                    } p-1`}
+                  >
+                    <CustomModal
+                      HeaderRightPos={0}
+                      HeaderTopPos={17}
+                      buttonColumn="col p-0"
+                      isFullscreen={true}
+                      modalId="utilization"
+                      button={
+                        <Button
+                          onClick={() => getProjectsList("TotalProject")}
+                          className="row d-flex m-0 justify-content-center align-items-center btn w-100 text-white text-nowrap fw-normal fs12px py-3 px-0 position-relative"
+                          style={{
+                            borderRadius: "8px",
+                            background: "#1E6BDD",
+                            transition: "all .3s",
+                          }}
+                        >
+                          <div className="col-auto px-1">
+                            <Image
+                              src={settingCircleArrow}
+                              alt="settingCircleArrow"
+                              width={32}
+                              height={32}
+                            />
+                          </div>
+                          <div className="col-auto px-1">
+                            <p className="mb-0">Utilization</p>
+                            <p className="mb-0">
+                              <span className="text-nowrap">(20% - 80%)</span>
+                              &nbsp;
+                              <span>
+                                {data ? (
+                                  <AnimatedCounter
+                                    from={0}
+                                    to={data.utilization20t080}
+                                    // to={utilizationData?.length}
+                                  />
+                                ) : (
+                                  0
+                                )}
+                              </span>
+                            </p>
+                          </div>
+                          {role === "Super Admin" ||
+                          role === "Deputy Director" ||
+                          role === "Director" ? (
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id={`tooltip-top`}>
+                                  Utilization vs Schemes Visited by
+                                  DGME&apos;Team
+                                </Tooltip>
+                              }
+                            >
+                              <span
+                                className="col-auto position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger fs12px"
+                                style={{ zIndex: 1 }}
+                              >
+                                {data && (
+                                  <AnimatedCounter
+                                    from={0}
+                                    to={
+                                      data.utilization20t080 -
+                                      utilizationData.filter(
+                                        (data) => data.visitCount > 0,
+                                      ).length
+                                    }
+                                  />
+                                )}
+                                <span className="visually-hidden">
+                                  unread messages
+                                </span>
+                              </span>
+                            </OverlayTrigger>
+                          ) : (
+                            ""
+                          )}
+                        </Button>
+                      }
+                      body={
+                        <>
+                          <div className="container-fluid border-0 p-0">
+                            {projectsData && filteredCMADPUtilizationKeys ? (
+                              <ProjectsTable
+                                rowCountOptions={rowCountOptions}
+                                districtOptions={districtOptions}
+                                sectorOptions={sectorOptions}
+                                userOptions={userOptions}
+                                keys={filteredCMADPUtilizationKeys}
+                                label="Utilization(20% - 80%)"
+                                projectsData={utilizationData}
+                                setProjectsData={setProjectsData}
+                                allowLink={false}
+                                role={role}
+                              />
+                            ) : (
+                              <Loader />
+                            )}
+                          </div>
+                        </>
+                      }
+                    />
+                  </div>
+                  {role !== "Special Role" && (
+                    <div className="col-5 col-sm-4 p-1">
+                      <Link
+                        target="_blank"
+                        href="/report-analysis"
+                        className="row d-flex flex-nowrap justify-content-center m-0 btn w-100 text-white fw-normal fs12px py-3 px-0"
                         style={{
                           borderRadius: "8px",
                           background: "#1E6BDD",
@@ -1617,590 +1745,598 @@ const DashboardMonitoring = () => {
                       >
                         <div className="col-auto px-1">
                           <Image
-                            src={settingCircleArrow}
-                            alt="settingCircleArrow"
+                            src={reportAnalysis}
+                            alt="reportAnalysis"
                             width={32}
                             height={32}
                           />
                         </div>
                         <div className="col-auto px-1">
-                          <p className="mb-0">Utilization</p>
-                          <p className="mb-0">
-                            <span className="text-nowrap">(20% - 80%)</span>
-                            &nbsp;
-                            <span>
-                              {data ? (
-                                <AnimatedCounter
-                                  from={0}
-                                  to={data.utilization20t080}
-                                  // to={utilizationData?.length}
-                                />
-                              ) : (
-                                0
-                              )}
-                            </span>
-                          </p>
+                          Report
+                          <br />
+                          Analysis
                         </div>
-                        {role === "Super Admin" ||
-                        role === "Deputy Director" ||
-                        role === "Director" ? (
-                          <OverlayTrigger
-                            placement="top"
-                            overlay={
-                              <Tooltip id={`tooltip-top`}>
-                                Utilization vs Schemes Visited by DGME&apos;Team
-                              </Tooltip>
-                            }
-                          >
-                            <span
-                              className="col-auto position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger fs12px"
-                              style={{ zIndex: 1 }}
-                            >
-                              {data && (
-                                <AnimatedCounter
-                                  from={0}
-                                  to={
-                                    data.utilization20t080 -
-                                    utilizationData.filter(
-                                      (data) => data.visitCount > 0,
-                                    ).length
-                                  }
-                                />
-                              )}
-                              <span className="visually-hidden">
-                                unread messages
-                              </span>
-                            </span>
-                          </OverlayTrigger>
-                        ) : (
-                          ""
-                        )}
-                      </Button>
-                    }
-                    body={
-                      <>
-                        <div className="container-fluid border-0 p-0">
-                          {projectsData && filteredCMADPUtilizationKeys ? (
-                            <ProjectsTable
-                              rowCountOptions={rowCountOptions}
-                              districtOptions={districtOptions}
-                              sectorOptions={sectorOptions}
-                              userOptions={userOptions}
-                              keys={filteredCMADPUtilizationKeys}
-                              label="Utilization(20% - 80%)"
-                              projectsData={utilizationData}
-                              setProjectsData={setProjectsData}
-                              allowLink={false}
-                              role={role}
-                            />
-                          ) : (
-                            <Loader />
-                          )}
-                        </div>
-                      </>
-                    }
-                  />
+                      </Link>
+                    </div>
+                  )}
                 </div>
-                {role !== "Special Role" && (
-                  <div className="col-5 col-sm-4 p-1">
-                    <Link
-                      target="_blank"
-                      href="/report-analysis"
-                      className="row d-flex flex-nowrap justify-content-center m-0 btn w-100 text-white fw-normal fs12px py-3 px-0"
+              ) : (
+                <>
+                  {role !== "Special Role" && (
+                    <div className="col-auto p-1">
+                      <Link
+                        target="_blank"
+                        href="/report-analysis"
+                        className="row d-flex flex-nowrap justify-content-center align-items-center m-0 btn w-100 text-white fw-normal fs12px py-3 px-0"
+                        style={{
+                          borderRadius: "8px",
+                          background: "#1E6BDD",
+                          transition: "all .3s",
+                        }}
+                      >
+                        <div className="col-auto px-1">
+                          <Image
+                            src={reportAnalysis}
+                            alt="reportAnalysis"
+                            width={32}
+                            height={32}
+                          />
+                        </div>
+                        <div className="col-auto px-1">Report Analysis</div>
+                      </Link>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+            {role !== "Special Role" && (
+              <div
+                className="col mb-2 shadow-sm fs14px p-2"
+                style={{
+                  background: "#C6D9F1",
+                  borderRadius: "10px",
+                  color: "#334155",
+                }}
+              >
+                <CustomModal
+                  HeaderRightPos={0}
+                  HeaderTopPos={17}
+                  buttonColumn="col p-0"
+                  size="xl"
+                  modalId="approvedCost"
+                  button={
+                    <Button
+                      className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
+                      style={{ background: "rgba(235, 239, 253, 1)" }}
+                    >
+                      <div className="row d-flex m-0">
+                        <div className="col text-start fw-5">Approved Cost</div>{" "}
+                        <div className="col fw-normal text-end pe-3">
+                          {data
+                            ? formatAmountWithCommas(data?.approvedCost)
+                            : 0}{" "}
+                          M
+                        </div>
+                      </div>
+                    </Button>
+                  }
+                  body={
+                    <div
+                      className={`container-fluid p-4 ${montserrat.className}`}
                       style={{
-                        borderRadius: "8px",
-                        background: "#1E6BDD",
-                        transition: "all .3s",
+                        borderRadius: "20px",
+                        background: "rgba(255, 255, 255,.75)",
                       }}
                     >
-                      <div className="col-auto px-1">
-                        <Image
-                          src={reportAnalysis}
-                          alt="reportAnalysis"
-                          width={32}
-                          height={32}
-                        />
+                      <div className="row d-flex justify-content-center m-0">
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={divideCircle}
+                              alt="divideCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                7409
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Total Scheme
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={originalAllocationCircle}
+                              alt="originalAllocationCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                842.00 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Original Allocation
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={revisedAllocationCircle}
+                              alt="revisedAllocationCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                842.00 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Revised Allocation
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={pndReleaseCircle}
+                              alt="pndReleaseCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                514.64 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                P&D Release
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={controllingReleaseCircle}
+                              alt="controllingReleaseCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                498.07 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Controlling Release
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col mb-4">
+                          <div
+                            className="col shadow d-flex bg-white"
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={spendingReleaseCircle}
+                              alt="spendingReleaseCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                472.76 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Spending Release
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-auto mb-4">
+                          <div
+                            className="col shadow d-flex bg-white "
+                            style={{
+                              borderRadius: "12px",
+                              padding: "20px 28px 10px 28px",
+                            }}
+                          >
+                            <Image
+                              src={utilizationCircle}
+                              alt="utilizationCircle"
+                              width={64}
+                              height={64}
+                              className="mt-2"
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <div className="col mb-4">
+                              <p
+                                className="m-0 fw-normal text-nowrap"
+                                style={{ fontSize: "2.125rem" }}
+                              >
+                                249.86 B
+                              </p>
+                              <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
+                                Utilization
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="col-auto px-1">
-                        Report
-                        <br />
-                        Analysis
-                      </div>
-                    </Link>
+                    </div>
+                  }
+                />
+
+                <div
+                  className="col p-2 rounded-2 mb-2"
+                  style={{ background: "rgba(235, 239, 253, 1)" }}
+                >
+                  <div className="row d-flex m-0">
+                    <div className="col fw-5 text-start">Expenditure</div>
+                    <div className="col fw-normal text-end pe-3">
+                      {data ? formatAmountWithCommas(data?.expenditure) : 0} M
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
-            ) : (
-              <>
-                {role !== "Special Role" && (
-                  <div className="col-auto p-1">
-                    <Link
-                      target="_blank"
-                      href="/report-analysis"
-                      className="row d-flex flex-nowrap justify-content-center align-items-center m-0 btn w-100 text-white fw-normal fs12px py-3 px-0"
-                      style={{
-                        borderRadius: "8px",
-                        background: "#1E6BDD",
-                        transition: "all .3s",
-                      }}
-                    >
-                      <div className="col-auto px-1">
-                        <Image
-                          src={reportAnalysis}
-                          alt="reportAnalysis"
-                          width={32}
-                          height={32}
-                        />
-                      </div>
-                      <div className="col-auto px-1">Report Analysis</div>
-                    </Link>
-                  </div>
-                )}
-              </>
             )}
-          </div>
-          {role !== "Special Role" && (
+
             <div
-              className="col mb-2 shadow-sm fs14px p-2"
+              className="col mb-2 shadow-sm fs14px"
               style={{
                 background: "#C6D9F1",
                 borderRadius: "10px",
+                padding: "15px 15px 15px 15px",
+              }}
+            >
+              <p
+                className="mb-2 fw-5 pb-1"
+                style={{ borderBottom: "1px dashed #97ABBD" }}
+              >
+                Project Status
+              </p>
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId="Approved"
+                button={
+                  <Button
+                    onClick={() => getProjectsList("Approved")}
+                    className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
+                    style={{ background: "rgba(235, 239, 253, 1)" }}
+                  >
+                    <div className="row d-flex m-0">
+                      <div className="col fw-5 text-start">Approved</div>{" "}
+                      <div className="col fw-normal text-end pe-3 text-success">
+                        {data ? (
+                          <AnimatedCounter from={0} to={data.approved} />
+                        ) : (
+                          0
+                        )}
+                      </div>
+                    </div>
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredCMADPKeys ? (
+                        <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
+                          keys={filteredCMADPKeys}
+                          label="Approved Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                          allowLink={false}
+                          role={role}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId="Unapproved"
+                button={
+                  <Button
+                    onClick={() => getProjectsList("Un-Approved")}
+                    className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
+                    style={{ background: "rgba(235, 239, 253, 1)" }}
+                  >
+                    <div className="row d-flex m-0">
+                      <div className="col fw-5 text-start">Unapproved</div>{" "}
+                      <div className="col fw-normal text-end pe-3 text-danger">
+                        {data ? (
+                          <AnimatedCounter from={0} to={data.unapproved} />
+                        ) : (
+                          0
+                        )}
+                      </div>
+                    </div>
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredCMADPKeys ? (
+                        <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
+                          keys={filteredCMADPKeys}
+                          label="Unapproved Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                          allowLink={false}
+                          role={role}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId="Dropped"
+                button={
+                  <Button
+                    onClick={() => getProjectsList("Dropped")}
+                    className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
+                    style={{ background: "rgba(235, 239, 253, 1)" }}
+                  >
+                    <div className="row d-flex m-0">
+                      <div className="col fw-5 text-start">Dropped</div>{" "}
+                      <div className="col fw-normal text-end pe-3 text-secondary">
+                        {data ? (
+                          <AnimatedCounter from={0} to={data.dropped} />
+                        ) : (
+                          0
+                        )}
+                      </div>
+                    </div>
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredCMADPKeys ? (
+                        <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
+                          keys={filteredCMADPKeys}
+                          label="Dropped Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                          allowLink={false}
+                          role={role}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+              <div className="row m-0" style={{ gap: 10 }}>
+                <CustomModal
+                  HeaderRightPos={0}
+                  HeaderTopPos={17}
+                  buttonColumn="col p-0"
+                  isFullscreen={true}
+                  size="xl"
+                  modalId="Umbrella"
+                  button={
+                    <Button
+                      onClick={() => getProjectsList("umbralla")}
+                      className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
+                      style={{ background: "rgba(235, 239, 253, 1)" }}
+                    >
+                      <div className="row d-flex m-0">
+                        <div className="col fw-5 text-start">Umbrella</div>
+                        <div className="col fw-normal text-end pe-3 text-secondary">
+                          {data ? (
+                            <AnimatedCounter from={0} to={data.umbralla} />
+                          ) : (
+                            0
+                          )}
+                        </div>
+                      </div>
+                    </Button>
+                  }
+                  body={
+                    <>
+                      <div className="container-fluid border-0 p-0">
+                        {projectsData && filteredCMADPKeys ? (
+                          <ProjectsTable
+                            rowCountOptions={rowCountOptions}
+                            districtOptions={districtOptions}
+                            sectorOptions={sectorOptions}
+                            userOptions={userOptions}
+                            keys={filteredCMADPKeys}
+                            label="Umbrella Projects"
+                            projectsData={projectsData}
+                            setProjectsData={setProjectsData}
+                            allowLink={false}
+                            role={role}
+                          />
+                        ) : (
+                          <Loader />
+                        )}
+                      </div>
+                    </>
+                  }
+                />
+                <CustomModal
+                  HeaderRightPos={0}
+                  HeaderTopPos={17}
+                  buttonColumn="col p-0"
+                  isFullscreen={true}
+                  size="xl"
+                  modalId="single"
+                  button={
+                    <Button
+                      onClick={() => getProjectsList("single")}
+                      className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
+                      style={{ background: "rgba(235, 239, 253, 1)" }}
+                    >
+                      <div className="row d-flex m-0">
+                        <div className="col fw-5 text-start">Single</div>
+                        <div className="col fw-normal text-end pe-3 text-secondary">
+                          {data ? (
+                            <AnimatedCounter from={0} to={data.single} />
+                          ) : (
+                            0
+                          )}
+                        </div>
+                      </div>
+                    </Button>
+                  }
+                  body={
+                    <>
+                      <div className="container-fluid border-0 p-0">
+                        {projectsData && filteredCMADPKeys ? (
+                          <ProjectsTable
+                            rowCountOptions={rowCountOptions}
+                            districtOptions={districtOptions}
+                            sectorOptions={sectorOptions}
+                            userOptions={userOptions}
+                            keys={filteredCMADPKeys}
+                            label="Single Projects"
+                            projectsData={projectsData}
+                            setProjectsData={setProjectsData}
+                            allowLink={false}
+                            role={role}
+                          />
+                        ) : (
+                          <Loader />
+                        )}
+                      </div>
+                    </>
+                  }
+                />
+              </div>
+            </div>
+
+            <div
+              className={`col shadow-sm fs14px ${lexend.className}`}
+              style={{
+                background: "#C6D9F1",
+                borderRadius: "10px",
+                padding: "15px 15px 15px 15px ",
                 color: "#334155",
               }}
             >
-              <CustomModal
-                HeaderRightPos={0}
-                HeaderTopPos={17}
-                buttonColumn="col p-0"
-                size="xl"
-                modalId="approvedCost"
-                button={
-                  <Button
-                    className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
-                    style={{ background: "rgba(235, 239, 253, 1)" }}
-                  >
-                    <div className="row d-flex m-0">
-                      <div className="col text-start fw-5">Approved Cost</div>{" "}
-                      <div className="col fw-normal text-end pe-3">
-                        {data ? formatAmountWithCommas(data?.approvedCost) : 0}{" "}
-                        M
-                      </div>
-                    </div>
-                  </Button>
-                }
-                body={
-                  <div
-                    className={`container-fluid p-4 ${montserrat.className}`}
-                    style={{
-                      borderRadius: "20px",
-                      background: "rgba(255, 255, 255,.75)",
-                    }}
-                  >
-                    <div className="row d-flex justify-content-center m-0">
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={divideCircle}
-                            alt="divideCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              7409
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Total Scheme
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={originalAllocationCircle}
-                            alt="originalAllocationCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              842.00 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Original Allocation
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={revisedAllocationCircle}
-                            alt="revisedAllocationCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              842.00 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Revised Allocation
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={pndReleaseCircle}
-                            alt="pndReleaseCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              514.64 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              P&D Release
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={controllingReleaseCircle}
-                            alt="controllingReleaseCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              498.07 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Controlling Release
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col mb-4">
-                        <div
-                          className="col shadow d-flex bg-white"
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={spendingReleaseCircle}
-                            alt="spendingReleaseCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              472.76 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Spending Release
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-auto mb-4">
-                        <div
-                          className="col shadow d-flex bg-white "
-                          style={{
-                            borderRadius: "12px",
-                            padding: "20px 28px 10px 28px",
-                          }}
-                        >
-                          <Image
-                            src={utilizationCircle}
-                            alt="utilizationCircle"
-                            width={64}
-                            height={64}
-                            className="mt-2"
-                          />
-                          &nbsp;&nbsp;&nbsp;
-                          <div className="col mb-4">
-                            <p
-                              className="m-0 fw-normal text-nowrap"
-                              style={{ fontSize: "2.125rem" }}
-                            >
-                              249.86 B
-                            </p>
-                            <p className="m-0 text-secondary fw-normal fs20px text-nowrap">
-                              Utilization
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                }
-              />
-
-              <div
-                className="col p-2 rounded-2 mb-2"
-                style={{ background: "rgba(235, 239, 253, 1)" }}
-              >
-                <div className="row d-flex m-0">
-                  <div className="col fw-5 text-start">Expenditure</div>
-                  <div className="col fw-normal text-end pe-3">
-                    {data ? formatAmountWithCommas(data?.expenditure) : 0} M
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div
-            className="col mb-2 shadow-sm fs14px"
-            style={{
-              background: "#C6D9F1",
-              borderRadius: "10px",
-              padding: "15px 15px 15px 15px",
-            }}
-          >
-            <p
-              className="mb-2 fw-5 pb-1"
-              style={{ borderBottom: "1px dashed #97ABBD" }}
-            >
-              Project Status
-            </p>
-            <CustomModal
-              HeaderRightPos={0}
-              HeaderTopPos={17}
-              buttonColumn="col p-0"
-              isFullscreen={true}
-              size="xl"
-              modalId="Approved"
-              button={
-                <Button
-                  onClick={() => getProjectsList("Approved")}
-                  className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
-                  style={{ background: "rgba(235, 239, 253, 1)" }}
-                >
-                  <div className="row d-flex m-0">
-                    <div className="col fw-5 text-start">Approved</div>{" "}
-                    <div className="col fw-normal text-end pe-3 text-success">
-                      {data ? (
-                        <AnimatedCounter from={0} to={data.approved} />
-                      ) : (
-                        0
-                      )}
-                    </div>
-                  </div>
-                </Button>
-              }
-              body={
-                <>
-                  <div className="container-fluid border-0 p-0">
-                    {projectsData && filteredCMADPKeys ? (
-                      <ProjectsTable
-                        rowCountOptions={rowCountOptions}
-                        districtOptions={districtOptions}
-                        sectorOptions={sectorOptions}
-                        userOptions={userOptions}
-                        keys={filteredCMADPKeys}
-                        label="Approved Projects"
-                        projectsData={projectsData}
-                        setProjectsData={setProjectsData}
-                        allowLink={false}
-                        role={role}
-                      />
-                    ) : (
-                      <Loader />
-                    )}
-                  </div>
-                </>
-              }
-            />
-            <CustomModal
-              HeaderRightPos={0}
-              HeaderTopPos={17}
-              buttonColumn="col p-0"
-              isFullscreen={true}
-              size="xl"
-              modalId="Unapproved"
-              button={
-                <Button
-                  onClick={() => getProjectsList("Un-Approved")}
-                  className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
-                  style={{ background: "rgba(235, 239, 253, 1)" }}
-                >
-                  <div className="row d-flex m-0">
-                    <div className="col fw-5 text-start">Unapproved</div>{" "}
-                    <div className="col fw-normal text-end pe-3 text-danger">
-                      {data ? (
-                        <AnimatedCounter from={0} to={data.unapproved} />
-                      ) : (
-                        0
-                      )}
-                    </div>
-                  </div>
-                </Button>
-              }
-              body={
-                <>
-                  <div className="container-fluid border-0 p-0">
-                    {projectsData && filteredCMADPKeys ? (
-                      <ProjectsTable
-                        rowCountOptions={rowCountOptions}
-                        districtOptions={districtOptions}
-                        sectorOptions={sectorOptions}
-                        userOptions={userOptions}
-                        keys={filteredCMADPKeys}
-                        label="Unapproved Projects"
-                        projectsData={projectsData}
-                        setProjectsData={setProjectsData}
-                        allowLink={false}
-                        role={role}
-                      />
-                    ) : (
-                      <Loader />
-                    )}
-                  </div>
-                </>
-              }
-            />
-            <CustomModal
-              HeaderRightPos={0}
-              HeaderTopPos={17}
-              buttonColumn="col p-0"
-              isFullscreen={true}
-              size="xl"
-              modalId="Dropped"
-              button={
-                <Button
-                  onClick={() => getProjectsList("Dropped")}
-                  className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
-                  style={{ background: "rgba(235, 239, 253, 1)" }}
-                >
-                  <div className="row d-flex m-0">
-                    <div className="col fw-5 text-start">Dropped</div>{" "}
-                    <div className="col fw-normal text-end pe-3 text-secondary">
-                      {data ? (
-                        <AnimatedCounter from={0} to={data.dropped} />
-                      ) : (
-                        0
-                      )}
-                    </div>
-                  </div>
-                </Button>
-              }
-              body={
-                <>
-                  <div className="container-fluid border-0 p-0">
-                    {projectsData && filteredCMADPKeys ? (
-                      <ProjectsTable
-                        rowCountOptions={rowCountOptions}
-                        districtOptions={districtOptions}
-                        sectorOptions={sectorOptions}
-                        userOptions={userOptions}
-                        keys={filteredCMADPKeys}
-                        label="Dropped Projects"
-                        projectsData={projectsData}
-                        setProjectsData={setProjectsData}
-                        allowLink={false}
-                        role={role}
-                      />
-                    ) : (
-                      <Loader />
-                    )}
-                  </div>
-                </>
-              }
-            />
-            <div className="row m-0" style={{ gap: 10 }}>
+              <p className="col fw-5 mb-2">Project Cost Slab</p>
               <CustomModal
                 HeaderRightPos={0}
                 HeaderTopPos={17}
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
-                modalId="Umbrella"
+                modalId="0.1M"
                 button={
                   <Button
-                    onClick={() => getProjectsList("umbralla")}
-                    className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
-                    style={{ background: "rgba(235, 239, 253, 1)" }}
+                    className="btn w-100 p-0"
+                    onClick={() => getProjectsList("0to200")}
                   >
-                    <div className="row d-flex m-0">
-                      <div className="col fw-5 text-start">Umbrella</div>
-                      <div className="col fw-normal text-end pe-3 text-secondary">
-                        {data ? (
-                          <AnimatedCounter from={0} to={data.umbralla} />
-                        ) : (
-                          0
-                        )}
-                      </div>
-                    </div>
+                    <FinancialSlab
+                      projectCategory="DDC"
+                      initialLimitLabel="0.1M"
+                      endLimitLabel="Up to 200M"
+                      value={data ? data.a0to200 : 0}
+                    />
                   </Button>
                 }
                 body={
@@ -2213,7 +2349,7 @@ const DashboardMonitoring = () => {
                           sectorOptions={sectorOptions}
                           userOptions={userOptions}
                           keys={filteredCMADPKeys}
-                          label="Umbrella Projects"
+                          label="0.1M to Up to 200M DDC Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           allowLink={false}
@@ -2232,23 +2368,18 @@ const DashboardMonitoring = () => {
                 buttonColumn="col p-0"
                 isFullscreen={true}
                 size="xl"
-                modalId="single"
+                modalId="Above200M"
                 button={
                   <Button
-                    onClick={() => getProjectsList("single")}
-                    className="btn w-100 col p-2 rounded-2 mb-2 fs14px"
-                    style={{ background: "rgba(235, 239, 253, 1)" }}
+                    className="btn p-0 w-100"
+                    onClick={() => getProjectsList("201to400")}
                   >
-                    <div className="row d-flex m-0">
-                      <div className="col fw-5 text-start">Single</div>
-                      <div className="col fw-normal text-end pe-3 text-secondary">
-                        {data ? (
-                          <AnimatedCounter from={0} to={data.single} />
-                        ) : (
-                          0
-                        )}
-                      </div>
-                    </div>
+                    <FinancialSlab
+                      projectCategory="DDWP"
+                      initialLimitLabel="Above 200M"
+                      endLimitLabel="Up to 400M"
+                      value={data ? data.a200to400 : 0}
+                    />
                   </Button>
                 }
                 body={
@@ -2261,7 +2392,136 @@ const DashboardMonitoring = () => {
                           sectorOptions={sectorOptions}
                           userOptions={userOptions}
                           keys={filteredCMADPKeys}
-                          label="Single Projects"
+                          label="Above 200M to Up to 400M DDWP Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                          allowLink={false}
+                          role={role}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId="Above400M"
+                button={
+                  <Button
+                    className="btn p-0 w-100"
+                    onClick={() => getProjectsList("401to800")}
+                  >
+                    <FinancialSlab
+                      projectCategory="DDSC"
+                      initialLimitLabel="Above 400M"
+                      endLimitLabel="Up to 800M"
+                      value={data ? data.a400to800 : 0}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredCMADPKeys ? (
+                        <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
+                          keys={filteredCMADPKeys}
+                          label="Above 400M Up to 800M DDSC Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                          allowLink={false}
+                          role={role}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId="Above800M"
+                button={
+                  <Button
+                    className="btn p-0 w-100"
+                    onClick={() => getProjectsList("801to1000")}
+                  >
+                    <FinancialSlab
+                      projectCategory="PDWP"
+                      initialLimitLabel="Above 800M"
+                      endLimitLabel="Up to 10B"
+                      value={data ? data.a800to1000 : 0}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredCMADPKeys ? (
+                        <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
+                          keys={filteredCMADPKeys}
+                          label="Above 800M to upto 10B PDWP Projects"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                          allowLink={false}
+                          role={role}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId="10Billion"
+                button={
+                  <Button
+                    className="btn p-0 w-100"
+                    onClick={() => getProjectsList("1001Above")}
+                  >
+                    <FinancialSlab
+                      projectCategory="CDWP"
+                      initialLimitLabel="10 Billion"
+                      endLimitLabel="or Above"
+                      value={data ? data.a800to1000 : 0}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredCMADPKeys ? (
+                        <ProjectsTable
+                          rowCountOptions={rowCountOptions}
+                          districtOptions={districtOptions}
+                          sectorOptions={sectorOptions}
+                          userOptions={userOptions}
+                          keys={filteredCMADPKeys}
+                          label="10 Billion or above CDWP Projects"
                           projectsData={projectsData}
                           setProjectsData={setProjectsData}
                           allowLink={false}
@@ -2276,234 +2536,7 @@ const DashboardMonitoring = () => {
               />
             </div>
           </div>
-
-          <div
-            className={`col shadow-sm fs14px ${lexend.className}`}
-            style={{
-              background: "#C6D9F1",
-              borderRadius: "10px",
-              padding: "15px 15px 15px 15px ",
-              color: "#334155",
-            }}
-          >
-            <p className="col fw-5 mb-2">Project Cost Slab</p>
-            <CustomModal
-              HeaderRightPos={0}
-              HeaderTopPos={17}
-              buttonColumn="col p-0"
-              isFullscreen={true}
-              size="xl"
-              modalId="0.1M"
-              button={
-                <Button
-                  className="btn w-100 p-0"
-                  onClick={() => getProjectsList("0to200")}
-                >
-                  <FinancialSlab
-                    projectCategory="DDC"
-                    initialLimitLabel="0.1M"
-                    endLimitLabel="Up to 200M"
-                    value={data ? data.a0to200 : 0}
-                  />
-                </Button>
-              }
-              body={
-                <>
-                  <div className="container-fluid border-0 p-0">
-                    {projectsData && filteredCMADPKeys ? (
-                      <ProjectsTable
-                        rowCountOptions={rowCountOptions}
-                        districtOptions={districtOptions}
-                        sectorOptions={sectorOptions}
-                        userOptions={userOptions}
-                        keys={filteredCMADPKeys}
-                        label="0.1M to Up to 200M DDC Projects"
-                        projectsData={projectsData}
-                        setProjectsData={setProjectsData}
-                        allowLink={false}
-                        role={role}
-                      />
-                    ) : (
-                      <Loader />
-                    )}
-                  </div>
-                </>
-              }
-            />
-            <CustomModal
-              HeaderRightPos={0}
-              HeaderTopPos={17}
-              buttonColumn="col p-0"
-              isFullscreen={true}
-              size="xl"
-              modalId="Above200M"
-              button={
-                <Button
-                  className="btn p-0 w-100"
-                  onClick={() => getProjectsList("201to400")}
-                >
-                  <FinancialSlab
-                    projectCategory="DDWP"
-                    initialLimitLabel="Above 200M"
-                    endLimitLabel="Up to 400M"
-                    value={data ? data.a200to400 : 0}
-                  />
-                </Button>
-              }
-              body={
-                <>
-                  <div className="container-fluid border-0 p-0">
-                    {projectsData && filteredCMADPKeys ? (
-                      <ProjectsTable
-                        rowCountOptions={rowCountOptions}
-                        districtOptions={districtOptions}
-                        sectorOptions={sectorOptions}
-                        userOptions={userOptions}
-                        keys={filteredCMADPKeys}
-                        label="Above 200M to Up to 400M DDWP Projects"
-                        projectsData={projectsData}
-                        setProjectsData={setProjectsData}
-                        allowLink={false}
-                        role={role}
-                      />
-                    ) : (
-                      <Loader />
-                    )}
-                  </div>
-                </>
-              }
-            />
-            <CustomModal
-              HeaderRightPos={0}
-              HeaderTopPos={17}
-              buttonColumn="col p-0"
-              isFullscreen={true}
-              size="xl"
-              modalId="Above400M"
-              button={
-                <Button
-                  className="btn p-0 w-100"
-                  onClick={() => getProjectsList("401to800")}
-                >
-                  <FinancialSlab
-                    projectCategory="DDSC"
-                    initialLimitLabel="Above 400M"
-                    endLimitLabel="Up to 800M"
-                    value={data ? data.a400to800 : 0}
-                  />
-                </Button>
-              }
-              body={
-                <>
-                  <div className="container-fluid border-0 p-0">
-                    {projectsData && filteredCMADPKeys ? (
-                      <ProjectsTable
-                        rowCountOptions={rowCountOptions}
-                        districtOptions={districtOptions}
-                        sectorOptions={sectorOptions}
-                        userOptions={userOptions}
-                        keys={filteredCMADPKeys}
-                        label="Above 400M Up to 800M DDSC Projects"
-                        projectsData={projectsData}
-                        setProjectsData={setProjectsData}
-                        allowLink={false}
-                        role={role}
-                      />
-                    ) : (
-                      <Loader />
-                    )}
-                  </div>
-                </>
-              }
-            />
-            <CustomModal
-              HeaderRightPos={0}
-              HeaderTopPos={17}
-              buttonColumn="col p-0"
-              isFullscreen={true}
-              size="xl"
-              modalId="Above800M"
-              button={
-                <Button
-                  className="btn p-0 w-100"
-                  onClick={() => getProjectsList("801to1000")}
-                >
-                  <FinancialSlab
-                    projectCategory="PDWP"
-                    initialLimitLabel="Above 800M"
-                    endLimitLabel="Up to 10B"
-                    value={data ? data.a800to1000 : 0}
-                  />
-                </Button>
-              }
-              body={
-                <>
-                  <div className="container-fluid border-0 p-0">
-                    {projectsData && filteredCMADPKeys ? (
-                      <ProjectsTable
-                        rowCountOptions={rowCountOptions}
-                        districtOptions={districtOptions}
-                        sectorOptions={sectorOptions}
-                        userOptions={userOptions}
-                        keys={filteredCMADPKeys}
-                        label="Above 800M to upto 10B PDWP Projects"
-                        projectsData={projectsData}
-                        setProjectsData={setProjectsData}
-                        allowLink={false}
-                        role={role}
-                      />
-                    ) : (
-                      <Loader />
-                    )}
-                  </div>
-                </>
-              }
-            />
-            <CustomModal
-              HeaderRightPos={0}
-              HeaderTopPos={17}
-              buttonColumn="col p-0"
-              isFullscreen={true}
-              size="xl"
-              modalId="10Billion"
-              button={
-                <Button
-                  className="btn p-0 w-100"
-                  onClick={() => getProjectsList("1001Above")}
-                >
-                  <FinancialSlab
-                    projectCategory="CDWP"
-                    initialLimitLabel="10 Billion"
-                    endLimitLabel="or Above"
-                    value={data ? data.a800to1000 : 0}
-                  />
-                </Button>
-              }
-              body={
-                <>
-                  <div className="container-fluid border-0 p-0">
-                    {projectsData && filteredCMADPKeys ? (
-                      <ProjectsTable
-                        rowCountOptions={rowCountOptions}
-                        districtOptions={districtOptions}
-                        sectorOptions={sectorOptions}
-                        userOptions={userOptions}
-                        keys={filteredCMADPKeys}
-                        label="10 Billion or above CDWP Projects"
-                        projectsData={projectsData}
-                        setProjectsData={setProjectsData}
-                        allowLink={false}
-                        role={role}
-                      />
-                    ) : (
-                      <Loader />
-                    )}
-                  </div>
-                </>
-              }
-            />
-          </div>
-        </div>
+        )}
       </div>
     </DashboardWrapper>
   );

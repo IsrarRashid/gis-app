@@ -55,7 +55,7 @@ const GroupingForm = ({ id, options, userName }: Props) => {
 
   const handleSelectGroup = (
     newValue: SingleValue<{ value: string; label: string }>,
-    actionMeta: ActionMeta<{ value: string; label: string }>
+    actionMeta: ActionMeta<{ value: string; label: string }>,
   ) => {
     if (newValue) {
       const selectedOptions = {
@@ -84,7 +84,7 @@ const GroupingForm = ({ id, options, userName }: Props) => {
     console.log("selectedOptions", selectedOptions);
     try {
       const response = await apiClient.post(
-        `${UPDATE_USER_ROLE_API}?UserName=${userName}&RoleName=${roleName}`
+        `${UPDATE_USER_ROLE_API}?UserName=${userName}&RoleName=${roleName}`,
       );
       console.log(response);
       // notifyCreate(updated);
@@ -160,6 +160,7 @@ const GroupingForm = ({ id, options, userName }: Props) => {
                     value={selectedValues} // Correctly mapped selected values
                     onChangeSingle={handleSelectGroup} // Correct handler
                     placeholder="Choose Role"
+                    closeMenuOnSelect
                   />
                 </div>
                 <SubmitButton>Save Role</SubmitButton>

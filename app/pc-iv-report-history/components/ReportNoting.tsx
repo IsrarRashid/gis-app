@@ -113,6 +113,7 @@ const ReportNoting = ({
   officers,
   onCommentSubmitted,
 }: Props) => {
+  console.log("data", data);
   const {
     control,
     setValue,

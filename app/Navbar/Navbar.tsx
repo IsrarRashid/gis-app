@@ -158,7 +158,8 @@ const Navbar = () => {
             {currentPath !== "/charts" && (
               <>
                 {(departmentId === 0 || departmentId === 1) &&
-                role !== "Special Role" ? (
+                role !== "Special Role" &&
+                role?.toLowerCase() !== "dgme reports" ? (
                   <li className="nav-item p-1 me-3 m-auto">
                     <Suspense
                       fallback={

@@ -2,9 +2,21 @@
 import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import { FaChevronLeft } from "react-icons/fa";
+import Cookies from "js-cookie";
 
 const BackButton = () => {
-  const router = useRouter();
+  const handleLogout = () => {
+    Cookies.remove("token");
+    Cookies.remove("email");
+    Cookies.remove("userName");
+    Cookies.remove("userId");
+    Cookies.remove("role");
+    Cookies.remove("rights");
+    Cookies.remove("departmentId");
+    Cookies.remove("deptUserFirstName");
+    Cookies.remove("deptUserLastName");
+    window.location.href = "/login";
+  };
 
   return (
     <Button
@@ -15,10 +27,10 @@ const BackButton = () => {
         padding: "16px 24px",
         gap: "12px",
       }}
-      onClick={() => router.back()}
+      onClick={() => handleLogout()}
     >
       <FaChevronLeft size={24} />
-      Go Back
+      Log out
     </Button>
   );
 };
