@@ -179,7 +179,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                   name="sort id"
                   handleSort={() => handleSort("sortId")}
                 />
-                <TableHeading
+                {/* <TableHeading
                   className="text-nowrap"
                   name="created at"
                   handleSort={() => handleSort("createdAt")}
@@ -188,7 +188,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                   className="text-nowrap"
                   name="update at"
                   handleSort={() => handleSort("updateAt")}
-                />
+                /> */}
                 <TableHeading name="ACTIONS" textClassName="text-center" />
               </tr>
             </thead>
@@ -209,7 +209,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                     <TableData>{d.description}</TableData>
                     <TableData>{getParentSector(d.parentId, data)}</TableData>
                     <TableData className="text-center">{d.sortId}</TableData>
-                    <TableData>
+                    {/* <TableData>
                       {d.createdAt &&
                         new Date(d.createdAt).toLocaleDateString("en-GB", {
                           weekday: "short",
@@ -217,8 +217,8 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                           month: "short",
                           year: "numeric",
                         })}
-                    </TableData>
-                    <TableData>
+                    </TableData> */}
+                    {/* <TableData>
                       {d.updateAt &&
                         new Date(d.updateAt).toLocaleDateString("en-GB", {
                           weekday: "short",
@@ -226,7 +226,7 @@ const SectorsTable = ({ refresh, setRefresh }: SectorsTableProps) => {
                           month: "short",
                           year: "numeric",
                         })}
-                    </TableData>
+                    </TableData> */}
                     <TableData>
                       <Actions
                         deleteNode={

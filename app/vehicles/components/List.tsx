@@ -197,7 +197,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   name="vehicle Icon"
                   handleSort={() => handleSort("vehicleIcon")}
                 />
-                <TableHeading
+                {/* <TableHeading
                   className="text-nowrap"
                   name="created at"
                   handleSort={() => handleSort("createdAt")}
@@ -206,7 +206,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                   className="text-nowrap"
                   name="updated at"
                   handleSort={() => handleSort("updatedAt")}
-                />
+                /> */}
                 <TableHeading name="ACTIONS" textClassName="text-center" />
               </tr>
             </thead>
@@ -262,7 +262,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                       />
                     )}
                   </TableData>
-                  <TableData>
+                  {/* <TableData>
                     {d.createdAt &&
                       new Date(d.createdAt).toLocaleDateString("en-GB", {
                         weekday: "short",
@@ -279,7 +279,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
                         month: "short",
                         year: "numeric",
                       })}
-                  </TableData>
+                  </TableData> */}
                   <TableData>
                     <Actions
                       deleteNode={

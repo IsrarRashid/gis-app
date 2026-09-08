@@ -16,11 +16,9 @@ import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import ProjectReportOverviewModal from "@/app/dashboard/components/projectReportOverview/ProjectReportOverviewModal";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import {
-  addDayToFormattedDate,
   displayStatusText,
-  exportToPDF,
+  exportDataToPDFNEW,
   formatAmountWithCommas,
-  getFormattedDate,
   getTimeLeft,
 } from "@/app/utils";
 import { exportDataToExcel } from "@/app/utils/exportToExcel";
@@ -78,6 +76,10 @@ export interface ProjectsList {
   totalRevenueCost: number;
   totalCapitalCost: number;
   reportStatus: number;
+  latestIssuedReport: string;
+  datesOfIssuedReports: string[];
+  issuedReportDistrict: string;
+  issuedReportActualPhysicalPrograss: number;
 }
 
 interface Props {
@@ -437,155 +439,58 @@ const ProjectsTable = ({
   };
 
   const keysForPDF = ["srNo", ...keys];
-  const columns = keysForPDF.map((key) => ({
-    header: formatKeyName(key), // Format key for header
-    dataKey: key, // Use the key for data mapping
-  }));
 
-  const tableRows = (
-    searchTerm || dropdownFilterValue.length > 0 ? filteredData : modifiedData
-  ).map((data: any, index) => {
-    const row: Record<string, any> = { srNo: index + 1 }; // Initialize row with srNo
+  // Single source of truth for both PDF and Excel exports.
+  // Keyed by DISPLAY label (formatKeyName(key)) since both
+  // exportDataToPDF and exportDataToExcel expect rows shaped that way
+  // (row[headerLabel], not row[rawKey]).
+  const exportHeaders = keysForPDF.map(formatKeyName);
 
-    keysForPDF.forEach((key) => {
-      switch (key) {
-        case "srNo":
-          row[key] = index + 1;
-          break;
-        case "gSno":
-          row[key] = data.gSno;
-          break;
-        case "projectName":
-          row[key] = data.projectName;
-          break;
-        case "districtName":
-          row[key] = data.districtName;
-          break;
-        case "sectorName":
-          row[key] = data.sectorName;
-          break;
-        case "userName":
-          row[key] = `${data.userName} (${data.designation})`;
-          break;
-        case "reportCompletion":
-          row[key] = `${Math.round(data.reportCompletion)}%`;
-          break;
-        case "visitStartDate":
-          row[key] =
-            data.visitStartDate &&
-            `${new Date(data.visitStartDate).toLocaleDateString("en-GB", {
-              weekday: "short",
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })} to ${
-              data.visitEndDate &&
-              new Date(data.visitEndDate).toLocaleDateString("en-GB", {
-                weekday: "short",
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })
-            }`;
-          break;
-        case "completedDate":
-          row[key] = data.completedDate
-            ? `${new Date(data.completedDate).toLocaleDateString("en-GB", {
-                weekday: "short",
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}`
-            : "NA";
-          break;
-        case "utilization":
-          row[key] = `${data.utilization + data.expUpToJune}`;
-          break;
-        case "utilPercent":
-          row[key] = `${data.utilPercent}%`;
-          break;
-        case "deadline":
-          if (data.submittedDate && data.deadline) {
-            row[key] = deadlineColumnValue(data.submittedDate, data.deadline);
-          } else if (data.deadline) {
-            row[key] = getTimeLeft(data.deadline).replace("-", "");
-          } else {
-            row[key] = "NA";
-          }
+  const buildExportRows = () => {
+    const source =
+      searchTerm || dropdownFilterValue.length > 0
+        ? filteredData
+        : modifiedData;
 
-          break;
-        case "reportStatus":
-          row[key] = displayStatusText(data.reportStatus);
-          break;
-        case "statusDate":
-          row[key] = data.statusDate
-            ? `${new Date(data.statusDate).toLocaleDateString("en-GB", {
-                weekday: "short",
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}`
-            : "NA";
-          break;
-        default:
-          row[key] = data[key]; // Handle any additional keys dynamically
-      }
-    });
-
-    return row;
-  });
-
-  // Export to Excel function
-  const exportToExcel = () => {
-    const headers = ["srNo", ...keys]; // Rename headers dynamically
-    const displayHeaders = headers.map(formatKeyName);
-    const data = (
-      searchTerm || dropdownFilterValue.length > 0 ? filteredData : modifiedData
-    ).map((item: any, index) => {
+    return source.map((data: any, index) => {
       const row: Record<string, any> = {};
 
-      headers.forEach((header) => {
-        const key =
-          Object.entries(renameMap).find(
-            ([, value]) => value === header,
-          )?.[0] || header; // Find original key from renamed header
+      keysForPDF.forEach((key) => {
+        const label = formatKeyName(key);
 
         switch (key) {
           case "srNo":
-            row[formatKeyName(header)] = index + 1;
+            row[label] = index + 1;
             break;
           case "gSno":
-            row[formatKeyName(header)] = item.gSno;
+            row[label] = data.gSno;
             break;
           case "projectName":
-            row[formatKeyName(header)] = item.projectName;
+            row[label] = data.projectName;
             break;
           case "districtName":
-            row[formatKeyName(header)] = item.districtName;
+            row[label] = data.districtName;
             break;
           case "sectorName":
-            row[formatKeyName(header)] = item.sectorName;
+            row[label] = data.sectorName;
             break;
           case "userName":
-            row[formatKeyName(header)] =
-              `${item.userName} (${item.designation})`;
+            row[label] = `${data.userName} (${data.designation})`;
             break;
           case "reportCompletion":
-            row[formatKeyName(header)] = `${Math.round(
-              item.reportCompletion,
-            )}%`;
+            row[label] = `${Math.round(data.reportCompletion)}%`;
             break;
           case "visitStartDate":
-            row[formatKeyName(header)] =
-              item.visitStartDate &&
-              `${new Date(item.visitStartDate).toLocaleDateString("en-GB", {
+            row[label] =
+              data.visitStartDate &&
+              `${new Date(data.visitStartDate).toLocaleDateString("en-GB", {
                 weekday: "short",
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
               })} to ${
-                item.visitEndDate &&
-                new Date(item.visitEndDate).toLocaleDateString("en-GB", {
+                data.visitEndDate &&
+                new Date(data.visitEndDate).toLocaleDateString("en-GB", {
                   weekday: "short",
                   day: "2-digit",
                   month: "short",
@@ -594,65 +499,76 @@ const ProjectsTable = ({
               }`;
             break;
           case "completedDate":
-            row[formatKeyName(header)] = item.completedDate
-              ? `${new Date(item.completedDate).toLocaleDateString("en-GB", {
+            row[label] = data.completedDate
+              ? `${new Date(data.completedDate).toLocaleDateString("en-GB", {
                   weekday: "short",
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
                 })}`
               : "NA";
-            break;
-          case "deadline":
-            if (item.deadline && item.submittedDate) {
-              row[formatKeyName(header)] = deadlineColumnValue(
-                item.submittedDate,
-                item.deadline,
-              );
-            } else if (item.deadline) {
-              row[formatKeyName(header)] = getTimeLeft(item.deadline).replace(
-                "-",
-                "",
-              );
-            } else {
-              row[formatKeyName(header)] = "NA";
-            }
             break;
           case "visitCount":
-            row[formatKeyName(header)] = item.visitCount;
+            row[label] = data.visitCount;
             break;
           case "scheduleVisitCount":
-            row[formatKeyName(header)] = item.scheduleVisitCount;
+            row[label] = data.scheduleVisitCount;
             break;
           case "completeVisitCount":
-            row[formatKeyName(header)] = item.completeVisitCount;
+            row[label] = data.completeVisitCount;
             break;
           case "submittedVisitCount":
-            row[formatKeyName(header)] = item.submittedVisitCount;
+            row[label] = data.submittedVisitCount;
             break;
           case "cost":
-            row[formatKeyName(header)] = item.cost;
+            row[label] = data.cost;
             break;
           case "revisedAllocation":
-            row[formatKeyName(header)] = item.revisedAllocation;
+            row[label] = data.revisedAllocation;
             break;
           case "pnDReleases":
-            row[formatKeyName(header)] = item.pnDReleases;
+            row[label] = data.pnDReleases;
             break;
           case "utilization":
-            row[formatKeyName(header)] = `${
-              item.utilization + item.expUpToJune
-            }`;
+            row[label] = `${data.utilization + data.expUpToJune}`;
             break;
           case "utilPercent":
-            row[formatKeyName(header)] = `${item.utilPercent}%`;
+            row[label] = `${data.utilPercent}%`;
+            break;
+          case "deadline":
+            if (data.submittedDate && data.deadline) {
+              row[label] = deadlineColumnValue(
+                data.submittedDate,
+                data.deadline,
+              );
+            } else if (data.deadline) {
+              row[label] = getTimeLeft(data.deadline).replace("-", "");
+            } else {
+              row[label] = "NA";
+            }
             break;
           case "reportStatus":
-            row[formatKeyName(header)] = displayStatusText(item.reportStatus);
+            row[label] = displayStatusText(data.reportStatus);
+            break;
+          case "datesOfIssuedReports":
+            // fixed: was building JSX (<Badge>...) here, which cannot be
+            // written into an Excel cell or a PDF cell. Exports need
+            // plain text, so this now joins the formatted dates instead.
+            row[label] = (data.datesOfIssuedReports ?? [])
+              .map((item: string) =>
+                new Date(item)
+                  .toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                  })
+                  .replace(/\//g, "."),
+              )
+              .join(", ");
             break;
           case "statusDate":
-            row[formatKeyName(header)] = item.statusDate
-              ? `${new Date(item.statusDate).toLocaleDateString("en-GB", {
+            row[label] = data.statusDate
+              ? `${new Date(data.statusDate).toLocaleDateString("en-GB", {
                   weekday: "short",
                   day: "2-digit",
                   month: "short",
@@ -660,24 +576,52 @@ const ProjectsTable = ({
                 })}`
               : "NA";
             break;
-
+          case "latestIssuedReport":
+            row[label] = data.latestIssuedReport;
+            break;
+          case "issuedReportDistrict":
+            row[label] = data.issuedReportDistrict;
+            break;
+          case "issuedReportActualPhysicalPrograss":
+            row[label] = data.issuedReportActualPhysicalPrograss;
+            break;
           default:
-            row[formatKeyName(header)] = item[formatKeyName(key)] || ""; // Handle any additional keys dynamically
+            row[label] = data[key];
         }
       });
 
       return row;
     });
+  };
 
+  const exportFilenameBase = `${label} ${new Date().toLocaleDateString(
+    "en-GB",
+    {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    },
+  )}`;
+
+  // Export to Excel — reuses buildExportRows(), no duplicate calculation
+  const exportToExcel = () => {
     exportDataToExcel(
-      data,
-      displayHeaders,
-      `${label} ${new Date().toLocaleDateString("en-GB", {
-        weekday: "short",
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })}.xlsx`,
+      buildExportRows(),
+      exportHeaders,
+      `${exportFilenameBase}.xlsx`,
+    );
+  };
+
+  // Export to PDF — same rows, same headers, no duplicate calculation
+  const exportToPdf = () => {
+    exportDataToPDFNEW(
+      exportHeaders,
+      buildExportRows(),
+      `${exportFilenameBase}.pdf`,
+      undefined,
+      undefined,
+      "landscape",
     );
   };
 
@@ -1560,10 +1504,7 @@ const ProjectsTable = ({
             )}
             <div className="col-auto">
               <DownloadDropDown
-                onClickPdf={() =>
-                  tableRows &&
-                  exportToPDF(columns, tableRows, new Date(), label)
-                }
+                onClickPdf={exportToPdf}
                 onClickExcel={exportToExcel}
               />
             </div>
@@ -1577,10 +1518,7 @@ const ProjectsTable = ({
           form={
             <div className="col-auto">
               <DownloadDropDown
-                onClickPdf={() =>
-                  tableRows &&
-                  exportToPDF(columns, tableRows, new Date(), label)
-                }
+                onClickPdf={exportToPdf}
                 onClickExcel={exportToExcel}
               />
             </div>
@@ -1891,6 +1829,37 @@ const ProjectsTable = ({
                             key === "completeVisitCount" ||
                             key === "submittedVisitCount" ? (
                             <div className="text-center">{d[key]}</div>
+                          ) : key === "datesOfIssuedReports" ? (
+                            <div className="flex flex-col gap-1">
+                              {Array.from({
+                                length: Math.ceil((d[key]?.length ?? 0) / 3),
+                              }).map((_, rowIndex) => (
+                                <div className="p-1" key={rowIndex}>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {d[key]
+                                      ?.slice(rowIndex * 3, rowIndex * 3 + 3)
+                                      .map((item: string, index: number) => (
+                                        <Badge
+                                          key={index}
+                                          className="text-decoration-underline"
+                                        >
+                                          {new Date(item)
+                                            .toLocaleDateString("en-GB", {
+                                              day: "2-digit",
+                                              month: "2-digit",
+                                              year: "2-digit",
+                                            })
+                                            .replace(/\//g, ".")}
+                                        </Badge>
+                                      ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : key === "issuedReportActualPhysicalPrograss" ? (
+                            <div className="text-center">
+                              <span>{d[key]}%</span>
+                            </div>
                           ) : key === "completedDate" ? (
                             d[key] ? (
                               <Badge>

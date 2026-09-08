@@ -122,18 +122,18 @@ const UserDropDown = () => {
               background: "rgba(255, 255, 255, 0.62)",
             }}
           >
-            <div className="row d-flex">
-              <div className="col m-auto ms-1 mt-1 mb-1">
+            <div className="row d-flex align-items-center gx-2 py-1">
+              <div className="col-auto">
                 <img
                   className="img-fluid rounded-circle m-0"
                   src="/icons/logoNew.svg"
                   style={{ objectFit: "cover" }}
                   alt="profilePic"
-                  width={70}
-                  height={70}
+                  width={40}
+                  height={40}
                 />
               </div>
-              <div className="col p-0 m-auto">
+              <div className="col">
                 <p className="m-0 text-dark text-start fs13px fw-6">
                   {userName}
                 </p>
@@ -145,7 +145,7 @@ const UserDropDown = () => {
                   {firstName} {lastName}
                 </p>
               </div>
-              <div className="col ps-2 pe-3 m-auto">
+              <div className="col-auto ps-2 pe-3">
                 <Image src={downArrowBold} alt="downArrowBold" />
               </div>
             </div>
@@ -163,8 +163,8 @@ const UserDropDown = () => {
             }`}
             style={{ zIndex: 5 }}
           >
-            <div className="row d-flex m-0 pt-1">
-              <div className="col-lg-3 col-md-3 col-sm-12 m-auto ms-1 mt-1 mb-1 p-0">
+            <div className="row d-flex align-items-center m-0 pt-1">
+              <div className="col-auto m-auto ms-1 mt-1 mb-1 p-0">
                 <img
                   className="img-fluid rounded-circle m-0"
                   src="/icons/logoNew.svg"

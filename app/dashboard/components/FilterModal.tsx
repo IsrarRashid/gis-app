@@ -51,18 +51,18 @@ const FilterModal = ({
   const handleSelectChange = (
     identifier: string,
     value: string,
-    index: number
+    index: number,
   ) => {
     setOtherFilters((prevFilters) => {
       let updatedFilters;
 
       if (value === "") {
         updatedFilters = prevFilters.filter(
-          (filter) => filter.filterIdentifier !== identifier
+          (filter) => filter.filterIdentifier !== identifier,
         );
       } else {
         const existingIndex = prevFilters.findIndex(
-          (filter) => filter.filterIdentifier === identifier
+          (filter) => filter.filterIdentifier === identifier,
         );
 
         if (existingIndex !== -1) {
@@ -118,7 +118,7 @@ const FilterModal = ({
   const handleCustomSelectChange = (
     identifier: string,
     selected: SingleValue<OptionType>,
-    index: number
+    index: number,
   ) => {
     const value = selected?.value || "";
     handleSelectChange(identifier, value, index);
@@ -168,7 +168,7 @@ const FilterModal = ({
 
                     const selectedValue =
                       otherFilters.find(
-                        (f) => f.filterIdentifier === d.filterIdentifier
+                        (f) => f.filterIdentifier === d.filterIdentifier,
                       )?.filterValues || "";
 
                     return (
@@ -190,9 +190,10 @@ const FilterModal = ({
                             handleCustomSelectChange(
                               d.filterIdentifier,
                               newValue,
-                              i
+                              i,
                             )
                           }
+                          menuPlacement="auto"
                         />
                         {/* <select
                           id={d.label}
@@ -251,7 +252,7 @@ const FilterModal = ({
                       className="btn w-50 fs-5 text-white"
                       onClick={() => {
                         const yearFilter = otherFilters.find(
-                          (filter) => filter.filterIdentifier === "Year"
+                          (filter) => filter.filterIdentifier === "Year",
                         );
                         if (activeFilter === "cmInitiative") {
                           if (

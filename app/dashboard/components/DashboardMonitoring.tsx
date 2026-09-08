@@ -43,6 +43,7 @@ import useProjectsTableUtils from "./ProjectsTable/useProjectsTableUtils";
 import ReportReview from "./ReportReview";
 import SimplePieChart from "./SimplePieChart";
 import VisitsPlan from "./VisitsPlan";
+import PCIVReview from "./PCIVReview";
 
 const Menu = dynamic(() => import("@/app/components/Menu"), { ssr: false });
 
@@ -279,6 +280,10 @@ const DashboardMonitoring = () => {
           "completeVisitCount",
           "submittedVisitCount",
           "visitCount",
+          "latestIssuedReport",
+          "datesOfIssuedReports",
+          "issuedReportDistrict",
+          "issuedReportActualPhysicalPrograss",
         ]
       : [];
 
@@ -290,6 +295,8 @@ const DashboardMonitoring = () => {
     allowedKeys
       .filter((key) => key in projectsData[0])
       .map((key) => key as keyof ProjectsList);
+
+  console.log("filteredCMADPUtilizationKeys", filteredCMADPUtilizationKeys);
 
   const filteredNoOfProjectsKeys =
     projectsData &&
@@ -1022,53 +1029,56 @@ const DashboardMonitoring = () => {
                   />
                 </div>
                 {departmentId !== 1 && departmentId !== 0 && (
+                  // <div className="col p-0">
+                  //   <CustomModal
+                  //     HeaderRightPos={0}
+                  //     HeaderTopPos={17}
+                  //     buttonColumn="col p-0"
+                  //     isFullscreen={true}
+                  //     size="xl"
+                  //     modalId={"pc-iv"}
+                  //     button={
+                  //       <Button
+                  //         className="btn p-0 pe-1 shadow-none w-100"
+                  //         onClick={() => getProjectsList("InProcess")}
+                  //       >
+                  //         <Menu
+                  //           background="rgba(12, 140, 233, 0.2)"
+                  //           outline="1px solid rgba(12, 140, 233, 0.4)"
+                  //           icon="/icons/file.svg"
+                  //           value={0}
+                  //           label="PC-IV"
+                  //           showTides={false}
+                  //           showArrow={true}
+                  //           textWrap={false}
+                  //         />
+                  //       </Button>
+                  //     }
+                  //     body={
+                  //       <>
+                  //         <div className="container-fluid border-0 p-0">
+                  //           {projectsData && filteredKeys ? (
+                  //             <ProjectsTable
+                  //               rowCountOptions={rowCountOptions}
+                  //               districtOptions={districtOptions}
+                  //               sectorOptions={sectorOptions}
+                  //               userOptions={userOptions}
+                  //               keys={filteredKeys}
+                  //               label="Reports In Progress"
+                  //               projectsData={projectsData}
+                  //               setProjectsData={setProjectsData}
+                  //               role={role}
+                  //             />
+                  //           ) : (
+                  //             <Loader />
+                  //           )}
+                  //         </div>
+                  //       </>
+                  //     }
+                  //   />
+                  // </div>
                   <div className="col p-0">
-                    <CustomModal
-                      HeaderRightPos={0}
-                      HeaderTopPos={17}
-                      buttonColumn="col p-0"
-                      isFullscreen={true}
-                      size="xl"
-                      modalId={"pc-iv"}
-                      button={
-                        <Button
-                          className="btn p-0 pe-1 shadow-none w-100"
-                          onClick={() => getProjectsList("InProcess")}
-                        >
-                          <Menu
-                            background="rgba(12, 140, 233, 0.2)"
-                            outline="1px solid rgba(12, 140, 233, 0.4)"
-                            icon="/icons/file.svg"
-                            value={0}
-                            label="PC-IV"
-                            showTides={false}
-                            showArrow={true}
-                            textWrap={false}
-                          />
-                        </Button>
-                      }
-                      body={
-                        <>
-                          <div className="container-fluid border-0 p-0">
-                            {projectsData && filteredKeys ? (
-                              <ProjectsTable
-                                rowCountOptions={rowCountOptions}
-                                districtOptions={districtOptions}
-                                sectorOptions={sectorOptions}
-                                userOptions={userOptions}
-                                keys={filteredKeys}
-                                label="Reports In Progress"
-                                projectsData={projectsData}
-                                setProjectsData={setProjectsData}
-                                role={role}
-                              />
-                            ) : (
-                              <Loader />
-                            )}
-                          </div>
-                        </>
-                      }
-                    />
+                    <PCIVReview />
                   </div>
                 )}
                 {departmentId !== 1 && departmentId !== 0 && (

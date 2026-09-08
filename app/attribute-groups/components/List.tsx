@@ -166,7 +166,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
                   name="sort id"
                   handleSort={() => handleSort("sortId")}
                 />
-                <TableHeading
+                {/* <TableHeading
                   className="text-nowrap"
                   name="created at"
                   handleSort={() => handleSort("createdAt")}
@@ -175,7 +175,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
                   className="text-nowrap"
                   name="updated at"
                   handleSort={() => handleSort("updatedAt")}
-                />
+                /> */}
                 <TableHeading name="Attributes" textClassName="text-center" />
                 <TableHeading name="Actions" textClassName="text-center" />
               </tr>
@@ -188,7 +188,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
                   <TableData>{d.description}</TableData>
                   <TableData>{d.parentName}</TableData>
                   <TableData className="text-center">{d.sortId}</TableData>
-                  <TableData>
+                  {/* <TableData>
                     {d.createdAt &&
                       new Date(d.createdAt).toLocaleDateString("en-GB", {
                         weekday: "short",
@@ -205,7 +205,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
                         month: "short",
                         year: "numeric",
                       })}
-                  </TableData>
+                  </TableData> */}
                   <TableData className="text-center">
                     <GroupingForm
                       id={d.id}

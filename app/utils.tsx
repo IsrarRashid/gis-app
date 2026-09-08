@@ -74,7 +74,7 @@ export function formatDateTime(dateTimeString: string, formatType: string) {
   }
 }
 
-export const devMap = true;
+export const devMap = false;
 
 // "yyyy-MM-dd" to the desired format "dd-MMM-yyyy"
 export function formatHHLStringDate(inputDate: string): string {
@@ -731,6 +731,7 @@ export const allPagesPath = [
   "/pc-iv-report-history",
   "/director-reports",
   "/project-document-names",
+  "/pc-iv-review",
 ];
 
 // for new-visit-plan starts
@@ -841,3 +842,78 @@ export const booleanOptions: OptionType[] = [
   { label: "True", value: "true" },
   { label: "False", value: "false" },
 ];
+
+export const exportDataToPDFNEW = (
+  headers: string[],
+  rows: any[],
+  filename: string,
+  beforeTable?: {
+    headers: string[];
+    rows: any[];
+  },
+  afterTable?: {
+    headers: string[];
+    rows: any[];
+  },
+  orientation: "portrait" | "landscape" = "portrait",
+) => {
+  const doc = new jsPDF({ orientation });
+
+  doc.setFontSize(14);
+  doc.text(filename.replace(".pdf", ""), 14, 15);
+
+  let currentY = 25;
+
+  // Patient Details
+  if (beforeTable) {
+    autoTable(doc, {
+      startY: currentY,
+      head: [beforeTable.headers],
+      body: beforeTable.rows.map((row) =>
+        beforeTable.headers.map((h) => row[h]),
+      ),
+      didParseCell: (data) => {
+        if (data.column.index === 0) {
+          data.cell.styles.fontStyle = "bold";
+        }
+      },
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY + 10;
+  }
+
+  // Main Table
+  autoTable(doc, {
+    startY: currentY,
+    head: [headers],
+    body: rows.map((row) => headers.map((h) => row[h])),
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [65, 105, 225] },
+
+    didParseCell: (data) => {
+      const row = data.row.raw as string[];
+
+      if (row?.[0] === "TOTAL") {
+        data.cell.styles.fontStyle = "bold";
+      }
+    },
+  });
+
+  currentY = (doc as any).lastAutoTable.finalY + 10;
+
+  // Summary Table
+  if (afterTable) {
+    autoTable(doc, {
+      startY: currentY,
+      head: [afterTable.headers],
+      body: afterTable.rows.map((row) => afterTable.headers.map((h) => row[h])),
+      didParseCell: (data) => {
+        if (data.column.index === 0) {
+          data.cell.styles.fontStyle = "bold";
+        }
+      },
+    });
+  }
+
+  doc.save(filename);
+};

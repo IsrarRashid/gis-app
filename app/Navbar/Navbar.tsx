@@ -116,7 +116,7 @@ const Navbar = () => {
             </li>
           </ul>
 
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
             {role !== "Special Role" && (
               <li className="nav-item p-1 me-3 mt-1">
                 <Link href={currentTutorial} target="_blank">
