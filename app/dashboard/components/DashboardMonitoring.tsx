@@ -32,6 +32,7 @@ import {
   adpFilters,
   cmInitiativeFilters,
   oldCmInitiativeFilters,
+  pastYearCmInitiativeFilters,
 } from "../filters";
 import styles from "./Dashboard.module.css";
 import DistributedColumnChart from "./DistributedColumnChart";
@@ -208,7 +209,17 @@ const DashboardMonitoring = () => {
         const yearFilter = otherFilters.find(
           (filter) => filter.filterIdentifier === "Year",
         );
-        if (yearFilter && yearFilter.filterValues === "2025-2026") {
+        if (
+          yearFilter &&
+          (yearFilter.filterValues === "2024-2025" ||
+            yearFilter.filterValues === "2025-2026")
+        ) {
+          const response = await apiClient.post(
+            `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
+            [...pastYearCmInitiativeFilters, ...otherFilters],
+          );
+          setProjectsData(response.data.data);
+        } else if (yearFilter && yearFilter.filterValues === "2026-2027") {
           const response = await apiClient.post(
             `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
             [...cmInitiativeFilters, ...otherFilters],

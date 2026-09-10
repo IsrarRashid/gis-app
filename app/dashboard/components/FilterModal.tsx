@@ -12,6 +12,7 @@ import {
   adpFilters,
   cmInitiativeFilters,
   oldCmInitiativeFilters,
+  pastYearCmInitiativeFilters,
 } from "../filters";
 import CustomLabel from "@/app/components/Form/CustomLabel";
 import { SingleValue } from "react-select";
@@ -257,7 +258,16 @@ const FilterModal = ({
                         if (activeFilter === "cmInitiative") {
                           if (
                             yearFilter &&
-                            yearFilter.filterValues === "2025-2026"
+                            (yearFilter.filterValues === "2024-2025" ||
+                              yearFilter.filterValues === "2025-2026")
+                          ) {
+                            handleSubmit([
+                              ...pastYearCmInitiativeFilters,
+                              ...otherFilters,
+                            ]);
+                          } else if (
+                            yearFilter &&
+                            yearFilter.filterValues === "2026-2027"
                           ) {
                             handleSubmit([
                               ...cmInitiativeFilters,
