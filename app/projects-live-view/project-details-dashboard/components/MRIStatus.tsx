@@ -37,19 +37,19 @@ const MRIStatus = ({ spi, cpi, projectRating }: Props) => {
                 projectRating > 70
                   ? "linear-gradient(to bottom right, rgba(115, 255, 64,1) , rgba(79, 227, 20,1), rgba(89, 230, 19,1),rgba(72, 223, 17,1),rgba(163, 197, 11,1))"
                   : projectRating <= 70 && projectRating >= 35
-                  ? "#DFE012"
-                  : projectRating < 35
-                  ? "linear-gradient(to bottom right, rgba(255, 64, 64,1) , rgba(227, 20, 20,1), rgba(230, 19, 19,1),rgba(223, 17, 17,1),rgba(197, 11, 11,1))"
-                  : "",
+                    ? "#DFE012"
+                    : projectRating < 35
+                      ? "linear-gradient(to bottom right, rgba(255, 64, 64,1) , rgba(227, 20, 20,1), rgba(230, 19, 19,1),rgba(223, 17, 17,1),rgba(197, 11, 11,1))"
+                      : "",
             }}
           >
             {projectRating > 70
               ? "Good"
               : projectRating <= 70 && projectRating >= 35
-              ? "Average"
-              : projectRating < 35
-              ? "Critical"
-              : ""}
+                ? "Average"
+                : projectRating < 35
+                  ? "Critical"
+                  : ""}
           </span>
         </div>
       </div>
@@ -78,7 +78,7 @@ const MRIStatus = ({ spi, cpi, projectRating }: Props) => {
           )}
           {spi === 1 && (
             <p className="m-0 fw-6 fs9px text-white mb-1 text-start">
-              On Time SPI === 1
+              On Time SPI == 1
             </p>
           )}
           <div className="d-flex justify-content-between align-items-center">

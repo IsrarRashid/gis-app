@@ -74,7 +74,7 @@ export function formatDateTime(dateTimeString: string, formatType: string) {
   }
 }
 
-export const devMap = false;
+export const devMap = true;
 
 // "yyyy-MM-dd" to the desired format "dd-MMM-yyyy"
 export function formatHHLStringDate(inputDate: string): string {
@@ -728,10 +728,10 @@ export const allPagesPath = [
   "/process",
   "/projects-live-view/:path*",
   "/charts",
-  "/pc-iv-report-history",
+  "/pc-iv-report-history/:path",
   "/director-reports",
   "/project-document-names",
-  "/pc-iv-review",
+  "/pc-iv-review/:path",
 ];
 
 // for new-visit-plan starts
@@ -916,4 +916,52 @@ export const exportDataToPDFNEW = (
   }
 
   doc.save(filename);
+};
+
+export const getSpiStatus = (spi: number) => {
+  if (spi > 1) {
+    return {
+      message: "No Time Overrun",
+      label: "SPI > 1",
+      color: "#32b334",
+    };
+  }
+
+  if (spi < 1) {
+    return {
+      message: "Time Overrun",
+      label: "SPI < 1",
+      color: "#A61C1C",
+    };
+  }
+
+  return {
+    message: "On Time",
+    label: "SPI = 1",
+    color: "#e8c00f",
+  };
+};
+
+export const getCpiStatus = (cpi: number) => {
+  if (cpi > 1) {
+    return {
+      message: "No Cost Overrun",
+      label: "CPI > 1",
+      color: "#32b334",
+    };
+  }
+
+  if (cpi < 1) {
+    return {
+      message: "Cost Overrun",
+      label: "CPI < 1",
+      color: "#A61C1C",
+    };
+  }
+
+  return {
+    message: "On Cost",
+    label: "CPI = 1",
+    color: "#e8c00f",
+  };
 };

@@ -95,6 +95,7 @@ const ProjectsTable = ({
   allowLink = true,
   role = "",
 }: Props) => {
+  console.log("projectsData", projectsData);
   const [selectedOptions, setSelectedOptions] = useState<OptionType[]>([]);
   const { rowCountOptions, districtOptions, sectorOptions, userOptions } =
     useProjectsTableUtils();
@@ -824,6 +825,7 @@ const ProjectsTable = ({
   };
 
   const pcIVReportPdfDownload = async (pcIvId: number) => {
+    console.log(`${GENERATE_REPORT_API}/GenerateReportPCIV?pcIVid=${pcIvId}`);
     try {
       const response = await apiClient.post(
         `${GENERATE_REPORT_API}/GenerateReportPCIV?pcIVid=${pcIvId}`,

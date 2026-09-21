@@ -1,4 +1,4 @@
-import { REPORTS_HISTORY_API } from "@/app/APIs";
+import { PC_IV_WORKFLOW_API, REPORTS_HISTORY_API } from "@/app/APIs";
 import Loader from "@/app/components/Loader";
 import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
 import apiClient, { AxiosError } from "@/app/services/api-client";
@@ -23,22 +23,19 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
   const [reportsHistory, setReportsHistory] = useState<ReportHistory[]>();
 
   useEffect(() => {
-    const getReportHistory = async (
-      visitId: number,
-      projectId: number,
-      reportType: number,
-    ) => {
+    const getReportHistory = async (pcivId: number) => {
       setLoading(true);
       try {
-        const response = await apiClient.get(
-          `${REPORTS_HISTORY_API}/GetReportHistory?visitId=${visitId}&ProjectId=${projectId}&reportType=${reportType}`,
-        );
+        const response = await apiClient.get(`${PC_IV_WORKFLOW_API}/history`, {
+          params: { pcivId },
+        });
         setReportsHistory(
           response.data.data.sort(
             (a: ReportHistory, b: ReportHistory) =>
-              new Date(b.sDate).getTime() - new Date(a.sDate).getTime(),
+              new Date(b.mark_date).getTime() - new Date(a.mark_date).getTime(),
           ),
         );
+        setReportsHistory(response.data.data);
         setLoading(false);
       } catch (err) {
         setError((err as AxiosError).message);
@@ -48,8 +45,8 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
         setLoading(false);
       }
     };
-    console.log("visit id:", data.visitId, "project id", data.projectId);
-    if (data) getReportHistory(data.visitId, data.projectId, data.reportType);
+    console.log("pcivId:", data.projectId);
+    if (data) getReportHistory(data.projectId);
   }, [data]);
   return (
     <>
@@ -64,16 +61,21 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
           <div>{error}, Please Try Again!</div>
         </div>
       ) : reportsHistory ? (
-        <div className="col">
-          <div className="row justify-content-between align-items-center mb-3">
-            <div className="col-auto fw-6 fs-4 ms-1">Report History</div>
-            <div className="col mb-2 text-end">
+        <div
+          className="col p-2 bg-white"
+          style={{
+            borderRadius: "12px",
+          }}
+        >
+          <div className="row justify-content-between align-items-center mb-3 gx-1">
+            <span className="fw-6 fs-4">Report History</span>
+            <span className="mb-2 text-end">
               <ReportHistoryDownload
                 data={reportsHistory}
                 users={users}
                 submittedReport={data}
               />
-            </div>
+            </span>
           </div>
           {reportsHistory.map((d) => (
             <div
@@ -89,10 +91,7 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
                   <p className="fw-normal m-0">
                     From:{" "}
                     <span>
-                      {
-                        users.find((user) => user.id === d.submittedFrom)
-                          ?.fullName
-                      }
+                      {users.find((user) => user.id === d.mark_From)?.fullName}
                     </span>
                   </p>
                 </div>
@@ -100,10 +99,7 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
                   <p className="fw-normal m-0">
                     To:{" "}
                     <span>
-                      {
-                        users.find((user) => user.id === d.submittedTo)
-                          ?.fullName
-                      }
+                      {users.find((user) => user.id === d.mark_to)?.fullName}
                     </span>
                   </p>
                 </div>
@@ -111,14 +107,14 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
                   <p className="fw-normal m-0">
                     Date:{" "}
                     <span>
-                      {new Date(d.sDate).toLocaleDateString("en-GB", {
+                      {new Date(d.mark_date).toLocaleDateString("en-GB", {
                         weekday: "short",
                         day: "2-digit",
                         month: "short",
                         year: "numeric",
                       })}{" "}
                       (
-                      {new Date(d.sDate).toLocaleTimeString([], {
+                      {new Date(d.mark_date).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
                         hour12: true,
@@ -130,7 +126,7 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
                 <div className="col text-end">
                   <Link
                     target="_blank"
-                    href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.reportPath}`}
+                    href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.pciv_pdf_path}`}
                     className="btn rounded-pill fs15px"
                     style={{ background: "#E4E4E4" }}
                   >

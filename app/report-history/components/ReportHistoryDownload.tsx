@@ -1,6 +1,6 @@
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
-import { exportToPDFNew, getFormattedDate } from "@/app/utils";
+import { exportToPDFNew } from "@/app/utils";
 import { SubmittedReport } from "../list/components/List";
 import { ReportHistory } from "./ReportNoting";
 
@@ -56,26 +56,24 @@ const ReportHistoryDownload = ({ data, users, submittedReport }: Props) => {
   ];
 
   return (
-    <div>
-      <DownloadDropDown
-        label="Download History"
-        onClickPdf={() =>
-          exportToPDFNew(
-            columns,
-            cardsToTableRows(users, data),
-            new Date(),
-            "Report History -" +
-              `${
-                submittedReport.reportType === 1 ? "MONITORING" : "EVALUATION"
-              }` +
-              " - (GS. NO- " +
-              submittedReport.gsNo +
-              ") - " +
-              submittedReport.projectName,
-          )
-        }
-      />
-    </div>
+    <DownloadDropDown
+      label="Download History"
+      onClickPdf={() =>
+        exportToPDFNew(
+          columns,
+          cardsToTableRows(users, data),
+          new Date(),
+          "Report History -" +
+            `${
+              submittedReport.reportType === 1 ? "MONITORING" : "EVALUATION"
+            }` +
+            " - (GS. NO- " +
+            submittedReport.gsNo +
+            ") - " +
+            submittedReport.projectName,
+        )
+      }
+    />
   );
 };
 

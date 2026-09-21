@@ -19,21 +19,21 @@ const ReportHistoryDownload = ({ data, users, submittedReport }: Props) => {
     return data.map((d, i) => ({
       "Sr. No.": (i + 1).toString(),
       From:
-        `${users.find((u) => u.id === d.submittedFrom)?.fullName} ${
+        `${users.find((u) => u.id === d.mark_From)?.fullName} ${
           i + 1 === 1
-            ? `(${users.find((u) => u.id === d.submittedFrom)?.designation})`
+            ? `(${users.find((u) => u.id === d.mark_From)?.designation})`
             : ""
         }` || "NA",
-      To: users.find((u) => u.id === d.submittedTo)?.fullName || "NA",
+      To: users.find((u) => u.id === d.mark_to)?.fullName || "NA",
       Date:
-        `${new Date(d.sDate).toLocaleDateString("en-GB", {
+        `${new Date(d.mark_date).toLocaleDateString("en-GB", {
           weekday: "short",
           day: "2-digit",
           month: "short",
           year: "numeric",
         })} ` +
         "(" +
-        `${new Date(d.sDate).toLocaleTimeString([], {
+        `${new Date(d.mark_date).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
           hour12: true,

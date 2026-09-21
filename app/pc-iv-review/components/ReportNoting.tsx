@@ -83,15 +83,13 @@ interface Props {
 
 export interface ReportHistory {
   id: number;
-  visitId: number;
-  projectId: number;
-  submittedFrom: number;
-  submittedTo: number;
+  pcIv_id: number;
+  mark_From: number;
+  mark_to: number;
   remarks: string;
-  reportPath: string;
+  mark_date: string;
+  pciv_pdf_path: string;
   status: number;
-  sDate: string;
-  reportType: number;
 }
 
 const ReportNoting = ({
@@ -183,12 +181,12 @@ const ReportNoting = ({
       setValue(
         "submittedTo",
         descendingOrderReportsHistory &&
-          descendingOrderReportsHistory[0].submittedFrom,
+          descendingOrderReportsHistory[0].mark_From,
       );
       setValue(
         "submittedTo",
         descendingOrderReportsHistory &&
-          descendingOrderReportsHistory[0].submittedFrom,
+          descendingOrderReportsHistory[0].mark_From,
       );
       console.log("status", REFERBACK);
       setReferback(true);
@@ -444,7 +442,7 @@ const ReportNoting = ({
                   </p>
                   <hr style={{ opacity: ".1" }} />
                   <>
-                    {descendingOrderReportsHistory[0].submittedTo === userId &&
+                    {descendingOrderReportsHistory[0].mark_to === userId &&
                     (selectedTabLabel === "SUBMITTED BY (AD)" ||
                       selectedTabLabel === "APPROVED BY (DG)" ||
                       selectedTabLabel === "REFERBACK BY (DIRECTOR)" ||

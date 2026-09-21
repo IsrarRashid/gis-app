@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import apiClient from "@/app/services/api-client";
-import { REPORTS_HISTORY_API } from "@/app/APIs";
+import { PC_IV_WORKFLOW_API, REPORTS_HISTORY_API } from "@/app/APIs";
 import { SubmittedReport } from "@/app/report-history/list/components/List";
 
 const PCIVReview = ({
@@ -33,7 +33,10 @@ const PCIVReview = ({
     const handleSubmit = async (userId: number) => {
       try {
         const response = await apiClient.get(
-          `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`,
+          `${PC_IV_WORKFLOW_API}/submitted-reports`,
+          {
+            params: { userId },
+          },
         );
         setData(response.data.data.reports);
       } catch (err) {

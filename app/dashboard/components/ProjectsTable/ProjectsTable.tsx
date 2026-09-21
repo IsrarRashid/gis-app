@@ -19,6 +19,8 @@ import {
   displayStatusText,
   exportDataToPDFNEW,
   formatAmountWithCommas,
+  getCpiStatus,
+  getSpiStatus,
   getTimeLeft,
 } from "@/app/utils";
 import { exportDataToExcel } from "@/app/utils/exportToExcel";
@@ -80,6 +82,8 @@ export interface ProjectsList {
   datesOfIssuedReports: string[];
   issuedReportDistrict: string;
   issuedReportActualPhysicalPrograss: number;
+  latestIssuedReportTimeOverRun: number;
+  latestIssuedReportCostOverRun: number;
 }
 
 interface Props {
@@ -409,6 +413,8 @@ const ProjectsTable = ({
     utilization: "EXPENDITURE + UTILIZATION (M)",
     utilPercent: "UTIL. PERCENT",
     reportStatus: "REPORT STATUS",
+    latestIssuedReportCostOverRun: "CPI",
+    latestIssuedReportTimeOverRun: "SPI",
     // Add other mappings as needed
   };
 
@@ -473,6 +479,22 @@ const ProjectsTable = ({
             break;
           case "sectorName":
             row[label] = data.sectorName;
+            break;
+          case "latestIssuedReportCostOverRun":
+            row[label] = data.latestIssuedReportCostOverRun
+              ? getCpiStatus(data.latestIssuedReportCostOverRun).message +
+                ` (
+                  ${data.latestIssuedReportCostOverRun}
+                )`
+              : "N/A";
+            break;
+          case "latestIssuedReportTimeOverRun":
+            row[label] = data.latestIssuedReportCostOverRun
+              ? getSpiStatus(data.latestIssuedReportTimeOverRun).message +
+                ` (
+                  ${data.latestIssuedReportTimeOverRun}
+                )`
+              : "N/A";
             break;
           case "userName":
             row[label] = `${data.userName} (${data.designation})`;
@@ -1587,7 +1609,7 @@ const ProjectsTable = ({
                           ),
                         )}
                       />
-                      <TableHeading name="" colSpan={7} />
+                      <TableHeading name="" colSpan={11} />
                     </tr>
                     <tr
                       className="position-sticky bg-white"
@@ -1761,6 +1783,69 @@ const ProjectsTable = ({
                               >
                                 {getTimeLeft(d.deadline).replace("-", "")}
                               </Badge>
+                            ) : (
+                              "NA"
+                            )}
+                          </TableData>
+                        );
+                      }
+                      if (key === "latestIssuedReportCostOverRun") {
+                        return (
+                          <TableData key="latestIssuedReportCostOverRun">
+                            {d.latestIssuedReportCostOverRun ? (
+                              <>
+                                <p className="m-0">
+                                  <Badge color="#A61C1C" background="#FFEEEE">
+                                    {
+                                      getCpiStatus(
+                                        d.latestIssuedReportCostOverRun,
+                                      ).message
+                                    }
+                                  </Badge>
+                                </p>
+                                <p className="m-0">
+                                  {
+                                    getCpiStatus(
+                                      d.latestIssuedReportCostOverRun,
+                                    ).label
+                                  }
+                                </p>
+                                <p className="m-0">
+                                  {d.latestIssuedReportCostOverRun}
+                                </p>
+                              </>
+                            ) : (
+                              "NA"
+                            )}
+                          </TableData>
+                        );
+                      }
+                      if (key === "latestIssuedReportTimeOverRun") {
+                        return (
+                          <TableData key="latestIssuedReportTimeOverRun">
+                            {d.latestIssuedReportTimeOverRun ? (
+                              <>
+                                <p className="m-0">
+                                  <Badge color="#A61C1C" background="#FFEEEE">
+                                    {
+                                      getSpiStatus(
+                                        d.latestIssuedReportTimeOverRun,
+                                      ).message
+                                    }
+                                  </Badge>
+                                </p>
+
+                                <p className="m-0">
+                                  {
+                                    getSpiStatus(
+                                      d.latestIssuedReportTimeOverRun,
+                                    ).label
+                                  }
+                                </p>
+                                <p className="m-0">
+                                  {d.latestIssuedReportTimeOverRun}
+                                </p>
+                              </>
                             ) : (
                               "NA"
                             )}

@@ -64,16 +64,14 @@ const ViewHistoryOnly = ({ data, users }: Props) => {
           <div>{error}, Please Try Again!</div>
         </div>
       ) : reportsHistory ? (
-        <div className="col">
-          <div className="row justify-content-between align-items-center mb-3">
-            <div className="col-auto fw-6 fs-4 ms-1">Report History</div>
-            <div className="col mb-2 text-end">
-              <ReportHistoryDownload
-                data={reportsHistory}
-                users={users}
-                submittedReport={data}
-              />
-            </div>
+        <div className="col bg-white p-2">
+          <div className="d-flex justify-content-between align-items-center mb-3 gx-1">
+            <span className="fw-6 fs-4">Report History</span>
+            <ReportHistoryDownload
+              data={reportsHistory}
+              users={users}
+              submittedReport={data}
+            />
           </div>
           {reportsHistory.map((d) => (
             <div

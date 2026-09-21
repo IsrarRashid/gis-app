@@ -295,6 +295,8 @@ const DashboardMonitoring = () => {
           "datesOfIssuedReports",
           "issuedReportDistrict",
           "issuedReportActualPhysicalPrograss",
+          "latestIssuedReportCostOverRun",
+          "latestIssuedReportTimeOverRun",
         ]
       : [];
 
@@ -770,7 +772,6 @@ const DashboardMonitoring = () => {
               />
             </div>
           </div>
-
           <>
             {role !== "Special Role" && (
               <div

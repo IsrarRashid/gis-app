@@ -1,5 +1,5 @@
 "use client";
-import { REPORTS_HISTORY_API } from "@/app/APIs";
+import { PC_IV_WORKFLOW_API, REPORTS_HISTORY_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
 import Loader from "@/app/components/Loader";
@@ -146,7 +146,10 @@ const List = ({
       setLoading(true);
       try {
         const response = await apiClient.get(
-          `${REPORTS_HISTORY_API}/GetSubmittedReports?submittedTo=${userId}`,
+          `${PC_IV_WORKFLOW_API}/submitted-reports`,
+          {
+            params: { userId },
+          },
         );
         if (response.data.data) {
           console.log("response.data.data", response.data.data);
@@ -231,7 +234,7 @@ const List = ({
         id: 1,
         label: "SUBMITTED BY (AD)",
         status: SUBMITTED,
-        role: "deputy director",
+        role: "department admin",
         reportSubmittedTo: userId,
         count: 0,
         filteredData: undefined,
@@ -761,7 +764,8 @@ const List = ({
                         </Button>
                       </div>
                     ))}
-                  {dashbaordType === undefined && (
+                  {(dashbaordType === undefined ||
+                    role !== "Department Admin") && (
                     <div className="col-auto">
                       <Button
                         className={`btn shadow-none rounded-0 fw-bold position-relative ${

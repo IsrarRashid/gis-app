@@ -29,7 +29,7 @@ import Loader from "@/app/components/Loader";
 
 const DistributedColumnChart = dynamic(
   () => import("./DistributedColumnChart"),
-  { ssr: false }
+  { ssr: false },
 );
 
 const SimplePieChart = dynamic(() => import("./SimplePieChart"), {
@@ -91,7 +91,7 @@ export interface StaffTrackings {
       longitude: string;
       visit_status: string;
       createdAt: string;
-    }
+    },
   ];
 }
 
@@ -130,7 +130,7 @@ export interface Attributes {
       createdAt: string;
       updatedAt: string;
       label: string;
-    }
+    },
   ];
   value: string;
   values: [
@@ -148,7 +148,7 @@ export interface Attributes {
       remarks: string;
       latitude: string;
       longitude: string;
-    }
+    },
   ];
   evaluationFormula: string;
   evaluationFormulaWeightage: number;
@@ -248,7 +248,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
   useEffect(() => {
     handleButtonClick(
       "projectDetailsDashboard",
-      "https://www.youtube.com/watch?v=PDHSsWfMhNM&ab_channel=DirectorateGeneralMonitoringandEvaluation"
+      "https://www.youtube.com/watch?v=PDHSsWfMhNM&ab_channel=DirectorateGeneralMonitoringandEvaluation",
     );
   }, []);
 
@@ -256,12 +256,12 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
     setLoading(true);
     try {
       const response = await apiClient.get(
-        `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`
+        `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`,
       );
       setData(response.data.data);
       console.log(
         `check now: projectid=${projectId}&visit=${visitId}`,
-        response
+        response,
       );
       setLoading(false);
     } catch (err) {
@@ -296,13 +296,13 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
       const spi: string | undefined = data?.groups
         .find((group) => group.name === "Earned Value Analysis")
         ?.attributes.find((attribute) =>
-          attribute.label.toLowerCase().includes("spi")
+          attribute.label.toLowerCase().includes("spi"),
         )?.values[0]?.value;
 
       const cpi: string | undefined = data?.groups
         .find((group) => group.name === "Earned Value Analysis")
         ?.attributes.find((attribute) =>
-          attribute.label.toLowerCase().includes("cpi")
+          attribute.label.toLowerCase().includes("cpi"),
         )?.values[0]?.value;
 
       if (cpi) {
@@ -317,14 +317,14 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
   const searchMonitoringRatingIndex = (
     parentGroupName: string,
     groupName: string,
-    attributeName: string
+    attributeName: string,
   ) => {
     if (data) {
       const value = data.groups
         .find((group) => group.name.toLowerCase().includes(parentGroupName))
         ?.group.find((group) => group.name.toLowerCase().includes(groupName))
         ?.attributes.find((attribute) =>
-          attribute.label.toLowerCase().includes(attributeName)
+          attribute.label.toLowerCase().includes(attributeName),
         )?.values[0]?.value;
       if (value) {
         return parseInt(value);
@@ -338,8 +338,8 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
         searchMonitoringRatingIndex(
           "rating index",
           "performance",
-          "project rating"
-        )!
+          "project rating",
+        )!,
       );
       getCPIAndSPI();
 
@@ -348,12 +348,12 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
         ?.attributes.filter(
           (attribute) =>
             attribute.label.toLowerCase() ===
-            PLANNED_VS_ACTUAL_PHYSICAL_PROGRESS
+            PLANNED_VS_ACTUAL_PHYSICAL_PROGRESS,
         )[0];
 
       if (physicalProgressVsPlannedProgress?.values[0]?.value) {
         setPhysicalVsPlanned(
-          parseFloat(physicalProgressVsPlannedProgress?.values[0]?.value)
+          parseFloat(physicalProgressVsPlannedProgress?.values[0]?.value),
         );
       }
 
@@ -364,12 +364,12 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
         ?.attributes.filter(
           (attribute) =>
             attribute.label.toLowerCase() ===
-            ACTUAL_PHYSICAL_VS_ACTUAL_FINANCIAL_PROGRESS
+            ACTUAL_PHYSICAL_VS_ACTUAL_FINANCIAL_PROGRESS,
         )[0];
 
       if (achievedProgressVsFinancialProgress) {
         setAchievedVsFinancial(
-          parseFloat(achievedProgressVsFinancialProgress?.values[0]?.value)
+          parseFloat(achievedProgressVsFinancialProgress?.values[0]?.value),
         );
       }
       console.log("achievedVsFinancial:", achievedVsFinancial);
@@ -384,21 +384,21 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
   useEffect(() => {
     if (data) {
       const filteredAttributes = data.groups.find((group) =>
-        group.name?.toLowerCase().includes("progress analysis")
+        group.name?.toLowerCase().includes("progress analysis"),
       )?.attributes[5];
 
       console.log("Filtered attributes: ", filteredAttributes);
       console.log(
         "lowercase attributes:",
-        filteredAttributes?.label.toLowerCase()
+        filteredAttributes?.label.toLowerCase(),
       );
       console.log(
         "lowercase attributes trim:",
-        filteredAttributes?.label.trim().toLowerCase()
+        filteredAttributes?.label.trim().toLowerCase(),
       );
       console.log(
         "decimal value",
-        parseFloat(filteredAttributes?.values[0]?.value!)
+        parseFloat(filteredAttributes?.values[0]?.value!),
       );
     }
   }, [data]);
@@ -461,7 +461,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                   <div className="col-lg-6 col-md-6 col-sm-12 p-1 pb-0">
                     {data.groups
                       .find((group) =>
-                        group.name.toLowerCase().includes("progress analysis")
+                        group.name.toLowerCase().includes("progress analysis"),
                       )
                       ?.attributes.filter(
                         (attribute) =>
@@ -470,7 +470,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                             PLANNED_PHYSICAL_PROGRESS,
                             ACTUAL_PHYSICAL_PROGRESS,
                             PLANNED_VS_ACTUAL_PHYSICAL_PROGRESS,
-                          ].includes(attribute.label.toLowerCase())
+                          ].includes(attribute.label.toLowerCase()),
                       )
                       .map((attribute: any) => (
                         <Menu
@@ -496,7 +496,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                   <div className="col-lg-6 col-md-6 col-sm-12 p-1 pb-0">
                     {data.groups
                       .find((group) =>
-                        group.name.toLowerCase().includes("progress analysis")
+                        group.name.toLowerCase().includes("progress analysis"),
                       )
                       ?.attributes.filter(
                         (attribute) =>
@@ -504,7 +504,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                           [
                             ACTUAL_FINANCIAL_PROGRESS,
                             ACTUAL_PHYSICAL_VS_ACTUAL_FINANCIAL_PROGRESS,
-                          ].includes(attribute.label.toLowerCase())
+                          ].includes(attribute.label.toLowerCase()),
                       )
                       .map((attribute) => (
                         <Menu
@@ -584,48 +584,48 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                             projectRating > 70
                               ? "linear-gradient(to bottom right, rgba(115, 255, 64,1) , rgba(79, 227, 20,1), rgba(89, 230, 19,1),rgba(72, 223, 17,1),rgba(163, 197, 11,1))"
                               : projectRating <= 70 && projectRating >= 35
-                              ? "linear-gradient(to bottom right, rgba(255, 236, 64,1), rgba(227, 227, 20,1), rgba(230, 226, 19,1),rgba(219, 223, 17,1),rgba(197, 191, 11,1))"
-                              : projectRating < 35
-                              ? "linear-gradient(to bottom right, rgba(255, 64, 64,1) , rgba(227, 20, 20,1), rgba(230, 19, 19,1),rgba(223, 17, 17,1),rgba(197, 11, 11,1))"
-                              : ""
+                                ? "linear-gradient(to bottom right, rgba(255, 236, 64,1), rgba(227, 227, 20,1), rgba(230, 226, 19,1),rgba(219, 223, 17,1),rgba(197, 191, 11,1))"
+                                : projectRating < 35
+                                  ? "linear-gradient(to bottom right, rgba(255, 64, 64,1) , rgba(227, 20, 20,1), rgba(230, 19, 19,1),rgba(223, 17, 17,1),rgba(197, 11, 11,1))"
+                                  : ""
                           }
                           outline={
                             projectRating > 70
                               ? "1px solid rgba(50, 179, 52, 0.4)"
                               : projectRating <= 70 && projectRating >= 35
-                              ? "1px solid rgba(232, 192, 15, 0.4)"
-                              : projectRating < 35
-                              ? "1px solid rgba(233, 12, 16, 0.4)"
-                              : ""
+                                ? "1px solid rgba(232, 192, 15, 0.4)"
+                                : projectRating < 35
+                                  ? "1px solid rgba(233, 12, 16, 0.4)"
+                                  : ""
                           }
                           value={projectRating}
                           label={
                             projectRating > 70
                               ? "MRI (Good)"
                               : projectRating <= 70 && projectRating >= 35
-                              ? "MRI (Average)"
-                              : projectRating < 35
-                              ? "MRI (Critical)"
-                              : ""
+                                ? "MRI (Average)"
+                                : projectRating < 35
+                                  ? "MRI (Critical)"
+                                  : ""
                           }
                           showTides={false}
                           tideOneImage={
                             projectRating > 70
                               ? "/images/tideOneGreen.png"
                               : projectRating <= 70 && projectRating >= 35
-                              ? "/images/tideOneYellow.png"
-                              : projectRating < 35
-                              ? "/images/tideOneRed.png"
-                              : "/images/tideOne.png"
+                                ? "/images/tideOneYellow.png"
+                                : projectRating < 35
+                                  ? "/images/tideOneRed.png"
+                                  : "/images/tideOne.png"
                           }
                           tideTwoImage={
                             projectRating > 70
                               ? "/images/tideTwoGreen.png"
                               : projectRating <= 70 && projectRating >= 35
-                              ? "/images/tideTwoYellow.png"
-                              : projectRating < 35
-                              ? "/images/tideTwoRed.png"
-                              : "/images/tideTwo.png"
+                                ? "/images/tideTwoYellow.png"
+                                : projectRating < 35
+                                  ? "/images/tideTwoRed.png"
+                                  : "/images/tideTwo.png"
                           }
                         />
                       </Button>
@@ -640,14 +640,14 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                         {data.groups.find((group) =>
                           group.name
                             .toLowerCase()
-                            .includes("monitoring rating index")
+                            .includes("monitoring rating index"),
                         ) && (
                           <MonitoringRatingIndex
                             group={
                               data.groups.find((group) =>
                                 group.name
                                   .toLowerCase()
-                                  .includes("monitoring rating index")
+                                  .includes("monitoring rating index"),
                               )!
                             }
                           />
@@ -663,8 +663,8 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                         spi > 1
                           ? "linear-gradient(to bottom left, #1c209c , #210ead, #1e15a3, #1e1a99, #1c089e)"
                           : spi === 1
-                          ? "linear-gradient(to bottom left, #00ffff , #14e3c1, #13e6ca, #11dfd5, #00dbff)"
-                          : "linear-gradient(to bottom left, #ff4040 , #e31414, #e61313,#df1111,#c50b0b)"
+                            ? "linear-gradient(to bottom left, #00ffff , #14e3c1, #13e6ca, #11dfd5, #00dbff)"
+                            : "linear-gradient(to bottom left, #ff4040 , #e31414, #e61313,#df1111,#c50b0b)"
                       }`,
                       borderRadius: "10px",
                     }}
@@ -699,7 +699,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                             On Time
                           </p>
                           <p className="m-0 fw-normal fs-6 text-white">
-                            SPI === 1
+                            SPI == 1
                           </p>
                         </>
                       )}
@@ -712,8 +712,8 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                         cpi > 1
                           ? "linear-gradient(to bottom left, #1c209c , #210ead, #1e15a3, #1e1a99, #1c089e)"
                           : cpi === 1
-                          ? "linear-gradient(to bottom left, #00ffff , #14e3c1, #13e6ca, #11dfd5, #00dbff)"
-                          : "linear-gradient(to bottom left, #ff4040 , #e31414, #e61313,#df1111,#c50b0b)"
+                            ? "linear-gradient(to bottom left, #00ffff , #14e3c1, #13e6ca, #11dfd5, #00dbff)"
+                            : "linear-gradient(to bottom left, #ff4040 , #e31414, #e61313,#df1111,#c50b0b)"
                       }`,
                       borderRadius: "10px",
                     }}
@@ -748,7 +748,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                             On Cost
                           </p>
                           <p className="m-0 fw-normal fs-6 text-white">
-                            CPI &gt; 1
+                            CPI == 1
                           </p>
                         </>
                       )}
@@ -769,12 +769,12 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                   data={data}
                   financialAnalysis={
                     data.groups.find((group) =>
-                      group.name.toLowerCase().includes("financial analysis")
+                      group.name.toLowerCase().includes("financial analysis"),
                     )!
                   }
                   projectProfile={
                     data.groups.find((group) =>
-                      group.name.toLowerCase().includes("project profile")
+                      group.name.toLowerCase().includes("project profile"),
                     )!
                   }
                 />
@@ -787,7 +787,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                   <MyMap
                     data={
                       data.groups.find((group) =>
-                        group.name.toLowerCase().startsWith("observation")
+                        group.name.toLowerCase().startsWith("observation"),
                       )!
                     }
                   />
@@ -800,7 +800,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                   progressAnalysis={
                     data.groups &&
                     data.groups.find((group) =>
-                      group.name.toLowerCase().includes("progress analysis")
+                      group.name.toLowerCase().includes("progress analysis"),
                     )!
                   }
                   majorDeliverables={
@@ -808,7 +808,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                     data.groups.filter((group) =>
                       group.name
                         .toLowerCase()
-                        .includes("work breakdown structure")
+                        .includes("work breakdown structure"),
                     )[0]
                   }
                 />
@@ -829,7 +829,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                     .filter((group) =>
                       group.name
                         .toLowerCase()
-                        .includes("work breakdown structure")
+                        .includes("work breakdown structure"),
                     )
                     .map((group) => (
                       <WBSReportUpdated
@@ -861,7 +861,7 @@ const ProjectDetailsDashboard = ({ id, visitId }: Props) => {
                   reports={data.reports}
                   observations={
                     data.groups.find(
-                      (group) => group.name === "Observation & Recommendations"
+                      (group) => group.name === "Observation & Recommendations",
                     )!
                   }
                 />

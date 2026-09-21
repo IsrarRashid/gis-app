@@ -1,6 +1,5 @@
 "use client";
 import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
-import { getFormattedDate } from "@/app/utils";
 import Link from "next/link";
 import { Accordion } from "react-bootstrap";
 import ReactMarkDown from "react-markdown";
@@ -44,7 +43,7 @@ const HistoryList = ({ descendingOrderData, users }: Props) => {
                         From:{" "}
                         <span>
                           {
-                            users.find((user) => user.id === d.submittedFrom)
+                            users.find((user) => user.id === d.mark_From)
                               ?.fullName
                           }
                         </span>
@@ -55,7 +54,7 @@ const HistoryList = ({ descendingOrderData, users }: Props) => {
                         To:{" "}
                         <span>
                           {
-                            users.find((user) => user.id === d.submittedTo)
+                            users.find((user) => user.id === d.mark_to)
                               ?.fullName
                           }
                         </span>
@@ -65,14 +64,14 @@ const HistoryList = ({ descendingOrderData, users }: Props) => {
                       <p className="fw-normal m-0">
                         Date:{" "}
                         <span>
-                          {new Date(d.sDate).toLocaleDateString("en-GB", {
+                          {new Date(d.mark_date).toLocaleDateString("en-GB", {
                             weekday: "short",
                             day: "2-digit",
                             month: "short",
                             year: "numeric",
                           })}{" "}
                           (
-                          {new Date(d.sDate).toLocaleTimeString([], {
+                          {new Date(d.mark_date).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
                             hour12: true,
@@ -84,7 +83,7 @@ const HistoryList = ({ descendingOrderData, users }: Props) => {
                     <div className="col text-end">
                       <Link
                         target="_blank"
-                        href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.reportPath}`}
+                        href={`${process.env.NEXT_PUBLIC_BACKEND_API}${d.pciv_pdf_path}`}
                         className="btn rounded-pill fs15px"
                         style={{ background: "#E4E4E4" }}
                       >

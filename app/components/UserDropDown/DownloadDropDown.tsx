@@ -43,7 +43,7 @@ const DownloadDropDown = ({
   }, []);
 
   return (
-    <div className={styles.dropdown} ref={dropdownRef}>
+    <span className={styles.dropdown} ref={dropdownRef}>
       {/* <Button
         className="btn btn-sm rounded-3 shadow-sm"
         onClick={() => setShow(!show)}
@@ -129,7 +129,7 @@ const DownloadDropDown = ({
           </Link>
         )}
       </div>
-    </div>
+    </span>
   );
 };
 

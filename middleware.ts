@@ -127,5 +127,6 @@ export const config = {
     "/projects-live-view/:path*",
     "/pc-iv-report-history",
     "/project-document-names/:path*",
+    "/pc-iv-review/:path*",
   ],
 };

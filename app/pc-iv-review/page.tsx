@@ -38,7 +38,12 @@ const PCIVReviewPage = () => {
 
     setDirectors(officers.filter((o) => o.roleName === "Director"));
 
-    setDepartmentHead(officers.find((o) => o.roleName === "Department Head"));
+    setDepartmentHead(
+      officers.find(
+        (o) =>
+          o.roleName === "Department Head" || o.roleName === "Department Admin",
+      ),
+    );
   }, [officers]);
 
   return (

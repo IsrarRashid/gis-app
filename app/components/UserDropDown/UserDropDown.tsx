@@ -170,8 +170,8 @@ const UserDropDown = () => {
                   src="/icons/logoNew.svg"
                   style={{ objectFit: "cover" }}
                   alt="profilePic"
-                  width={70}
-                  height={70}
+                  width={50}
+                  height={50}
                 />
               </div>
               <div className="col p-0 m-auto ms-1 p-1">
