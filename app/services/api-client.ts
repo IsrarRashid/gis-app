@@ -8,6 +8,12 @@ export interface ErrorResponse {
   responseMessage: string;
 }
 
+export interface BaseResponse<T> {
+  responseCode: number;
+  responseMessage: string;
+  data: T;
+}
+
 export default axios.create({
   // withCredentials: true,
   baseURL: process.env.NEXT_PUBLIC_BACKEND_API,

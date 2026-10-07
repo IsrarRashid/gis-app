@@ -110,7 +110,7 @@ const Form = ({
   const handleShow = async () => {
     setShow(true);
     const itemData: Visit | undefined = visits.find(
-      (itemData: any) => itemData.id === id
+      (itemData: any) => itemData.id === id,
     );
     if (itemData) {
       setValue("visitPlanGroup", itemData.visitPlanGroup);
@@ -155,7 +155,7 @@ const Form = ({
       console.error("Submission error:", err);
       toast.error(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-          (err as AxiosError<ErrorResponse>).message
+          (err as AxiosError<ErrorResponse>).message,
       );
     }
   };
@@ -163,7 +163,7 @@ const Form = ({
   const getUserProjects = async (id: number) => {
     try {
       const response = await apiClient.get(
-        `${GET_USER_PROJECTS_API}?userId=${id}`
+        `${GET_USER_PROJECTS_API}?userId=${id}`,
       );
       console.log("Response:", response);
       setUserProjects(response.data.data);
@@ -330,15 +330,15 @@ const Form = ({
                             "latitude",
                             districts.find(
                               (district) =>
-                                district.id === Number(e.target.value)
-                            )!.latitude
+                                district.id === Number(e.target.value),
+                            )!.latitude,
                           );
                           setValue(
                             "longitude",
                             districts.find(
                               (district) =>
-                                district.id === Number(e.target.value)
-                            )!.longitude
+                                district.id === Number(e.target.value),
+                            )!.longitude,
                           );
                         }}
                       >

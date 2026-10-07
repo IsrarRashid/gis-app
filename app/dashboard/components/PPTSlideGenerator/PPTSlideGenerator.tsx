@@ -39,7 +39,7 @@ const PPTSlideGenerator = () => {
     const isChecked = e.target.checked;
 
     setPriority((prev) =>
-      isChecked ? [...prev, value] : prev.filter((v) => v !== value)
+      isChecked ? [...prev, value] : prev.filter((v) => v !== value),
     );
   };
 
@@ -116,20 +116,20 @@ const PPTSlideGenerator = () => {
           toDate: new Date(toDate).toISOString().split("T")[0],
           fromDate: new Date(fromDate).toISOString().split("T")[0],
           sector: sectors.map((sector) => sector.title),
-        }
+        },
       );
 
       console.log(response);
       toast.success("PPT Generated Successfully");
       setSlidePath(
-        process.env.NEXT_PUBLIC_BACKEND_API + "/" + response.data.data
+        process.env.NEXT_PUBLIC_BACKEND_API + "/" + response.data.data,
       );
     } catch (err) {
       setSubmitting(false);
       console.error("Submission error:", err);
       toast.error(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-          (err as AxiosError<ErrorResponse>).message
+          (err as AxiosError<ErrorResponse>).message,
       );
     } finally {
       setSubmitting(false); // Always run after try/catch
@@ -163,7 +163,7 @@ const PPTSlideGenerator = () => {
           toDate: new Date(toDate).toISOString().split("T")[0],
           fromDate: new Date(fromDate).toISOString().split("T")[0],
           sector: [""],
-        }
+        },
       );
 
       console.log(response);
@@ -174,7 +174,7 @@ const PPTSlideGenerator = () => {
       console.error("Submission error:", err);
       toast.error(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-          (err as AxiosError<ErrorResponse>).message
+          (err as AxiosError<ErrorResponse>).message,
       );
     }
   }, [priority, fromDate, toDate]);

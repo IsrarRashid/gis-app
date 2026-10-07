@@ -10,6 +10,7 @@ import FormWrapper from "@/app/components/Form/FormWrapper";
 import SubmitButton from "@/app/components/Form/SubmitButton";
 import ActionButton from "@/app/components/Table/ActionButton";
 import apiClient, { AxiosError } from "@/app/services/api-client";
+import { createdMessage, updatedMessage } from "@/app/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
@@ -41,6 +42,7 @@ interface Props {
 }
 
 const SectorForm = ({ api, method, id, setRefresh, refresh, data }: Props) => {
+  const [isSubmitting, setSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -51,9 +53,6 @@ const SectorForm = ({ api, method, id, setRefresh, refresh, data }: Props) => {
   } = useForm<Sector>({ resolver: zodResolver(schema) });
   const [show, setShow] = useState(false);
 
-  const createdMessage = "Created Successfully";
-  const updatedMessage = "Updated Successfully";
-
   const handleClose = () => {
     setShow(false);
     reset();
@@ -62,6 +61,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh, data }: Props) => {
   const handleShow = async () => {
     setShow(true);
     if (method === "PUT") {
+      setSubmitting(true);
       try {
         const response = await apiClient.get(`${api}/${id}`);
         const itemData = response.data.data;
@@ -72,9 +72,13 @@ const SectorForm = ({ api, method, id, setRefresh, refresh, data }: Props) => {
         setValue("description", itemData.description);
         setValue("createdAt", itemData.createdAt);
         setValue("updateAt", new Date().toISOString());
+        setSubmitting(false);
       } catch (err) {
         console.log((err as AxiosError).message);
         toast.error((err as AxiosError).message);
+        setSubmitting(false);
+      } finally {
+        setSubmitting(false);
       }
     }
   };
@@ -230,7 +234,7 @@ const SectorForm = ({ api, method, id, setRefresh, refresh, data }: Props) => {
                   placeholder="Write Brief Description..."
                 />
               </div>
-              <SubmitButton>Save Sector</SubmitButton>
+              <SubmitButton disabled={isSubmitting}>Save Sector</SubmitButton>
             </form>
           </FormWrapper>
         </Modal.Body>

@@ -40,6 +40,8 @@ const BgChanger = () => {
     "process",
     "dashboard-to",
     "dashboard-summary",
+    "pc-iv-attached-review",
+    "pc-iv-referback-review",
   ];
 
   const pathSegment = currentPath.split("/")[1]; // e.g., "sectors"

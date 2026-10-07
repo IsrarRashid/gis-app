@@ -86,7 +86,7 @@ const LoginNew = () => {
       console.log(err);
       notifyError(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-          errorMessage
+          errorMessage,
       );
     } finally {
       setSubmitting(false); // Always run after try/catch

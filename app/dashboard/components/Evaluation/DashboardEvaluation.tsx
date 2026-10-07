@@ -78,25 +78,12 @@ export interface FilterData {
 }
 
 const DashboardEvaluation = () => {
+  console.log("DashboardEvaluation");
   const [data, setData] = useState<EvaluationMainDashboard>();
   const [role, setRole] = useState<string>("");
   const [departmentId, setDepartmentId] = useState<number>();
   const dispatch = useDispatch();
   // useAuthorization("dashboard");
-
-  const [isInRange, setIsInRange] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      setIsInRange(width >= 992 && width <= 1264);
-    };
-
-    handleResize(); // Check on initial render
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     const userRole = Cookies.get("role");
@@ -1474,6 +1461,258 @@ const DashboardEvaluation = () => {
               )}
             </div>
           </div> */}
+
+          <div className={`${lexend.className}`}>
+            <div className="p-1 col">
+              {devMap && data && (
+                <EvaluationMap
+                  data={data}
+                  handleSubmit={handleSubmit}
+                  activeFilter={activeFilter}
+                  cmInitiativeFilters={cmInitiativeFilters}
+                  adpFilters={adpFilters}
+                  otherFilters={otherFilters}
+                  setOtherFilters={setOtherFilters}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      {role.toLowerCase() === "administrative secretary" && (
+        <div style={{ padding: "11px 5px" }}>
+          <div className={`row ${lexend.className} m-0`}>
+            <div className="col p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                modalId={"TotalProject"}
+                button={
+                  <Button
+                    className="position-relative btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("all")}
+                  >
+                    <div
+                      className="position-absolute"
+                      style={{
+                        // background:
+                        //   "linear-gradient( rgba(35, 119, 182, 0), rgba(35, 119, 182, 1))",
+                        padding: "1px",
+                        borderRadius: "10px",
+                        width: "98%",
+                        height: "92%",
+                      }}
+                    ></div>
+                    <Menu
+                      background="linear-gradient(to right, #155E95 , #2377B6)"
+                      icon="/icons/eyeBold.svg"
+                      value={data ? data.totalSubmittedPCIvs : 0}
+                      label="Total PC(IV)s"
+                      showTides={false}
+                      showArrow={true}
+                      textWrap={false}
+                      isGrouped={false}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredSubmittedPcIvKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredSubmittedPcIvKeys}
+                          label="Total PC(IV)s"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="col p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"inprogress"}
+                allowOpen={false}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("inprogress")}
+                    disabled
+                  >
+                    <Menu
+                      background="rgba(12, 140, 233, 0.2)"
+                      outline="1px solid rgba(12, 140, 233, 0.4)"
+                      icon="/icons/inProcess.svg"
+                      value={data ? data.pCivInProgress : 0}
+                      label="Submitted To DGM&E"
+                      showTides={false}
+                      showArrow={true}
+                      textWrap={false}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredSubmittedPcIvKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredSubmittedPcIvKeys}
+                          label="Submitted To DGM&E"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="col p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"inprogress"}
+                allowOpen={false}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("inprogress")}
+                    disabled
+                  >
+                    <Menu
+                      background="rgba(12, 140, 233, 0.2)"
+                      outline="1px solid rgba(12, 140, 233, 0.4)"
+                      icon="/icons/inProcess.svg"
+                      value={data ? data.assignedToEvaluator : 0}
+                      label="In Progress"
+                      showTides={false}
+                      showArrow={true}
+                      textWrap={false}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredSubmittedPcIvKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredSubmittedPcIvKeys}
+                          label="In Progress"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="col p-0">
+              <CustomModal
+                HeaderRightPos={0}
+                HeaderTopPos={17}
+                buttonColumn="col p-0"
+                isFullscreen={true}
+                size="xl"
+                modalId={"inprogress"}
+                allowOpen={false}
+                button={
+                  <Button
+                    className="btn p-0 pe-1 shadow-none w-100"
+                    onClick={() => getProjectsList("inprogress")}
+                    disabled
+                  >
+                    <Menu
+                      background="rgba(12, 140, 233, 0.2)"
+                      outline="1px solid rgba(12, 140, 233, 0.4)"
+                      icon="/icons/inProcess.svg"
+                      value={data ? data.pCivInProgress : 0}
+                      label="Take-up for Evalution"
+                      showTides={false}
+                      showArrow={true}
+                      textWrap={false}
+                    />
+                  </Button>
+                }
+                body={
+                  <>
+                    <div className="container-fluid border-0 p-0">
+                      {projectsData && filteredSubmittedPcIvKeys ? (
+                        <ProjectsTable
+                          role={role}
+                          keys={filteredSubmittedPcIvKeys}
+                          label="Take-up for Evalution"
+                          projectsData={projectsData}
+                          setProjectsData={setProjectsData}
+                        />
+                      ) : (
+                        <Loader />
+                      )}
+                    </div>
+                  </>
+                }
+              />
+            </div>
+          </div>
+          <div className={`row ${lexend.className} m-0`}>
+            <div className="col p-0 pe-1">
+              <Link
+                href="/pc-iv-referback-review"
+                target="_blank"
+                className="shadow-none w-100 position-relative text-decoration-none"
+              >
+                <Menu
+                  background="rgba(12, 140, 233, 0.2)"
+                  outline="1px solid rgba(12, 140, 233, 0.4)"
+                  icon="/icons/reportReview.svg"
+                  value={0}
+                  label="Referback"
+                  showTides={false}
+                  showArrow={true}
+                  textWrap={false}
+                />
+              </Link>
+            </div>
+            <div className="col p-0 pe-1">
+              <Link
+                href="/pc-iv-attached-review"
+                target="_blank"
+                className="shadow-none w-100 position-relative text-decoration-none"
+              >
+                <Menu
+                  background="rgba(12, 140, 233, 0.2)"
+                  outline="1px solid rgba(12, 140, 233, 0.4)"
+                  icon="/icons/reportReview.svg"
+                  value={0}
+                  label="Submitted by Attached Dept."
+                  showTides={false}
+                  showArrow={true}
+                  textWrap={false}
+                />
+              </Link>
+            </div>
+          </div>
 
           <div className={`${lexend.className}`}>
             <div className="p-1 col">

@@ -128,5 +128,7 @@ export const config = {
     "/pc-iv-report-history",
     "/project-document-names/:path*",
     "/pc-iv-review/:path*",
+    "/pc-iv-attached-review/:path*",
+    "/pc-iv-referback-review/:path*",
   ],
 };

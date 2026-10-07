@@ -45,6 +45,9 @@ import ReportReview from "./ReportReview";
 import SimplePieChart from "./SimplePieChart";
 import VisitsPlan from "./VisitsPlan";
 import PCIVReview from "./PCIVReview";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckmarkSquare01Icon } from "@hugeicons/core-free-icons";
+import MarkToProjects from "./MarkToProjects/MarkToProjects";
 
 const Menu = dynamic(() => import("@/app/components/Menu"), { ssr: false });
 
@@ -179,7 +182,7 @@ const DashboardMonitoring = () => {
       // if (districtFilter) {
       //   setActiveProjects(response.data.data.projectslist);
       // }
-      console.log("Israr:", response.data.data);
+      console.log("response:", response.data.data);
       console.log("FilterData:", filterData);
       setLoading(false);
     } catch (err) {
@@ -297,6 +300,7 @@ const DashboardMonitoring = () => {
           "issuedReportActualPhysicalPrograss",
           "latestIssuedReportCostOverRun",
           "latestIssuedReportTimeOverRun",
+          "markToEvaluation",
         ]
       : [];
 
@@ -1645,11 +1649,7 @@ const DashboardMonitoring = () => {
             >
               {departmentId === 0 || departmentId === 1 ? (
                 <div className="row d-flex m-0">
-                  <div
-                    className={`${
-                      role === "Special Role" ? "col" : "col-7 col-sm-8"
-                    } p-1`}
-                  >
+                  <div className="col p-1">
                     <CustomModal
                       HeaderRightPos={0}
                       HeaderTopPos={17}
@@ -1779,6 +1779,45 @@ const DashboardMonitoring = () => {
                           Analysis
                         </div>
                       </Link>
+                    </div>
+                  )}
+
+                  {(role.toLowerCase() === "director" ||
+                    role.toLowerCase() === "deputy director") && (
+                    <div className="col p-1">
+                      <CustomModal
+                        HeaderRightPos={0}
+                        HeaderTopPos={17}
+                        buttonColumn="col p-0"
+                        isFullscreen={true}
+                        showCloseButton
+                        modalId="mark to evaluation"
+                        button={
+                          <Button
+                            className="row d-flex flex-nowrap justify-content-center align-items-center m-0 btn w-100 text-white fw-normal fs12px py-3 px-0"
+                            style={{
+                              borderRadius: "8px",
+                              background: "#1E6BDD",
+                              transition: "all .3s",
+                            }}
+                          >
+                            <div className="col-auto px-1">
+                              <HugeiconsIcon
+                                icon={CheckmarkSquare01Icon}
+                                size={32}
+                              />
+                            </div>
+                            <div className="col-auto px-1">Mark Evaluation</div>
+                          </Button>
+                        }
+                        body={
+                          <>
+                            <div className="container-fluid border-0 p-0">
+                              <MarkToProjects role={role} />
+                            </div>
+                          </>
+                        }
+                      />
                     </div>
                   )}
                 </div>

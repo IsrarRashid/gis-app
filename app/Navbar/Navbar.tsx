@@ -171,7 +171,10 @@ const Navbar = () => {
                       <DashboardTypeFilter />
                     </Suspense>
                   </li>
-                ) : role === "Special Role" || !role || !departmentId ? (
+                ) : role === "Special Role" ||
+                  !role ||
+                  !departmentId ||
+                  "Administrative Secretary" ? (
                   ""
                 ) : (
                   <li className="nav-item p-1 me-3 m-auto">

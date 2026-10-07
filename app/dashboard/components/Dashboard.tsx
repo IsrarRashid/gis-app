@@ -204,7 +204,7 @@ const Dashboard = ({ dashboardType }: Props) => {
       // if (districtFilter) {
       //   setActiveProjects(response.data.data.projectslist);
       // }
-      console.log("Israr:", response.data.data);
+      console.log("response:", response.data.data);
       console.log("FilterData:", filterData);
       setLoading(false);
     } catch (err) {

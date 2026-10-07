@@ -268,6 +268,7 @@ const GISMenu = ({
         icon: process,
         backgroundColor: "linear-gradient(to bottom right, #a8118f , #11a89b)",
       },
+
       // {
       //   name: "Visits",
       //   nameId: "visits",

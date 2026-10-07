@@ -143,7 +143,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
         console.error("Submission error:", err);
         toast.error(
           (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-            (err as AxiosError<ErrorResponse>).message
+            (err as AxiosError<ErrorResponse>).message,
         );
       }
     };
@@ -154,7 +154,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
     console.log(`${DEPARTMENT_API}/GetDataAgainstField?id=${id}`);
     try {
       const response = await apiClient.get(
-        `${DEPARTMENT_API}/GetDataAgainstField?id=${id}`
+        `${DEPARTMENT_API}/GetDataAgainstField?id=${id}`,
       );
       console.log(response);
       //   setDataAgainstFiled(response.data.data);
@@ -178,7 +178,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
       console.error("Submission error:", err);
       toast.error(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-          (err as AxiosError<ErrorResponse>).message
+          (err as AxiosError<ErrorResponse>).message,
       );
     }
   };
@@ -469,7 +469,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                                 ([key, value]) => ({
                                   value: key,
                                   label: value,
-                                })
+                                }),
                               )}
                               closeMenuOnSelect={true}
                               value={
@@ -493,7 +493,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                                   ? Number(singleOption.value)
                                   : 0;
                                 field.onChange(
-                                  singleOption ? singleOption.value : ""
+                                  singleOption ? singleOption.value : "",
                                 );
 
                                 if (!selectedId) {
@@ -559,12 +559,12 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                                 field.onChange(
                                   selectedOptions
                                     .map((opt) => opt.value)
-                                    .join(",")
+                                    .join(","),
                                 );
                               }}
                               value={(fieldValueOptionsMap[index] || []).filter(
                                 (opt) =>
-                                  field.value?.split(",")?.includes(opt.value)
+                                  field.value?.split(",")?.includes(opt.value),
                               )}
                             />
                           )}
@@ -590,7 +590,7 @@ const Form = ({ api, method, id, setRefresh }: Props) => {
                           const id = 0;
                           // Get current fieldName value from form state
                           const selectedFieldNameId = watch(
-                            `departmentRights.${index}.fieldName`
+                            `departmentRights.${index}.fieldName`,
                           );
                           const selectedFieldNameLabel =
                             filedList?.[

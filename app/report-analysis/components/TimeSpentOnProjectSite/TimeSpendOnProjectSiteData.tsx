@@ -72,7 +72,7 @@ const TimeSpendOnProjectSiteData = ({
     try {
       const response = await apiClient.post(
         `${MAIN_DASHBOARD_API}/GetProjectsListByStatus?status=${status}`,
-        [...cmInitiativeFilters]
+        [...cmInitiativeFilters],
       );
       setProjectsData(response.data.data);
     } catch (err) {
@@ -87,7 +87,7 @@ const TimeSpendOnProjectSiteData = ({
       const fetchPromises = []; // Collect promises for batching
       for (let i = 0; i < filteredData.length; i++) {
         const userId = users.find(
-          (user) => user.fullName === filteredData[i].userName
+          (user) => user.fullName === filteredData[i].userName,
         )?.id;
         const visitId = filteredData[i].visitId;
 
@@ -100,7 +100,7 @@ const TimeSpendOnProjectSiteData = ({
                 userId,
                 visitId,
                 date: null,
-              })
+              }),
             );
           } else {
             fetchPromises.push(Promise.resolve(null)); // Maintain alignment
@@ -155,14 +155,14 @@ const TimeSpendOnProjectSiteData = ({
   }, [filteredData]);
 
   const fetchRecordingData = async (
-    recordingTrackingRequestBody: TrackingRequestData
+    recordingTrackingRequestBody: TrackingRequestData,
   ) => {
     try {
       const response = await apiClient.post<StaffTrackingData>(
         STAFF_TRACKING_API,
-        recordingTrackingRequestBody
+        recordingTrackingRequestBody,
       );
-      // console.log("recording data Israr:", response.data.data[0]);
+      // console.log("recording data response:", response.data.data[0]);
       return response.data.data[0];
       // setRecordingData((prev) => [...prev, response.data.data[0]]);
     } catch (err) {
@@ -239,7 +239,7 @@ const TimeSpendOnProjectSiteData = ({
 
   const calculateOfficerDuration = (
     firstCoordinateCreatedAt: string,
-    lastCoordinateCreatedAt: string
+    lastCoordinateCreatedAt: string,
   ) => {
     const startDate = new Date(firstCoordinateCreatedAt);
     const endDate = new Date(lastCoordinateCreatedAt);
@@ -264,7 +264,7 @@ const TimeSpendOnProjectSiteData = ({
     startLng: number,
     endLat: number,
     endLng: number,
-    averageSpeed: number = 50 // Average speed in km/h
+    averageSpeed: number = 50, // Average speed in km/h
   ): string {
     const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
@@ -326,7 +326,7 @@ const TimeSpendOnProjectSiteData = ({
 
   const calculateTimeSpent = (
     officerDuration: string,
-    googleDuration: string
+    googleDuration: string,
   ): string => {
     const officerMinutes = parseDurationToMinutes(officerDuration);
     const googleMinutes = parseDurationToMinutes(googleDuration);
@@ -346,7 +346,7 @@ const TimeSpendOnProjectSiteData = ({
     if (projectsData) {
       const data = projectsData.map((project, i) => {
         const visitData = latLngsOfVisits.find(
-          (visit) => visit?.visit?.visitID === project.visitId
+          (visit) => visit?.visit?.visitID === project.visitId,
         );
 
         return {
@@ -362,7 +362,7 @@ const TimeSpendOnProjectSiteData = ({
           Visit_Time: visitData
             ? calculateOfficerDuration(
                 visitData.visit.startLatLng.createdAt,
-                visitData.visit.endLatLng.createdAt
+                visitData.visit.endLatLng.createdAt,
               )
             : "N/A",
           Travel_Time: visitData
@@ -370,21 +370,21 @@ const TimeSpendOnProjectSiteData = ({
                 parseFloat(visitData.visit.startLatLng.latitude),
                 parseFloat(visitData.visit.startLatLng.longitude),
                 parseFloat(visitData.visit.endLatLng.latitude),
-                parseFloat(visitData.visit.endLatLng.longitude)
+                parseFloat(visitData.visit.endLatLng.longitude),
               )
             : "N/A",
           Time_Spent_On_Project_Site: visitData
             ? calculateTimeSpent(
                 calculateOfficerDuration(
                   visitData.visit.startLatLng.createdAt,
-                  visitData.visit.endLatLng.createdAt
+                  visitData.visit.endLatLng.createdAt,
                 ),
                 calculateTravelTime(
                   parseFloat(visitData.visit.startLatLng.latitude),
                   parseFloat(visitData.visit.startLatLng.longitude),
                   parseFloat(visitData.visit.endLatLng.latitude),
-                  parseFloat(visitData.visit.endLatLng.longitude)
-                )
+                  parseFloat(visitData.visit.endLatLng.longitude),
+                ),
               )
             : "N/A",
         };

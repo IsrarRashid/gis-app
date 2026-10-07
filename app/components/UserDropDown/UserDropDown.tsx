@@ -14,6 +14,7 @@ import Button from "../Button";
 import Spinner from "../Spinner";
 import ChangePasswordForm from "./ChangePasswordForm";
 import styles from "./UserDropDown.module.css";
+import UploadProfileImgAndSign from "./UploadProfileImgAndSign";
 
 const UserDropDown = () => {
   const [show, setShow] = useState(false);
@@ -223,6 +224,9 @@ const UserDropDown = () => {
               <div className="dropdown-divider m-0"></div>
             </div>
             <ChangePasswordForm userName={userName} />
+            {role === "administrative secretary" && userId && (
+              <UploadProfileImgAndSign userId={userId} />
+            )}
             <div className="pt-0 pb-0 ps-3 pe-3">
               <div className="dropdown-divider m-0"></div>
             </div>

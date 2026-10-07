@@ -44,6 +44,8 @@ import {
   RangeType,
 } from "../../ProjectsTable/ProjectsTableUtils";
 import useProjectsTableUtils from "../../ProjectsTable/useProjectsTableUtils";
+import AsyncAction from "@/app/components/Form/AsyncAction";
+import Spinner from "@/app/components/Spinner";
 
 export interface ProjectsList {
   id: number;
@@ -825,10 +827,12 @@ const ProjectsTable = ({
   };
 
   const pcIVReportPdfDownload = async (pcIvId: number) => {
-    console.log(`${GENERATE_REPORT_API}/GenerateReportPCIV?pcIVid=${pcIvId}`);
+    console.log(
+      `${GENERATE_REPORT_API}/GenerateReportPCIVForWeb?pcIVid=${pcIvId}`,
+    );
     try {
       const response = await apiClient.post(
-        `${GENERATE_REPORT_API}/GenerateReportPCIV?pcIVid=${pcIvId}`,
+        `${GENERATE_REPORT_API}/GenerateReportPCIVForWeb?pcIVid=${pcIvId}`,
       );
 
       console.log("response", response);
@@ -1761,15 +1765,27 @@ const ProjectsTable = ({
                           {key === "name" ? (
                             <>
                               {label === "PC(IV) Submitted by Department" ? (
-                                <div
-                                  className="text-start color-sea-blue cursor-pointer"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    pcIVReportPdfDownload(d.pcIvmainId);
-                                  }}
+                                <AsyncAction
+                                  className="text-start"
+                                  onClick={() =>
+                                    pcIVReportPdfDownload(d.pcIvmainId)
+                                  }
+                                  loadingContent={
+                                    <div className="d-flex gap-2 align-items-center text-secondary">
+                                      <div style={{ flexShrink: 0 }}>
+                                        <Spinner />
+                                      </div>
+
+                                      <span className="text-start text-secondary">
+                                        {d[key]}
+                                      </span>
+                                    </div>
+                                  }
                                 >
-                                  {d[key]}
-                                </div>
+                                  <span className="color-sea-blue cursor-pointer">
+                                    {d[key]}
+                                  </span>
+                                </AsyncAction>
                               ) : label === "No. of Visits (Single)" ? (
                                 <div
                                   className="text-start color-sea-blue cursor-pointer"

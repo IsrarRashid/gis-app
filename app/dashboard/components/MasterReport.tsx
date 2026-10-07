@@ -72,7 +72,7 @@ const MasterReport = () => {
     const isChecked = e.target.checked;
 
     setMRStatus((prev) =>
-      isChecked ? [...prev, value] : prev.filter((v) => v !== value)
+      isChecked ? [...prev, value] : prev.filter((v) => v !== value),
     );
   };
 
@@ -149,20 +149,20 @@ const MasterReport = () => {
           to: new Date(toDate).toISOString().split("T")[0],
           from: new Date(fromDate).toISOString().split("T")[0],
           sector: sectors.map((sector) => sector.title),
-        }
+        },
       );
 
       console.log(response);
       toast.success("PPT Generated Successfully");
       setSlidePath(
-        process.env.NEXT_PUBLIC_BACKEND_API + "/" + response.data.data
+        process.env.NEXT_PUBLIC_BACKEND_API + "/" + response.data.data,
       );
     } catch (err) {
       setSubmitting(false);
       console.error("Submission error:", err);
       toast.error(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-          (err as AxiosError<ErrorResponse>).message
+          (err as AxiosError<ErrorResponse>).message,
       );
     } finally {
       setSubmitting(false); // Always run after try/catch
@@ -196,7 +196,7 @@ const MasterReport = () => {
           to: new Date(toDate).toISOString().split("T")[0],
           from: new Date(fromDate).toISOString().split("T")[0],
           sector: [""],
-        }
+        },
       );
 
       console.log(response);
@@ -207,7 +207,7 @@ const MasterReport = () => {
       console.error("Submission error:", err);
       toast.error(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-          (err as AxiosError<ErrorResponse>).message
+          (err as AxiosError<ErrorResponse>).message,
       );
     }
   }, [mrStatus, fromDate, toDate]);

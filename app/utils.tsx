@@ -732,6 +732,8 @@ export const allPagesPath = [
   "/director-reports",
   "/project-document-names",
   "/pc-iv-review/:path",
+  "/pc-iv-attached-review/:path",
+  "/pc-iv-referback-review/:path",
 ];
 
 // for new-visit-plan starts

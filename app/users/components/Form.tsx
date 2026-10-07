@@ -44,7 +44,7 @@ const schema = z.object({
   roleID: z
     .preprocess(
       (val) => (val === "" || val === undefined ? undefined : String(val)),
-      z.string({ invalid_type_error: "Please add Role Id!" })
+      z.string({ invalid_type_error: "Please add Role Id!" }),
     )
     .optional()
     .default(""),
@@ -146,7 +146,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
       setSubmitting(false);
       toast.error(
         (err as AxiosError<ErrorResponse>).response?.data.responseMessage ||
-          (err as AxiosError<ErrorResponse>).message
+          (err as AxiosError<ErrorResponse>).message,
       );
     } finally {
       setSubmitting(false);
@@ -162,7 +162,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
 
   const bpsOptions: OptionType[] = Array.from(
     { length: 22 },
-    (_, i) => i + 1
+    (_, i) => i + 1,
   ).map((d) => {
     return {
       value: d.toString(),
@@ -420,12 +420,12 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                         closeMenuOnSelect={true}
                         value={
                           roleIdOptions.find(
-                            (option) => option.value === String(field.value)
+                            (option) => option.value === String(field.value),
                           )
                             ? [
                                 roleIdOptions.find(
                                   (option) =>
-                                    option.value === String(field.value)
+                                    option.value === String(field.value),
                                 )!,
                               ]
                             : []
@@ -434,7 +434,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                           const singleOption =
                             selectedOption as SingleValue<OptionType>;
                           field.onChange(
-                            singleOption ? Number(singleOption.value) : 0
+                            singleOption ? Number(singleOption.value) : 0,
                           );
                         }}
                       />
@@ -525,12 +525,12 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                         maxHeight={43 * 4}
                         value={
                           bpsOptions.find(
-                            (option) => option.value === String(field.value)
+                            (option) => option.value === String(field.value),
                           )
                             ? [
                                 bpsOptions.find(
                                   (option) =>
-                                    option.value === String(field.value)
+                                    option.value === String(field.value),
                                 )!,
                               ]
                             : []
@@ -539,7 +539,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                           const singleOption =
                             selectedOption as SingleValue<OptionType>;
                           field.onChange(
-                            singleOption ? Number(singleOption.value) : 0
+                            singleOption ? Number(singleOption.value) : 0,
                           );
                         }}
                       />
@@ -586,12 +586,12 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                         options={[defaultOption, ...sectionOptions]}
                         value={
                           sectionOptions.find(
-                            (option) => option.value === String(field.value)
+                            (option) => option.value === String(field.value),
                           )
                             ? [
                                 sectionOptions.find(
                                   (option) =>
-                                    option.value === String(field.value)
+                                    option.value === String(field.value),
                                 )!,
                               ]
                             : []
@@ -600,7 +600,7 @@ const Form = ({ api, method, id, setRefresh, refresh, roles }: Props) => {
                           const singleOption =
                             selectedOption as SingleValue<OptionType>;
                           field.onChange(
-                            singleOption ? singleOption.value : ""
+                            singleOption ? singleOption.value : "",
                           );
                         }}
                       />

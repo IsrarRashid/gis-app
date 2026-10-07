@@ -162,7 +162,7 @@ const StaffTracking = () => {
     });
   const [googleDuration, setGoogleDuration] = useState<string | undefined>("");
   const [officerDuration, setOfficerDuration] = useState<string | undefined>(
-    ""
+    "",
   );
 
   const [markerPositions, setMarkerPositions] = useState<{
@@ -170,12 +170,12 @@ const StaffTracking = () => {
   }>({});
 
   const getStaffWithCoordinates = async (
-    trackingRequestBody: TrackingRequestData
+    trackingRequestBody: TrackingRequestData,
   ) => {
     try {
       const response = await apiClient.post(
         STAFF_TRACKING_API,
-        trackingRequestBody
+        trackingRequestBody,
       );
       if (response.data.data) {
         setData(response.data.data);
@@ -184,10 +184,10 @@ const StaffTracking = () => {
         response.data.data.forEach((d: any) => {
           const userId = d.userId;
           const newLat = parseFloat(
-            d.coordinates[d.coordinates.length - 1].latitude
+            d.coordinates[d.coordinates.length - 1].latitude,
           );
           const newLng = parseFloat(
-            d.coordinates[d.coordinates.length - 1].longitude
+            d.coordinates[d.coordinates.length - 1].longitude,
           );
           const currentPos = markerPositions[userId] || {
             lat: newLat,
@@ -242,7 +242,7 @@ const StaffTracking = () => {
   useEffect(() => {
     handleButtonClick(
       "StaffTracking",
-      "https://www.youtube.com/watch?v=L38gouuFtyo&ab_channel=DirectorateGeneralMonitoringandEvaluation"
+      "https://www.youtube.com/watch?v=L38gouuFtyo&ab_channel=DirectorateGeneralMonitoringandEvaluation",
     );
   }, []);
 
@@ -255,9 +255,9 @@ const StaffTracking = () => {
     try {
       const response = await apiClient.post(
         STAFF_TRACKING_API,
-        recordingTrackingRequestBody
+        recordingTrackingRequestBody,
       );
-      console.log("recording data Israr:", response.data.data);
+      console.log("recording data:", response.data.data);
       const responseData: StaffTracking[] = await response.data.data;
       setRecordingData(response.data.data);
       const coordinatesList = responseData[0]?.coordinates;
@@ -285,7 +285,7 @@ const StaffTracking = () => {
     try {
       if (data && data.startAddressLat && data.startAddressLong) {
         const response = await fetch(
-          `${REVERSE_GEO_CODING_API}${data.startAddressLat},${data.startAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
+          `${REVERSE_GEO_CODING_API}${data.startAddressLat},${data.startAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`,
         );
         const resopnseData = await response.json();
         setStartLocation(resopnseData.results[0].formatted_address);
@@ -299,7 +299,7 @@ const StaffTracking = () => {
     try {
       if (data && data.endAddressLat && data.endAddressLong) {
         const response = await fetch(
-          `${REVERSE_GEO_CODING_API}${data.endAddressLat},${data.endAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`
+          `${REVERSE_GEO_CODING_API}${data.endAddressLat},${data.endAddressLong}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`,
         );
         const resopnseData = await response.json();
         setEndLocation(resopnseData.results[0].formatted_address);
@@ -329,7 +329,7 @@ const StaffTracking = () => {
   const handleUserSubmit = async (id: number) => {
     try {
       const response = await apiClient.get(
-        `${GET_USER_PROJECTS_API}?userId=${id}`
+        `${GET_USER_PROJECTS_API}?userId=${id}`,
       );
       console.log("Response:", response);
       setUserProjects(response.data.data);
@@ -341,7 +341,7 @@ const StaffTracking = () => {
   const handleProjectSubmit = async (projectId: number, userId: number) => {
     try {
       const response = await apiClient.get(
-        `${VISIT_API}/GetVisitsByProjectId?ProjectId=${projectId}&userId=${userId}`
+        `${VISIT_API}/GetVisitsByProjectId?ProjectId=${projectId}&userId=${userId}`,
       );
       console.log("Response:", response);
       setUserVisits(response.data.data);
@@ -502,7 +502,7 @@ const StaffTracking = () => {
                             const selectedId = parseInt(selectedValue, 10);
                             handleProjectSubmit(
                               selectedId,
-                              recordingTrackingRequestBody.userId
+                              recordingTrackingRequestBody.userId,
                             ); // Call handleUserSubmit with the selected userId
                           }
                         }}
@@ -563,9 +563,9 @@ const StaffTracking = () => {
                             isDateSelected
                               ? false
                               : recordingTrackingRequestBody.userId &&
-                                isVisitSelected
-                              ? false
-                              : true
+                                  isVisitSelected
+                                ? false
+                                : true
                           }
                           className="btn w-50 fs-5 text-white"
                           type="submit"

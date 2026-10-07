@@ -23,6 +23,6 @@ interface Props {
 }
 
 const useUsers = ({ refresh = false }: Props = {}) =>
-  useData<User>({ refresh, endpoint: USER_API });
+  useData<User>({ refresh, endpoint: USER_API + "/GetAllUsers" });
 
 export default useUsers;

@@ -1,5 +1,5 @@
 "use client";
-import { GENERATE_REPORT_API } from "@/app/APIs";
+import { GENERATE_REPORT_API, MARK_TO_EVALUATION_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomInput from "@/app/components/Form/CustomInput";
 import CustomLabel from "@/app/components/Form/CustomLabel";
@@ -48,6 +48,7 @@ import {
   RangeType,
   reportStatusOptions,
 } from "./ProjectsTableUtils";
+import GenericToggleControl from "@/app/components/Form/GenericToggleControl";
 
 export interface ProjectsList {
   id: number;
@@ -78,17 +79,18 @@ export interface ProjectsList {
   totalRevenueCost: number;
   totalCapitalCost: number;
   reportStatus: number;
-  latestIssuedReport: string;
+  latestIssuedReport: string[];
   datesOfIssuedReports: string[];
-  issuedReportDistrict: string;
+  issuedReportDistrict: string[];
   issuedReportActualPhysicalPrograss: number;
   latestIssuedReportTimeOverRun: number;
   latestIssuedReportCostOverRun: number;
+  markToEvaluation: boolean;
 }
 
 interface Props {
   projectsData: ProjectsList[];
-  setProjectsData?: Dispatch<SetStateAction<ProjectsList[] | undefined>>;
+  setProjectsData: Dispatch<SetStateAction<ProjectsList[] | undefined>>;
   label: string;
   keys: (keyof ProjectsList)[];
   role: string;
@@ -101,6 +103,7 @@ interface Props {
 
 const ProjectsTable = ({
   projectsData,
+  setProjectsData,
   label,
   keys,
   allowLink = true,
@@ -588,6 +591,17 @@ const ProjectsTable = ({
               )
               .join(", ");
             break;
+          case "latestIssuedReport":
+            row[label] = (data.latestIssuedReport ?? [])
+              .map((item: string) => item)
+              .join(", ");
+            break;
+          case "issuedReportDistrict":
+            row[label] = (data.issuedReportDistrict ?? [])
+              .map((item: string) => item)
+              .join(", ");
+            break;
+
           case "statusDate":
             row[label] = data.statusDate
               ? `${new Date(data.statusDate).toLocaleDateString("en-GB", {
@@ -800,6 +814,44 @@ const ProjectsTable = ({
     setSelectedOptions([rowCountOptions[0]]);
     handleRowsPerPage(parseInt(rowCountOptions[0].value));
   }, []);
+
+  const handleMarkToEvaluation = async (
+    projectId: number,
+    nextValue: boolean,
+  ) => {
+    console.log(MARK_TO_EVALUATION_API + "/Mark?projectId=" + projectId);
+    try {
+      const response = await apiClient.post(
+        MARK_TO_EVALUATION_API + "/Mark?projectId=" + projectId,
+      );
+
+      if (!response.data) {
+        throw new Error("Failed to update evaluation status");
+      }
+
+      // Update only the affected item locally
+      if (projectsData) {
+        setProjectsData((prevList) =>
+          prevList?.map((item) =>
+            item.id === projectId
+              ? { ...item, markToEvaluation: nextValue }
+              : item,
+          ),
+        );
+      }
+
+      toast.success(
+        `Mark to evaluation ${
+          nextValue ? "enabled" : "disabled"
+        } successfully.`,
+      );
+    } catch (error) {
+      console.error("Evaluation status update failed:", error);
+      toast.error("Failed to update evaluation status. Please try again.");
+
+      throw error;
+    }
+  };
 
   return (
     <div className={`d-flex`}>
@@ -1852,6 +1904,24 @@ const ProjectsTable = ({
                           </TableData>
                         );
                       }
+                      if (key === "markToEvaluation") {
+                        return (
+                          <TableData key="markToEvaluation">
+                            <div className="d-flex justify-content-center">
+                              <GenericToggleControl
+                                controlType="checkbox"
+                                // title="Mark to Evaluation"
+                                // description="Include this item in final grading calculations."
+                                checked={d.markToEvaluation}
+                                onCheckedChange={async (val) =>
+                                  await handleMarkToEvaluation(d.id, val)
+                                }
+                                disabled={d.markToEvaluation}
+                              />
+                            </div>
+                          </TableData>
+                        );
+                      }
                       // For other keys
                       return (
                         <TableData key={key}>
@@ -1936,6 +2006,48 @@ const ProjectsTable = ({
                                             })
                                             .replace(/\//g, ".")}
                                         </Badge>
+                                      ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : key === "latestIssuedReport" ? (
+                            <div className="flex flex-col gap-1">
+                              {Array.from({
+                                length: Math.ceil((d[key]?.length ?? 0) / 3),
+                              }).map((_, rowIndex) => (
+                                <div className="p-1" key={rowIndex}>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {d[key]
+                                      ?.slice(rowIndex * 3, rowIndex * 3 + 3)
+                                      .map((item: string, index: number) => (
+                                        <div
+                                          key={index}
+                                          className="text-decoration-underline"
+                                        >
+                                          {item}
+                                        </div>
+                                      ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : key === "issuedReportDistrict" ? (
+                            <div className="flex flex-col gap-1">
+                              {Array.from({
+                                length: Math.ceil((d[key]?.length ?? 0) / 3),
+                              }).map((_, rowIndex) => (
+                                <div className="p-1" key={rowIndex}>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {d[key]
+                                      ?.slice(rowIndex * 3, rowIndex * 3 + 3)
+                                      .map((item: string, index: number) => (
+                                        <div
+                                          key={index}
+                                          className="text-decoration-underline"
+                                        >
+                                          {item}
+                                        </div>
                                       ))}
                                   </div>
                                 </div>
