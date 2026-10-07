@@ -1,5 +1,5 @@
 "use client";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/Table/TableHeading";

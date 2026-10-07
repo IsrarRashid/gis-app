@@ -1,7 +1,7 @@
 "use client";
 import { VISIT_API, VISIT_NEW_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/Table/TableHeading";
@@ -77,7 +77,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
       ]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -130,7 +130,7 @@ const List = ({ refresh, setRefresh }: ListProps) => {
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   // const handleFilterData = (data: VisitNew[], status: string) => {

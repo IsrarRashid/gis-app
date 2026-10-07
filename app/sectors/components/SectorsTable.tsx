@@ -1,7 +1,7 @@
 "use client";
 import { SECTOR_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import Actions from "@/app/components/Table/Actions";
 import Pagination from "@/app/components/Table/Pagination";
 import TableData from "@/app/components/Table/TableData";

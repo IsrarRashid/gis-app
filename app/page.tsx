@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Home from "./components/Home/Home";
-import Loader from "./components/Loader";
+import Loader from "./components/Loader/Loader";
 
 export default function HomePage() {
   return (

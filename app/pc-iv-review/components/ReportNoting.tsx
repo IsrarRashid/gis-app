@@ -16,7 +16,7 @@ import { SubmittedReport } from "../list/components/List";
 import { APPROVED, REFERBACK, SUBMITTED } from "../statuses";
 import HistoryList from "./HistoryList";
 
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import { BsExclamationTriangleFill } from "react-icons/bs";
 import PdfIframe from "./pdf/PdfIframe";
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {

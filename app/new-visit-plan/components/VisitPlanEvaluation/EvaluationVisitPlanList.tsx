@@ -6,7 +6,7 @@ import CustomSelect, {
   defaultNegativeNumberOption,
   OptionType,
 } from "@/app/components/Form/CustomSelect";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import Spinner from "@/app/components/Spinner";
 import TableHeading from "@/app/components/Table/TableHeading";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";

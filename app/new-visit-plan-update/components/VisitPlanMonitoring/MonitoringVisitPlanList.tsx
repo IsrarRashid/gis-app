@@ -2,7 +2,7 @@
 
 import { EVALUATION_TEMP_TOUR_PLAN_API, TEMP_TOUR_PLAN_API } from "@/app/APIs";
 import { OptionType } from "@/app/components/Form/CustomSelect";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import TableHeading from "@/app/components/Table/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import useDistrict from "@/app/hooks/useDistrict";
@@ -114,7 +114,7 @@ const MonitoringVisitPlanList = ({
 
       const response = await apiClient.post(
         `${TEMP_TOUR_PLAN_API_ENDPOINT}/create-or-update`,
-        payload
+        payload,
       );
       toast.success(response.data?.message || "Saved successfully!");
 
@@ -183,7 +183,7 @@ const MonitoringVisitPlanList = ({
     try {
       // Only call API if this record exists in backend (id > 0)
       const response = await apiClient.delete(
-        `${TEMP_TOUR_PLAN_API}/${tempId}`
+        `${TEMP_TOUR_PLAN_API}/${tempId}`,
       );
       // toast.success("Item deleted successfully!");
       // Remove row from field array

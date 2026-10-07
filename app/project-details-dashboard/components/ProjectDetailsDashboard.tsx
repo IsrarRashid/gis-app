@@ -25,7 +25,7 @@ import MonitoringRatingIndex from "./MonitoringRatingIndex";
 import dynamic from "next/dynamic";
 import useAuthorization from "@/app/hooks/useAuthorization";
 import WBSSummary from "./WBSFlow/WBSSummary";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 
 const DistributedColumnChart = dynamic(
   () => import("./DistributedColumnChart"),

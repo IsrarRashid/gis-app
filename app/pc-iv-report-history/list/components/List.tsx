@@ -2,7 +2,7 @@
 import { PC_IV_WORKFLOW_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import useOfficers, { Officer } from "@/app/hooks/useOfficers";
 import useReportHistoryUser from "@/app/hooks/useReportHistoryUsers";
 import apiClient, { AxiosError } from "@/app/services/api-client";

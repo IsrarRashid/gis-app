@@ -3,7 +3,7 @@ import { VISIT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import DeleteModal from "@/app/components/DeleteModal";
 import DisplayStatusText from "@/app/components/DisplayStatusText";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/Table/TableHeading";

@@ -1,6 +1,6 @@
 "use client";
 import { DASHBOARD_ATTENDANCE_API } from "@/app/APIs";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import apiClient from "@/app/services/api-client";
 import Link from "next/link";
 import { useEffect, useState } from "react";

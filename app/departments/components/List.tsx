@@ -1,7 +1,7 @@
 "use client";
 import { DEPARTMENT_API } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import Actions from "@/app/components/Table/Actions";
 import Pagination from "@/app/components/Table/Pagination";
 import RowHeader from "@/app/components/Table/RowHeader";
@@ -43,7 +43,7 @@ const List = ({ refresh, setRefresh }: Props) => {
       [item.id.toString(), item.name, item.email, item.name, item.phoneNumber]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -82,7 +82,7 @@ const List = ({ refresh, setRefresh }: Props) => {
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const handleDelete = async (id: number) => {

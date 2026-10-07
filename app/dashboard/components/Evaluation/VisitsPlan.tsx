@@ -1,7 +1,7 @@
 import { VISIT_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import DownloadDropDown from "@/app/components/UserDropDown/DownloadDropDown";
 import useDistrict from "@/app/hooks/useDistrict";
 import useSectors from "@/app/hooks/useSectors";

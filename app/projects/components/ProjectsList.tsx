@@ -6,7 +6,7 @@ import {
   TEMP_TOUR_PLAN_API,
 } from "@/app/APIs";
 import Button from "@/app/components/Button";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import RowHeader from "@/app/components/Table/RowHeader";
 import TableData from "@/app/components/Table/TableData";
@@ -78,7 +78,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
       [item.id.toString(), item.gsNo, item.name, item.status]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -140,14 +140,14 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const hideCompleted = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       // Filter the data to hide completed items
       setData((prevData) =>
-        prevData.filter((item) => item.status !== "Complete")
+        prevData.filter((item) => item.status !== "Complete"),
       );
     } else {
       // Reset to the original data
@@ -159,7 +159,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
     if (e.target.checked) {
       // Filter the data to show only canceled items
       setData((prevData) =>
-        prevData.filter((item) => item.status === "Cancel")
+        prevData.filter((item) => item.status === "Cancel"),
       );
     } else {
       // Reset to the original data
@@ -170,7 +170,7 @@ const ProjectsList = ({ dashboardType }: { dashboardType?: string }) => {
   const handleAddVisitPlan = async (projectId: number) => {
     try {
       const response = await apiClient.post(
-        `${TEMP_TOUR_PLAN_API_ENDPOINT}/add-tour-plan?projectid=${projectId}`
+        `${TEMP_TOUR_PLAN_API_ENDPOINT}/add-tour-plan?projectid=${projectId}`,
       );
       console.log(response);
       notifyCreate(response.data?.message);

@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import BgChanger from "./components/BgChanger";
 import BootstrapClient from "./components/BootstrapClient";
 import FooterToggle from "./components/FooterToggle";
-import Loader from "./components/Loader";
+import Loader from "./components/Loader/Loader";
 import NavbarToggle from "./components/NavbarToggle";
 import ReduxProvider from "./components/ReduxProvider";
 import ToastContainers from "./components/ToastContainers";

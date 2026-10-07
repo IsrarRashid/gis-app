@@ -33,7 +33,7 @@ import ObservationsAndRecommendations from "./components/ObservationsAndRecommen
 import ProgressAnalysis from "./components/ProgressAnalysis";
 import ProjectProfile from "./components/ProjectProfile";
 import Badge from "../ProjectsTable/components/Badge";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import { triggerEscapeKeyPress } from "@/app/utils";
 
 interface Props {
@@ -135,7 +135,7 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
     setLoading(true);
     try {
       const response = await apiClient.get(
-        `${PROJECT_API}/${id}?visitId=${visitId}`
+        `${PROJECT_API}/${id}?visitId=${visitId}`,
       );
       setProjectsData(response.data.data);
       setLoading(false);
@@ -152,7 +152,7 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
         ? attributes.length
         : groups.reduce(
             (total: any, group: any) => total + (group.attributes?.length || 0),
-            0
+            0,
           ) || 0;
 
     // setTotalValue(totalValue);
@@ -160,13 +160,13 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
       attributes.length > 0
         ? attributes.filter(
             (attribute: any) =>
-              attribute.values.length > 0 && attribute.values[0].value !== null
+              attribute.values.length > 0 && attribute.values[0].value !== null,
           ).length
         : groups.reduce((gained: any, group: any) => {
             const groupGained = group.attributes?.filter(
               (attribute: any) =>
                 attribute.values.length > 0 &&
-                attribute.values[0]?.value !== null
+                attribute.values[0]?.value !== null,
             ).length;
             return gained + (groupGained || 0);
           }, 0) || 0;
@@ -178,7 +178,7 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
       "gainedValue:",
       gainedValue,
       "totalValue:",
-      totalValue
+      totalValue,
     );
     return gainedValue && totalValue ? (gainedValue / totalValue) * 100 : 0;
   };
@@ -264,7 +264,7 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
                         projectsData.groups.map((group) => {
                           // Try to find an icon based on group.name
                           let itemIcon = icons.find(
-                            (icon) => icon.label === group.name.trim()
+                            (icon) => icon.label === group.name.trim(),
                           );
 
                           // If not found, or if name starts with "Work BreakDown Structure", use a specific one
@@ -309,16 +309,16 @@ const ProjectReportOverviewModal = ({ value, id, visitId }: Props) => {
                                       value={Math.round(
                                         calculatePercentage(
                                           group.attributes,
-                                          group.group
-                                        )
+                                          group.group,
+                                        ),
                                       )}
                                     />
                                     <div className="col-1 p-0 pe-4 text-dark">
                                       {Math.round(
                                         calculatePercentage(
                                           group.attributes,
-                                          group.group
-                                        )
+                                          group.group,
+                                        ),
                                       )}
                                       %
                                     </div>

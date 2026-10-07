@@ -4,7 +4,7 @@ import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
 import DeleteModal from "@/app/components/DeleteModal";
 import DisplayStatusText from "@/app/components/DisplayStatusText";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import TableHeading from "@/app/components/Table/TableHeading";
 import useAuthentication from "@/app/hooks/useAuthentication";
 import useDriver from "@/app/hooks/useDriver";

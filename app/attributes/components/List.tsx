@@ -5,7 +5,7 @@ import {
   GET_PROJECT_DETAIL_KEYS_API,
 } from "@/app/APIs";
 import DeleteModal from "@/app/components/DeleteModal";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import Actions from "@/app/components/Table/Actions";
 import Pagination from "@/app/components/Table/Pagination";
 import RowHeader from "@/app/components/Table/RowHeader";
@@ -66,7 +66,7 @@ const List = ({ dashboardType }: { dashboardType?: string }) => {
       ]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };

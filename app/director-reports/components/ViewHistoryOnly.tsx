@@ -1,5 +1,5 @@
 import { REPORTS_HISTORY_API } from "@/app/APIs";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { getFormattedDate } from "@/app/utils";

@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import EarthLoading from "@/app/earthLoading.json";
+import EarthLoading from "./earthLoading.json";
 
 // Dynamically import Lottie only on client
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });

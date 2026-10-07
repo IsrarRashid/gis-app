@@ -2,7 +2,7 @@
 import { PC_IV_WORKFLOW_API, REPORTS_HISTORY_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import { DashboardTypeEnum } from "@/app/dashboard/types/types";
 import { Officer } from "@/app/hooks/useOfficers";
 import { ReportHistoryUser } from "@/app/hooks/useReportHistoryUsers";

@@ -6,7 +6,7 @@ import ProjectDetailsDashboard, {
 } from "../../components/ProjectDetailsDashboard";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { SINGLE_PROJECT_DASHBOARD_API } from "@/app/APIs";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 
 interface Props {
   params: { id: string; visitId: number }; // Change to string to match the routing expectations
@@ -28,12 +28,12 @@ const SingleProjectDashboardPage = ({ params }: Props) => {
       setLoading(true);
       try {
         const response = await apiClient.get(
-          `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`
+          `${SINGLE_PROJECT_DASHBOARD_API}?projectid=${projectId}&visitId=${visitId}`,
         );
         setData(response.data.data);
         console.log(
           `check now: projectid=${projectId}&visit=${visitId}`,
-          response
+          response,
         );
         setLoading(false);
       } catch (err) {

@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import apiClient, { AxiosError } from "@/app/services/api-client";
 import { ReportTab } from "./List";
 import { useRouter } from "next/navigation";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 
 const MasterReport = () => {
   const [show, setShow] = useState(false);

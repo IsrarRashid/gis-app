@@ -1,7 +1,7 @@
 "use client";
 import { SINGLE_PROJECT_DASHBOARD_API } from "@/app/APIs";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import { SingleProjectDashboard } from "@/app/project-details-dashboard/components/ProjectDetailsDashboard";
 import Reports from "@/app/project-details-dashboard/components/Reports";
 import apiClient from "@/app/services/api-client";

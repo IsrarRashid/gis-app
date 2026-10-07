@@ -1,6 +1,6 @@
 "use client";
 import { GET_USER_PROJECTS_API, SMDP_SYNC_API } from "@/app/APIs";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import Pagination from "@/app/components/Table/Pagination";
 import TableHeader from "@/app/components/Table/TableHeader";
 import TableHeading from "@/app/components/Table/TableHeading";
@@ -84,7 +84,7 @@ const UserProjectsList = ({
       [item.id.toString(), item.gsNo, item.name, item.status]
         .filter((field) => field) // Remove undefined fields
         .map((field) => field.toLowerCase())
-        .some((field) => field.includes(e.target.value.toLowerCase()))
+        .some((field) => field.includes(e.target.value.toLowerCase())),
     );
     setFilteredData(filtered);
   };
@@ -127,13 +127,13 @@ const UserProjectsList = ({
   // Paginate data to display only the current page's rows
   const paginatedData = (searchTerm ? filteredData : data).slice(
     (currentPage - 1) * rows,
-    currentPage * rows
+    currentPage * rows,
   );
 
   const handleSubmit = async (id: number) => {
     try {
       const response = await apiClient.get(
-        `${GET_USER_PROJECTS_API}?userId=${id}`
+        `${GET_USER_PROJECTS_API}?userId=${id}`,
       );
       console.log("Response:", response);
       setData(response.data.data);

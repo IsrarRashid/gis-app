@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 
 const Home = () => {
   const router = useRouter();
@@ -30,7 +30,7 @@ const Home = () => {
               role?.toLowerCase() === "director general"
             ) {
               router.push(
-                `/${rights[i]}${currentParams ? `?${currentParams}` : ""}`
+                `/${rights[i]}${currentParams ? `?${currentParams}` : ""}`,
               );
               hasDashboard = true;
               break;
@@ -41,7 +41,7 @@ const Home = () => {
           for (let i = 0; i < rights.length; i++) {
             if (rights[i].toLowerCase() === "dashboard") {
               router.push(
-                `/${rights[i]}${currentParams ? `?${currentParams}` : ""}`
+                `/${rights[i]}${currentParams ? `?${currentParams}` : ""}`,
               );
               hasDashboard = true;
               break;
@@ -58,7 +58,7 @@ const Home = () => {
 
         if (!hasDashboard)
           router.push(
-            `/${rights[0]}${currentParams ? `?${currentParams}` : ""}`
+            `/${rights[0]}${currentParams ? `?${currentParams}` : ""}`,
           );
       } else {
         router.push("/not-authorized");

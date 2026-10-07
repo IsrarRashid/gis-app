@@ -1,6 +1,6 @@
 "use client";
 import { STAFF_ATTENDANCE_API } from "@/app/APIs";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import TableHeader from "@/app/components/Table/TableHeader";
 import apiClient from "@/app/services/api-client";
 import {

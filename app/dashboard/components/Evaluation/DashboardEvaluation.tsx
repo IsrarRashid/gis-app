@@ -3,7 +3,7 @@ import { EVALUATION_MAIN_DASHBOARD_API } from "@/app/APIs";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
 import DashboardWrapper from "@/app/components/DashboardWrapper";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 // import Menu from "@/app/components/Menu";
 import { setContent } from "@/app/features/content/contentSlice";
 import { setTutorial } from "@/app/features/tutorial/tutorialSlice";

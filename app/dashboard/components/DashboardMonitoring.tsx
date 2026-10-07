@@ -4,7 +4,7 @@ import AnimatedCounter from "@/app/components/AnimatedCounter";
 import Button from "@/app/components/Button";
 import CustomModal from "@/app/components/CustomModal/CustomModal";
 import DashboardWrapper from "@/app/components/DashboardWrapper";
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/components/Loader/Loader";
 import { setContent } from "@/app/features/content/contentSlice";
 import { setTutorial } from "@/app/features/tutorial/tutorialSlice";
 import apiClient from "@/app/services/api-client";
